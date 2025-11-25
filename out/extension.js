@@ -114,6 +114,10 @@ function registerCommands(context, treeView) {
     context.subscriptions.push(vscode.commands.registerCommand('S3TreeView.TestAwsConnection', () => {
         treeView.TestAwsConnection();
     }));
+    // Configuration export command
+    context.subscriptions.push(vscode.commands.registerCommand('S3TreeView.ExportToYaml', () => {
+        treeView.ExportToYaml();
+    }));
     ui.logToOutput('All commands registered successfully');
 }
 /**

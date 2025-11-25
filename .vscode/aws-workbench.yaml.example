@@ -1,0 +1,26 @@
+# AWS Workbench Configuration File
+# Place this file in .vscode folder for workspace-specific configuration
+# Location: .vscode/aws-workbench.yaml
+
+# This configuration is checked FIRST and takes priority
+# over aws-workbench.yaml in workspace root
+
+root:
+  # Development buckets (workspace-specific)
+  - s3: arn:aws:s3:::my-dev-bucket
+    shortcuts:
+      - test-data/
+      - logs/local/
+
+  # Personal shortcuts
+  - s3: arn:aws:s3:::shared-bucket
+    shortcuts:
+      - my-team/necati/
+      - my-workspace/
+      - drafts/
+
+  # Bucket for this specific project
+  - s3: arn:aws:s3:::project-specific-bucket
+    shortcuts:
+      - builds/latest/
+      - config/dev.json

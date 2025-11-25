@@ -4,8 +4,10 @@ import { S3TreeItem, TreeItemType } from './S3TreeItem';
 import { S3TreeDataProvider } from './S3TreeDataProvider';
 import * as ui from '../common/UI';
 import * as api from '../common/API';
+import { ConfigManager } from '../common/ConfigManager';
 import { S3Explorer } from './S3Explorer';
 import { S3Search } from './S3Search';
+
 
 export class S3TreeView {
 
@@ -202,6 +204,28 @@ export class S3TreeView {
 		ui.logToOutput('S3TreeView.loadState Started');
 		try {
 
+			// First, try to load from YAML config file
+			const yamlConfig = ConfigManager.loadConfig();
+			
+			if (yamlConfig) {
+				ui.logToOutput('S3TreeView: Loading from YAML config file');
+				
+				// Load bucket list from YAML
+				if (yamlConfig.BucketList && Array.isArray(yamlConfig.BucketList)) {
+					this.treeDataProvider.SetBucketList(yamlConfig.BucketList);
+					ui.logToOutput(`S3TreeView: Loaded ${yamlConfig.BucketList.length} buckets from YAML config`);
+				}
+				
+				// Load shortcut list from YAML
+				if (yamlConfig.ShortcutList && Array.isArray(yamlConfig.ShortcutList)) {
+					this.treeDataProvider.SetShortcutList(yamlConfig.ShortcutList);
+					ui.logToOutput(`S3TreeView: Loaded ${yamlConfig.ShortcutList.length} shortcuts from YAML config`);
+				}
+			} else {
+				ui.logToOutput('S3TreeView: No YAML config found, loading from VSCode state');
+			}
+
+			// Load remaining state from VSCode globalState (these are not in YAML)
 			let AwsProfileTemp: string | undefined = this.context.globalState.get('AwsProfile');
 			if (AwsProfileTemp) {
 				this.AwsProfile = AwsProfileTemp;
@@ -223,37 +247,40 @@ export class S3TreeView {
 				this.treeDataProvider.BucketProfileList = BucketProfileListTemp;
 			}
 
-			let BucketListTemp:string[] | undefined  = this.context.globalState.get('BucketList');
-			if(BucketListTemp)
-			{
-				this.treeDataProvider.SetBucketList(BucketListTemp);
-			}
-			
-			let ShortcutListTemp: {Bucket: string, Shortcut: string}[] | undefined
-			//TODO: Remove this legacy code after 1 year
-			try
-			{
-				let legacyShortcutListTemp:[[string,string]] | undefined
-				legacyShortcutListTemp  = this.context.globalState.get('ShortcutList');
-				if(legacyShortcutListTemp && Array.isArray(legacyShortcutListTemp) && legacyShortcutListTemp[0] && Array.isArray(legacyShortcutListTemp[0]))
+			// Only load from VSCode state if YAML config didn't provide these
+			if (!yamlConfig) {
+				let BucketListTemp:string[] | undefined  = this.context.globalState.get('BucketList');
+				if(BucketListTemp)
 				{
-					ShortcutListTemp = [];
-					for(let i = 0; i < legacyShortcutListTemp.length; i++)
+					this.treeDataProvider.SetBucketList(BucketListTemp);
+				}
+				
+				let ShortcutListTemp: {Bucket: string, Shortcut: string}[] | undefined
+				//TODO: Remove this legacy code after 1 year
+				try
+				{
+					let legacyShortcutListTemp:[[string,string]] | undefined
+					legacyShortcutListTemp  = this.context.globalState.get('ShortcutList');
+					if(legacyShortcutListTemp && Array.isArray(legacyShortcutListTemp) && legacyShortcutListTemp[0] && Array.isArray(legacyShortcutListTemp[0]))
 					{
-						ShortcutListTemp.push({Bucket: legacyShortcutListTemp[i][0], Shortcut: legacyShortcutListTemp[i][1]});
+						ShortcutListTemp = [];
+						for(let i = 0; i < legacyShortcutListTemp.length; i++)
+						{
+							ShortcutListTemp.push({Bucket: legacyShortcutListTemp[i][0], Shortcut: legacyShortcutListTemp[i][1]});
+						}
 					}
 				}
-			}
-			catch {}
-			
-			if(!ShortcutListTemp)
-			{
-				ShortcutListTemp  = this.context.globalState.get('ShortcutList');
-			}
-			
-			if(ShortcutListTemp)
-			{
-				this.treeDataProvider.SetShortcutList(ShortcutListTemp);
+				catch {}
+				
+				if(!ShortcutListTemp)
+				{
+					ShortcutListTemp  = this.context.globalState.get('ShortcutList');
+				}
+				
+				if(ShortcutListTemp)
+				{
+					this.treeDataProvider.SetShortcutList(ShortcutListTemp);
+				}
 			}
 
 			let ViewTypeTemp:number | undefined = this.context.globalState.get('ViewType');
@@ -470,6 +497,20 @@ export class S3TreeView {
 			this.AwsRegion = awsRegion;
 		}
 		this.SaveState();
+	}
+
+	async ExportToYaml() {
+		ui.logToOutput('S3TreeView.ExportToYaml Started');
+		
+		const bucketList = this.treeDataProvider.GetBucketList();
+		const shortcutList = this.treeDataProvider.GetShortcutList();
+		
+		if (bucketList.length === 0 && shortcutList.length === 0) {
+			ui.showWarningMessage('No buckets or shortcuts to export');
+			return;
+		}
+		
+		await ConfigManager.exportToConfig(bucketList, shortcutList);
 	}
 
 

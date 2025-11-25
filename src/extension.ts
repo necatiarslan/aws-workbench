@@ -182,6 +182,13 @@ function registerCommands(context: vscode.ExtensionContext, treeView: S3TreeView
 		})
 	);
 
+	// Configuration export command
+	context.subscriptions.push(
+		vscode.commands.registerCommand('S3TreeView.ExportToYaml', () => {
+			treeView.ExportToYaml();
+		})
+	);
+
 	ui.logToOutput('All commands registered successfully');
 }
 

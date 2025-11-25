@@ -124,6 +124,10 @@
       {
         "command": "S3TreeView.TestAwsConnection",
         "title": "Test Aws Connection"
+      },
+      {
+        "command": "S3TreeView.ExportToYaml",
+        "title": "Export Config to YAML"
       }
     ],
     "menus": {
@@ -170,6 +174,11 @@
         },
         {
           "command": "S3TreeView.TestAwsConnection",
+          "when": "view == S3TreeView",
+          "group": "other"
+        },
+        {
+          "command": "S3TreeView.ExportToYaml",
           "when": "view == S3TreeView",
           "group": "other"
         }
@@ -276,6 +285,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.1",
     "@types/vscode": "^1.106.1",
@@ -292,6 +302,7 @@
     "@aws-sdk/credential-providers": "^3.939.0",
     "@vscode-elements/elements": "^2.3.1",
     "@vscode/codicons": "^0.0.43",
+    "js-yaml": "^4.1.1",
     "tmp": "^0.2.5"
   }
 }
