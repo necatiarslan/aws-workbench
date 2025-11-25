@@ -62,53 +62,106 @@ class ConfigManager {
      * Convert YAML format to internal format
      */
     static yamlToInternal(yamlConfig) {
+        const tree = [];
         const bucketList = [];
         const shortcutList = [];
         if (yamlConfig.root && Array.isArray(yamlConfig.root)) {
             for (const entry of yamlConfig.root) {
-                if (entry.s3) {
-                    const bucketName = this.parseBucketArn(entry.s3);
-                    bucketList.push(bucketName);
-                    // Add shortcuts for this bucket
-                    if (entry.shortcuts && Array.isArray(entry.shortcuts)) {
-                        for (const shortcut of entry.shortcuts) {
-                            shortcutList.push({
-                                Bucket: bucketName,
-                                Shortcut: shortcut
-                            });
-                        }
-                    }
+                const item = this.parseYamlEntry(entry, bucketList, shortcutList);
+                if (item) {
+                    tree.push(item);
                 }
             }
         }
-        return { BucketList: bucketList, ShortcutList: shortcutList };
+        return { BucketList: bucketList, ShortcutList: shortcutList, Tree: tree };
+    }
+    static parseYamlEntry(entry, bucketList, shortcutList) {
+        if ('folder' in entry) {
+            // It's a folder
+            const folderEntry = entry;
+            const children = [];
+            if (folderEntry.resources && Array.isArray(folderEntry.resources)) {
+                for (const res of folderEntry.resources) {
+                    const child = this.parseYamlEntry(res, bucketList, shortcutList);
+                    if (child) {
+                        children.push(child);
+                    }
+                }
+            }
+            return {
+                type: 'folder',
+                name: folderEntry.folder,
+                children: children
+            };
+        }
+        else if ('s3' in entry) {
+            // It's a bucket
+            const bucketEntry = entry;
+            const bucketName = this.parseBucketArn(bucketEntry.s3);
+            // Add to flat lists for backward compatibility / quick lookup
+            if (!bucketList.includes(bucketName)) {
+                bucketList.push(bucketName);
+            }
+            const shortcuts = [];
+            if (bucketEntry.shortcuts && Array.isArray(bucketEntry.shortcuts)) {
+                for (const shortcut of bucketEntry.shortcuts) {
+                    shortcuts.push(shortcut);
+                    shortcutList.push({
+                        Bucket: bucketName,
+                        Shortcut: shortcut
+                    });
+                }
+            }
+            return {
+                type: 'bucket',
+                name: bucketName,
+                shortcuts: shortcuts
+            };
+        }
+        return undefined;
     }
     /**
      * Convert internal format to YAML format
      */
-    static internalToYaml(bucketList, shortcutList) {
+    static internalToYaml(tree) {
         const root = [];
-        // Group shortcuts by bucket
-        const shortcutsByBucket = new Map();
-        for (const shortcut of shortcutList) {
-            const bucket = shortcut.Bucket;
-            if (!shortcutsByBucket.has(bucket)) {
-                shortcutsByBucket.set(bucket, []);
+        for (const item of tree) {
+            const entry = this.serializeConfigItem(item);
+            if (entry) {
+                root.push(entry);
             }
-            shortcutsByBucket.get(bucket).push(shortcut.Shortcut);
-        }
-        // Create entries for all buckets
-        for (const bucket of bucketList) {
-            const entry = {
-                s3: this.bucketNameToArn(bucket)
-            };
-            const shortcuts = shortcutsByBucket.get(bucket);
-            if (shortcuts && shortcuts.length > 0) {
-                entry.shortcuts = shortcuts;
-            }
-            root.push(entry);
         }
         return { root };
+    }
+    static serializeConfigItem(item) {
+        if (item.type === 'folder') {
+            const children = [];
+            if (item.children) {
+                for (const child of item.children) {
+                    const childEntry = this.serializeConfigItem(child);
+                    if (childEntry) {
+                        children.push(childEntry);
+                    }
+                }
+            }
+            const entry = {
+                folder: item.name
+            };
+            if (children.length > 0) {
+                entry.resources = children;
+            }
+            return entry;
+        }
+        else if (item.type === 'bucket') {
+            const entry = {
+                s3: this.bucketNameToArn(item.name)
+            };
+            if (item.shortcuts && item.shortcuts.length > 0) {
+                entry.shortcuts = item.shortcuts;
+            }
+            return entry;
+        }
+        return undefined;
     }
     /**
      * Load configuration from YAML file
@@ -126,7 +179,7 @@ class ConfigManager {
             const yamlConfig = yaml.load(fileContents);
             // Convert YAML format to internal format
             const config = this.yamlToInternal(yamlConfig);
-            ui.logToOutput(`ConfigManager: Config loaded successfully. Buckets: ${config.BucketList?.length || 0}, Shortcuts: ${config.ShortcutList?.length || 0}`);
+            ui.logToOutput(`ConfigManager: Config loaded successfully. Tree items: ${config.Tree?.length || 0}`);
             return config;
         }
         catch (error) {
@@ -139,7 +192,7 @@ class ConfigManager {
     /**
      * Save configuration to YAML file
      */
-    static async saveConfig(bucketList, shortcutList) {
+    static async saveConfig(tree) {
         ui.logToOutput('ConfigManager.saveConfig Started');
         try {
             const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -150,7 +203,7 @@ class ConfigManager {
             const workspaceRoot = workspaceFolders[0].uri.fsPath;
             const configPath = path.join(workspaceRoot, this.CONFIG_FILENAME);
             // Convert internal format to YAML format
-            const yamlConfig = this.internalToYaml(bucketList, shortcutList);
+            const yamlConfig = this.internalToYaml(tree);
             const yamlStr = yaml.dump(yamlConfig, {
                 indent: 2,
                 lineWidth: -1,
@@ -172,7 +225,7 @@ class ConfigManager {
     /**
      * Export current state to YAML config file
      */
-    static async exportToConfig(bucketList, shortcutList) {
+    static async exportToConfig(tree) {
         ui.logToOutput('ConfigManager.exportToConfig Started');
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -215,7 +268,7 @@ class ConfigManager {
         }
         // Save the config
         try {
-            const yamlConfig = this.internalToYaml(bucketList, shortcutList);
+            const yamlConfig = this.internalToYaml(tree);
             const yamlStr = yaml.dump(yamlConfig, {
                 indent: 2,
                 lineWidth: -1,

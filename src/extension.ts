@@ -108,8 +108,12 @@ function registerCommands(context: vscode.ExtensionContext, treeView: S3TreeView
 
 	// Bucket management commands
 	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.AddBucket', () => {
-			treeView.AddBucket();
+		vscode.commands.registerCommand('S3TreeView.AddBucket', (node?: S3TreeItem) => {
+			// If no node passed (e.g. from title button), check selection
+			if (!node && treeView.view.selection.length > 0) {
+				node = treeView.view.selection[0];
+			}
+			treeView.AddResource(node); // Now shows resource type selection
 		})
 	);
 
@@ -122,6 +126,19 @@ function registerCommands(context: vscode.ExtensionContext, treeView: S3TreeView
 	context.subscriptions.push(
 		vscode.commands.registerCommand('S3TreeView.Goto', (node: S3TreeItem) => {
 			treeView.Goto(node);
+		})
+	);
+
+	// Folder management commands
+	context.subscriptions.push(
+		vscode.commands.registerCommand('S3TreeView.RenameFolder', (node: S3TreeItem) => {
+			treeView.RenameFolder(node);
+		})
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('S3TreeView.RemoveFolder', (node: S3TreeItem) => {
+			treeView.RemoveFolder(node);
 		})
 	);
 

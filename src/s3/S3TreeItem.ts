@@ -7,6 +7,7 @@ export class S3TreeItem extends vscode.TreeItem {
 	public Text:string;
 	public Bucket:string | undefined;
 	public Shortcut:string | undefined;
+	public FolderPath:string | undefined; // For folder hierarchy
 	public Parent:S3TreeItem | undefined;
 	public Children:S3TreeItem[] = [];
 	private _isHidden: boolean = false;
@@ -50,6 +51,7 @@ export class S3TreeItem extends vscode.TreeItem {
 		let contextValue = "#";
 		contextValue += this.IsFav ? "Fav#" : "!Fav#";
 		contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+		contextValue += this.TreeItemType === TreeItemType.Folder ? "Folder#" : "";
 		contextValue += this.TreeItemType === TreeItemType.Bucket ? "Bucket#" : "";
 		contextValue += this.TreeItemType === TreeItemType.Shortcut ? "Shortcut#" : "";
 		contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
@@ -59,13 +61,46 @@ export class S3TreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.Bucket)
+		if(this.TreeItemType === TreeItemType.Folder)
+		{
+			this.iconPath = new vscode.ThemeIcon('folder');
+			this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+		}
+		else if(this.TreeItemType === TreeItemType.Bucket)
 		{
 			this.iconPath = new vscode.ThemeIcon('package');
 		}
 		else if(this.TreeItemType === TreeItemType.Shortcut)
 		{
 			this.iconPath = new vscode.ThemeIcon('file-symlink-directory');
+		}
+		else if(this.TreeItemType === TreeItemType.LambdaFunction)
+		{
+			this.iconPath = new vscode.ThemeIcon('symbol-method');
+		}
+		else if(this.TreeItemType === TreeItemType.CloudWatchLogGroup)
+		{
+			this.iconPath = new vscode.ThemeIcon('output');
+		}
+		else if(this.TreeItemType === TreeItemType.SNSTopic)
+		{
+			this.iconPath = new vscode.ThemeIcon('broadcast');
+		}
+		else if(this.TreeItemType === TreeItemType.DynamoDBTable)
+		{
+			this.iconPath = new vscode.ThemeIcon('database');
+		}
+		else if(this.TreeItemType === TreeItemType.SQSQueue)
+		{
+			this.iconPath = new vscode.ThemeIcon('inbox');
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunction)
+		{
+			this.iconPath = new vscode.ThemeIcon('symbol-namespace');
+		}
+		else if(this.TreeItemType === TreeItemType.IAMRole)
+		{
+			this.iconPath = new vscode.ThemeIcon('shield');
 		}
 		else
 		{
@@ -126,6 +161,78 @@ export class S3TreeItem extends vscode.TreeItem {
 }
 
 export enum TreeItemType{
+	Folder = 0,
 	Bucket = 1,
 	Shortcut = 2,
+	LambdaFunction = 3,
+	CloudWatchLogGroup = 4,
+	SNSTopic = 5,
+	DynamoDBTable = 6,
+	SQSQueue = 7,
+	StepFunction = 8,
+	IAMRole = 9,
 }
+
+export interface ResourceTypeOption {
+	label: string;
+	description: string;
+	type: TreeItemType;
+	icon: string;
+}
+
+export const RESOURCE_TYPE_OPTIONS: ResourceTypeOption[] = [
+	{
+		label: 'Folder',
+		description: 'Organize resources into folders',
+		type: TreeItemType.Folder,
+		icon: 'folder'
+	},
+	{
+		label: 'S3 Bucket',
+		description: 'Add an S3 bucket',
+		type: TreeItemType.Bucket,
+		icon: 'package'
+	},
+	{
+		label: 'Lambda Function',
+		description: 'Add a Lambda function',
+		type: TreeItemType.LambdaFunction,
+		icon: 'symbol-method'
+	},
+	{
+		label: 'CloudWatch Log Group',
+		description: 'Add a CloudWatch log group',
+		type: TreeItemType.CloudWatchLogGroup,
+		icon: 'output'
+	},
+	{
+		label: 'SNS Topic',
+		description: 'Add an SNS topic',
+		type: TreeItemType.SNSTopic,
+		icon: 'broadcast'
+	},
+	{
+		label: 'DynamoDB Table',
+		description: 'Add a DynamoDB table',
+		type: TreeItemType.DynamoDBTable,
+		icon: 'database'
+	},
+	{
+		label: 'SQS Queue',
+		description: 'Add an SQS queue',
+		type: TreeItemType.SQSQueue,
+		icon: 'inbox'
+	},
+	{
+		label: 'Step Function',
+		description: 'Add a Step Function state machine',
+		type: TreeItemType.StepFunction,
+		icon: 'symbol-namespace'
+	},
+	{
+		label: 'IAM Role',
+		description: 'Add an IAM role',
+		type: TreeItemType.IAMRole,
+		icon: 'shield'
+	}
+];

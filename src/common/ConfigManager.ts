@@ -5,9 +5,17 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as ui from './UI';
 
+export interface ConfigItem {
+	type: 'bucket' | 'folder';
+	name: string;
+	children?: ConfigItem[];
+	shortcuts?: string[];
+}
+
 export interface WorkbenchConfig {
 	BucketList?: string[];
 	ShortcutList?: { Bucket: string; Shortcut: string }[];
+	Tree?: ConfigItem[];
 }
 
 interface YamlBucketEntry {
@@ -15,8 +23,15 @@ interface YamlBucketEntry {
 	shortcuts?: string[];
 }
 
+interface YamlFolderEntry {
+	folder: string;
+	resources?: (YamlBucketEntry | YamlFolderEntry)[];
+}
+
+type YamlEntry = YamlBucketEntry | YamlFolderEntry;
+
 interface YamlConfig {
-	root?: YamlBucketEntry[];
+	root?: YamlEntry[];
 }
 
 export class ConfigManager {
@@ -85,62 +100,125 @@ export class ConfigManager {
 	 * Convert YAML format to internal format
 	 */
 	private static yamlToInternal(yamlConfig: YamlConfig): WorkbenchConfig {
+		const tree: ConfigItem[] = [];
 		const bucketList: string[] = [];
 		const shortcutList: { Bucket: string; Shortcut: string }[] = [];
 
 		if (yamlConfig.root && Array.isArray(yamlConfig.root)) {
 			for (const entry of yamlConfig.root) {
-				if (entry.s3) {
-					const bucketName = this.parseBucketArn(entry.s3);
-					bucketList.push(bucketName);
-
-					// Add shortcuts for this bucket
-					if (entry.shortcuts && Array.isArray(entry.shortcuts)) {
-						for (const shortcut of entry.shortcuts) {
-							shortcutList.push({
-								Bucket: bucketName,
-								Shortcut: shortcut
-							});
-						}
-					}
+				const item = this.parseYamlEntry(entry, bucketList, shortcutList);
+				if (item) {
+					tree.push(item);
 				}
 			}
 		}
 
-		return { BucketList: bucketList, ShortcutList: shortcutList };
+		return { BucketList: bucketList, ShortcutList: shortcutList, Tree: tree };
+	}
+
+	private static parseYamlEntry(
+		entry: YamlEntry, 
+		bucketList: string[], 
+		shortcutList: { Bucket: string; Shortcut: string }[]
+	): ConfigItem | undefined {
+		if ('folder' in entry) {
+			// It's a folder
+			const folderEntry = entry as YamlFolderEntry;
+			const children: ConfigItem[] = [];
+			
+			if (folderEntry.resources && Array.isArray(folderEntry.resources)) {
+				for (const res of folderEntry.resources) {
+					const child = this.parseYamlEntry(res, bucketList, shortcutList);
+					if (child) {
+						children.push(child);
+					}
+				}
+			}
+
+			return {
+				type: 'folder',
+				name: folderEntry.folder,
+				children: children
+			};
+		} else if ('s3' in entry) {
+			// It's a bucket
+			const bucketEntry = entry as YamlBucketEntry;
+			const bucketName = this.parseBucketArn(bucketEntry.s3);
+			
+			// Add to flat lists for backward compatibility / quick lookup
+			if (!bucketList.includes(bucketName)) {
+				bucketList.push(bucketName);
+			}
+
+			const shortcuts: string[] = [];
+			if (bucketEntry.shortcuts && Array.isArray(bucketEntry.shortcuts)) {
+				for (const shortcut of bucketEntry.shortcuts) {
+					shortcuts.push(shortcut);
+					shortcutList.push({
+						Bucket: bucketName,
+						Shortcut: shortcut
+					});
+				}
+			}
+
+			return {
+				type: 'bucket',
+				name: bucketName,
+				shortcuts: shortcuts
+			};
+		}
+		return undefined;
 	}
 
 	/**
 	 * Convert internal format to YAML format
 	 */
-	private static internalToYaml(bucketList: string[], shortcutList: { Bucket: string; Shortcut: string }[]): YamlConfig {
-		const root: YamlBucketEntry[] = [];
+	private static internalToYaml(tree: ConfigItem[]): YamlConfig {
+		const root: YamlEntry[] = [];
 
-		// Group shortcuts by bucket
-		const shortcutsByBucket = new Map<string, string[]>();
-		for (const shortcut of shortcutList) {
-			const bucket = shortcut.Bucket;
-			if (!shortcutsByBucket.has(bucket)) {
-				shortcutsByBucket.set(bucket, []);
+		for (const item of tree) {
+			const entry = this.serializeConfigItem(item);
+			if (entry) {
+				root.push(entry);
 			}
-			shortcutsByBucket.get(bucket)!.push(shortcut.Shortcut);
-		}
-
-		// Create entries for all buckets
-		for (const bucket of bucketList) {
-			const entry: YamlBucketEntry = {
-				s3: this.bucketNameToArn(bucket)
-			};
-
-			const shortcuts = shortcutsByBucket.get(bucket);
-			if (shortcuts && shortcuts.length > 0) {
-				entry.shortcuts = shortcuts;
-			}
-
-			root.push(entry);
 		}
 
 		return { root };
+	}
+
+	private static serializeConfigItem(item: ConfigItem): YamlEntry | undefined {
+		if (item.type === 'folder') {
+			const children: YamlEntry[] = [];
+			if (item.children) {
+				for (const child of item.children) {
+					const childEntry = this.serializeConfigItem(child);
+					if (childEntry) {
+						children.push(childEntry);
+					}
+				}
+			}
+			
+			const entry: YamlFolderEntry = {
+				folder: item.name
+			};
+			
+			if (children.length > 0) {
+				entry.resources = children;
+			}
+			
+			return entry;
+		} else if (item.type === 'bucket') {
+			const entry: YamlBucketEntry = {
+				s3: this.bucketNameToArn(item.name)
+			};
+
+			if (item.shortcuts && item.shortcuts.length > 0) {
+				entry.shortcuts = item.shortcuts;
+			}
+
+			return entry;
+		}
+		return undefined;
 	}
 
 	/**
@@ -165,7 +243,7 @@ export class ConfigManager {
 			// Convert YAML format to internal format
 			const config = this.yamlToInternal(yamlConfig);
 
-			ui.logToOutput(`ConfigManager: Config loaded successfully. Buckets: ${config.BucketList?.length || 0}, Shortcuts: ${config.ShortcutList?.length || 0}`);
+			ui.logToOutput(`ConfigManager: Config loaded successfully. Tree items: ${config.Tree?.length || 0}`);
 			return config;
 
 		} catch (error) {
@@ -179,7 +257,7 @@ export class ConfigManager {
 	/**
 	 * Save configuration to YAML file
 	 */
-	public static async saveConfig(bucketList: string[], shortcutList: { Bucket: string; Shortcut: string }[]): Promise<boolean> {
+	public static async saveConfig(tree: ConfigItem[]): Promise<boolean> {
 		ui.logToOutput('ConfigManager.saveConfig Started');
 		
 		try {
@@ -194,7 +272,7 @@ export class ConfigManager {
 			const configPath = path.join(workspaceRoot, this.CONFIG_FILENAME);
 
 			// Convert internal format to YAML format
-			const yamlConfig = this.internalToYaml(bucketList, shortcutList);
+			const yamlConfig = this.internalToYaml(tree);
 
 			const yamlStr = yaml.dump(yamlConfig, {
 				indent: 2,
@@ -221,7 +299,7 @@ export class ConfigManager {
 	/**
 	 * Export current state to YAML config file
 	 */
-	public static async exportToConfig(bucketList: string[], shortcutList: { Bucket: string; Shortcut: string }[]): Promise<void> {
+	public static async exportToConfig(tree: ConfigItem[]): Promise<void> {
 		ui.logToOutput('ConfigManager.exportToConfig Started');
 		
 		const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -277,7 +355,7 @@ export class ConfigManager {
 
 		// Save the config
 		try {
-			const yamlConfig = this.internalToYaml(bucketList, shortcutList);
+			const yamlConfig = this.internalToYaml(tree);
 			const yamlStr = yaml.dump(yamlConfig, {
 				indent: 2,
 				lineWidth: -1,

@@ -210,16 +210,22 @@ export class S3TreeView {
 			if (yamlConfig) {
 				ui.logToOutput('S3TreeView: Loading from YAML config file');
 				
-				// Load bucket list from YAML
-				if (yamlConfig.BucketList && Array.isArray(yamlConfig.BucketList)) {
-					this.treeDataProvider.SetBucketList(yamlConfig.BucketList);
-					ui.logToOutput(`S3TreeView: Loaded ${yamlConfig.BucketList.length} buckets from YAML config`);
-				}
-				
-				// Load shortcut list from YAML
-				if (yamlConfig.ShortcutList && Array.isArray(yamlConfig.ShortcutList)) {
-					this.treeDataProvider.SetShortcutList(yamlConfig.ShortcutList);
-					ui.logToOutput(`S3TreeView: Loaded ${yamlConfig.ShortcutList.length} shortcuts from YAML config`);
+				if (yamlConfig.Tree && yamlConfig.Tree.length > 0) {
+					// Load from hierarchical structure
+					this.treeDataProvider.LoadFromTreeStructure(yamlConfig.Tree);
+					ui.logToOutput(`S3TreeView: Loaded tree structure from YAML config`);
+				} else {
+					// Backward compatibility: Load from flat lists
+					if (yamlConfig.BucketList && Array.isArray(yamlConfig.BucketList)) {
+						this.treeDataProvider.SetBucketList(yamlConfig.BucketList);
+						ui.logToOutput(`S3TreeView: Loaded ${yamlConfig.BucketList.length} buckets from YAML config`);
+					}
+					
+					// Load shortcut list from YAML
+					if (yamlConfig.ShortcutList && Array.isArray(yamlConfig.ShortcutList)) {
+						this.treeDataProvider.SetShortcutList(yamlConfig.ShortcutList);
+						ui.logToOutput(`S3TreeView: Loaded ${yamlConfig.ShortcutList.length} shortcuts from YAML config`);
+					}
 				}
 			} else {
 				ui.logToOutput('S3TreeView: No YAML config found, loading from VSCode state');
@@ -327,8 +333,124 @@ export class S3TreeView {
 		return variable ? "✓" : "𐄂";
 	}
 
-	async AddBucket(){
-		ui.logToOutput('S3TreeView.AddBucket Started');
+	async AddResource(parentNode?: S3TreeItem) {
+		ui.logToOutput('S3TreeView.AddResource Started');
+
+		// Import resource type options
+		const { RESOURCE_TYPE_OPTIONS } = await import('./S3TreeItem');
+
+		// Show resource type selection
+		const selectedType = await vscode.window.showQuickPick(
+			RESOURCE_TYPE_OPTIONS.map(opt => ({
+				label: `$(${opt.icon}) ${opt.label}`,
+				description: opt.description,
+				type: opt.type
+			})),
+			{
+				placeHolder: 'Select resource type to add'
+			}
+		);
+
+		if (!selectedType) { return; }
+
+		// Route to appropriate handler based on type
+		switch (selectedType.type) {
+			case (await import('./S3TreeItem')).TreeItemType.Folder:
+				await this.AddFolder(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.Bucket:
+				await this.AddS3Bucket(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.LambdaFunction:
+				await this.AddLambdaFunction(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.CloudWatchLogGroup:
+				await this.AddCloudWatchLogGroup(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.SNSTopic:
+				await this.AddSNSTopic(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.DynamoDBTable:
+				await this.AddDynamoDBTable(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.SQSQueue:
+				await this.AddSQSQueue(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.StepFunction:
+				await this.AddStepFunction(parentNode);
+				break;
+			case (await import('./S3TreeItem')).TreeItemType.IAMRole:
+				await this.AddIAMRole(parentNode);
+				break;
+		}
+	}
+
+	async AddFolder(parentNode?: S3TreeItem) {
+		ui.logToOutput('S3TreeView.AddFolder Started');
+
+		const folderName = await vscode.window.showInputBox({ 
+			placeHolder: 'Enter folder name',
+			prompt: 'Folder name for organizing resources'
+		});
+
+		if (!folderName) { return; }
+
+		// Create folder path
+		let folderPath = folderName;
+		if (parentNode && parentNode.FolderPath) {
+			folderPath = `${parentNode.FolderPath}/${folderName}`;
+		}
+
+		this.treeDataProvider.AddFolder(folderName, folderPath, parentNode);
+		this.SaveState();
+		ui.showInfoMessage(`Folder "${folderName}" created`);
+	}
+
+	async RenameFolder(node: S3TreeItem) {
+		ui.logToOutput('S3TreeView.RenameFolder Started');
+
+		const { TreeItemType } = await import('./S3TreeItem');
+		if (node.TreeItemType !== TreeItemType.Folder) { return; }
+
+		const newName = await vscode.window.showInputBox({ 
+			placeHolder: 'Enter new folder name',
+			value: node.Text
+		});
+
+		if (!newName || newName === node.Text) { return; }
+
+		this.treeDataProvider.RenameFolder(node, newName);
+		this.SaveState();
+		ui.showInfoMessage(`Folder renamed to "${newName}"`);
+	}
+
+	async RemoveFolder(node: S3TreeItem) {
+		ui.logToOutput('S3TreeView.RemoveFolder Started');
+
+		const { TreeItemType } = await import('./S3TreeItem');
+		if (node.TreeItemType !== TreeItemType.Folder) { return; }
+
+		const hasChildren = node.Children && node.Children.length > 0;
+		const message = hasChildren 
+			? `Delete folder "${node.Text}" and all its contents?`
+			: `Delete folder "${node.Text}"?`;
+
+		const confirmed = await vscode.window.showWarningMessage(
+			message,
+			{ modal: true },
+			'Delete'
+		);
+
+		if (confirmed !== 'Delete') { return; }
+
+		this.treeDataProvider.RemoveFolder(node);
+		this.SaveState();
+		ui.showInfoMessage(`Folder "${node.Text}" deleted`);
+	}
+
+	// S3 Bucket handler (existing logic)
+	async AddS3Bucket(parentNode?: S3TreeItem) {
+		ui.logToOutput('S3TreeView.AddS3Bucket Started');
 
 		let selectedBucketName = await vscode.window.showInputBox({ placeHolder: 'Enter Bucket Name / Search Text' });
 		if(selectedBucketName===undefined){ return; }
@@ -341,10 +463,51 @@ export class S3TreeView {
 
 		for(var selectedBucket of selectedBucketList)
 		{
-			this.treeDataProvider.AddBucket(selectedBucket);
+			this.treeDataProvider.AddBucket(selectedBucket, parentNode);
 			this.SetFilterMessage();
 		}
 		this.SaveState();
+	}
+
+	// Keep old AddBucket for backward compatibility
+	async AddBucket(){
+		return this.AddS3Bucket();
+	}
+
+	// Resource type handlers (stubs for now - can be implemented later)
+	async AddLambdaFunction(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('Lambda Function support coming soon!');
+		// TODO: Implement Lambda function addition
+	}
+
+	async AddCloudWatchLogGroup(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('CloudWatch Log Group support coming soon!');
+		// TODO: Implement CloudWatch log group addition
+	}
+
+	async AddSNSTopic(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('SNS Topic support coming soon!');
+		// TODO: Implement SNS topic addition
+	}
+
+	async AddDynamoDBTable(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('DynamoDB Table support coming soon!');
+		// TODO: Implement DynamoDB table addition
+	}
+
+	async AddSQSQueue(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('SQS Queue support coming soon!');
+		// TODO: Implement SQS queue addition
+	}
+
+	async AddStepFunction(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('Step Function support coming soon!');
+		// TODO: Implement Step Function addition
+	}
+
+	async AddIAMRole(parentNode?: S3TreeItem) {
+		ui.showInfoMessage('IAM Role support coming soon!');
+		// TODO: Implement IAM role addition
 	}
 
 	async RemoveBucket(node: S3TreeItem) {
@@ -502,16 +665,16 @@ export class S3TreeView {
 	async ExportToYaml() {
 		ui.logToOutput('S3TreeView.ExportToYaml Started');
 		
-		const bucketList = this.treeDataProvider.GetBucketList();
-		const shortcutList = this.treeDataProvider.GetShortcutList();
+		const treeStructure = this.treeDataProvider.GetTreeStructure();
 		
-		if (bucketList.length === 0 && shortcutList.length === 0) {
-			ui.showWarningMessage('No buckets or shortcuts to export');
+		if (treeStructure.length === 0) {
+			ui.showWarningMessage('No resources to export');
 			return;
 		}
 		
-		await ConfigManager.exportToConfig(bucketList, shortcutList);
+		await ConfigManager.exportToConfig(treeStructure);
 	}
+
 
 
 }

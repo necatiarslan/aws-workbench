@@ -128,6 +128,14 @@
       {
         "command": "S3TreeView.ExportToYaml",
         "title": "Export Config to YAML"
+      },
+      {
+        "command": "S3TreeView.RenameFolder",
+        "title": "Rename Folder"
+      },
+      {
+        "command": "S3TreeView.RemoveFolder",
+        "title": "Delete Folder"
       }
     ],
     "menus": {
@@ -238,6 +246,16 @@
           "command": "S3TreeView.ShowInAnyProfile",
           "when": "view == S3TreeView && viewItem =~ /#Profile#/",
           "group": "Filter"
+        },
+        {
+          "command": "S3TreeView.RenameFolder",
+          "when": "view == S3TreeView && viewItem =~ /#Folder#/",
+          "group": "Folder"
+        },
+        {
+          "command": "S3TreeView.RemoveFolder",
+          "when": "view == S3TreeView && viewItem =~ /#Folder#/",
+          "group": "Folder"
         },
         {
           "command": "S3TreeView.ShowS3Explorer",
