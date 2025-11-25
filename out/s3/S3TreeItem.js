@@ -4,6 +4,15 @@ exports.TreeItemType = exports.S3TreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 class S3TreeItem extends vscode.TreeItem {
+    _isFav = false;
+    TreeItemType;
+    Text;
+    Bucket;
+    Shortcut;
+    Parent;
+    Children = [];
+    _isHidden = false;
+    _profileToShow = "";
     set ProfileToShow(value) {
         this._profileToShow = value;
         this.setContextValue();
@@ -27,10 +36,6 @@ class S3TreeItem extends vscode.TreeItem {
     }
     constructor(text, treeItemType) {
         super(text);
-        this._isFav = false;
-        this.Children = [];
-        this._isHidden = false;
-        this._profileToShow = "";
         this.Text = text;
         this.TreeItemType = treeItemType;
         this.refreshUI();
@@ -96,5 +101,5 @@ var TreeItemType;
 (function (TreeItemType) {
     TreeItemType[TreeItemType["Bucket"] = 1] = "Bucket";
     TreeItemType[TreeItemType["Shortcut"] = 2] = "Shortcut";
-})(TreeItemType = exports.TreeItemType || (exports.TreeItemType = {}));
+})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=S3TreeItem.js.map

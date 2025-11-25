@@ -6,15 +6,15 @@ const vscode = require("vscode");
 const S3TreeItem_1 = require("./S3TreeItem");
 const S3TreeView_1 = require("./S3TreeView");
 class S3TreeDataProvider {
+    _onDidChangeTreeData = new vscode.EventEmitter();
+    onDidChangeTreeData = this._onDidChangeTreeData.event;
+    BucketNodeList = [];
+    ShortcutNodeList = [];
+    BucketList = [];
+    ShortcutList = [];
+    ViewType = ViewType.Bucket_Shortcut;
+    BucketProfileList = [];
     constructor() {
-        this._onDidChangeTreeData = new vscode.EventEmitter();
-        this.onDidChangeTreeData = this._onDidChangeTreeData.event;
-        this.BucketNodeList = [];
-        this.ShortcutNodeList = [];
-        this.BucketList = [];
-        this.ShortcutList = [];
-        this.ViewType = ViewType.Bucket_Shortcut;
-        this.BucketProfileList = [];
     }
     Refresh() {
         this._onDidChangeTreeData.fire();
@@ -248,5 +248,5 @@ exports.S3TreeDataProvider = S3TreeDataProvider;
 var ViewType;
 (function (ViewType) {
     ViewType[ViewType["Bucket_Shortcut"] = 1] = "Bucket_Shortcut";
-})(ViewType = exports.ViewType || (exports.ViewType = {}));
+})(ViewType || (exports.ViewType = ViewType = {}));
 //# sourceMappingURL=S3TreeDataProvider.js.map

@@ -7,7 +7,8 @@
  * @module ConnectionManager
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getConnectionManager = exports.ConnectionManager = void 0;
+exports.ConnectionManager = void 0;
+exports.getConnectionManager = getConnectionManager;
 const client_s3_1 = require("@aws-sdk/client-s3");
 const client_iam_1 = require("@aws-sdk/client-iam");
 const client_sts_1 = require("@aws-sdk/client-sts");
@@ -18,12 +19,17 @@ const ui = require("./UI");
  * Provides connection pooling and proper lifecycle management
  */
 class ConnectionManager {
+    static instance;
+    s3Client;
+    iamClient;
+    stsClient;
+    credentials;
+    config = {};
+    isConnected = false;
     /**
      * Private constructor to enforce singleton pattern
      */
     constructor() {
-        this.config = {};
-        this.isConnected = false;
         ui.logToOutput('ConnectionManager instance created');
     }
     /**
@@ -219,5 +225,4 @@ exports.ConnectionManager = ConnectionManager;
 function getConnectionManager() {
     return ConnectionManager.getInstance();
 }
-exports.getConnectionManager = getConnectionManager;
 //# sourceMappingURL=ConnectionManager.js.map

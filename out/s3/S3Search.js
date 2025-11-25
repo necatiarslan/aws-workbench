@@ -11,12 +11,16 @@ const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
 const S3Explorer_1 = require("./S3Explorer");
 class S3Search {
+    static Current;
+    _panel;
+    _disposables = [];
+    extensionUri;
+    S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem("undefined", "");
+    S3ObjectList;
+    FileName = "";
+    FileExtension = "";
+    FolderName = "";
     constructor(panel, extensionUri, node) {
-        this._disposables = [];
-        this.S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem("undefined", "");
-        this.FileName = "";
-        this.FileExtension = "";
-        this.FolderName = "";
         ui.logToOutput('S3Search.constructor Started');
         this.SetS3ExplorerItem(node);
         this.extensionUri = extensionUri;

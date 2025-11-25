@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3ExplorerItem = void 0;
 const s3_helper = require("./S3Helper");
 class S3ExplorerItem {
+    Bucket;
+    Key;
     constructor(Bucket, Key) {
         this.Bucket = Bucket;
         this.Key = Key;

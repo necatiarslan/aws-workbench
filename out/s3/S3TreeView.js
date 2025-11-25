@@ -10,12 +10,19 @@ const api = require("../common/API");
 const S3Explorer_1 = require("./S3Explorer");
 const S3Search_1 = require("./S3Search");
 class S3TreeView {
+    static Current;
+    view;
+    treeDataProvider;
+    context;
+    FilterString = "";
+    isShowOnlyFavorite = false;
+    isShowHiddenNodes = false;
+    AwsProfile = "default";
+    AwsEndPoint;
+    AwsRegion;
+    IsSharedIniFileCredentials = false;
+    CredentialProviderName;
     constructor(context) {
-        this.FilterString = "";
-        this.isShowOnlyFavorite = false;
-        this.isShowHiddenNodes = false;
-        this.AwsProfile = "default";
-        this.IsSharedIniFileCredentials = false;
         ui.logToOutput('TreeView.constructor Started');
         S3TreeView.Current = this;
         this.context = context;
