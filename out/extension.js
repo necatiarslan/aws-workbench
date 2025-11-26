@@ -11,6 +11,7 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = require("vscode");
 const ui = require("./common/UI");
+const ConfigManager_1 = require("./common/ConfigManager");
 const S3TreeView_1 = require("./s3/S3TreeView");
 /**
  * Extension activation function
@@ -21,6 +22,8 @@ const S3TreeView_1 = require("./s3/S3TreeView");
 function activate(context) {
     ui.logToOutput('AWS S3 Extension activation started');
     try {
+        // Set extension path for ConfigManager
+        ConfigManager_1.ConfigManager.setExtensionPath(context.extensionPath);
         // Initialize the tree view
         const treeView = new S3TreeView_1.S3TreeView(context);
         // Register all commands and add them to subscriptions for proper disposal

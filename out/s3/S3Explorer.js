@@ -51,7 +51,7 @@ class S3Explorer {
         if (!S3TreeView_1.S3TreeView.Current) {
             return;
         }
-        var result = await api.GetFolderList(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key);
+        var result = await S3TreeView_1.S3TreeView.Current.s3Api.getFolderList(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key);
         if (result.isSuccessful) {
             this.S3ObjectList = result.result;
         }
@@ -171,19 +171,19 @@ class S3Explorer {
         const s3ExplorerJSUri = ui.getUri(webview, extensionUri, ["media", "s3ExplorerJS.js"]);
         const styleUri = ui.getUri(webview, extensionUri, ["media", "style.css"]);
         const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'node_modules', '@vscode', 'codicons', 'dist', 'codicon.css'));
-        const bookmark_yesUri = ui.getUri(webview, extensionUri, ["media", "bookmark_yes.png"]);
-        const bookmark_noUri = ui.getUri(webview, extensionUri, ["media", "bookmark_no.png"]);
-        const goHomeUri = ui.getUri(webview, extensionUri, ["media", "go-home.png"]);
-        const goUpUri = ui.getUri(webview, extensionUri, ["media", "go-up.png"]);
-        const fileDownloadUri = ui.getUri(webview, extensionUri, ["media", "file-download.png"]);
-        const fileUploadUri = ui.getUri(webview, extensionUri, ["media", "file-upload.png"]);
-        const folderCreateUri = ui.getUri(webview, extensionUri, ["media", "folder-create.png"]);
-        const fileDeleteUri = ui.getUri(webview, extensionUri, ["media", "file-delete.png"]);
-        const fileRenameUri = ui.getUri(webview, extensionUri, ["media", "file-rename.png"]);
-        const fileMoveUri = ui.getUri(webview, extensionUri, ["media", "file-move.png"]);
-        const fileCopyUri = ui.getUri(webview, extensionUri, ["media", "file-copy.png"]);
-        const fileUri = ui.getUri(webview, extensionUri, ["media", "file.png"]);
-        const folderUri = ui.getUri(webview, extensionUri, ["media", "folder.png"]);
+        const bookmark_yesUri = ui.getUri(webview, extensionUri, ["media", "s3", "bookmark_yes.png"]);
+        const bookmark_noUri = ui.getUri(webview, extensionUri, ["media", "s3", "bookmark_no.png"]);
+        const goHomeUri = ui.getUri(webview, extensionUri, ["media", "s3", "go-home.png"]);
+        const goUpUri = ui.getUri(webview, extensionUri, ["media", "s3", "go-up.png"]);
+        const fileDownloadUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-download.png"]);
+        const fileUploadUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-upload.png"]);
+        const folderCreateUri = ui.getUri(webview, extensionUri, ["media", "s3", "folder-create.png"]);
+        const fileDeleteUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-delete.png"]);
+        const fileRenameUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-rename.png"]);
+        const fileMoveUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-move.png"]);
+        const fileCopyUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-copy.png"]);
+        const fileUri = ui.getUri(webview, extensionUri, ["media", "s3", "file.png"]);
+        const folderUri = ui.getUri(webview, extensionUri, ["media", "s3", "folder.png"]);
         let fileCounter = 0;
         let folderCounter = 0;
         this.SortList();
@@ -301,7 +301,7 @@ class S3Explorer {
             let lastModifiedDate = "";
             let fileSize = "";
             let fileMetaData;
-            let resultObject = await api.GetObjectProperties(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key);
+            let resultObject = await S3TreeView_1.S3TreeView.Current.s3Api.getObjectProperties(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key);
             if (resultObject.isSuccessful && resultObject.result) {
                 if (resultObject.result.LastModified)
                     lastModifiedDate = resultObject.result.LastModified.toLocaleDateString() + "   " + resultObject.result.LastModified.toLocaleTimeString();
@@ -817,7 +817,7 @@ class S3Explorer {
             progress.report({ increment: 0 });
             await api.StartConnection();
             for (var key of keyList) {
-                let result = await api.MoveObject(this.S3ExplorerItem.Bucket, key, targetKey);
+                let result = await S3TreeView_1.S3TreeView.Current.s3Api.moveObject(this.S3ExplorerItem.Bucket, key, targetKey);
                 progress.report({ increment: 100 / keyList.length, message: `Moved ${key}` });
                 if (result.isSuccessful) {
                     results = results.concat(result.result || []);
@@ -860,7 +860,7 @@ class S3Explorer {
             progress.report({ increment: 0 });
             await api.StartConnection();
             for (var key of keyList) {
-                let result = await api.CopyObject(this.S3ExplorerItem.Bucket, key, targetKey);
+                let result = await S3TreeView_1.S3TreeView.Current.s3Api.copyObject(this.S3ExplorerItem.Bucket, key, targetKey);
                 progress.report({ increment: 100 / keyList.length, message: `Copied ${key}` });
                 if (result.isSuccessful) {
                     results = results.concat(result.result || []);
@@ -890,7 +890,7 @@ class S3Explorer {
             let deleteCounter = 0;
             await api.StartConnection();
             for (var key of keyList) {
-                let response = await api.DeleteObject(this.S3ExplorerItem.Bucket, key);
+                let response = await S3TreeView_1.S3TreeView.Current.s3Api.deleteObject(this.S3ExplorerItem.Bucket, key);
                 if (response.isSuccessful) {
                     let fileCountDeleted = response.result.length;
                     //ui.showInfoMessage(key + " is deleted " + fileCountDeleted.toString() + " object(s)");
@@ -937,7 +937,7 @@ class S3Explorer {
             }
             progress.report({ increment: 0 });
             await api.StartConnection();
-            result = await api.RenameObject(this.S3ExplorerItem.Bucket, key, targetName);
+            result = await S3TreeView_1.S3TreeView.Current.s3Api.renameObject(this.S3ExplorerItem.Bucket, key, targetName);
             progress.report({ increment: 100, message: `Renamed ${key}` });
             await api.StopConnection();
         });
@@ -981,7 +981,7 @@ class S3Explorer {
             progress.report({ increment: 0 });
             await api.StartConnection();
             for (var key of keyList) {
-                await api.DownloadFile(this.S3ExplorerItem.Bucket, key, selectedFolder[0].fsPath);
+                await S3TreeView_1.S3TreeView.Current.s3Api.downloadFile(this.S3ExplorerItem.Bucket, key, selectedFolder[0].fsPath);
                 progress.report({ increment: 100 / keyList.length, message: `Downloading ${key}` });
             }
             await api.StopConnection();
@@ -995,7 +995,7 @@ class S3Explorer {
         if (key && s3_helper.IsFile(key)) {
             const tmp = require('tmp');
             const tempFolderPath = tmp.dirSync().name;
-            let result = await api.DownloadFile(this.S3ExplorerItem.Bucket, key, tempFolderPath);
+            let result = await S3TreeView_1.S3TreeView.Current.s3Api.downloadFile(this.S3ExplorerItem.Bucket, key, tempFolderPath);
             if (result.isSuccessful) {
                 ui.openFile(result.result);
             }
@@ -1028,7 +1028,7 @@ class S3Explorer {
             await api.StartConnection();
             for (var file of selectedFileList) {
                 let fileNameWithExt = s3_helper.GetFileNameWithExtension(file.fsPath);
-                let result = await api.UploadFileToFolder(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, file.fsPath);
+                let result = await S3TreeView_1.S3TreeView.Current.s3Api.uploadFileToFolder(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, file.fsPath);
                 if (result.isSuccessful) {
                     progress.report({ increment: 100 / selectedFileList.length, message: `Uploaded ${fileNameWithExt}` });
                 }
@@ -1058,7 +1058,7 @@ class S3Explorer {
             return;
         }
         let file = selectedFileList[0];
-        let result = await api.UploadFile(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, file.fsPath);
+        let result = await S3TreeView_1.S3TreeView.Current.s3Api.uploadFile(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, file.fsPath);
         if (result.isSuccessful) {
             ui.showInfoMessage(s3_helper.GetFileNameWithExtension(file.fsPath) + " is replaced");
             this.Load();
@@ -1072,7 +1072,7 @@ class S3Explorer {
         if (folderName === undefined) {
             return;
         }
-        let result = await api.CreateFolder(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, folderName);
+        let result = await S3TreeView_1.S3TreeView.Current.s3Api.createFolder(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, folderName);
         if (result.isSuccessful) {
             ui.showInfoMessage(result.result + " Folder is Created");
             this.Load();

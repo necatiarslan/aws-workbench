@@ -9,6 +9,10 @@ const path = require("path");
 const ui = require("./UI");
 class ConfigManager {
     static CONFIG_FILENAME = 'aws-workbench.yaml';
+    static extensionPath;
+    static setExtensionPath(path) {
+        this.extensionPath = path;
+    }
     /**
      * Parse S3 bucket ARN to extract bucket name
      * ARN format: arn:aws:s3:::bucket-name
@@ -33,30 +37,35 @@ class ConfigManager {
         return `arn:aws:s3:::${bucketName}`;
     }
     /**
-     * Find config file in workspace root or .vscode folder
-     * Priority:
-     * 1. .vscode/aws-workbench.yaml (workspace-specific)
-     * 2. aws-workbench.yaml (workspace root)
+     * Get the configuration file path based on workspace state
+     *
+     * Logic:
+     * 1. If workspace open:
+     *    - Check .vscode/aws-workbench.yaml
+     *    - Check aws-workbench.yaml in root
+     *    - Default to aws-workbench.yaml in root
+     * 2. If no workspace:
+     *    - Use aws-workbench.yaml in extension path
      */
-    static findConfigFile() {
+    static getConfigPath() {
         const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (!workspaceFolders || workspaceFolders.length === 0) {
-            return undefined;
-        }
-        const workspaceRoot = workspaceFolders[0].uri.fsPath;
-        // Check .vscode folder first (workspace-specific configuration)
-        const vscodeConfigPath = path.join(workspaceRoot, '.vscode', this.CONFIG_FILENAME);
-        if (fs.existsSync(vscodeConfigPath)) {
-            ui.logToOutput(`ConfigManager: Found config in .vscode folder: ${vscodeConfigPath}`);
-            return vscodeConfigPath;
-        }
-        // Check workspace root
-        const rootConfigPath = path.join(workspaceRoot, this.CONFIG_FILENAME);
-        if (fs.existsSync(rootConfigPath)) {
-            ui.logToOutput(`ConfigManager: Found config in workspace root: ${rootConfigPath}`);
+        if (workspaceFolders && workspaceFolders.length > 0) {
+            const workspaceRoot = workspaceFolders[0].uri.fsPath;
+            // Check .vscode folder first
+            const vscodeConfigPath = path.join(workspaceRoot, '.vscode', this.CONFIG_FILENAME);
+            if (fs.existsSync(vscodeConfigPath)) {
+                return vscodeConfigPath;
+            }
+            // Check workspace root
+            const rootConfigPath = path.join(workspaceRoot, this.CONFIG_FILENAME);
+            // If exists or not, we default to root for new files if not found in .vscode
             return rootConfigPath;
         }
-        return undefined;
+        // No workspace, use extension path
+        if (this.extensionPath) {
+            return path.join(this.extensionPath, this.CONFIG_FILENAME);
+        }
+        throw new Error('Extension path not set and no workspace open');
     }
     /**
      * Convert YAML format to internal format
@@ -165,16 +174,18 @@ class ConfigManager {
     }
     /**
      * Load configuration from YAML file
+     * Creates empty config file if it doesn't exist
      */
     static loadConfig() {
         ui.logToOutput('ConfigManager.loadConfig Started');
         try {
-            const configPath = this.findConfigFile();
-            if (!configPath) {
-                ui.logToOutput('ConfigManager: No config file found');
-                return undefined;
+            const configPath = this.getConfigPath();
+            ui.logToOutput(`ConfigManager: Using config path: ${configPath}`);
+            if (!fs.existsSync(configPath)) {
+                ui.logToOutput('ConfigManager: Config file not found, creating empty one');
+                this.saveConfig([]); // Create empty config
+                return { BucketList: [], ShortcutList: [], Tree: [] };
             }
-            ui.logToOutput(`ConfigManager: Loading config from ${configPath}`);
             const fileContents = fs.readFileSync(configPath, 'utf8');
             const yamlConfig = yaml.load(fileContents);
             // Convert YAML format to internal format
@@ -195,13 +206,7 @@ class ConfigManager {
     static async saveConfig(tree) {
         ui.logToOutput('ConfigManager.saveConfig Started');
         try {
-            const workspaceFolders = vscode.workspace.workspaceFolders;
-            if (!workspaceFolders || workspaceFolders.length === 0) {
-                ui.showWarningMessage('No workspace folder open. Cannot save config file.');
-                return false;
-            }
-            const workspaceRoot = workspaceFolders[0].uri.fsPath;
-            const configPath = path.join(workspaceRoot, this.CONFIG_FILENAME);
+            const configPath = this.getConfigPath();
             // Convert internal format to YAML format
             const yamlConfig = this.internalToYaml(tree);
             const yamlStr = yaml.dump(yamlConfig, {
@@ -212,7 +217,6 @@ class ConfigManager {
             });
             fs.writeFileSync(configPath, yamlStr, 'utf8');
             ui.logToOutput(`ConfigManager: Config saved successfully to ${configPath}`);
-            ui.showInfoMessage(`Configuration saved to ${this.CONFIG_FILENAME}`);
             return true;
         }
         catch (error) {
@@ -223,79 +227,35 @@ class ConfigManager {
         }
     }
     /**
-     * Export current state to YAML config file
+     * Export current state to YAML config file (Manual export)
      */
     static async exportToConfig(tree) {
-        ui.logToOutput('ConfigManager.exportToConfig Started');
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (!workspaceFolders || workspaceFolders.length === 0) {
-            const openFolder = await vscode.window.showErrorMessage('No workspace folder open. Please open a folder to save the configuration.', 'Open Folder');
-            if (openFolder === 'Open Folder') {
-                vscode.commands.executeCommand('vscode.openFolder');
-            }
-            return;
-        }
-        // Ask user where to save the config file
-        const saveLocation = await vscode.window.showQuickPick([
-            {
-                label: '$(folder) Workspace Root',
-                description: 'Save in workspace root folder (shared with team)',
-                value: 'root'
-            },
-            {
-                label: '$(file) .vscode Folder',
-                description: 'Save in .vscode folder (workspace-specific)',
-                value: 'vscode'
-            }
-        ], {
-            placeHolder: 'Choose where to save aws-workbench.yaml'
-        });
-        if (!saveLocation) {
-            return; // User cancelled
-        }
-        const workspaceRoot = workspaceFolders[0].uri.fsPath;
-        let configPath;
-        if (saveLocation.value === 'vscode') {
-            // Ensure .vscode folder exists
-            const vscodeFolder = path.join(workspaceRoot, '.vscode');
-            if (!fs.existsSync(vscodeFolder)) {
-                fs.mkdirSync(vscodeFolder, { recursive: true });
-            }
-            configPath = path.join(vscodeFolder, this.CONFIG_FILENAME);
-        }
-        else {
-            configPath = path.join(workspaceRoot, this.CONFIG_FILENAME);
-        }
-        // Save the config
-        try {
-            const yamlConfig = this.internalToYaml(tree);
-            const yamlStr = yaml.dump(yamlConfig, {
-                indent: 2,
-                lineWidth: -1,
-                noRefs: true,
-                sortKeys: false
-            });
-            fs.writeFileSync(configPath, yamlStr, 'utf8');
-            ui.logToOutput(`ConfigManager: Config saved successfully to ${configPath}`);
-            ui.showInfoMessage(`Configuration saved to ${path.relative(workspaceRoot, configPath)}`);
-        }
-        catch (error) {
-            const err = error instanceof Error ? error : new Error(String(error));
-            ui.logToOutput('ConfigManager.exportToConfig Error !!!', err);
-            ui.showErrorMessage('Error saving aws-workbench.yaml configuration', err);
-        }
+        // Just call saveConfig as it now handles the logic
+        await this.saveConfig(tree);
+        ui.showInfoMessage(`Configuration saved to ${this.CONFIG_FILENAME}`);
     }
     /**
      * Check if config file exists
      */
     static hasConfigFile() {
-        return this.findConfigFile() !== undefined;
+        try {
+            const configPath = this.getConfigPath();
+            return fs.existsSync(configPath);
+        }
+        catch {
+            return false;
+        }
     }
     /**
      * Get config file path
      */
     static getConfigFilePath() {
-        return this.findConfigFile();
+        try {
+            return this.getConfigPath();
+        }
+        catch {
+            return undefined;
+        }
     }
 }
 exports.ConfigManager = ConfigManager;

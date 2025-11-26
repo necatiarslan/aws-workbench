@@ -7,6 +7,7 @@ import * as api from '../common/API';
 import { ConfigManager } from '../common/ConfigManager';
 import { S3Explorer } from './S3Explorer';
 import { S3Search } from './S3Search';
+import { S3API } from './S3API';
 
 
 export class S3TreeView {
@@ -23,17 +24,42 @@ export class S3TreeView {
 	public AwsRegion: string | undefined;
 	public IsSharedIniFileCredentials: boolean = false;
 	public CredentialProviderName: string | undefined;
+	
+	// S3 API instance using new architecture (public so other S3 components can use it)
+	public s3Api: S3API;
 
 	constructor(context: vscode.ExtensionContext) {
 		ui.logToOutput('TreeView.constructor Started');
 		S3TreeView.Current = this;
 		this.context = context;
 		this.treeDataProvider = new S3TreeDataProvider();
+		
+		// Initialize S3 API
+		this.s3Api = new S3API();
+		
 		this.LoadState();
 		this.view = vscode.window.createTreeView('S3TreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
 		context.subscriptions.push(this.view);
 		this.SetFilterMessage();
+		
+		// Configure S3 API with current settings
+		this.updateS3ApiConfiguration();
+	}
+	
+	/**
+	 * Update S3 API configuration with current settings
+	 */
+	private updateS3ApiConfiguration() {
+		if (this.AwsProfile) {
+			this.s3Api.setProfile(this.AwsProfile);
+		}
+		if (this.AwsEndPoint) {
+			this.s3Api.setEndpoint(this.AwsEndPoint);
+		}
+		if (this.AwsRegion) {
+			this.s3Api.setRegion(this.AwsRegion);
+		}
 	}
 
 	async TestAwsConnection(){
@@ -194,6 +220,10 @@ export class S3TreeView {
 			this.context.globalState.update('AwsRegion', this.AwsRegion);
 			this.context.globalState.update('BucketProfileList', this.treeDataProvider.BucketProfileList);
 
+			// Save tree structure to YAML
+			const treeStructure = this.treeDataProvider.GetTreeStructure();
+			ConfigManager.saveConfig(treeStructure as any); // Cast to any to avoid import issues, structure matches ConfigItem[]
+
 			ui.logToOutput("S3TreeView.saveState Successfull");
 		} catch (error) {
 			ui.logToOutput("S3TreeView.saveState Error !!!");
@@ -254,7 +284,11 @@ export class S3TreeView {
 			}
 
 			// Only load from VSCode state if YAML config didn't provide these
-			if (!yamlConfig) {
+			const isConfigEmpty = !yamlConfig || 
+				((!yamlConfig.Tree || yamlConfig.Tree.length === 0) && 
+				 (!yamlConfig.BucketList || yamlConfig.BucketList.length === 0));
+
+			if (isConfigEmpty) {
 				let BucketListTemp:string[] | undefined  = this.context.globalState.get('BucketList');
 				if(BucketListTemp)
 				{
@@ -448,14 +482,15 @@ export class S3TreeView {
 		ui.showInfoMessage(`Folder "${node.Text}" deleted`);
 	}
 
-	// S3 Bucket handler (existing logic)
+	// S3 Bucket handler (using new S3API)
 	async AddS3Bucket(parentNode?: S3TreeItem) {
 		ui.logToOutput('S3TreeView.AddS3Bucket Started');
 
 		let selectedBucketName = await vscode.window.showInputBox({ placeHolder: 'Enter Bucket Name / Search Text' });
 		if(selectedBucketName===undefined){ return; }
 
-		var resultBucket = await api.GetBucketList(selectedBucketName);
+		// Use new S3API instead of common/api
+		var resultBucket = await this.s3Api.getBucketList(selectedBucketName);
 		if(!resultBucket.isSuccessful){ return; }
 
 		let selectedBucketList = await vscode.window.showQuickPick(resultBucket.result, {canPickMany:true, placeHolder: 'Select Bucket(s)'});

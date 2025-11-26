@@ -4,7 +4,6 @@ exports.S3Search = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const ui = require("../common/UI");
-const api = require("../common/API");
 const S3TreeView_1 = require("./S3TreeView");
 const S3TreeItem_1 = require("./S3TreeItem");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
@@ -51,7 +50,7 @@ class S3Search {
         if (!S3TreeView_1.S3TreeView.Current) {
             return;
         }
-        var result = await api.SearchObject(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, this.FileName, this.FileExtension, this.FolderName);
+        var result = await S3TreeView_1.S3TreeView.Current.s3Api.searchObject(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, this.FileName, this.FileExtension, this.FolderName);
         if (result.isSuccessful) {
             this.S3ObjectList = result.result;
         }
@@ -122,10 +121,10 @@ class S3Search {
         const s3SearchJSUri = ui.getUri(webview, extensionUri, ["media", "s3SearchJS.js"]);
         const styleUri = ui.getUri(webview, extensionUri, ["media", "style.css"]);
         const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
-        const bookmark_yesUri = ui.getUri(webview, extensionUri, ["media", "bookmark_yes.png"]);
-        const bookmark_noUri = ui.getUri(webview, extensionUri, ["media", "bookmark_no.png"]);
-        const fileUri = ui.getUri(webview, extensionUri, ["media", "file.png"]);
-        const folderUri = ui.getUri(webview, extensionUri, ["media", "folder.png"]);
+        const bookmark_yesUri = ui.getUri(webview, extensionUri, ["media", "s3", "bookmark_yes.png"]);
+        const bookmark_noUri = ui.getUri(webview, extensionUri, ["media", "s3", "bookmark_no.png"]);
+        const fileUri = ui.getUri(webview, extensionUri, ["media", "s3", "file.png"]);
+        const folderUri = ui.getUri(webview, extensionUri, ["media", "s3", "folder.png"]);
         let fileCounter = 0;
         let folderCounter = 0;
         let S3RowHtml = "";
