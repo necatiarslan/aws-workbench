@@ -19,10 +19,10 @@ export function getUri(webview: vscode.Webview, extensionUri: vscode.Uri, pathLi
   return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
 }
 
-export function showOutputMessage(message: any, popupMessage: string = "Results are printed to OUTPUT / AwsS3-Extension", clearPrevMessages:boolean=true): void {
+export function showOutputMessage(message: any, popupMessage: string = "Results are printed to OUTPUT / AwsWorkbench-Extension", clearPrevMessages:boolean=true): void {
 
   if (!outputChannel) {
-    outputChannel = vscode.window.createOutputChannel("AwsS3-Extension");
+    outputChannel = vscode.window.createOutputChannel("AwsWorkbench-Extension");
   }
 
   if(clearPrevMessages)
@@ -38,7 +38,7 @@ export function showOutputMessage(message: any, popupMessage: string = "Results 
   }
   outputChannel.show();
 
-  if(popupMessage.length > 0)
+  if(popupMessage && popupMessage.length > 0)
   {
     showInfoMessage(popupMessage);
   }
@@ -48,7 +48,7 @@ export function logToOutput(message: any, error?: Error): void {
   let now = new Date().toLocaleString();
 
   if (!logsOutputChannel) {
-    logsOutputChannel = vscode.window.createOutputChannel("AwsS3-Log");
+    logsOutputChannel = vscode.window.createOutputChannel("AwsWorkbench-Log");
   }
 
   if (typeof message === "object") {
@@ -84,7 +84,7 @@ export function showWarningMessage(message: string): void {
 export function showErrorMessage(message: string, error: Error): void {
   if(error instanceof AggregateError)
   {
-    error = error.errors[0];
+    error = (error as any).errors[0];
   }
 
   if (error) {
@@ -96,10 +96,14 @@ export function showErrorMessage(message: string, error: Error): void {
 }
 
 export function getExtensionVersion() {
-  const { version: extVersion } = JSON.parse(
-    readFileSync(join(__dirname, '..', 'package.json'), { encoding: 'utf8' })
-  );
-  return extVersion;
+  try {
+    const { version: extVersion } = JSON.parse(
+      readFileSync(join(__dirname, '..', 'package.json'), { encoding: 'utf8' })
+    );
+    return extVersion;
+  } catch (err) {
+    return '1.0.0';
+  }
 }
 
 export function openFile(file: string) {

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
+	<title>Add Item</title>
+	<style>
+		body {
+			padding: 20px;
+			font-family: var(--vscode-font-family);
+			color: var(--vscode-foreground);
+			background-color: var(--vscode-editor-background);
+		}
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+		}
+		.header {
+			margin-bottom: 24px;
+		}
+		h1 {
+			font-size: 24px;
+			font-weight: 600;
+			margin: 0 0 8px 0;
+		}
+		.subtitle {
+			color: var(--vscode-descriptionForeground);
+			font-size: 13px;
+		}
+		.section {
+			margin-bottom: 24px;
+			padding: 16px;
+			background-color: var(--vscode-input-background);
+			border: 1px solid var(--vscode-input-border);
+			border-radius: 4px;
+		}
+		.section-title {
+			font-size: 14px;
+			font-weight: 600;
+			margin-bottom: 12px;
+			color: var(--vscode-foreground);
+		}
+		.field-group {
+			margin-bottom: 16px;
+		}
+		.field-label {
+			display: block;
+			margin-bottom: 6px;
+			font-size: 13px;
+			font-weight: 500;
+		}
+		.required {
+			color: var(--vscode-errorForeground);
+		}
+		.key-badge {
+			display: inline-block;
+			padding: 2px 8px;
+			margin-left: 8px;
+			font-size: 11px;
+			background-color: var(--vscode-badge-background);
+			color: var(--vscode-badge-foreground);
+			border-radius: 3px;
+		}
+		input[type="text"], input[type="radio"], select {
+			padding: 6px 8px;
+			background-color: var(--vscode-input-background);
+			color: var(--vscode-input-foreground);
+			border: 1px solid var(--vscode-input-border);
+			border-radius: 2px;
+			font-size: 13px;
+			font-family: var(--vscode-font-family);
+			box-sizing: border-box;
+		}
+		input[type="text"], select {
+			width: 100%;
+		}
+		input[type="text"]:focus, select:focus {
+			outline: 1px solid var(--vscode-focusBorder);
+			border-color: var(--vscode-focusBorder);
+		}
+		.attribute-row {
+			display: grid;
+			grid-template-columns: 1fr 140px 1fr 40px;
+			gap: 8px;
+			margin-bottom: 8px;
+			align-items: end;
+		}
+		.bool-options {
+			display: flex;
+			gap: 16px;
+			align-items: center;
+			padding: 6px 0;
+		}
+		.bool-options label {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			cursor: pointer;
+		}
+		.null-notice {
+			color: var(--vscode-descriptionForeground);
+			font-size: 12px;
+			font-style: italic;
+			padding: 6px 0;
+		}
+		.button-group {
+			display: flex;
+			gap: 8px;
+			margin-top: 24px;
+			justify-content: flex-end;
+		}
+		button {
+			padding: 6px 14px;
+			font-size: 13px;
+			font-family: var(--vscode-font-family);
+			border: none;
+			border-radius: 2px;
+			cursor: pointer;
+		}
+		.btn-primary {
+			background-color: var(--vscode-button-background);
+			color: var(--vscode-button-foreground);
+		}
+		.btn-primary:hover {
+			background-color: var(--vscode-button-hoverBackground);
+		}
+		.btn-secondary {
+			background-color: var(--vscode-button-secondaryBackground);
+			color: var(--vscode-button-secondaryForeground);
+		}
+		.btn-secondary:hover {
+			background-color: var(--vscode-button-secondaryHoverBackground);
+		}
+		.btn-icon {
+			background-color: transparent;
+			color: var(--vscode-foreground);
+			padding: 4px 8px;
+			font-size: 16px;
+		}
+		.btn-icon:hover {
+			background-color: var(--vscode-toolbar-hoverBackground);
+		}
+		.error-message {
+			display: none;
+			padding: 12px;
+			margin-bottom: 16px;
+			background-color: var(--vscode-inputValidation-errorBackground);
+			border: 1px solid var(--vscode-inputValidation-errorBorder);
+			color: var(--vscode-errorForeground);
+			border-radius: 4px;
+		}
+		.error-message.show {
+			display: block;
+		}
+		.add-attribute-btn {
+			margin-top: 8px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>Add Item to Table</h1>
+			<div class="subtitle" id="subtitle"></div>
+		</div>
+
+		<div class="error-message" id="errorMessage"></div>
+
+		<form id="addItemForm">
+			<!-- Primary Keys Section -->
+			<div class="section">
+				<div class="section-title">Primary Keys</div>
+				
+				<!-- Partition Key -->
+				<div class="field-group" id="partitionKeyGroup"></div>
+
+				<!-- Sort Key (if exists) -->
+				<div class="field-group" id="sortKeyGroup"></div>
+			</div>
+
+			<!-- Additional Attributes Section -->
+			<div class="section">
+				<div class="section-title">Additional Attributes (Optional)</div>
+				<div id="attributesContainer"></div>
+				<button type="button" class="btn-secondary add-attribute-btn" id="addAttributeBtn">
+					➕ Add Attribute
+				</button>
+			</div>
+
+			<!-- Action Buttons -->
+			<div class="button-group">
+				<button type="button" id="cancelBtn" class="btn-secondary">Cancel</button>
+				<button type="submit" id="submitBtn" class="btn-primary">Add Item</button>
+			</div>
+		</form>
+	</div>
+
+	<script nonce="${nonce}">
+		const vscode = acquireVsCodeApi();
+		let tableDetails = {};
+		let attributeCounter = 0;
+
+		// Initialize when we receive table details
+		window.addEventListener('message', event => {
+			const message = event.data;
+			switch (message.command) {
+				case 'init':
+					tableDetails = message.tableDetails;
+					initializeForm();
+					break;
+				case 'error':
+					showError(message.message);
+					break;
+				case 'populateAttributes':
+					if (message.attributes && message.attributes.length > 0) {
+						message.attributes.forEach(attr => {
+							addAttributeRow(attr.name, attr.type);
+						});
+					}
+					break;
+			}
+		});
+
+		function initializeForm() {
+			// Set subtitle
+			document.getElementById('subtitle').textContent = 
+				`Table: ${tableDetails.tableName} | Region: ${tableDetails.region}`;
+
+			// Create partition key field
+			const partitionKeyGroup = document.getElementById('partitionKeyGroup');
+			partitionKeyGroup.innerHTML = `
+				<label class="field-label">
+					${tableDetails.partitionKey?.name || 'Partition Key'}
+					<span class="required">*</span>
+					<span class="key-badge">🔑 Partition Key</span>
+					<span class="key-badge">${tableDetails.partitionKey?.type || 'S'}</span>
+				</label>
+				<input 
+					type="text"
+					id="partitionKeyValue" 
+					name="partitionKeyValue"
+					placeholder="Enter ${tableDetails.partitionKey?.name || 'partition key'} value"
+					required>
+			`;
+
+			// Create sort key field if exists
+			if (tableDetails.sortKey) {
+				const sortKeyGroup = document.getElementById('sortKeyGroup');
+				sortKeyGroup.innerHTML = `
+					<label class="field-label">
+						${tableDetails.sortKey.name}
+						<span class="required">*</span>
+						<span class="key-badge">🔑 Sort Key</span>
+						<span class="key-badge">${tableDetails.sortKey.type}</span>
+					</label>
+					<input 
+						type="text"
+						id="sortKeyValue" 
+						name="sortKeyValue"
+						placeholder="Enter ${tableDetails.sortKey.name} value"
+						required>
+				`;
+			}
+		}
+
+		// Add attribute functionality
+		document.getElementById('addAttributeBtn').addEventListener('click', () => {
+			addAttributeRow();
+		});
+
+		function addAttributeRow(attrName = '', attrType = 'S') {
+			const container = document.getElementById('attributesContainer');
+			const row = document.createElement('div');
+			row.className = 'attribute-row';
+			row.id = 'attr-row-' + attributeCounter;
+			const rowId = attributeCounter;
+			
+			row.innerHTML = `
+				<input 
+					type="text"
+					placeholder="Attribute name"
+					value="${attrName}"
+					class="attr-name"
+					data-row-id="${rowId}">
+				<select class="attr-type" data-row-id="${rowId}">
+					<option value="S" ${attrType === 'S' ? 'selected' : ''}>String (S)</option>
+					<option value="N" ${attrType === 'N' ? 'selected' : ''}>Number (N)</option>
+					<option value="BOOL" ${attrType === 'BOOL' ? 'selected' : ''}>Boolean (BOOL)</option>
+					<option value="NULL" ${attrType === 'NULL' ? 'selected' : ''}>Null (NULL)</option>
+					<option value="M" ${attrType === 'M' ? 'selected' : ''}>Map (M)</option>
+					<option value="L" ${attrType === 'L' ? 'selected' : ''}>List (L)</option>
+					<option value="SS" ${attrType === 'SS' ? 'selected' : ''}>String Set (SS)</option>
+					<option value="NS" ${attrType === 'NS' ? 'selected' : ''}>Number Set (NS)</option>
+					<option value="BS" ${attrType === 'BS' ? 'selected' : ''}>Binary Set (BS)</option>
+					<option value="B" ${attrType === 'B' ? 'selected' : ''}>Binary (B)</option>
+				</select>
+				<div class="value-container" id="value-container-${rowId}">
+					${getValueInputHTML(rowId, attrType)}
+				</div>
+				<button 
+					type="button"
+					class="btn-icon delete-attr-btn" 
+					data-row-id="${rowId}"
+					title="Remove attribute">
+					🗑️
+				</button>
+			`;
+			
+			container.appendChild(row);
+			
+			// Add event listener for type change
+			const typeSelect = row.querySelector('.attr-type');
+			typeSelect.addEventListener('change', (e) => {
+				const newType = e.target.value;
+				const valueContainer = document.getElementById('value-container-' + rowId);
+				valueContainer.innerHTML = getValueInputHTML(rowId, newType);
+			});
+			
+			attributeCounter++;
+		}
+
+		function getValueInputHTML(rowId, type) {
+			if (type === 'BOOL') {
+				return `
+					<div class="bool-options">
+						<label>
+							<input type="radio" name="bool-${rowId}" value="true" class="attr-value" data-row-id="${rowId}" required>
+							Yes
+						</label>
+						<label>
+							<input type="radio" name="bool-${rowId}" value="false" class="attr-value" data-row-id="${rowId}" required>
+							No
+						</label>
+					</div>
+				`;
+			} else if (type === 'NULL') {
+				return '<div class="null-notice">No value needed for NULL type</div>';
+			} else {
+				return `
+					<input 
+						type="text"
+						placeholder="Value"
+						class="attr-value"
+						data-row-id="${rowId}">
+				`;
+			}
+		}
+
+		// Use event delegation for delete buttons
+		document.getElementById('attributesContainer').addEventListener('click', (e) => {
+			const deleteBtn = e.target.closest('.delete-attr-btn');
+			if (deleteBtn) {
+				const rowId = deleteBtn.getAttribute('data-row-id');
+				const row = document.getElementById('attr-row-' + rowId);
+				if (row) {
+					row.remove();
+				}
+			}
+		});
+
+		// Form submission
+		document.getElementById('addItemForm').addEventListener('submit', async (e) => {
+			e.preventDefault();
+			
+			const errorMessage = document.getElementById('errorMessage');
+			errorMessage.classList.remove('show');
+			
+			try {
+				const item = {};
+				
+				// Add partition key
+				const partitionKeyValue = document.getElementById('partitionKeyValue').value;
+				if (!partitionKeyValue) {
+					showError('Partition key value is required');
+					return;
+				}
+				
+				// Validate numeric partition key
+				if (tableDetails.partitionKey.type === 'N' && isNaN(partitionKeyValue)) {
+					showError('Partition key must be a valid number');
+					return;
+				}
+				
+				item[tableDetails.partitionKey.name] = {
+					type: tableDetails.partitionKey.type,
+					value: partitionKeyValue
+				};
+				
+				// Add sort key if exists
+				if (tableDetails.sortKey) {
+					const sortKeyValue = document.getElementById('sortKeyValue').value;
+					if (!sortKeyValue) {
+						showError('Sort key value is required');
+						return;
+					}
+					
+					// Validate numeric sort key
+					if (tableDetails.sortKey.type === 'N' && isNaN(sortKeyValue)) {
+						showError('Sort key must be a valid number');
+						return;
+					}
+					
+					item[tableDetails.sortKey.name] = {
+						type: tableDetails.sortKey.type,
+						value: sortKeyValue
+					};
+				}
+				
+				// Add additional attributes
+				const attributeRows = document.querySelectorAll('.attribute-row');
+				for (const row of attributeRows) {
+					const nameField = row.querySelector('.attr-name');
+					const typeField = row.querySelector('.attr-type');
+					
+					const name = nameField?.value?.trim();
+					const type = typeField?.value || 'S';
+					
+					if (!name) continue;
+					
+					let value;
+					
+					if (type === 'BOOL') {
+						const rowId = nameField.getAttribute('data-row-id');
+						const checkedRadio = row.querySelector(`input[name="bool-${rowId}"]:checked`);
+						if (!checkedRadio) {
+							showError(`Please select Yes or No for boolean attribute "${name}"`);
+							return;
+						}
+						value = checkedRadio.value === 'true';
+					} else if (type === 'NULL') {
+						value = true; // NULL type doesn't need a value, just set to true
+					} else {
+						const valueField = row.querySelector('.attr-value');
+						value = valueField?.value;
+						
+						if (value === undefined || value === '') {
+							continue; // Skip empty optional attributes
+						}
+						
+						// Validate numeric type
+						if (type === 'N' && isNaN(value)) {
+							showError(`Attribute "${name}" must be a valid number`);
+							return;
+						}
+					}
+					
+					item[name] = {
+						type: type,
+						value: value
+					};
+				}
+				
+				// Send to extension
+				vscode.postMessage({
+					command: 'addItem',
+					item: item
+				});
+				
+			} catch (error) {
+				showError(error.message || 'An error occurred');
+			}
+		});
+
+		// Cancel button
+		document.getElementById('cancelBtn').addEventListener('click', () => {
+			vscode.postMessage({ command: 'cancel' });
+		});
+
+		function showError(message) {
+			const errorMessage = document.getElementById('errorMessage');
+			errorMessage.textContent = message;
+			errorMessage.classList.add('show');
+			errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		}
+
+		// Signal ready to receive init data
+		vscode.postMessage({ command: 'ready' });
+	</script>
+</body>
+</html>

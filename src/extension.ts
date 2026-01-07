@@ -1,224 +1,90 @@
-/**
- * AWS S3 VSCode Extension - Main Entry Point
- * 
- * This file handles extension activation, command registration, and lifecycle management.
- * 
- * @module extension
- */
-
 import * as vscode from 'vscode';
-import * as ui from './common/UI';
-import { ConfigManager } from './common/ConfigManager';
-import {S3TreeView} from './s3/S3TreeView';
-import {S3TreeItem} from './s3/S3TreeItem';
+import * as s3_ext from './services/s3/extension';
+import * as lambda_ext from './services/lambda/extension';
+import * as cloudwatch_ext from './services/cloudwatch/extension';
+import * as access_ext from './services/access/extension';
+import * as dynamodb_ext from './services/dynamodb/extension';
+import * as glue_ext from './services/glue/extension';
+import * as iam_ext from './services/iam/extension';
+import * as sns_ext from './services/sns/extension';
+import * as sqs_ext from './services/sqs/extension';
+import * as step_ext from './services/step-functions/extension';
+
+import { WorkbenchTreeProvider } from './tree/WorkbenchTreeProvider';
+import { ServiceManager } from './services/ServiceManager';
+
+import { S3Service } from './services/s3/S3Service';
+import { LambdaService } from './services/lambda/LambdaService';
+import { CloudwatchService } from './services/cloudwatch/CloudwatchService';
+import { DynamodbService } from './services/dynamodb/DynamodbService';
+import { GlueService } from './services/glue/GlueService';
+import { IamService } from './services/iam/IamService';
+import { SnsService } from './services/sns/SnsService';
+import { SqsService } from './services/sqs/SqsService';
+import { StepfunctionsService } from './services/step-functions/StepfunctionsService';
 
 /**
- * Extension activation function
- * Called when the extension is activated
+ * Activates the AWS Workbench extension.
+ * Consolidates activation of all sub-services.
  * 
- * @param context - Extension context provided by VSCode
+ * @param context - The extension context provided by VSCode
  */
 export function activate(context: vscode.ExtensionContext): void {
-	ui.logToOutput('AWS S3 Extension activation started');
+    console.log('AWS Workbench is now active!');
 
-	try {
-		// Set extension path for ConfigManager
-		ConfigManager.setExtensionPath(context.extensionPath);
+    try {
+        // 1. Activate original extensions' command registration and tree views
+        // These are registered in the same 'aws-workbench' sidebar container (multi-accordion)
+        s3_ext.activate(context);
+        lambda_ext.activate(context);
+        cloudwatch_ext.activate(context);
+        access_ext.activate(context);
+        dynamodb_ext.activate(context);
+        glue_ext.activate(context);
+        iam_ext.activate(context);
+        sns_ext.activate(context);
+        sqs_ext.activate(context);
+        step_ext.activate(context);
 
-		// Initialize the tree view
-		const treeView = new S3TreeView(context);
+        // 2. Initialize the Unified "Aws Workbench" Tree Provider
+        const treeProvider = new WorkbenchTreeProvider(context);
+        vscode.window.registerTreeDataProvider('AwsWorkbenchTree', treeProvider);
 
-		// Register all commands and add them to subscriptions for proper disposal
-		registerCommands(context, treeView);
+        // 3. Register our Service wrappers for the Unified Tree to fetch children from
+        const serviceManager = ServiceManager.Instance;
+        serviceManager.registerService(new S3Service(context));
+        serviceManager.registerService(new LambdaService(context));
+        serviceManager.registerService(new CloudwatchService(context));
+        serviceManager.registerService(new DynamodbService(context));
+        serviceManager.registerService(new GlueService(context));
+        serviceManager.registerService(new IamService(context));
+        serviceManager.registerService(new SnsService(context));
+        serviceManager.registerService(new SqsService(context));
+        serviceManager.registerService(new StepfunctionsService(context));
 
-		ui.logToOutput('AWS S3 Extension activation completed successfully');
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-		ui.logToOutput(`AWS S3 Extension activation failed: ${errorMessage}`, error as Error);
-		ui.showErrorMessage('Failed to activate AWS S3 Extension', error as Error);
-	}
+        console.log('All AWS services activated successfully.');
+    } catch (error) {
+        console.error('Error activating AWS Workbench services:', error);
+    }
 }
 
 /**
- * Register all extension commands
- * 
- * @param context - Extension context
- * @param treeView - S3 Tree View instance
- */
-function registerCommands(context: vscode.ExtensionContext, treeView: S3TreeView): void {
-	// View management commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.Refresh', () => {
-			treeView.Refresh();
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.Filter', () => {
-			treeView.Filter();
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ShowOnlyFavorite', () => {
-			treeView.ShowOnlyFavorite();
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ShowHiddenNodes', () => {
-			treeView.ShowHiddenNodes();
-		})
-	);
-
-	// Favorite management commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.AddToFav', (node: S3TreeItem) => {
-			treeView.AddToFav(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.DeleteFromFav', (node: S3TreeItem) => {
-			treeView.DeleteFromFav(node);
-		})
-	);
-
-	// Node visibility commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.HideNode', (node: S3TreeItem) => {
-			treeView.HideNode(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.UnHideNode', (node: S3TreeItem) => {
-			treeView.UnHideNode(node);
-		})
-	);
-
-	// Profile management commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ShowOnlyInThisProfile', (node: S3TreeItem) => {
-			treeView.ShowOnlyInThisProfile(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ShowInAnyProfile', (node: S3TreeItem) => {
-			treeView.ShowInAnyProfile(node);
-		})
-	);
-
-	// Bucket management commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.AddBucket', (node?: S3TreeItem) => {
-			// If no node passed (e.g. from title button), check selection
-			if (!node && treeView.view.selection.length > 0) {
-				node = treeView.view.selection[0];
-			}
-			treeView.AddResource(node); // Now shows resource type selection
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.RemoveBucket', (node: S3TreeItem) => {
-			treeView.RemoveBucket(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.Goto', (node: S3TreeItem) => {
-			treeView.Goto(node);
-		})
-	);
-
-	// Folder management commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.RenameFolder', (node: S3TreeItem) => {
-			treeView.RenameFolder(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.RemoveFolder', (node: S3TreeItem) => {
-			treeView.RemoveFolder(node);
-		})
-	);
-
-	// Shortcut management commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.RemoveShortcut', (node: S3TreeItem) => {
-			treeView.RemoveShortcut(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.AddShortcut', (node: S3TreeItem) => {
-			treeView.AddShortcut(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.CopyShortcut', (node: S3TreeItem) => {
-			treeView.CopyShortcut(node);
-		})
-	);
-
-	// Explorer and search commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ShowS3Explorer', (node: S3TreeItem) => {
-			treeView.ShowS3Explorer(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ShowS3Search', (node: S3TreeItem) => {
-			treeView.ShowS3Search(node);
-		})
-	);
-
-	// AWS configuration commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.SelectAwsProfile', (node: S3TreeItem) => {
-			treeView.SelectAwsProfile(node);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.UpdateAwsEndPoint', () => {
-			treeView.UpdateAwsEndPoint();
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.SetAwsRegion', () => {
-			treeView.SetAwsRegion();
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.TestAwsConnection', () => {
-			treeView.TestAwsConnection();
-		})
-	);
-
-	// Configuration export command
-	context.subscriptions.push(
-		vscode.commands.registerCommand('S3TreeView.ExportToYaml', () => {
-			treeView.ExportToYaml();
-		})
-	);
-
-	ui.logToOutput('All commands registered successfully');
-}
-
-/**
- * Extension deactivation function
- * Called when the extension is deactivated
- * 
- * Cleanup is handled automatically by VSCode disposing all items in context.subscriptions
+ * Deactivates the extension.
  */
 export function deactivate(): void {
-	ui.logToOutput('AWS S3 Extension is now deactivated');
+    // Call deactivate for each service if they export it
+    try {
+        if ((s3_ext as any).deactivate) (s3_ext as any).deactivate();
+        if ((lambda_ext as any).deactivate) (lambda_ext as any).deactivate();
+        if ((cloudwatch_ext as any).deactivate) (cloudwatch_ext as any).deactivate();
+        if ((access_ext as any).deactivate) (access_ext as any).deactivate();
+        if ((dynamodb_ext as any).deactivate) (dynamodb_ext as any).deactivate();
+        if ((glue_ext as any).deactivate) (glue_ext as any).deactivate();
+        if ((iam_ext as any).deactivate) (iam_ext as any).deactivate();
+        if ((sns_ext as any).deactivate) (sns_ext as any).deactivate();
+        if ((sqs_ext as any).deactivate) (sqs_ext as any).deactivate();
+        if ((step_ext as any).deactivate) (step_ext as any).deactivate();
+    } catch (error) {
+        console.error('Error deactivating AWS Workbench services:', error);
+    }
 }

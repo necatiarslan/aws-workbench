@@ -36,9 +36,9 @@ function withProgress(task) {
 function getUri(webview, extensionUri, pathList) {
     return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
 }
-function showOutputMessage(message, popupMessage = "Results are printed to OUTPUT / AwsS3-Extension", clearPrevMessages = true) {
+function showOutputMessage(message, popupMessage = "Results are printed to OUTPUT / AwsWorkbench-Extension", clearPrevMessages = true) {
     if (!outputChannel) {
-        outputChannel = vscode.window.createOutputChannel("AwsS3-Extension");
+        outputChannel = vscode.window.createOutputChannel("AwsWorkbench-Extension");
     }
     if (clearPrevMessages) {
         outputChannel.clear();
@@ -50,14 +50,14 @@ function showOutputMessage(message, popupMessage = "Results are printed to OUTPU
         outputChannel.appendLine(message);
     }
     outputChannel.show();
-    if (popupMessage.length > 0) {
+    if (popupMessage && popupMessage.length > 0) {
         showInfoMessage(popupMessage);
     }
 }
 function logToOutput(message, error) {
     let now = new Date().toLocaleString();
     if (!logsOutputChannel) {
-        logsOutputChannel = vscode.window.createOutputChannel("AwsS3-Log");
+        logsOutputChannel = vscode.window.createOutputChannel("AwsWorkbench-Log");
     }
     if (typeof message === "object") {
         logsOutputChannel.appendLine("[" + now + "] " + JSON.stringify(message, null, 4));
@@ -94,8 +94,13 @@ function showErrorMessage(message, error) {
     }
 }
 function getExtensionVersion() {
-    const { version: extVersion } = JSON.parse((0, fs_1.readFileSync)((0, path_1.join)(__dirname, '..', 'package.json'), { encoding: 'utf8' }));
-    return extVersion;
+    try {
+        const { version: extVersion } = JSON.parse((0, fs_1.readFileSync)((0, path_1.join)(__dirname, '..', 'package.json'), { encoding: 'utf8' }));
+        return extVersion;
+    }
+    catch (err) {
+        return '1.0.0';
+    }
 }
 function openFile(file) {
     vscode.commands.executeCommand('vscode.open', vscode.Uri.file(file), vscode.ViewColumn.One);
