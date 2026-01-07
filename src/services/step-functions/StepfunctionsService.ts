@@ -18,7 +18,8 @@ export class StepfunctionsService implements IService {
     }
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
-        return [];
+        const nodes = this.treeView.treeDataProvider.GetStepFuncNodes();
+        return nodes.map(n => this.mapToWorkbenchItem(n));
     }
 
     private mapToWorkbenchItem(n: any): WorkbenchTreeItem {
@@ -48,5 +49,6 @@ export class StepfunctionsService implements IService {
     }
 
     async addResource(): Promise<void> {
+        await this.treeView.AddStepFunc();
     }
 }

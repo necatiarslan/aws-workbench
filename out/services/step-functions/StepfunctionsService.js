@@ -14,7 +14,8 @@ class StepfunctionsService {
         // Commands are registered by the internal activate()
     }
     async getRootNodes() {
-        return [];
+        const nodes = this.treeView.treeDataProvider.GetStepFuncNodes();
+        return nodes.map(n => this.mapToWorkbenchItem(n));
     }
     mapToWorkbenchItem(n) {
         return new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
@@ -33,6 +34,7 @@ class StepfunctionsService {
         return element.itemData;
     }
     async addResource() {
+        await this.treeView.AddStepFunc();
     }
 }
 exports.StepfunctionsService = StepfunctionsService;

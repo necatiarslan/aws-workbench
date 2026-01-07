@@ -18,9 +18,8 @@ export class GlueService implements IService {
     }
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
-        // Most of these have a Get...Nodes method in their treeDataProvider
-        // We'll need to adapt each one or use a common logic if available
-        return [];
+        const nodes = await this.treeView.treeDataProvider.getChildren(undefined);
+        return nodes.map((n: any) => this.mapToWorkbenchItem(n));
     }
 
     private mapToWorkbenchItem(n: any): WorkbenchTreeItem {
@@ -50,6 +49,6 @@ export class GlueService implements IService {
     }
 
     async addResource(): Promise<void> {
-        // Each service has a different "Add" method
+        await this.treeView.AddGlueJob();
     }
 }

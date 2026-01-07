@@ -14,9 +14,8 @@ class SqsService {
         // Commands are registered by the internal activate() or we can add them here
     }
     async getRootNodes() {
-        // Most of these have a Get...Nodes method in their treeDataProvider
-        // We'll need to adapt each one or use a common logic if available
-        return [];
+        const nodes = this.treeView.treeDataProvider.GetSqsNodes();
+        return nodes.map(n => this.mapToWorkbenchItem(n));
     }
     mapToWorkbenchItem(n) {
         return new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
@@ -35,7 +34,7 @@ class SqsService {
         return element.itemData;
     }
     async addResource() {
-        // Each service has a different "Add" method
+        await this.treeView.AddQueue();
     }
 }
 exports.SqsService = SqsService;
