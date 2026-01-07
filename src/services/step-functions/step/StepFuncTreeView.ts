@@ -11,7 +11,7 @@ import { StepFuncStudioView } from './StepFuncStudioView';
 export class StepFuncTreeView {
 
 	public static Current: StepFuncTreeView;
-	public view: vscode.TreeView<StepFuncTreeItem>;
+	public view?: vscode.TreeView<StepFuncTreeItem>;
 	public treeDataProvider: StepFuncTreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -30,9 +30,9 @@ export class StepFuncTreeView {
 		this.context = context;
 		this.LoadState();
 		this.treeDataProvider = new StepFuncTreeDataProvider();
-		this.view = vscode.window.createTreeView('StepFuncTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('StepFuncTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 		this.SetFilterMessage();
 	}
 
@@ -153,7 +153,9 @@ export class StepFuncTreeView {
 	}
 
 	async SetViewTitle(){
-		//this.view.title = "Aws StepFunc";
+		if (this.view) { 
+			// this.view.title = "Aws StepFunc"; 
+		}
 	}
 
 	SaveState() {
@@ -246,6 +248,7 @@ export class StepFuncTreeView {
 	}
 
 	async SetFilterMessage(){
+		if (!this.view) { return; }
 		if(this.StepFuncList.length > 0)
 		{
 			this.view.message = 

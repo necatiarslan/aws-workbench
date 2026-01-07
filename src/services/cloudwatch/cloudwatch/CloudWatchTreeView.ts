@@ -9,7 +9,7 @@ import { CloudWatchLogView } from './CloudWatchLogView';
 export class CloudWatchTreeView {
 
 	public static Current: CloudWatchTreeView | undefined;
-	public view: vscode.TreeView<CloudWatchTreeItem>;
+	public view?: vscode.TreeView<CloudWatchTreeItem>;
 	public treeDataProvider: CloudWatchTreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -24,9 +24,9 @@ export class CloudWatchTreeView {
 		this.context = context;
 		this.treeDataProvider = new CloudWatchTreeDataProvider();
 		this.LoadState();
-		this.view = vscode.window.createTreeView('CloudWatchTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('CloudWatchTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 		CloudWatchTreeView.Current = this;
 		this.SetFilterMessage();
 	}
@@ -100,7 +100,7 @@ export class CloudWatchTreeView {
 	}
 
 	async SetViewTitle(){
-		this.view.title = "Aws Cloud Watch";
+		if (this.view) { this.view.title = "Aws Cloud Watch"; }
 	}
 
 	SaveState() {
@@ -176,7 +176,7 @@ export class CloudWatchTreeView {
 	}
 
 	SetFilterMessage(){
-		this.view.message = "Profile:" + this.AwsProfile + " " + this.GetBoolenSign(this.isShowOnlyFavorite) + "Fav, " + this.FilterString;
+		if (this.view) { this.view.message = "Profile:" + this.AwsProfile + " " + this.GetBoolenSign(this.isShowOnlyFavorite) + "Fav, " + this.FilterString; }
 	}
 
 	GetBoolenSign(variable: boolean){

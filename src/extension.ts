@@ -1,14 +1,5 @@
 import * as vscode from 'vscode';
-import * as s3_ext from './services/s3/extension';
-import * as lambda_ext from './services/lambda/extension';
-import * as cloudwatch_ext from './services/cloudwatch/extension';
 import * as access_ext from './services/access/extension';
-import * as dynamodb_ext from './services/dynamodb/extension';
-import * as glue_ext from './services/glue/extension';
-import * as iam_ext from './services/iam/extension';
-import * as sns_ext from './services/sns/extension';
-import * as sqs_ext from './services/sqs/extension';
-import * as step_ext from './services/step-functions/extension';
 
 import { WorkbenchTreeProvider } from './tree/WorkbenchTreeProvider';
 import { ServiceManager } from './services/ServiceManager';
@@ -33,18 +24,8 @@ export function activate(context: vscode.ExtensionContext): void {
     console.log('AWS Workbench is now active!');
 
     try {
-        // 1. Activate original extensions' command registration and tree views
-        // These are registered in the same 'aws-workbench' sidebar container (multi-accordion)
-        s3_ext.activate(context);
-        lambda_ext.activate(context);
-        cloudwatch_ext.activate(context);
+        // 1. Activate access service (Status bar, profiles, etc.)
         access_ext.activate(context);
-        dynamodb_ext.activate(context);
-        glue_ext.activate(context);
-        iam_ext.activate(context);
-        sns_ext.activate(context);
-        sqs_ext.activate(context);
-        step_ext.activate(context);
 
         // 2. Initialize the Unified "Aws Workbench" Tree Provider
         const treeProvider = new WorkbenchTreeProvider(context);
@@ -62,6 +43,32 @@ export function activate(context: vscode.ExtensionContext): void {
         serviceManager.registerService(new SqsService(context));
         serviceManager.registerService(new StepfunctionsService(context));
 
+        // 4. Register Commands
+        context.subscriptions.push(
+            vscode.commands.registerCommand('aws-workbench.addResource', async () => {
+                const services = serviceManager.getAllServices();
+                const items = services.map(s => ({
+                    label: s.serviceId.toUpperCase(),
+                    description: `Add ${s.serviceId.toUpperCase()} resource`,
+                    service: s
+                }));
+
+                const selected = await vscode.window.showQuickPick(items, {
+                    placeHolder: 'Select AWS resource type to add'
+                });
+
+                if (selected) {
+                    await selected.service.addResource();
+                    treeProvider.refresh();
+                }
+            })
+        );
+
+        // 5. Register each service's commands
+        for (const service of serviceManager.getAllServices()) {
+            service.registerCommands(context, treeProvider);
+        }
+
         console.log('All AWS services activated successfully.');
     } catch (error) {
         console.error('Error activating AWS Workbench services:', error);
@@ -72,18 +79,8 @@ export function activate(context: vscode.ExtensionContext): void {
  * Deactivates the extension.
  */
 export function deactivate(): void {
-    // Call deactivate for each service if they export it
     try {
-        if ((s3_ext as any).deactivate) (s3_ext as any).deactivate();
-        if ((lambda_ext as any).deactivate) (lambda_ext as any).deactivate();
-        if ((cloudwatch_ext as any).deactivate) (cloudwatch_ext as any).deactivate();
-        if ((access_ext as any).deactivate) (access_ext as any).deactivate();
-        if ((dynamodb_ext as any).deactivate) (dynamodb_ext as any).deactivate();
-        if ((glue_ext as any).deactivate) (glue_ext as any).deactivate();
-        if ((iam_ext as any).deactivate) (iam_ext as any).deactivate();
-        if ((sns_ext as any).deactivate) (sns_ext as any).deactivate();
-        if ((sqs_ext as any).deactivate) (sqs_ext as any).deactivate();
-        if ((step_ext as any).deactivate) (step_ext as any).deactivate();
+        access_ext.deactivate();
     } catch (error) {
         console.error('Error deactivating AWS Workbench services:', error);
     }

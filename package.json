@@ -30,6 +30,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "aws-workbench.addResource",
+        "title": "Add AWS Resource",
+        "icon": "$(add)"
+      },
+      {
         "command": "S3TreeView.Refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
@@ -1249,1210 +1254,760 @@
     "menus": {
       "view/title": [
         {
-          "command": "S3TreeView.ShowOnlyFavorite",
-          "when": "view == S3TreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "S3TreeView.ShowHiddenNodes",
-          "when": "view == S3TreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "S3TreeView.Filter",
-          "when": "view == S3TreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "S3TreeView.AddBucket",
-          "when": "view == S3TreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "S3TreeView.SelectAwsProfile",
-          "when": "view == S3TreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "S3TreeView.Refresh",
-          "when": "view == S3TreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "S3TreeView.UpdateAwsEndPoint",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.SetAwsRegion",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.TestAwsConnection",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.ExportToYaml",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.ShowCommandHistory",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.OpenServiceAccessView",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.ActivatePro",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "S3TreeView.EnterLicenseKey",
-          "when": "view == S3TreeView",
-          "group": "other"
-        },
-        {
-          "command": "SqsTreeView.ShowOnlyFavorite",
-          "when": "view == SqsTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "SqsTreeView.ShowHiddenNodes",
-          "when": "view == SqsTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "SqsTreeView.Filter",
-          "when": "view == SqsTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "SqsTreeView.AddQueue",
-          "when": "view == SqsTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "SqsTreeView.SelectAwsProfile",
-          "when": "view == SqsTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "SqsTreeView.Refresh",
-          "when": "view == SqsTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "SqsTreeView.TestAwsConnection",
-          "when": "view == SqsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SqsTreeView.UpdateAwsEndPoint",
-          "when": "view == SqsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SqsTreeView.Donate",
-          "when": "view == SqsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SqsTreeView.BugAndNewFeature",
-          "when": "view == SqsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SnsTreeView.ShowOnlyFavorite",
-          "when": "view == SnsTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "SnsTreeView.ShowHiddenNodes",
-          "when": "view == SnsTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "SnsTreeView.Filter",
-          "when": "view == SnsTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "SnsTreeView.AddTopic",
-          "when": "view == SnsTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "SnsTreeView.SelectAwsProfile",
-          "when": "view == SnsTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "SnsTreeView.Refresh",
-          "when": "view == SnsTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "SnsTreeView.TestAwsConnection",
-          "when": "view == SnsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SnsTreeView.UpdateAwsEndPoint",
-          "when": "view == SnsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SnsTreeView.Donate",
-          "when": "view == SnsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "SnsTreeView.BugAndNewFeature",
-          "when": "view == SnsTreeView",
-          "group": "other"
-        },
-        {
-          "command": "CloudWatchTreeView.ShowOnlyFavorite",
-          "when": "view == CloudWatchTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "CloudWatchTreeView.Filter",
-          "when": "view == CloudWatchTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "CloudWatchTreeView.AddLogGroup",
-          "when": "view == CloudWatchTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "CloudWatchTreeView.AddLogGroupByName",
-          "when": "view == CloudWatchTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "CloudWatchTreeView.SelectAwsProfile",
-          "when": "view == CloudWatchTreeView",
-          "group": "navigation@5"
-        },
-        {
-          "command": "CloudWatchTreeView.Refresh",
-          "when": "view == CloudWatchTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "CloudWatchTreeView.UpdateAwsEndPoint",
-          "when": "view == CloudWatchTreeView",
-          "group": "other"
-        },
-        {
-          "command": "DynamodbTreeView.ShowOnlyFavorite",
-          "when": "view == DynamodbTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "DynamodbTreeView.ShowHiddenNodes",
-          "when": "view == DynamodbTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "DynamodbTreeView.Filter",
-          "when": "view == DynamodbTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "DynamodbTreeView.AddDynamodb",
-          "when": "view == DynamodbTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "DynamodbTreeView.SelectAwsProfile",
-          "when": "view == DynamodbTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "DynamodbTreeView.Refresh",
-          "when": "view == DynamodbTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "DynamodbTreeView.TestAwsConnection",
-          "when": "view == DynamodbTreeView",
-          "group": "other"
-        },
-        {
-          "command": "DynamodbTreeView.UpdateAwsEndPoint",
-          "when": "view == DynamodbTreeView",
-          "group": "other"
-        },
-        {
-          "command": "DynamodbTreeView.Donate",
-          "when": "view == DynamodbTreeView",
-          "group": "other"
-        },
-        {
-          "command": "DynamodbTreeView.BugAndNewFeature",
-          "when": "view == DynamodbTreeView",
-          "group": "other"
-        },
-        {
-          "command": "IamTreeView.ShowOnlyFavorite",
-          "when": "view == IamTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "IamTreeView.ShowHiddenNodes",
-          "when": "view == IamTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "IamTreeView.Filter",
-          "when": "view == IamTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "IamTreeView.AddIamRole",
-          "when": "view == IamTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "IamTreeView.SelectAwsProfile",
-          "when": "view == IamTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "IamTreeView.Refresh",
-          "when": "view == IamTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "IamTreeView.TestAwsConnection",
-          "when": "view == IamTreeView",
-          "group": "other"
-        },
-        {
-          "command": "IamTreeView.UpdateAwsEndPoint",
-          "when": "view == IamTreeView",
-          "group": "other"
-        },
-        {
-          "command": "IamTreeView.Donate",
-          "when": "view == IamTreeView",
-          "group": "other"
-        },
-        {
-          "command": "IamTreeView.BugAndNewFeature",
-          "when": "view == IamTreeView",
-          "group": "other"
-        },
-        {
-          "command": "StepFuncTreeView.ShowOnlyFavorite",
-          "when": "view == StepFuncTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "StepFuncTreeView.ShowHiddenNodes",
-          "when": "view == StepFuncTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "StepFuncTreeView.Filter",
-          "when": "view == StepFuncTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "StepFuncTreeView.AddStepFunc",
-          "when": "view == StepFuncTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "StepFuncTreeView.SelectAwsProfile",
-          "when": "view == StepFuncTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "StepFuncTreeView.Refresh",
-          "when": "view == StepFuncTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "StepFuncTreeView.TestAwsConnection",
-          "when": "view == StepFuncTreeView",
-          "group": "other"
-        },
-        {
-          "command": "StepFuncTreeView.UpdateAwsEndPoint",
-          "when": "view == StepFuncTreeView",
-          "group": "other"
-        },
-        {
-          "command": "StepFuncTreeView.Donate",
-          "when": "view == StepFuncTreeView",
-          "group": "other"
-        },
-        {
-          "command": "StepFuncTreeView.BugAndNewFeature",
-          "when": "view == StepFuncTreeView",
-          "group": "other"
-        },
-        {
-          "command": "GlueTreeView.ShowOnlyFavorite",
-          "when": "view == GlueTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "GlueTreeView.ShowHiddenNodes",
-          "when": "view == GlueTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "GlueTreeView.Filter",
-          "when": "view == GlueTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "GlueTreeView.AddGlueJob",
-          "when": "view == GlueTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "GlueTreeView.SelectAwsProfile",
-          "when": "view == GlueTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "GlueTreeView.Refresh",
-          "when": "view == GlueTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "GlueTreeView.TestAwsConnection",
-          "when": "view == GlueTreeView",
-          "group": "other"
-        },
-        {
-          "command": "GlueTreeView.UpdateAwsEndPoint",
-          "when": "view == GlueTreeView",
-          "group": "other"
-        },
-        {
-          "command": "GlueTreeView.Donate",
-          "when": "view == GlueTreeView",
-          "group": "other"
-        },
-        {
-          "command": "GlueTreeView.BugAndNewFeature",
-          "when": "view == GlueTreeView",
-          "group": "other"
-        },
-        {
-          "command": "LambdaTreeView.ShowOnlyFavorite",
-          "when": "view == LambdaTreeView",
-          "group": "navigation@1"
-        },
-        {
-          "command": "LambdaTreeView.ShowHiddenNodes",
-          "when": "view == LambdaTreeView",
-          "group": "navigation@2"
-        },
-        {
-          "command": "LambdaTreeView.Filter",
-          "when": "view == LambdaTreeView",
-          "group": "navigation@3"
-        },
-        {
-          "command": "LambdaTreeView.AddLambda",
-          "when": "view == LambdaTreeView",
-          "group": "navigation@4"
-        },
-        {
-          "command": "LambdaTreeView.SelectAwsProfile",
-          "when": "view == LambdaTreeView",
-          "group": "navigation@6"
-        },
-        {
-          "command": "LambdaTreeView.Refresh",
-          "when": "view == LambdaTreeView",
-          "group": "navigation@7"
-        },
-        {
-          "command": "LambdaTreeView.TestAwsConnection",
-          "when": "view == LambdaTreeView",
-          "group": "other"
-        },
-        {
-          "command": "LambdaTreeView.UpdateAwsEndPoint",
-          "when": "view == LambdaTreeView",
-          "group": "other"
-        },
-        {
-          "command": "LambdaTreeView.Donate",
-          "when": "view == LambdaTreeView",
-          "group": "other"
-        },
-        {
-          "command": "LambdaTreeView.BugAndNewFeature",
-          "when": "view == LambdaTreeView",
-          "group": "other"
+          "command": "aws-workbench.addResource",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "S3TreeView.RemoveBucket",
-          "when": "view == S3TreeView && viewItem =~ /#Bucket#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Bucket#/",
           "group": "Bucket"
         },
         {
           "command": "S3TreeView.Goto",
-          "when": "view == S3TreeView && viewItem =~ /#Bucket#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Bucket#/",
           "group": "Bucket"
         },
         {
           "command": "S3TreeView.RemoveShortcut",
-          "when": "view == S3TreeView && viewItem =~ /#Shortcut#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Shortcut#/",
           "group": "Shortcut"
         },
         {
           "command": "S3TreeView.AddShortcut",
-          "when": "view == S3TreeView && viewItem =~ /#Bucket#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Bucket#/",
           "group": "Shortcut"
         },
         {
           "command": "S3TreeView.CopyShortcut",
-          "when": "view == S3TreeView && viewItem =~ /#Shortcut#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Shortcut#/",
           "group": "Shortcut"
         },
         {
           "command": "S3TreeView.AddToFav",
-          "when": "view == S3TreeView && viewItem =~ /#!Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#!Fav#/",
           "group": "Filter"
         },
         {
           "command": "S3TreeView.DeleteFromFav",
-          "when": "view == S3TreeView && viewItem =~ /#Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Fav#/",
           "group": "Filter"
         },
         {
           "command": "S3TreeView.HideNode",
-          "when": "view == S3TreeView && viewItem =~ /#!Hidden#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#!Hidden#/",
           "group": "Filter"
         },
         {
           "command": "S3TreeView.UnHideNode",
-          "when": "view == S3TreeView && viewItem =~ /#Hidden#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Hidden#/",
           "group": "Filter"
         },
         {
           "command": "S3TreeView.ShowOnlyInThisProfile",
-          "when": "view == S3TreeView && viewItem =~ /#NoProfile#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#NoProfile#/",
           "group": "Filter"
         },
         {
           "command": "S3TreeView.ShowInAnyProfile",
-          "when": "view == S3TreeView && viewItem =~ /#Profile#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Profile#/",
           "group": "Filter"
         },
         {
           "command": "S3TreeView.RenameFolder",
-          "when": "view == S3TreeView && viewItem =~ /#Folder#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Folder#/",
           "group": "Folder"
         },
         {
           "command": "S3TreeView.RemoveFolder",
-          "when": "view == S3TreeView && viewItem =~ /#Folder#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Folder#/",
           "group": "Folder"
         },
         {
           "command": "S3TreeView.ShowS3Explorer",
-          "when": "view == S3TreeView",
+          "when": "view == AwsWorkbenchTree",
           "group": "inline"
         },
         {
           "command": "S3TreeView.ShowS3Search",
-          "when": "view == S3TreeView",
+          "when": "view == AwsWorkbenchTree",
           "group": "inline"
         },
         {
           "command": "S3TreeView.AskAI",
-          "when": "view == S3TreeView",
+          "when": "view == AwsWorkbenchTree",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.AddToFav",
-          "when": "view == SqsTreeView && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem == Queue",
           "group": "Filter"
         },
         {
           "command": "SqsTreeView.DeleteFromFav",
-          "when": "view == SqsTreeView && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem == Queue",
           "group": "Filter"
         },
         {
           "command": "SqsTreeView.HideNode",
-          "when": "view == SqsTreeView && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem == Queue",
           "group": "Filter"
         },
         {
           "command": "SqsTreeView.UnHideNode",
-          "when": "view == SqsTreeView && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem == Queue",
           "group": "Filter"
         },
         {
           "command": "SqsTreeView.RemoveQueue",
-          "when": "view == SqsTreeView && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem == Queue",
           "group": "Queue"
         },
         {
           "command": "SqsTreeView.Goto",
-          "when": "view == SqsTreeView && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem == Queue",
           "group": "Queue"
         },
         {
           "command": "SqsTreeView.SendMessage",
-          "when": "view == SqsTreeView && (viewItem == Queue || viewItem == Queue || viewItem == PublishAdhoc || viewItem == PublishFile)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Queue || viewItem == Queue || viewItem == PublishAdhoc || viewItem == PublishFile)",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.AddMessageFilePath",
-          "when": "view == SqsTreeView && viewItem == PublishGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == PublishGroup",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.ReceiveMessage",
-          "when": "view == SqsTreeView && viewItem == ReceiveGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == ReceiveGroup",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.DeleteAllMessages",
-          "when": "view == SqsTreeView && viewItem == ReceiveGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == ReceiveGroup",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.GetMessageCount",
-          "when": "view == SqsTreeView && viewItem == ReceiveGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == ReceiveGroup",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.PreviewMessage",
-          "when": "view == SqsTreeView && (viewItem == ReceivedMessage || viewItem == DeletedMessage)",
+          "when": "view == AwsWorkbenchTree && (viewItem == ReceivedMessage || viewItem == DeletedMessage)",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.DeleteMessage",
-          "when": "view == SqsTreeView && viewItem == ReceivedMessage",
+          "when": "view == AwsWorkbenchTree && viewItem == ReceivedMessage",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.PreviewPolicy",
-          "when": "view == SqsTreeView && viewItem == Policy",
+          "when": "view == AwsWorkbenchTree && viewItem == Policy",
           "group": "inline"
         },
         {
           "command": "SqsTreeView.RemoveMessageFilePath",
-          "when": "view == SqsTreeView && viewItem == PublishFile",
+          "when": "view == AwsWorkbenchTree && viewItem == PublishFile",
           "group": "inline"
         },
         {
           "command": "SnsTreeView.AddToFav",
-          "when": "view == SnsTreeView && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem == Topic",
           "group": "Filter"
         },
         {
           "command": "SnsTreeView.DeleteFromFav",
-          "when": "view == SnsTreeView && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem == Topic",
           "group": "Filter"
         },
         {
           "command": "SnsTreeView.HideNode",
-          "when": "view == SnsTreeView && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem == Topic",
           "group": "Filter"
         },
         {
           "command": "SnsTreeView.UnHideNode",
-          "when": "view == SnsTreeView && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem == Topic",
           "group": "Filter"
         },
         {
           "command": "SnsTreeView.RemoveTopic",
-          "when": "view == SnsTreeView && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem == Topic",
           "group": "Topic"
         },
         {
           "command": "SnsTreeView.Goto",
-          "when": "view == SnsTreeView && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem == Topic",
           "group": "Topic"
         },
         {
           "command": "SnsTreeView.PublishMessage",
-          "when": "view == SnsTreeView && (viewItem == Topic || viewItem == Topic || viewItem == PublishAdhoc || viewItem == PublishFile)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Topic || viewItem == Topic || viewItem == PublishAdhoc || viewItem == PublishFile)",
           "group": "inline"
         },
         {
           "command": "SnsTreeView.AddMessageFilePath",
-          "when": "view == SnsTreeView && viewItem == PublishGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == PublishGroup",
           "group": "inline"
         },
         {
           "command": "SnsTreeView.RemoveMessageFilePath",
-          "when": "view == SnsTreeView && viewItem == PublishFile",
+          "when": "view == AwsWorkbenchTree && viewItem == PublishFile",
           "group": "inline"
         },
         {
           "command": "SnsTreeView.GetSubscriptions",
-          "when": "view == SnsTreeView && viewItem == SubscriptionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == SubscriptionGroup",
           "group": "inline"
         },
         {
           "command": "CloudWatchTreeView.AddToFav",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#!Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#!Fav#/",
           "group": "Fav"
         },
         {
           "command": "CloudWatchTreeView.DeleteFromFav",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Fav#/",
           "group": "Fav"
         },
         {
           "command": "CloudWatchTreeView.RemoveLogGroup",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
           "group": "LogGroup"
         },
         {
           "command": "CloudWatchTreeView.AddLogStream",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "CloudWatchTreeView.RemoveLogStream",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogStream#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogStream#/",
           "group": "LogStream"
         },
         {
           "command": "CloudWatchTreeView.AddAllLogStreams",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "CloudWatchTreeView.AddLogStreamsByDate",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "CloudWatchTreeView.RemoveAllLogStreams",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "CloudWatchTreeView.ShowCloudWatchLogView",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogStream#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogStream#/",
           "group": "inline"
         },
         {
           "command": "CloudWatchTreeView.PinLogStream",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#LogStream#/ && viewItem =~ /#NotPinned#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogStream#/ && viewItem =~ /#NotPinned#/",
           "group": "inline@2"
         },
         {
           "command": "CloudWatchTreeView.RefreshDateNode",
-          "when": "view == CloudWatchTreeView && viewItem =~ /#Today#|#Yesterday#|#History#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Today#|#Yesterday#|#History#/",
           "group": "inline@1"
         },
         {
           "command": "DynamodbTreeView.AddToFav",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Filter"
         },
         {
           "command": "DynamodbTreeView.DeleteFromFav",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Filter"
         },
         {
           "command": "DynamodbTreeView.HideNode",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Filter"
         },
         {
           "command": "DynamodbTreeView.UnHideNode",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Filter"
         },
         {
           "command": "DynamodbTreeView.RemoveDynamodb",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Dynamodb"
         },
         {
           "command": "DynamodbTreeView.Goto",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Dynamodb"
         },
         {
           "command": "DynamodbTreeView.PrintDynamodb",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "inline"
         },
         {
           "command": "DynamodbTreeView.CreateTable",
-          "when": "view == DynamodbTreeView",
+          "when": "view == AwsWorkbenchTree",
           "group": "navigation@5"
         },
         {
           "command": "DynamodbTreeView.DeleteTable",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Dynamodb"
         },
         {
           "command": "DynamodbTreeView.EditCapacity",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Dynamodb"
         },
         {
           "command": "DynamodbTreeView.QueryTable",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Operations"
         },
         {
           "command": "DynamodbTreeView.ScanTable",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Operations"
         },
         {
           "command": "DynamodbTreeView.AddItem",
-          "when": "view == DynamodbTreeView && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
           "group": "Items"
         },
         {
           "command": "IamTreeView.AddToFav",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "Filter"
         },
         {
           "command": "IamTreeView.DeleteFromFav",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "Filter"
         },
         {
           "command": "IamTreeView.HideNode",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "Filter"
         },
         {
           "command": "IamTreeView.UnHideNode",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "Filter"
         },
         {
           "command": "IamTreeView.RemoveIamRole",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "IamRole"
         },
         {
           "command": "IamTreeView.Goto",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "IamRole"
         },
         {
           "command": "IamTreeView.PrintIamRole",
-          "when": "view == IamTreeView && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
           "group": "inline"
         },
         {
           "command": "IamTreeView.LoadPermissions",
-          "when": "view == IamTreeView && viewItem == PermissionsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == PermissionsGroup",
           "group": "inline"
         },
         {
           "command": "IamTreeView.ViewPolicy",
-          "when": "view == IamTreeView && viewItem == Permission",
+          "when": "view == AwsWorkbenchTree && viewItem == Permission",
           "group": "inline"
         },
         {
           "command": "IamTreeView.DownloadPolicy",
-          "when": "view == IamTreeView && viewItem == Permission",
+          "when": "view == AwsWorkbenchTree && viewItem == Permission",
           "group": "inline"
         },
         {
           "command": "IamTreeView.LoadTrustRelationships",
-          "when": "view == IamTreeView && viewItem == TrustRelationshipsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TrustRelationshipsGroup",
           "group": "inline"
         },
         {
           "command": "IamTreeView.ViewTrustRelationship",
-          "when": "view == IamTreeView && viewItem == TrustRelationship",
+          "when": "view == AwsWorkbenchTree && viewItem == TrustRelationship",
           "group": "inline"
         },
         {
           "command": "IamTreeView.DownloadTrustRelationship",
-          "when": "view == IamTreeView && viewItem == TrustRelationship",
+          "when": "view == AwsWorkbenchTree && viewItem == TrustRelationship",
           "group": "inline"
         },
         {
           "command": "IamTreeView.LoadTags",
-          "when": "view == IamTreeView && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
           "group": "inline"
         },
         {
           "command": "IamTreeView.AddTag",
-          "when": "view == IamTreeView && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
           "group": "inline"
         },
         {
           "command": "IamTreeView.UpdateTag",
-          "when": "view == IamTreeView && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem == Tag",
           "group": "inline"
         },
         {
           "command": "IamTreeView.RemoveTag",
-          "when": "view == IamTreeView && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem == Tag",
           "group": "inline"
         },
         {
           "command": "IamTreeView.LoadInfo",
-          "when": "view == IamTreeView && viewItem == InfoGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == InfoGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.AddToFav",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "Filter"
         },
         {
           "command": "StepFuncTreeView.DeleteFromFav",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "Filter"
         },
         {
           "command": "StepFuncTreeView.HideNode",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "Filter"
         },
         {
           "command": "StepFuncTreeView.UnHideNode",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "Filter"
         },
         {
           "command": "StepFuncTreeView.RemoveStepFunc",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "StepFunc"
         },
         {
           "command": "StepFuncTreeView.Goto",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "StepFunc"
         },
         {
           "command": "StepFuncTreeView.TriggerStepFunc",
-          "when": "view == StepFuncTreeView && (viewItem == StepFunc || viewItem == TriggerConfig || viewItem == TriggerSavedPayload || viewItem == TriggerWithPayload || viewItem == TriggerFilePayload || viewItem == TriggerNoPayload)",
+          "when": "view == AwsWorkbenchTree && (viewItem == StepFunc || viewItem == TriggerConfig || viewItem == TriggerSavedPayload || viewItem == TriggerWithPayload || viewItem == TriggerFilePayload || viewItem == TriggerNoPayload)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.ViewLatestLog",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.PrintStepFunc",
-          "when": "view == StepFuncTreeView && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.SetCodePath",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.UnsetCodePath",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.OpenCodeFile",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.DownloadDefinitionFromAWS",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.CompareLocalWithAWS",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.ViewCodeGraph",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.UpdateStepFuncCodes",
-          "when": "view == StepFuncTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.AddPayloadPath",
-          "when": "view == StepFuncTreeView && viewItem == TriggerGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TriggerGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.RemovePayloadPath",
-          "when": "view == StepFuncTreeView && viewItem == TriggerFilePayload",
+          "when": "view == AwsWorkbenchTree && viewItem == TriggerFilePayload",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.RefreshLogs",
-          "when": "view == StepFuncTreeView && viewItem == LogGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == LogGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.RefreshExecutions",
-          "when": "view == StepFuncTreeView && viewItem == ExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == ExecutionGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.RefreshRunningExecutions",
-          "when": "view == StepFuncTreeView && viewItem == RunningExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == RunningExecutionGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.RefreshSuccessfulExecutions",
-          "when": "view == StepFuncTreeView && viewItem == SuccessfulExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == SuccessfulExecutionGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.RefreshFailedExecutions",
-          "when": "view == StepFuncTreeView && viewItem == FailedExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == FailedExecutionGroup",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.ViewLog",
-          "when": "view == StepFuncTreeView && viewItem == LogStream",
+          "when": "view == AwsWorkbenchTree && viewItem == LogStream",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.ViewResponsePayload",
-          "when": "view == StepFuncTreeView && viewItem == ResponsePayload",
+          "when": "view == AwsWorkbenchTree && viewItem == ResponsePayload",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.ViewExecutionDetails",
-          "when": "view == StepFuncTreeView && viewItem == Execution",
+          "when": "view == AwsWorkbenchTree && viewItem == Execution",
           "group": "inline"
         },
         {
           "command": "StepFuncTreeView.ViewExecutionLog",
-          "when": "view == StepFuncTreeView && viewItem == Execution",
+          "when": "view == AwsWorkbenchTree && viewItem == Execution",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.AddToFav",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "Filter"
         },
         {
           "command": "GlueTreeView.DeleteFromFav",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "Filter"
         },
         {
           "command": "GlueTreeView.HideNode",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "Filter"
         },
         {
           "command": "GlueTreeView.UnHideNode",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "Filter"
         },
         {
           "command": "GlueTreeView.RemoveGlueJob",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "Glue"
         },
         {
           "command": "GlueTreeView.Goto",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "Glue"
         },
         {
           "command": "GlueTreeView.RunJob",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.ViewLatestLog",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.PrintResource",
-          "when": "view == GlueTreeView && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem == Job",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.RefreshLogs",
-          "when": "view == GlueTreeView && viewItem == LogGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == LogGroup",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.RefreshRuns",
-          "when": "view == GlueTreeView && viewItem == RunGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == RunGroup",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.RefreshJobInfo",
-          "when": "view == GlueTreeView && viewItem == Info",
+          "when": "view == AwsWorkbenchTree && viewItem == Info",
           "group": "inline"
         },
         {
           "command": "GlueTreeView.ViewLog",
-          "when": "view == GlueTreeView && viewItem == LogStream",
+          "when": "view == AwsWorkbenchTree && viewItem == LogStream",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.AddToFav",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "Filter"
         },
         {
           "command": "LambdaTreeView.DeleteFromFav",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "Filter"
         },
         {
           "command": "LambdaTreeView.HideNode",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "Filter"
         },
         {
           "command": "LambdaTreeView.UnHideNode",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "Filter"
         },
         {
           "command": "LambdaTreeView.RemoveLambda",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "Lambda"
         },
         {
           "command": "LambdaTreeView.Goto",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "Lambda"
         },
         {
           "command": "LambdaTreeView.TriggerLambda",
-          "when": "view == LambdaTreeView && (viewItem == Lambda || viewItem == TriggerConfig || viewItem == TriggerSavedPayload || viewItem == TriggerWithPayload || viewItem == TriggerFilePayload || viewItem == TriggerNoPayload)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Lambda || viewItem == TriggerConfig || viewItem == TriggerSavedPayload || viewItem == TriggerWithPayload || viewItem == TriggerFilePayload || viewItem == TriggerNoPayload)",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.ViewLatestLog",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.PrintLambda",
-          "when": "view == LambdaTreeView && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.SetCodePath",
-          "when": "view == LambdaTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.UnsetCodePath",
-          "when": "view == LambdaTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.UpdateLambdaCodes",
-          "when": "view == LambdaTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.DownloadLambdaCode",
-          "when": "view == LambdaTreeView && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.AddPayloadPath",
-          "when": "view == LambdaTreeView && viewItem == TriggerGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TriggerGroup",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.RemovePayloadPath",
-          "when": "view == LambdaTreeView && viewItem == TriggerFilePayload",
+          "when": "view == AwsWorkbenchTree && viewItem == TriggerFilePayload",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.RefreshLogs",
-          "when": "view == LambdaTreeView && viewItem == LogGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == LogGroup",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.ViewLog",
-          "when": "view == LambdaTreeView && viewItem == LogStream",
+          "when": "view == AwsWorkbenchTree && viewItem == LogStream",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.ViewResponsePayload",
-          "when": "view == LambdaTreeView && viewItem == ResponsePayload",
+          "when": "view == AwsWorkbenchTree && viewItem == ResponsePayload",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.LoadEnvironmentVariables",
-          "when": "view == LambdaTreeView && viewItem == EnvironmentVariableGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariableGroup",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.AddEnvironmentVariable",
-          "when": "view == LambdaTreeView && viewItem == EnvironmentVariableGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariableGroup",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.UpdateEnvironmentVariable",
-          "when": "view == LambdaTreeView && viewItem == EnvironmentVariable",
+          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariable",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.RemoveEnvironmentVariable",
-          "when": "view == LambdaTreeView && viewItem == EnvironmentVariable",
+          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariable",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.LoadTags",
-          "when": "view == LambdaTreeView && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.AddTag",
-          "when": "view == LambdaTreeView && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.UpdateTag",
-          "when": "view == LambdaTreeView && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem == Tag",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.RemoveTag",
-          "when": "view == LambdaTreeView && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem == Tag",
           "group": "inline"
         },
         {
           "command": "LambdaTreeView.LoadInfo",
-          "when": "view == LambdaTreeView && viewItem == InfoGroup",
+          "when": "view == AwsWorkbenchTree && viewItem == InfoGroup",
           "group": "inline"
         }
       ]
@@ -2463,51 +2018,6 @@
           "id": "aws-workbench",
           "title": "Aws Workbench",
           "icon": "media/aws-workbench-logo-activitybar.png"
-        },
-        {
-          "id": "aws-s3-vscode-extension",
-          "title": "Aws S3",
-          "icon": "media/extension/aws-s3-logo-activitybar.png"
-        },
-        {
-          "id": "aws-sqs-vscode-extension",
-          "title": "Aws Sqs",
-          "icon": "media/aws-sqs-logo-activitybar.png"
-        },
-        {
-          "id": "aws-sns-vscode-extension",
-          "title": "Aws Sns",
-          "icon": "media/aws-sns-logo-activitybar.png"
-        },
-        {
-          "id": "aws-cloudwatch-vscode-extension",
-          "title": "Aws Cloud Watch",
-          "icon": "media/aws-cloudwatch-logo-activitybar.png"
-        },
-        {
-          "id": "aws-dynamodb-vscode-extension",
-          "title": "Aws Dynamodb",
-          "icon": "media/aws-dynamodb-logo-activitybar.png"
-        },
-        {
-          "id": "aws-iam-vscode-extension",
-          "title": "Aws Iam",
-          "icon": "media/aws-iam-logo-activitybar.png"
-        },
-        {
-          "id": "aws-step-functions-vscode-extension",
-          "title": "Aws Step Functions",
-          "icon": "media/aws-step-functions-logo-activitybar.png"
-        },
-        {
-          "id": "aws-glue-vscode-extension",
-          "title": "Aws Glue",
-          "icon": "media/aws-glue-logo-activitybar.png"
-        },
-        {
-          "id": "aws-lambda-vscode-extension",
-          "title": "Aws Lambda",
-          "icon": "media/aws-lambda-logo-activitybar.png"
         }
       ]
     },
@@ -2517,90 +2027,13 @@
           "id": "AwsWorkbenchTree",
           "name": "Aws Workbench",
           "icon": "media/aws-workbench-logo-activitybar.png"
-        },
-        {
-          "id": "S3TreeView",
-          "name": "Aws S3",
-          "icon": "media/s3/extension/aws-s3-logo-activitybar.png"
-        },
-        {
-          "id": "SqsTreeView",
-          "name": "Aws Sqs",
-          "icon": "media/sqs/aws-sqs-logo-activitybar.png"
-        },
-        {
-          "id": "SnsTreeView",
-          "name": "Aws Sns",
-          "icon": "media/sns/aws-sns-logo-activitybar.png"
-        },
-        {
-          "id": "CloudWatchTreeView",
-          "name": "Aws Cloud Watch",
-          "icon": "media/cloudwatch/aws-cloudwatch-logo-activitybar.png"
-        },
-        {
-          "id": "DynamodbTreeView",
-          "name": "Aws Dynamodb",
-          "icon": "media/dynamodb/aws-dynamodb-logo-activitybar.png"
-        },
-        {
-          "id": "IamTreeView",
-          "name": "Aws Iam Roles",
-          "icon": "media/iam/aws-iam-logo-activitybar.png"
-        },
-        {
-          "id": "StepFuncTreeView",
-          "name": "Aws Step Functions",
-          "icon": "media/step-functions/aws-step-functions-logo-activitybar.png"
-        },
-        {
-          "id": "GlueTreeView",
-          "name": "Aws Glue",
-          "icon": "media/glue/aws-glue-logo-activitybar.png"
-        },
-        {
-          "id": "LambdaTreeView",
-          "name": "Aws Lambda",
-          "icon": "media/lambda/aws-lambda-logo-activitybar.png"
         }
       ]
     },
     "viewsWelcome": [
       {
-        "view": "S3TreeView",
-        "contents": "Please click [+] to add your buckets. \n [Add Bucket](command:S3TreeView.AddBucket) \n Leave bucket name empty to get all your buckets. You can enter bucket name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Test Aws Connection](command:S3TreeView.TestAwsConnection) \n [Update Aws EndPoint](command:S3TreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "SqsTreeView",
-        "contents": "Please click [+] to add your SQS Queue. \n [Add Queue](command:SqsTreeView.AddQueue) \n Leave Queue name empty to get all your topics. You can enter queue name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update Aws EndPoint](command:SqsTreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "SnsTreeView",
-        "contents": "Please click [+] to add your SNS Topics. \n [Add Topic](command:SnsTreeView.AddTopic) \n Leave Topic name empty to get all your topics. You can enter topic name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update Aws EndPoint](command:SnsTreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "CloudWatchTreeView",
-        "contents": "\n\n\n\n Please wait... \n\n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU)"
-      },
-      {
-        "view": "DynamodbTreeView",
-        "contents": "Please click [+] to add your DynamoDB Tables. \n [Add DynamoDB Table](command:DynamodbTreeView.AddDynamodb) \n Leave table name empty to get all your tables. You can enter table name partially. \n If you cannot connect after a while, check your AWS Credentials, Network and Proxy settings. \n\n\n\n To access AWS, you need to configure AWS credentials. \n For more details on AWS Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a YouTube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update AWS Endpoint](command:DynamodbTreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "IamTreeView",
-        "contents": "Please click [+] to add IAM Roles. \n [Add IAM Role](command:IamTreeView.AddIamRole) \n Leave role name empty to get all your roles. You can enter role name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update Aws EndPoint](command:IamTreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "StepFuncTreeView",
-        "contents": "Please click [+] to add your Step Functions. \n [Add StepFunc](command:StepFuncTreeView.AddStepFunc) \n Leave Step Function name empty to get all your Step Functions. You can enter Step Function name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update Aws EndPoint](command:StepFuncTreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "GlueTreeView",
-        "contents": "Please click [+] to add your Glue Jobs. \n [Add Glue Job](command:GlueTreeView.AddGlueJob) \n Leave Job name empty to get all your Glue Jobs. You can enter Job name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update Aws EndPoint](command:GlueTreeView.UpdateAwsEndPoint)"
-      },
-      {
-        "view": "LambdaTreeView",
-        "contents": "Please click [+] to add your lambda Functions. \n [Add Lambda](command:LambdaTreeView.AddLambda) \n Leave lambda name empty to get all your buckets. You can enter lambda name partially. \n If you can not connect after a while check your Aws Credentials, Network and Proxy settings. \n\n\n\n To Access Aws, you need to configure aws credentials. \n For more detail on Aws Credentials [Click Here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) \n For a Youtube Tutorial [Click Here](https://www.youtube.com/watch?v=SON8sY1iOBU) \n [Update Aws EndPoint](command:LambdaTreeView.UpdateAwsEndPoint)"
+        "view": "AwsWorkbenchTree",
+        "contents": "Welcome to AWS Workbench! \n Click the [+] button in the title bar to add AWS resources like S3 buckets, Lambda functions, etc. \n\n To Access AWS, you need to configure AWS credentials. \n [Configure Credentials](command:aws-access-vscode-extension.ListAwsProfiles)"
       }
     ]
   },

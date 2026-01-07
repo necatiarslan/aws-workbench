@@ -9,7 +9,7 @@ import { CloudWatchLogView } from '../cloudwatch/CloudWatchLogView';
 export class LambdaTreeView {
 
 	public static Current: LambdaTreeView;
-	public view: vscode.TreeView<LambdaTreeItem>;
+	public view?: vscode.TreeView<LambdaTreeItem>;
 	public treeDataProvider: LambdaTreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -28,9 +28,9 @@ export class LambdaTreeView {
 		this.context = context;
 		this.LoadState();
 		this.treeDataProvider = new LambdaTreeDataProvider();
-		this.view = vscode.window.createTreeView('LambdaTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('LambdaTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 		this.SetFilterMessage();
 	}
 
@@ -151,7 +151,7 @@ export class LambdaTreeView {
 	}
 
 	async SetViewTitle(){
-		this.view.title = "Aws Lambda";
+		if (this.view) { this.view.title = "Aws Lambda"; }
 	}
 
 	SaveState() {
@@ -244,6 +244,7 @@ export class LambdaTreeView {
 	}
 
 	async SetFilterMessage(){
+		if (!this.view) { return; }
 		if(this.LambdaList.length > 0)
 		{
 			this.view.message = 

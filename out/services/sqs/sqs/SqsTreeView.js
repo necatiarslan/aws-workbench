@@ -25,9 +25,9 @@ class SqsTreeView {
         this.context = context;
         this.LoadState();
         this.treeDataProvider = new SqsTreeDataProvider_1.SqsTreeDataProvider();
-        this.view = vscode.window.createTreeView('SqsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('SqsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
         this.SetFilterMessage();
     }
     async TestAwsConnection() {
@@ -129,7 +129,9 @@ class SqsTreeView {
         this.SaveState();
     }
     async SetViewTitle() {
-        this.view.title = "Aws Sqs";
+        if (this.view) {
+            this.view.title = "Aws Sqs";
+        }
     }
     SaveState() {
         ui.logToOutput('SqsTreeView.saveState Started');
@@ -215,6 +217,9 @@ class SqsTreeView {
         }
     }
     async SetFilterMessage() {
+        if (!this.view) {
+            return;
+        }
         if (this.QueueList.length > 0) {
             this.view.message =
                 await this.GetFilterProfilePrompt()

@@ -29,9 +29,9 @@ class S3TreeView {
         this.context = context;
         this.treeDataProvider = new S3TreeDataProvider_1.S3TreeDataProvider();
         this.LoadState();
-        this.view = vscode.window.createTreeView('S3TreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('S3TreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
         this.SetFilterMessage();
     }
     async TestAwsConnection() {
@@ -159,7 +159,9 @@ class S3TreeView {
         this.SaveState();
     }
     async SetViewTitle() {
-        this.view.title = "Aws S3";
+        if (this.view) {
+            this.view.title = "Aws S3";
+        }
     }
     SaveState() {
         ui.logToOutput('S3TreeView.saveState Started');
@@ -242,6 +244,9 @@ class S3TreeView {
         }
     }
     async SetFilterMessage() {
+        if (!this.view) {
+            return;
+        }
         if (this.treeDataProvider.BucketList.length > 0) {
             this.view.message =
                 await this.GetFilterProfilePrompt()

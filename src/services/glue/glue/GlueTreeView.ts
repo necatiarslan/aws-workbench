@@ -9,7 +9,7 @@ import { CloudWatchLogView } from '../cloudwatch/CloudWatchLogView';
 export class GlueTreeView {
 
 	public static Current: GlueTreeView;
-	public view: vscode.TreeView<GlueTreeItem>;
+	public view?: vscode.TreeView<GlueTreeItem>;
 	public treeDataProvider: GlueTreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -27,9 +27,9 @@ export class GlueTreeView {
 		this.context = context;
 		this.LoadState();
 		this.treeDataProvider = new GlueTreeDataProvider();
-		this.view = vscode.window.createTreeView('GlueTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('GlueTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 	}
 
 	async TestAwsConnection(){

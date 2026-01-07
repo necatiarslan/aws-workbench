@@ -27,9 +27,9 @@ class LambdaTreeView {
         this.context = context;
         this.LoadState();
         this.treeDataProvider = new LambdaTreeDataProvider_1.LambdaTreeDataProvider();
-        this.view = vscode.window.createTreeView('LambdaTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('LambdaTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
         this.SetFilterMessage();
     }
     async TestAwsConnection() {
@@ -131,7 +131,9 @@ class LambdaTreeView {
         this.SaveState();
     }
     async SetViewTitle() {
-        this.view.title = "Aws Lambda";
+        if (this.view) {
+            this.view.title = "Aws Lambda";
+        }
     }
     SaveState() {
         ui.logToOutput('LambdaTreeView.saveState Started');
@@ -222,6 +224,9 @@ class LambdaTreeView {
         }
     }
     async SetFilterMessage() {
+        if (!this.view) {
+            return;
+        }
         if (this.LambdaList.length > 0) {
             this.view.message =
                 await this.GetFilterProfilePrompt()

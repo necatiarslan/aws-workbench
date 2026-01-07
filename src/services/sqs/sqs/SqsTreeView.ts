@@ -8,7 +8,7 @@ import * as api from '../common/API';
 export class SqsTreeView {
 
 	public static Current: SqsTreeView;
-	public view: vscode.TreeView<SqsTreeItem>;
+	public view?: vscode.TreeView<SqsTreeItem>;
 	public treeDataProvider: SqsTreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -26,9 +26,9 @@ export class SqsTreeView {
 		this.context = context;
 		this.LoadState();
 		this.treeDataProvider = new SqsTreeDataProvider();
-		this.view = vscode.window.createTreeView('SqsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('SqsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 		this.SetFilterMessage();
 	}
 
@@ -149,7 +149,7 @@ export class SqsTreeView {
 	}
 
 	async SetViewTitle(){
-		this.view.title = "Aws Sqs";
+		if (this.view) { this.view.title = "Aws Sqs"; }
 	}
 
 	SaveState() {
@@ -238,6 +238,7 @@ export class SqsTreeView {
 	}
 
 	async SetFilterMessage(){
+		if (!this.view) { return; }
 		if(this.QueueList.length > 0)
 		{
 			this.view.message = 

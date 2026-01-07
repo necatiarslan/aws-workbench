@@ -24,9 +24,9 @@ class IamTreeView {
         this.context = context;
         this.LoadState();
         this.treeDataProvider = new IamTreeDataProvider_1.IamTreeDataProvider();
-        this.view = vscode.window.createTreeView('IamTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('IamTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
         this.SetFilterMessage();
     }
     async TestAwsConnection() {
@@ -128,7 +128,9 @@ class IamTreeView {
         this.SaveState();
     }
     async SetViewTitle() {
-        this.view.title = "";
+        if (this.view) {
+            this.view.title = "";
+        }
     }
     SaveState() {
         ui.logToOutput('IamTreeView.saveState Started');
@@ -209,6 +211,9 @@ class IamTreeView {
         }
     }
     async SetFilterMessage() {
+        if (!this.view) {
+            return;
+        }
         if (this.IamRoleList.length > 0) {
             this.view.message =
                 await this.GetFilterProfilePrompt()

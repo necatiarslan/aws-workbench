@@ -23,9 +23,9 @@ class CloudWatchTreeView {
         this.context = context;
         this.treeDataProvider = new CloudWatchTreeDataProvider_1.CloudWatchTreeDataProvider();
         this.LoadState();
-        this.view = vscode.window.createTreeView('CloudWatchTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('CloudWatchTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
         CloudWatchTreeView.Current = this;
         this.SetFilterMessage();
     }
@@ -85,7 +85,9 @@ class CloudWatchTreeView {
         this.SaveState();
     }
     async SetViewTitle() {
-        this.view.title = "Aws Cloud Watch";
+        if (this.view) {
+            this.view.title = "Aws Cloud Watch";
+        }
     }
     SaveState() {
         ui.logToOutput('CloudWatchTreeView.saveState Started');
@@ -142,7 +144,9 @@ class CloudWatchTreeView {
         }
     }
     SetFilterMessage() {
-        this.view.message = "Profile:" + this.AwsProfile + " " + this.GetBoolenSign(this.isShowOnlyFavorite) + "Fav, " + this.FilterString;
+        if (this.view) {
+            this.view.message = "Profile:" + this.AwsProfile + " " + this.GetBoolenSign(this.isShowOnlyFavorite) + "Fav, " + this.FilterString;
+        }
     }
     GetBoolenSign(variable) {
         return variable ? "✓" : "𐄂";

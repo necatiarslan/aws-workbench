@@ -27,9 +27,9 @@ class GlueTreeView {
         this.context = context;
         this.LoadState();
         this.treeDataProvider = new GlueTreeDataProvider_1.GlueTreeDataProvider();
-        this.view = vscode.window.createTreeView('GlueTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('GlueTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
     }
     async TestAwsConnection() {
         let response = await api.TestAwsCredentials();

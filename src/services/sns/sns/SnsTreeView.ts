@@ -8,7 +8,7 @@ import * as api from '../common/API';
 export class SnsTreeView {
 
 	public static Current: SnsTreeView;
-	public view: vscode.TreeView<SnsTreeItem>;
+	public view?: vscode.TreeView<SnsTreeItem>;
 	public treeDataProvider: SnsTreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -26,9 +26,9 @@ export class SnsTreeView {
 		this.context = context;
 		this.LoadState();
 		this.treeDataProvider = new SnsTreeDataProvider();
-		this.view = vscode.window.createTreeView('SnsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('SnsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 		this.SetFilterMessage();
 	}
 
@@ -149,7 +149,7 @@ export class SnsTreeView {
 	}
 
 	async SetViewTitle(){
-		this.view.title = "Aws Sns";
+		if (this.view) { this.view.title = "Aws Sns"; }
 	}
 
 	SaveState() {
@@ -238,13 +238,14 @@ export class SnsTreeView {
 	}
 
 	async SetFilterMessage(){
+		if (!this.view) { return; }
 		if(this.TopicList.length > 0)
 		{
 			this.view.message = 
 			await this.GetFilterProfilePrompt()
 			+ this.GetBoolenSign(this.isShowOnlyFavorite) + "Fav, " 
 			+ this.GetBoolenSign(this.isShowHiddenNodes) + "Hidden, "
-			+ this.FilterString;
+			+ this.FilterString;	
 		}
 	}
 

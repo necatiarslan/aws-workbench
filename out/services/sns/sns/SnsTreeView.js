@@ -25,9 +25,9 @@ class SnsTreeView {
         this.context = context;
         this.LoadState();
         this.treeDataProvider = new SnsTreeDataProvider_1.SnsTreeDataProvider();
-        this.view = vscode.window.createTreeView('SnsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        // this.view = vscode.window.createTreeView('SnsTreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         this.Refresh();
-        context.subscriptions.push(this.view);
+        // if (this.view) { context.subscriptions.push(this.view); }
         this.SetFilterMessage();
     }
     async TestAwsConnection() {
@@ -129,7 +129,9 @@ class SnsTreeView {
         this.SaveState();
     }
     async SetViewTitle() {
-        this.view.title = "Aws Sns";
+        if (this.view) {
+            this.view.title = "Aws Sns";
+        }
     }
     SaveState() {
         ui.logToOutput('SnsTreeView.saveState Started');
@@ -215,6 +217,9 @@ class SnsTreeView {
         }
     }
     async SetFilterMessage() {
+        if (!this.view) {
+            return;
+        }
         if (this.TopicList.length > 0) {
             this.view.message =
                 await this.GetFilterProfilePrompt()

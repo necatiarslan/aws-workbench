@@ -11,7 +11,7 @@ import { Telemetry } from '../common/Telemetry';
 export class S3TreeView {
 
 	public static Current: S3TreeView | undefined;
-	public view: vscode.TreeView<S3TreeItem>;
+	public view?: vscode.TreeView<S3TreeItem>;
 	public treeDataProvider: S3TreeDataProvider;
 	public context: vscode.ExtensionContext;
 	public FilterString: string = "";
@@ -29,9 +29,9 @@ export class S3TreeView {
 		this.context = context;
 		this.treeDataProvider = new S3TreeDataProvider();
 		this.LoadState();
-		this.view = vscode.window.createTreeView('S3TreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+		// this.view = vscode.window.createTreeView('S3TreeView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		this.Refresh();
-		context.subscriptions.push(this.view);
+		// if (this.view) { context.subscriptions.push(this.view); }
 		this.SetFilterMessage();
 	}
 
@@ -175,7 +175,7 @@ export class S3TreeView {
 	}
 
 	async SetViewTitle(){
-		this.view.title = "Aws S3";
+		if (this.view) { this.view.title = "Aws S3"; }
 	}
 
 	SaveState() {
@@ -280,6 +280,7 @@ export class S3TreeView {
 	}
 
 	async SetFilterMessage(){
+		if (!this.view) { return; }
 		if(this.treeDataProvider.BucketList.length > 0)
 		{
 			this.view.message = 
