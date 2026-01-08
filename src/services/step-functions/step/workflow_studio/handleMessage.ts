@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode';
 import { Message, Command, MessageType, WebviewContext } from './types';
-import * as ui from '../../common/UI';
+import * as ui from '../../../../common/UI';
 
 /**
  * Handles messages from the webview

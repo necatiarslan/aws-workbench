@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const SnsTreeDataProvider_1 = require("./sns/SnsTreeDataProvider");
 const SnsTreeItem_1 = require("./sns/SnsTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class SnsService {
     static Instance;

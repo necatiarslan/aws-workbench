@@ -4,7 +4,7 @@ import { SqsTreeDataProvider } from './sqs/SqsTreeDataProvider';
 import { SqsTreeItem, TreeItemType } from './sqs/SqsTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class SqsService implements IService {

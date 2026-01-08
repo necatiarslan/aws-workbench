@@ -4,7 +4,7 @@ import { SnsTreeDataProvider } from './sns/SnsTreeDataProvider';
 import { SnsTreeItem, TreeItemType } from './sns/SnsTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class SnsService implements IService {

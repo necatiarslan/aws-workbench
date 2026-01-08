@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 import * as fs from 'fs';
 import { StepFuncStudioView } from './StepFuncStudioView';
 

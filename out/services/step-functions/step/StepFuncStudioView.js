@@ -8,7 +8,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepFuncStudioView = exports.StepFuncStudioEditorProvider = void 0;
 const vscode = require("vscode");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const https = require("https");
 const crypto = require("crypto");
 var WorkflowMode;

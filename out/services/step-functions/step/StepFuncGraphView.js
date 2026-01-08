@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepFuncGraphView = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const fs = require("fs");
 const StepFuncStudioView_1 = require("./StepFuncStudioView");
 class StepFuncGraphView {

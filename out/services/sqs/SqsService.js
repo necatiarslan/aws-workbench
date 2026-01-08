@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const SqsTreeDataProvider_1 = require("./sqs/SqsTreeDataProvider");
 const SqsTreeItem_1 = require("./sqs/SqsTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class SqsService {
     static Instance;

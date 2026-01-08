@@ -5,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleMessage = handleMessage;
 const types_1 = require("./types");
-const ui = require("../../common/UI");
+const ui = require("../../../../common/UI");
 /**
  * Handles messages from the webview
  * @param message The message received from the webview

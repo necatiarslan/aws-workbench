@@ -4,7 +4,7 @@ import { StepFuncTreeDataProvider } from './step/StepFuncTreeDataProvider';
 import { StepFuncTreeItem, TreeItemType } from './step/StepFuncTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class StepfunctionsService implements IService {

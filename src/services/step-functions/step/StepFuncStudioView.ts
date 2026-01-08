@@ -6,7 +6,7 @@
  */
 
 import * as vscode from 'vscode';
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 import * as https from 'https';
 import * as crypto from 'crypto';
 

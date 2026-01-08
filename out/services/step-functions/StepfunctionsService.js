@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const StepFuncTreeDataProvider_1 = require("./step/StepFuncTreeDataProvider");
 const StepFuncTreeItem_1 = require("./step/StepFuncTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class StepfunctionsService {
     static Instance;
