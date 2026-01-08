@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = require("vscode");
-const access_ext = require("./services/access/extension");
 const WorkbenchTreeProvider_1 = require("./tree/WorkbenchTreeProvider");
 const ServiceManager_1 = require("./services/ServiceManager");
 const S3Service_1 = require("./services/s3/S3Service");
@@ -15,6 +14,7 @@ const IamService_1 = require("./services/iam/IamService");
 const SnsService_1 = require("./services/sns/SnsService");
 const SqsService_1 = require("./services/sqs/SqsService");
 const StepfunctionsService_1 = require("./services/step-functions/StepfunctionsService");
+const AccessService_1 = require("./services/access/AccessService");
 /**
  * Activates the AWS Workbench extension.
  * Consolidates activation of all sub-services.
@@ -24,17 +24,16 @@ const StepfunctionsService_1 = require("./services/step-functions/StepfunctionsS
 function activate(context) {
     console.log('AWS Workbench is now active!');
     try {
-        // 1. Activate access service (Status bar, profiles, etc.)
-        access_ext.activate(context);
-        // 2. Initialize the Unified "Aws Workbench" Tree Provider
+        // 1. Initialize the Unified "Aws Workbench" Tree Provider
         const treeProvider = new WorkbenchTreeProvider_1.WorkbenchTreeProvider(context);
         const treeView = vscode.window.createTreeView('AwsWorkbenchTree', {
             treeDataProvider: treeProvider,
             showCollapseAll: true
         });
         context.subscriptions.push(treeView);
-        // 3. Register our Service wrappers for the Unified Tree to fetch children from
+        // 2. Register our Service wrappers for the Unified Tree to fetch children from
         const serviceManager = ServiceManager_1.ServiceManager.Instance;
+        serviceManager.registerService(new AccessService_1.AccessService(context));
         serviceManager.registerService(new S3Service_1.S3Service(context));
         serviceManager.registerService(new LambdaService_1.LambdaService(context));
         serviceManager.registerService(new CloudWatchService_1.CloudWatchService(context));
@@ -73,10 +72,10 @@ function activate(context) {
         }));
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.Refresh', () => treeProvider.refresh()));
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
-            vscode.commands.executeCommand('aws-access-vscode-extension.TestAwsConnectivity');
+            vscode.commands.executeCommand('aws-workbench.access.TestAwsConnectivity');
         }));
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
-            vscode.commands.executeCommand('aws-access-vscode-extension.SetActiveProfile');
+            vscode.commands.executeCommand('aws-workbench.access.SetActiveProfile');
         }));
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.Filter', () => {
             vscode.window.showInformationMessage('Filter command not implemented yet.');
@@ -108,7 +107,7 @@ function activate(context) {
  */
 function deactivate() {
     try {
-        access_ext.deactivate();
+        // access_ext.deactivate();
     }
     catch (error) {
         console.error('Error deactivating AWS Workbench services:', error);

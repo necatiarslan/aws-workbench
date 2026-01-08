@@ -143,51 +143,51 @@
         "title": "Delete Folder"
       },
       {
-        "command": "aws-access-vscode-extension.RefreshCredentials",
+        "command": "aws-workbench.access.RefreshCredentials",
         "title": "Aws Access:Refresh Credentials"
       },
       {
-        "command": "aws-access-vscode-extension.SetAwsLoginCommand",
+        "command": "aws-workbench.access.SetAwsLoginCommand",
         "title": "Aws Access:Set Login Command"
       },
       {
-        "command": "aws-access-vscode-extension.ListAwsProfiles",
+        "command": "aws-workbench.access.ListAwsProfiles",
         "title": "Aws Access:List Profiles"
       },
       {
-        "command": "aws-access-vscode-extension.RunLoginCommand",
+        "command": "aws-workbench.access.RunLoginCommand",
         "title": "Aws Access:Run Login Command"
       },
       {
-        "command": "aws-access-vscode-extension.PauseAutoLogin",
+        "command": "aws-workbench.access.PauseAutoLogin",
         "title": "Aws Access:Pause/UnPause Auto Login"
       },
       {
-        "command": "aws-access-vscode-extension.SetActiveProfile",
+        "command": "aws-workbench.access.SetActiveProfile",
         "title": "Aws Access:Set Active Profile"
       },
       {
-        "command": "aws-access-vscode-extension.ShowActiveCredentials",
+        "command": "aws-workbench.access.ShowActiveCredentials",
         "title": "Aws Access:Show Active Credentials"
       },
       {
-        "command": "aws-access-vscode-extension.ShowDefaultCredentials",
+        "command": "aws-workbench.access.ShowDefaultCredentials",
         "title": "Aws Access:Show Default Credentials"
       },
       {
-        "command": "aws-access-vscode-extension.OpenCredentialsFile",
+        "command": "aws-workbench.access.OpenCredentialsFile",
         "title": "Aws Access:Open Credentials File"
       },
       {
-        "command": "aws-access-vscode-extension.OpenConfigFile",
+        "command": "aws-workbench.access.OpenConfigFile",
         "title": "Aws Access:Open Config File"
       },
       {
-        "command": "aws-access-vscode-extension.TestAwsConnectivity",
+        "command": "aws-workbench.access.TestAwsConnectivity",
         "title": "Aws Access:Test Aws Connectivity With Active User"
       },
       {
-        "command": "aws-access-vscode-extension.CopyCredentialsToDefaultProfile",
+        "command": "aws-workbench.access.CopyCredentialsToDefaultProfile",
         "title": "Aws Access:Copy Credentials To Default Profile"
       },
       {
@@ -2063,7 +2063,7 @@
     "viewsWelcome": [
       {
         "view": "AwsWorkbenchTree",
-        "contents": "Welcome to AWS Workbench! \n Click the [+] button in the title bar to add AWS resources like S3 buckets, Lambda functions, etc. \n\n To Access AWS, you need to configure AWS credentials. \n [Configure Credentials](command:aws-access-vscode-extension.ListAwsProfiles)"
+        "contents": "Welcome to AWS Workbench! \n Click the [+] button in the title bar to add AWS resources like S3 buckets, Lambda functions, etc. \n\n To Access AWS, you need to configure AWS credentials. \n [Configure Credentials](command:aws-workbench.access.ListAwsProfiles)"
       }
     ]
   },

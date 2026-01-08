@@ -8,40 +8,40 @@ const StatusBar = require("./StatusBarItem");
 function activate(context) {
     ui.logToOutput('Aws Access is now active!');
     new StatusBar.StatusBarItem(context);
-    vscode.commands.registerCommand('aws-access-vscode-extension.RefreshCredentials', () => {
+    vscode.commands.registerCommand('aws-workbench.access.RefreshCredentials', () => {
         StatusBar.StatusBarItem.Current.GetCredentials();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.SetAwsLoginCommand', () => {
+    vscode.commands.registerCommand('aws-workbench.access.SetAwsLoginCommand', () => {
         StatusBar.StatusBarItem.Current.SetAwsLoginCommand();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.ListAwsProfiles', () => {
+    vscode.commands.registerCommand('aws-workbench.access.ListAwsProfiles', () => {
         StatusBar.StatusBarItem.Current.ListAwsProfiles();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.RunLoginCommand', () => {
+    vscode.commands.registerCommand('aws-workbench.access.RunLoginCommand', () => {
         StatusBar.StatusBarItem.Current.RunLoginCommand();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.PauseAutoLogin', () => {
+    vscode.commands.registerCommand('aws-workbench.access.PauseAutoLogin', () => {
         StatusBar.StatusBarItem.Current.PauseAutoLogin();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.SetActiveProfile', () => {
+    vscode.commands.registerCommand('aws-workbench.access.SetActiveProfile', () => {
         StatusBar.StatusBarItem.Current.SetActiveProfile();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.ShowActiveCredentials', () => {
+    vscode.commands.registerCommand('aws-workbench.access.ShowActiveCredentials', () => {
         StatusBar.StatusBarItem.Current.ShowActiveCredentials();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.ShowDefaultCredentials', () => {
+    vscode.commands.registerCommand('aws-workbench.access.ShowDefaultCredentials', () => {
         StatusBar.StatusBarItem.Current.ShowDefaultCredentials();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.OpenCredentialsFile', () => {
+    vscode.commands.registerCommand('aws-workbench.access.OpenCredentialsFile', () => {
         StatusBar.StatusBarItem.Current.OpenCredentialsFile();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.OpenConfigFile', () => {
+    vscode.commands.registerCommand('aws-workbench.access.OpenConfigFile', () => {
         StatusBar.StatusBarItem.Current.OpenConfigFile();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.TestAwsConnectivity', () => {
+    vscode.commands.registerCommand('aws-workbench.access.TestAwsConnectivity', () => {
         StatusBar.StatusBarItem.Current.TestAwsConnectivity();
     });
-    vscode.commands.registerCommand('aws-access-vscode-extension.CopyCredentialsToDefaultProfile', () => {
+    vscode.commands.registerCommand('aws-workbench.access.CopyCredentialsToDefaultProfile', () => {
         StatusBar.StatusBarItem.Current.CopyCredentialsToDefaultProfile();
     });
     vscode.window.onDidCloseTerminal((terminal) => {
