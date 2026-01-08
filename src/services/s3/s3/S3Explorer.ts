@@ -627,18 +627,7 @@ export class S3Explorer {
                     case "ask_ai":
                         ui.logToOutput('S3Explorer.AskAI Started');
 
-                        try {
-                            const { AIHandler } = await import('../chat/AIHandler');
-                            if (!AIHandler.Current) {
-                                ui.showErrorMessage('AIHandler not initialized', new Error('AI handler is not available'));
-                                return;
-                            }
 
-                            await AIHandler.Current.askAI(`How can you help with Bucket:${this.S3ExplorerItem.Bucket} Key:${this.S3ExplorerItem.Key} ?`);
-                        } catch (error: unknown) {
-                            ui.showErrorMessage('AskAI Error !!!', error as Error);
-                            ui.logToOutput("AskAI Error !!!", error as Error);
-                        }
 
                         return;
 

@@ -4,7 +4,6 @@ exports.Session = void 0;
 const ui = require("../../../common/UI");
 const vscode = require("vscode");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
-const MessageHub = require("./MessageHub");
 class Session {
     static Current = undefined;
     Context;
@@ -130,11 +129,9 @@ class Session {
             const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
             this.CurrentCredentials = await provider();
             if (!this.CurrentCredentials) {
-                MessageHub.CredentialsChanged();
                 throw new Error('AWS credentials not found');
             }
             ui.logToOutput(`Credentials loaded (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
-            MessageHub.CredentialsChanged();
             return this.CurrentCredentials;
         }
         catch (error) {
@@ -151,7 +148,6 @@ class Session {
     }
     ClearCredentials() {
         this.CurrentCredentials = undefined;
-        MessageHub.CredentialsChanged();
         this._onDidChangeSession.fire();
         ui.logToOutput('Credentials cache cleared');
     }

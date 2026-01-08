@@ -10,8 +10,6 @@ import { S3Explorer } from './s3/S3Explorer';
 import { S3Search } from './s3/S3Search';
 import { Telemetry } from './common/Telemetry';
 import { Session } from './common/Session';
-import { CommandHistoryView } from './common/CommandHistoryView';
-import { ServiceAccessView } from './common/ServiceAccessView';
 import { isLicenseValid, promptForLicense } from "./common/License";
 
 export class S3Service implements IService {
@@ -126,16 +124,6 @@ export class S3Service implements IService {
             }),
             vscode.commands.registerCommand('S3TreeView.TestAwsConnection', () => {
                 this.TestAwsConnection();
-            }),
-            vscode.commands.registerCommand('S3TreeView.ShowCommandHistory', () => {
-                if (Session.Current) {
-                    CommandHistoryView.Render(Session.Current.ExtensionUri);
-                }
-            }),
-            vscode.commands.registerCommand('S3TreeView.OpenServiceAccessView', () => {
-                if (Session.Current) {
-                    ServiceAccessView.Render(Session.Current.ExtensionUri);
-                }
             }),
             vscode.commands.registerCommand('S3TreeView.ActivatePro', () => {
                 if (Session.Current?.IsProVersion) {

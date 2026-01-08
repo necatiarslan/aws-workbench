@@ -579,18 +579,6 @@ class S3Explorer {
                     return;
                 case "ask_ai":
                     ui.logToOutput('S3Explorer.AskAI Started');
-                    try {
-                        const { AIHandler } = await Promise.resolve().then(() => require('../chat/AIHandler'));
-                        if (!AIHandler.Current) {
-                            ui.showErrorMessage('AIHandler not initialized', new Error('AI handler is not available'));
-                            return;
-                        }
-                        await AIHandler.Current.askAI(`How can you help with Bucket:${this.S3ExplorerItem.Bucket} Key:${this.S3ExplorerItem.Key} ?`);
-                    }
-                    catch (error) {
-                        ui.showErrorMessage('AskAI Error !!!', error);
-                        ui.logToOutput("AskAI Error !!!", error);
-                    }
                     return;
                 case "search":
                     let node;

@@ -11,8 +11,6 @@ const S3Explorer_1 = require("./s3/S3Explorer");
 const S3Search_1 = require("./s3/S3Search");
 const Telemetry_1 = require("./common/Telemetry");
 const Session_1 = require("./common/Session");
-const CommandHistoryView_1 = require("./common/CommandHistoryView");
-const ServiceAccessView_1 = require("./common/ServiceAccessView");
 const License_1 = require("./common/License");
 class S3Service {
     static Instance;
@@ -100,14 +98,6 @@ class S3Service {
             treeProvider.refresh();
         }), vscode.commands.registerCommand('S3TreeView.TestAwsConnection', () => {
             this.TestAwsConnection();
-        }), vscode.commands.registerCommand('S3TreeView.ShowCommandHistory', () => {
-            if (Session_1.Session.Current) {
-                CommandHistoryView_1.CommandHistoryView.Render(Session_1.Session.Current.ExtensionUri);
-            }
-        }), vscode.commands.registerCommand('S3TreeView.OpenServiceAccessView', () => {
-            if (Session_1.Session.Current) {
-                ServiceAccessView_1.ServiceAccessView.Render(Session_1.Session.Current.ExtensionUri);
-            }
         }), vscode.commands.registerCommand('S3TreeView.ActivatePro', () => {
             if (Session_1.Session.Current?.IsProVersion) {
                 ui.showInfoMessage('You already have an active Pro license!');

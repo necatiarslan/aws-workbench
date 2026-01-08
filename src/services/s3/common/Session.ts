@@ -2,7 +2,6 @@ import * as ui from '../../../common/UI';
 import * as vscode from 'vscode';
 import { AwsCredentialIdentity } from '@aws-sdk/types';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import * as MessageHub from './MessageHub';
 
 export class Session implements vscode.Disposable {
     public static Current: Session | undefined = undefined;
@@ -141,12 +140,10 @@ export class Session implements vscode.Disposable {
             this.CurrentCredentials = await provider();
 
             if (!this.CurrentCredentials) {
-                MessageHub.CredentialsChanged();
                 throw new Error('AWS credentials not found');
             }
 
             ui.logToOutput(`Credentials loaded (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
-            MessageHub.CredentialsChanged();
             return this.CurrentCredentials;
         } catch (error: any) {
             ui.logToOutput('Failed to get credentials', error);
@@ -164,7 +161,6 @@ export class Session implements vscode.Disposable {
 
     public ClearCredentials() {
         this.CurrentCredentials = undefined;
-        MessageHub.CredentialsChanged();
         this._onDidChangeSession.fire();
         ui.logToOutput('Credentials cache cleared');
     }
