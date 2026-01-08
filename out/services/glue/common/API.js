@@ -24,12 +24,12 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const GlueTreeView = require("../glue/GlueTreeView");
+const GlueService_1 = require("../GlueService");
 async function GetCredentials() {
     let credentials;
     try {
-        if (GlueTreeView.GlueTreeView.Current) {
-            process.env.AWS_PROFILE = GlueTreeView.GlueTreeView.Current.AwsProfile;
+        if (GlueService_1.GlueService.Instance) {
+            process.env.AWS_PROFILE = GlueService_1.GlueService.Instance.AwsProfile;
         }
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
         credentials = await provider();
@@ -50,7 +50,7 @@ async function GetGlueClient(region) {
     const glueClient = new client_glue_1.GlueClient({
         region,
         credentials,
-        endpoint: GlueTreeView.GlueTreeView.Current?.AwsEndPoint,
+        endpoint: GlueService_1.GlueService.Instance?.AwsEndPoint,
     });
     return glueClient;
 }
@@ -59,7 +59,7 @@ async function GetCloudWatchClient(region) {
     const cloudwatchLogsClient = new client_cloudwatch_logs_1.CloudWatchLogsClient({
         region,
         credentials,
-        endpoint: GlueTreeView.GlueTreeView.Current?.AwsEndPoint,
+        endpoint: GlueService_1.GlueService.Instance?.AwsEndPoint,
     });
     return cloudwatchLogsClient;
 }
@@ -68,7 +68,7 @@ async function GetSTSClient(region) {
     const stsClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: GlueTreeView.GlueTreeView.Current?.AwsEndPoint,
+        endpoint: GlueService_1.GlueService.Instance?.AwsEndPoint,
     });
     return stsClient;
 }

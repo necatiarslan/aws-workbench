@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { SnsTreeItem, TreeItemType } from './SnsTreeItem';
-import { SnsTreeView } from './SnsTreeView';
-import { ListSubscriptionsByTopicCommandOutput } from '@aws-sdk/client-sns';
+import { SnsService } from '../SnsService';
+import * as api from '../common/API';
 
 export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 {
@@ -20,26 +20,27 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 		this._onDidChangeTreeData.fire();
 	}
 
-	AddTopic(Region:string, TopicArn:string){
-		for(var item of SnsTreeView.Current.TopicList)
+	AddTopic(Region:string, TopicArn:string): SnsTreeItem | undefined {
+		for(var item of SnsService.Instance.TopicList)
 		{
 			if(item.Region === Region && item.TopicArn === TopicArn)
 			{
-				return;
+				return this.SnsNodeList.find(n => n.Region === Region && n.TopicArn === TopicArn);
 			}
 		}
 		
-		SnsTreeView.Current.TopicList.push({Region: Region, TopicArn: TopicArn});
-		this.AddNewSnsNode(Region, TopicArn);
+		SnsService.Instance.TopicList.push({Region: Region, TopicArn: TopicArn});
+		const node = this.AddNewSnsNode(Region, TopicArn);
 		this.Refresh();
+		return node;
 	}
 
 	RemoveTopic(Region:string, TopicArn:string){
-		for(var i=0; i<SnsTreeView.Current.TopicList.length; i++)
+		for(var i=0; i<SnsService.Instance.TopicList.length; i++)
 		{
-			if(SnsTreeView.Current.TopicList[i].Region === Region && SnsTreeView.Current.TopicList[i].TopicArn === TopicArn)
+			if(SnsService.Instance.TopicList[i].Region === Region && SnsService.Instance.TopicList[i].TopicArn === TopicArn)
 			{
-				SnsTreeView.Current.TopicList.splice(i, 1);
+				SnsService.Instance.TopicList.splice(i, 1);
 				break;
 			}
 		}
@@ -50,8 +51,9 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 	
 	LoadSnsNodeList(){
 		this.SnsNodeList = [];
+		if(!SnsService.Instance) return;
 		
-		for(var item of SnsTreeView.Current.TopicList)
+		for(var item of SnsService.Instance.TopicList)
 		{
 			let treeItem = this.NewSnsNode(item.Region, item.TopicArn);
 
@@ -59,11 +61,14 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 		}
 	}
 
-	AddNewSnsNode(Region:string, TopicArn:string){
-		if (this.SnsNodeList.some(item => item.Region === Region && item.TopicArn === TopicArn)) { return; }
+	AddNewSnsNode(Region:string, TopicArn:string): SnsTreeItem | undefined {
+		if (this.SnsNodeList.some(item => item.Region === Region && item.TopicArn === TopicArn)) { 
+			return this.SnsNodeList.find(n => n.Region === Region && n.TopicArn === TopicArn);
+		}
 
 		let treeItem = this.NewSnsNode(Region, TopicArn);
 		this.SnsNodeList.push(treeItem);
+		return treeItem;
 	}
 
 	RemoveSnsNode(Region:string, TopicArn:string){
@@ -78,6 +83,7 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 	}
 
 	GetTopicName(TopicArn:string):string{
+		if(!TopicArn) { return "Undefined Topic"; }
 		const topicName = TopicArn.split(":").pop();
 		if(!topicName) { return TopicArn; }
 		return topicName;
@@ -94,24 +100,9 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 		let pubItem = new SnsTreeItem("Publish", TreeItemType.PublishGroup);
 		pubItem.TopicArn = treeItem.TopicArn;
 		pubItem.Region = treeItem.Region;
-		pubItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+		pubItem.collapsibleState = vscode.ThemeIcon.File === undefined ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.None; // Default to None
 		pubItem.Parent = treeItem;
 		treeItem.Children.push(pubItem);
-
-		let pubJson = new SnsTreeItem("Adhoc", TreeItemType.PublishAdhoc);
-		pubJson.TopicArn = treeItem.TopicArn;
-		pubJson.Region = treeItem.Region;
-		pubJson.Parent = pubItem;
-		pubItem.Children.push(pubJson);
-
-		for(var i=0; i<SnsTreeView.Current.MessageFilePathList.length; i++)
-		{
-			if(SnsTreeView.Current.MessageFilePathList[i].Region === Region 
-				&& SnsTreeView.Current.MessageFilePathList[i].TopicArn === TopicArn)
-			{
-				this.AddNewMessagePathNode(pubItem, SnsTreeView.Current.MessageFilePathList[i].MessageFilePath);
-			}
-		}
 
 		let subItem = new SnsTreeItem("Subscriptions", TreeItemType.SubscriptionGroup);
 		subItem.TopicArn = treeItem.TopicArn;
@@ -123,84 +114,31 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 		return treeItem;
 	}
 
-	AddMessageFilePath(node: SnsTreeItem, MessageFilePath:string){
-		
-		for(var i=0; i<SnsTreeView.Current.MessageFilePathList.length; i++)
-		{
-			if(SnsTreeView.Current.MessageFilePathList[i].Region === node.Region 
-				&& SnsTreeView.Current.MessageFilePathList[i].TopicArn === node.TopicArn
-				&& SnsTreeView.Current.MessageFilePathList[i].MessageFilePath === MessageFilePath)
-			{
-				return;
-			}
-		}
-		this.AddNewMessagePathNode(node, MessageFilePath);
-		SnsTreeView.Current.MessageFilePathList.push({Region: node.Region, TopicArn: node.TopicArn, MessageFilePath: MessageFilePath});
-		this.Refresh();
-	}
-
-	private AddNewMessagePathNode(node: SnsTreeItem, MessageFilePath: string) {
-		let fileName = MessageFilePath.split("/").pop();
-		if (!fileName) { fileName = MessageFilePath; }
-
-		let treeItem = new SnsTreeItem(fileName, TreeItemType.PublishFile);
-		treeItem.Region = node.Region;
-		treeItem.TopicArn = node.TopicArn;
-		treeItem.MessageFilePath = MessageFilePath;
-		treeItem.Parent = node;
-		node.Children.push(treeItem);
-	}
-
-	RemoveMessageFilePath(node: SnsTreeItem){
-		if(!node.Parent) { return; }
-
-		for(var i=0; i<SnsTreeView.Current.MessageFilePathList.length; i++)
-		{
-			if(SnsTreeView.Current.MessageFilePathList[i].Region === node.Region 
-				&& SnsTreeView.Current.MessageFilePathList[i].TopicArn === node.TopicArn
-				&& SnsTreeView.Current.MessageFilePathList[i].MessageFilePath === node.MessageFilePath
-			)
-			{
-				SnsTreeView.Current.MessageFilePathList.splice(i, 1);
-			}
-		}
-		
-		let parentNode = node.Parent;
-		for(var i=0; i<parentNode.Children.length; i++)
-		{
-			if(parentNode.Children[i].Region === node.Region 
-				&& parentNode.Children[i].TopicArn === node.TopicArn
-				&& parentNode.Children[i].MessageFilePath === node.MessageFilePath
-			)
-			{
-				parentNode.Children.splice(i, 1);
-			}
-		}
-		this.Refresh();
-	}
-
-	AddSubscriptions(node: SnsTreeItem, Subscriptions: ListSubscriptionsByTopicCommandOutput) {
-		node.Children = [];
-		if(!Subscriptions.Subscriptions) { return; }
-		for(var i=0; i<Subscriptions.Subscriptions.length; i++)
-		{
-			let endpoint = Subscriptions.Subscriptions[i].Endpoint;
-			let protocol = Subscriptions.Subscriptions[i].Protocol;
-			if(!endpoint) { continue; }
-
-			let treeItem = new SnsTreeItem(protocol?.toUpperCase() + " : " + endpoint, TreeItemType.Subscription);
-			treeItem.TopicArn = node.TopicArn;
-			treeItem.Region = node.Region;
-			treeItem.Parent = node;
-			node.Children.push(treeItem);
-		}
-	}
 	getChildren(node: SnsTreeItem): Thenable<SnsTreeItem[]> {
 		let result:SnsTreeItem[] = [];
 
 		if(!node)
 		{
 			result.push(...this.GetSnsNodes());
+		}
+		else if(node.TreeItemType === TreeItemType.SubscriptionGroup && node.Children.length === 0)
+		{
+			return api.GetSubscriptions(node.Region!, node.TopicArn!).then(subs => {
+				if (subs.isSuccessful && subs.result && subs.result.Subscriptions) {
+					for(var sub of subs.result.Subscriptions)
+					{
+						let subNode = new SnsTreeItem(sub.SubscriptionArn ? sub.SubscriptionArn : "No ARN", TreeItemType.Subscription);
+						subNode.Region = node.Region;
+						subNode.TopicArn = node.TopicArn;
+						subNode.SubscriptionArn = sub.SubscriptionArn || "";
+						subNode.Protocol = sub.Protocol || "";
+						subNode.Endpoint = sub.Endpoint || "";
+						subNode.Parent = node;
+						node.Children.push(subNode);
+					}
+				}
+				return node.Children;
+			});
 		}
 		else if(node.Children.length > 0)
 		{
@@ -213,10 +151,11 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 
 	GetSnsNodes(): SnsTreeItem[]{
 		var result: SnsTreeItem[] = [];
+		if(!SnsService.Instance) return result;
 		for (var node of this.SnsNodeList) {
-			if (SnsTreeView.Current && SnsTreeView.Current.FilterString && !node.IsFilterStringMatch(SnsTreeView.Current.FilterString)) { continue; }
-			if (SnsTreeView.Current && SnsTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (SnsTreeView.Current && !SnsTreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (SnsService.Instance.FilterString && !node.IsFilterStringMatch(SnsService.Instance.FilterString)) { continue; }
+			if (SnsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (SnsService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}
@@ -226,8 +165,4 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 	getTreeItem(element: SnsTreeItem): SnsTreeItem {
 		return element;
 	}
-}
-
-export enum ViewType{
-	Sns = 1
 }

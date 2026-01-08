@@ -4,7 +4,7 @@ exports.ViewType = exports.IamTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const IamTreeItem_1 = require("./IamTreeItem");
-const IamTreeView_1 = require("./IamTreeView");
+const IamService_1 = require("../IamService");
 class IamTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -18,19 +18,20 @@ class IamTreeDataProvider {
         this._onDidChangeTreeData.fire();
     }
     AddIamRole(Region, IamRole) {
-        for (var item of IamTreeView_1.IamTreeView.Current.IamRoleList) {
+        for (var item of IamService_1.IamService.Instance.IamRoleList) {
             if (item.Region === Region && item.IamRole === IamRole) {
-                return;
+                return this.IamRoleNodeList.find(n => n.Region === Region && n.IamRole === IamRole);
             }
         }
-        IamTreeView_1.IamTreeView.Current.IamRoleList.push({ Region: Region, IamRole: IamRole });
-        this.AddNewIamRoleNode(Region, IamRole);
+        IamService_1.IamService.Instance.IamRoleList.push({ Region: Region, IamRole: IamRole });
+        const node = this.AddNewIamRoleNode(Region, IamRole);
         this.Refresh();
+        return node;
     }
     RemoveIamRole(Region, IamRole) {
-        for (var i = 0; i < IamTreeView_1.IamTreeView.Current.IamRoleList.length; i++) {
-            if (IamTreeView_1.IamTreeView.Current.IamRoleList[i].Region === Region && IamTreeView_1.IamTreeView.Current.IamRoleList[i].IamRole === IamRole) {
-                IamTreeView_1.IamTreeView.Current.IamRoleList.splice(i, 1);
+        for (var i = 0; i < IamService_1.IamService.Instance.IamRoleList.length; i++) {
+            if (IamService_1.IamService.Instance.IamRoleList[i].Region === Region && IamService_1.IamService.Instance.IamRoleList[i].IamRole === IamRole) {
+                IamService_1.IamService.Instance.IamRoleList.splice(i, 1);
                 break;
             }
         }
@@ -39,17 +40,20 @@ class IamTreeDataProvider {
     }
     LoadIamRoleNodeList() {
         this.IamRoleNodeList = [];
-        for (var item of IamTreeView_1.IamTreeView.Current.IamRoleList) {
+        if (!IamService_1.IamService.Instance)
+            return;
+        for (var item of IamService_1.IamService.Instance.IamRoleList) {
             let treeItem = this.NewIamRoleNode(item.Region, item.IamRole);
             this.IamRoleNodeList.push(treeItem);
         }
     }
     AddNewIamRoleNode(Region, IamRole) {
         if (this.IamRoleNodeList.some(item => item.Region === Region && item.IamRole === IamRole)) {
-            return;
+            return this.IamRoleNodeList.find(n => n.Region === Region && n.IamRole === IamRole);
         }
         let treeItem = this.NewIamRoleNode(Region, IamRole);
         this.IamRoleNodeList.push(treeItem);
+        return treeItem;
     }
     RemoveIamRoleNode(Region, IamRole) {
         for (var i = 0; i < this.IamRoleNodeList.length; i++) {
@@ -101,19 +105,19 @@ class IamTreeDataProvider {
         }
         else if (node.TreeItemType === IamTreeItem_1.TreeItemType.PermissionsGroup && node.Children.length === 0) {
             // Auto-load permissions when the node is expanded
-            IamTreeView_1.IamTreeView.Current.LoadPermissions(node);
+            IamService_1.IamService.Instance.LoadPermissions(node);
         }
         else if (node.TreeItemType === IamTreeItem_1.TreeItemType.TrustRelationshipsGroup && node.Children.length === 0) {
             // Auto-load trust relationships when the node is expanded
-            IamTreeView_1.IamTreeView.Current.LoadTrustRelationships(node);
+            IamService_1.IamService.Instance.LoadTrustRelationships(node);
         }
         else if (node.TreeItemType === IamTreeItem_1.TreeItemType.TagsGroup && node.Children.length === 0) {
             // Auto-load tags when the node is expanded
-            IamTreeView_1.IamTreeView.Current.LoadTags(node);
+            IamService_1.IamService.Instance.LoadTags(node);
         }
         else if (node.TreeItemType === IamTreeItem_1.TreeItemType.InfoGroup && node.Children.length === 0) {
             // Auto-load info when the node is expanded
-            IamTreeView_1.IamTreeView.Current.LoadInfo(node);
+            IamService_1.IamService.Instance.LoadInfo(node);
         }
         else if (node.Children.length > 0) {
             result.push(...node.Children);
@@ -122,14 +126,16 @@ class IamTreeDataProvider {
     }
     GetIamRoleNodes() {
         var result = [];
+        if (!IamService_1.IamService.Instance)
+            return result;
         for (var node of this.IamRoleNodeList) {
-            if (IamTreeView_1.IamTreeView.Current && IamTreeView_1.IamTreeView.Current.FilterString && !node.IsFilterStringMatch(IamTreeView_1.IamTreeView.Current.FilterString)) {
+            if (IamService_1.IamService.Instance.FilterString && !node.IsFilterStringMatch(IamService_1.IamService.Instance.FilterString)) {
                 continue;
             }
-            if (IamTreeView_1.IamTreeView.Current && IamTreeView_1.IamTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (IamService_1.IamService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (IamTreeView_1.IamTreeView.Current && !IamTreeView_1.IamTreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (IamService_1.IamService.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

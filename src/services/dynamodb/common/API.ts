@@ -26,7 +26,7 @@ import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as DynamodbTreeView from '../dynamodb/DynamodbTreeView';
+import { DynamodbService } from '../DynamodbService';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
 
@@ -34,8 +34,8 @@ export async function GetCredentials() {
   let credentials;
 
   try {
-    if (DynamodbTreeView.DynamodbTreeView.Current) {
-      process.env.AWS_PROFILE = DynamodbTreeView.DynamodbTreeView.Current.AwsProfile ;
+    if (DynamodbService.Instance) {
+      process.env.AWS_PROFILE = DynamodbService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -60,7 +60,7 @@ async function GetDynamodbClient(region: string) {
   const dynamodbClient = new DynamoDBClient({
     region,
     credentials,
-    endpoint: DynamodbTreeView.DynamodbTreeView.Current?.AwsEndPoint,
+    endpoint: DynamodbService.Instance?.AwsEndPoint,
   });
   
   return dynamodbClient;
@@ -71,7 +71,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: DynamodbTreeView.DynamodbTreeView.Current?.AwsEndPoint,
+    endpoint: DynamodbService.Instance?.AwsEndPoint,
   });
   
   return cloudwatchLogsClient;
@@ -998,7 +998,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: DynamodbTreeView.DynamodbTreeView.Current?.AwsEndPoint,
+      endpoint: DynamodbService.Instance?.AwsEndPoint,
     }
   );
   return iamClient;

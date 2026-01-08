@@ -5,7 +5,7 @@ exports.CloudWatchLogView = void 0;
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("../common/API");
-const CloudWatchTreeView_1 = require("./CloudWatchTreeView");
+const CloudwatchService_1 = require("../CloudwatchService");
 const tmp = require("tmp");
 const fs = require("fs");
 class CloudWatchLogView {
@@ -46,7 +46,7 @@ class CloudWatchLogView {
     }
     async LoadLogs() {
         ui.logToOutput('CloudWatchLogView.LoadLogs Started');
-        if (!CloudWatchTreeView_1.CloudWatchTreeView.Current) {
+        if (!CloudwatchService_1.CloudwatchService.Instance) {
             return;
         }
         var result = await api.GetLogEvents(this.Region, this.LogGroup, this.LogStream, this.StartTime);

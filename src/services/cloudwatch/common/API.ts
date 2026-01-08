@@ -6,15 +6,15 @@ import { sep } from "path";
 import { join } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import { CloudWatchTreeView } from "../cloudwatch/CloudWatchTreeView";
+import { CloudwatchService } from "../CloudwatchService";
 
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 export async function GetCredentials() {
   let credentials;
 
   try {
-    if (CloudWatchTreeView.Current) {
-      process.env.AWS_PROFILE = CloudWatchTreeView.Current.AwsProfile ;
+    if (CloudwatchService.Instance) {
+      process.env.AWS_PROFILE = CloudwatchService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -35,11 +35,11 @@ export async function GetCredentials() {
 
 import { CloudWatchLogsClient } from "@aws-sdk/client-cloudwatch-logs";
 
-export async function GetCloudWatchLogsClient(Region:string | undefined = CloudWatchTreeView.Current?.LastUsedRegion): Promise<CloudWatchLogsClient> {
+export async function GetCloudWatchLogsClient(Region:string | undefined = CloudwatchService.Instance?.LastUsedRegion): Promise<CloudWatchLogsClient> {
   let credentials = await GetCredentials();
   return new CloudWatchLogsClient({
     credentials: credentials,
-    endpoint: CloudWatchTreeView.Current?.AwsEndPoint,
+    endpoint: CloudwatchService.Instance?.AwsEndPoint,
     region: Region
   });
 }

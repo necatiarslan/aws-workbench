@@ -36,15 +36,15 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const StepFuncTreeView = require("../step/StepFuncTreeView");
+const StepfunctionsService_1 = require("../StepfunctionsService");
 const fs = require("fs");
 // add a simple in-memory cache for DescribeStateMachine responses
 const stateMachineCache = new Map();
 async function GetCredentials() {
     let credentials;
     try {
-        if (StepFuncTreeView.StepFuncTreeView.Current) {
-            process.env.AWS_PROFILE = StepFuncTreeView.StepFuncTreeView.Current.AwsProfile;
+        if (StepfunctionsService_1.StepfunctionsService.Instance) {
+            process.env.AWS_PROFILE = StepfunctionsService_1.StepfunctionsService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -66,7 +66,7 @@ async function GetStepFuncClient(region) {
     const stepFuncClient = new client_sfn_1.SFNClient({
         region,
         credentials,
-        endpoint: StepFuncTreeView.StepFuncTreeView.Current?.AwsEndPoint,
+        endpoint: StepfunctionsService_1.StepfunctionsService.Instance?.AwsEndPoint,
     });
     return stepFuncClient;
 }
@@ -75,7 +75,7 @@ async function GetCloudWatchClient(region) {
     const cloudwatchLogsClient = new client_cloudwatch_logs_1.CloudWatchLogsClient({
         region,
         credentials,
-        endpoint: StepFuncTreeView.StepFuncTreeView.Current?.AwsEndPoint,
+        endpoint: StepfunctionsService_1.StepfunctionsService.Instance?.AwsEndPoint,
     });
     return cloudwatchLogsClient;
 }
@@ -576,7 +576,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: StepFuncTreeView.StepFuncTreeView.Current?.AwsEndPoint,
+        endpoint: StepfunctionsService_1.StepfunctionsService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

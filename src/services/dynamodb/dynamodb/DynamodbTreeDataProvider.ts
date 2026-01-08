@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { DynamodbTreeItem, TreeItemType } from './DynamodbTreeItem';
-import { DynamodbTreeView } from './DynamodbTreeView';
+import { DynamodbService } from '../DynamodbService';
 import * as api from '../common/API';
 
 export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<DynamodbTreeItem>
@@ -20,26 +20,27 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		this._onDidChangeTreeData.fire();
 	}
 
-	AddDynamodb(Region:string, Dynamodb:string){
-		for(var item of DynamodbTreeView.Current.DynamodbList)
+	AddDynamodb(Region:string, Dynamodb:string): DynamodbTreeItem | undefined {
+		for(var item of DynamodbService.Instance.DynamodbList)
 		{
 			if(item.Region === Region && item.Dynamodb === Dynamodb)
 			{
-				return;
+				return this.DynamodbNodeList.find(n => n.Region === Region && n.Dynamodb === Dynamodb);
 			}
 		}
 		
-		DynamodbTreeView.Current.DynamodbList.push({Region: Region, Dynamodb: Dynamodb});
-		this.AddNewDynamodbNode(Region, Dynamodb);
+		DynamodbService.Instance.DynamodbList.push({Region: Region, Dynamodb: Dynamodb});
+		const node = this.AddNewDynamodbNode(Region, Dynamodb);
 		this.Refresh();
+		return node;
 	}
 
 	RemoveDynamodb(Region:string, Dynamodb:string){
-		for(var i=0; i<DynamodbTreeView.Current.DynamodbList.length; i++)
+		for(var i=0; i<DynamodbService.Instance.DynamodbList.length; i++)
 		{
-			if(DynamodbTreeView.Current.DynamodbList[i].Region === Region && DynamodbTreeView.Current.DynamodbList[i].Dynamodb === Dynamodb)
+			if(DynamodbService.Instance.DynamodbList[i].Region === Region && DynamodbService.Instance.DynamodbList[i].Dynamodb === Dynamodb)
 			{
-				DynamodbTreeView.Current.DynamodbList.splice(i, 1);
+				DynamodbService.Instance.DynamodbList.splice(i, 1);
 				break;
 			}
 		}
@@ -80,8 +81,9 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	}
 	LoadDynamodbNodeList(){
 		this.DynamodbNodeList = [];
+		if(!DynamodbService.Instance) return;
 		
-		for(var item of DynamodbTreeView.Current.DynamodbList)
+		for(var item of DynamodbService.Instance.DynamodbList)
 		{
 			let treeItem = this.NewDynamodbNode(item.Region, item.Dynamodb);
 
@@ -89,11 +91,14 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		}
 	}
 
-	AddNewDynamodbNode(Region:string, Dynamodb:string){
-		if (this.DynamodbNodeList.some(item => item.Region === Region && item.Dynamodb === Dynamodb)) { return; }
+	AddNewDynamodbNode(Region:string, Dynamodb:string): DynamodbTreeItem | undefined {
+		if (this.DynamodbNodeList.some(item => item.Region === Region && item.Dynamodb === Dynamodb)) { 
+			return this.DynamodbNodeList.find(n => n.Region === Region && n.Dynamodb === Dynamodb);
+		}
 
 		let treeItem = this.NewDynamodbNode(Region, Dynamodb);
 		this.DynamodbNodeList.push(treeItem);
+		return treeItem;
 	}
 
 	RemoveDynamodbNode(Region:string, Dynamodb:string){
@@ -158,6 +163,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 
 	async PopulateTableDetails(node: DynamodbTreeItem) {
 		if (!node || node.TreeItemType !== TreeItemType.Dynamodb) { return; }
+		if(!DynamodbService.Instance) return;
 		
 		try {
 			const response = await api.GetDynamodb(node.Region, node.Dynamodb);
@@ -213,7 +219,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			readCapacityItem.ReadCapacity = details.readCapacity;
 			readCapacityItem.tooltip = 'Click for read capacity details';
 			readCapacityItem.command = {
-				command: 'dynamodb.showCapacityExplanation',
+				command: 'DynamodbTreeView.showCapacityExplanation',
 				title: 'Show Capacity Explanation',
 				arguments: [readCapacityItem, 'read']
 			};
@@ -230,7 +236,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			writeCapacityItem.WriteCapacity = details.writeCapacity;
 			writeCapacityItem.tooltip = 'Click for write capacity details';
 			writeCapacityItem.command = {
-				command: 'dynamodb.showCapacityExplanation',
+				command: 'DynamodbTreeView.showCapacityExplanation',
 				title: 'Show Capacity Explanation',
 				arguments: [writeCapacityItem, 'write']
 			};
@@ -359,98 +365,6 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	}
 }
 
-	AddPayloadPath(node: DynamodbTreeItem, PayloadPath:string){
-		
-		for(var i=0; i<DynamodbTreeView.Current.PayloadPathList.length; i++)
-		{
-			if(DynamodbTreeView.Current.PayloadPathList[i].Region === node.Region 
-				&& DynamodbTreeView.Current.CodePathList[i].Dynamodb === node.Dynamodb
-				&& DynamodbTreeView.Current.PayloadPathList[i].PayloadPath === PayloadPath)
-			{
-				return;
-			}
-		}
-		this.AddNewPayloadPathNode(node, PayloadPath);
-		DynamodbTreeView.Current.PayloadPathList.push({Region: node.Region, Dynamodb: node.Dynamodb, PayloadPath: PayloadPath});
-		this.Refresh();
-	}
-
-	private AddNewPayloadPathNode(node: DynamodbTreeItem, PayloadPath: string) {
-		let fileName = PayloadPath.split("/").pop();
-		if (!fileName) { fileName = PayloadPath; }
-
-		let treeItem = new DynamodbTreeItem(fileName, TreeItemType.TriggerFilePayload);
-		treeItem.Region = node.Region;
-		treeItem.Dynamodb = node.Dynamodb;
-		treeItem.PayloadPath = PayloadPath;
-		treeItem.Parent = node;
-		node.Children.push(treeItem);
-	}
-
-	RemovePayloadPath(node: DynamodbTreeItem){
-		if(!node.Parent) { return; }
-
-		for(var i=0; i<DynamodbTreeView.Current.PayloadPathList.length; i++)
-		{
-			if(DynamodbTreeView.Current.PayloadPathList[i].Region === node.Region 
-				&& DynamodbTreeView.Current.PayloadPathList[i].Dynamodb === node.Dynamodb
-				&& DynamodbTreeView.Current.PayloadPathList[i].PayloadPath === node.PayloadPath
-			)
-			{
-				DynamodbTreeView.Current.PayloadPathList.splice(i, 1);
-			}
-		}
-		
-		let parentNode = node.Parent;
-		for(var i=0; i<parentNode.Children.length; i++)
-		{
-			if(parentNode.Children[i].Region === node.Region 
-				&& parentNode.Children[i].Dynamodb === node.Dynamodb
-				&& parentNode.Children[i].PayloadPath === node.PayloadPath
-			)
-			{
-				parentNode.Children.splice(i, 1);
-			}
-		}
-		this.Refresh();
-	}
-
-	AddCodePath(Region:string, Dynamodb:string, CodePath:string){
-		//remove old
-		for(var i=0; i<DynamodbTreeView.Current.CodePathList.length; i++)
-		{
-			if(DynamodbTreeView.Current.CodePathList[i].Region === Region && DynamodbTreeView.Current.CodePathList[i].Dynamodb === Dynamodb)
-			{
-				DynamodbTreeView.Current.CodePathList.splice(i, 1);
-			}
-		}
-		
-		DynamodbTreeView.Current.CodePathList.push({Region: Region, Dynamodb: Dynamodb, CodePath: CodePath});
-		this.Refresh();
-	}
-
-	RemoveCodePath(Region:string, Dynamodb:string){
-		for(var i=0; i<DynamodbTreeView.Current.CodePathList.length; i++)
-		{
-			if(DynamodbTreeView.Current.CodePathList[i].Region === Region && DynamodbTreeView.Current.CodePathList[i].Dynamodb === Dynamodb)
-			{
-				DynamodbTreeView.Current.CodePathList.splice(i, 1);
-			}
-		}
-		this.Refresh();
-	}
-
-	GetCodePath(Region:string, Dynamodb:string){
-		for(var item of DynamodbTreeView.Current.CodePathList)
-		{
-			if(item.Region === Region && item.Dynamodb === Dynamodb)
-			{
-				return item.CodePath;
-			}
-		}
-		return "";
-	}
-
 	getChildren(node: DynamodbTreeItem): Thenable<DynamodbTreeItem[]> {
 		let result:DynamodbTreeItem[] = [];
 
@@ -469,10 +383,11 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 
 	GetDynamodbNodes(): DynamodbTreeItem[]{
 		var result: DynamodbTreeItem[] = [];
+		if(!DynamodbService.Instance) return result;
 		for (var node of this.DynamodbNodeList) {
-			if (DynamodbTreeView.Current && DynamodbTreeView.Current.FilterString && !node.IsFilterStringMatch(DynamodbTreeView.Current.FilterString)) { continue; }
-			if (DynamodbTreeView.Current && DynamodbTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (DynamodbTreeView.Current && !DynamodbTreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (DynamodbService.Instance.FilterString && !node.IsFilterStringMatch(DynamodbService.Instance.FilterString)) { continue; }
+			if (DynamodbService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (DynamodbService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}
@@ -482,8 +397,4 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	getTreeItem(element: DynamodbTreeItem): DynamodbTreeItem {
 		return element;
 	}
-}
-
-export enum ViewType{
-	Dynamodb = 1
 }

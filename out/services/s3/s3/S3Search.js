@@ -5,7 +5,7 @@ exports.S3Search = void 0;
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("../common/API");
-const S3TreeView_1 = require("./S3TreeView");
+const S3Service_1 = require("../S3Service");
 const S3TreeItem_1 = require("./S3TreeItem");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
@@ -50,7 +50,7 @@ class S3Search {
     async Load() {
         Telemetry_1.Telemetry.Current?.send("S3Search.Load");
         ui.logToOutput('S3Search.LoadLogs Started');
-        if (!S3TreeView_1.S3TreeView.Current) {
+        if (!S3Service_1.S3Service.Instance) {
             return;
         }
         var result = await api.SearchObject(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, this.FileName, this.FileExtension, this.FolderName);
@@ -156,7 +156,7 @@ class S3Search {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}"
-                                src="${S3TreeView_1.S3TreeView.Current?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key) ? bookmark_yesUri : bookmark_noUri}">
+                                src="${S3Service_1.S3Service.Instance?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key) ? bookmark_yesUri : bookmark_noUri}">
                             </img>
                         </td>
                         <td style="white-space:nowrap;">
@@ -350,7 +350,7 @@ class S3Search {
     }
     AddShortcut(key) {
         Telemetry_1.Telemetry.Current?.send("S3Search.AddShortcut");
-        S3TreeView_1.S3TreeView.Current?.AddOrRemoveShortcut(this.S3ExplorerItem.Bucket, key);
+        S3Service_1.S3Service.Instance?.AddOrRemoveShortcut(this.S3ExplorerItem.Bucket, key);
         this.RenderHtml();
     }
     CopyS3URI(keys) {

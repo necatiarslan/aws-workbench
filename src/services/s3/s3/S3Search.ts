@@ -2,7 +2,7 @@
 import * as vscode from "vscode";
 import * as ui from '../common/UI';
 import * as api from '../common/API';
-import { S3TreeView } from "./S3TreeView";
+import { S3Service } from "../S3Service";
 import { S3TreeItem, TreeItemType } from "./S3TreeItem";
 import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
@@ -60,7 +60,7 @@ export class S3Search {
     public async Load(){
         Telemetry.Current?.send("S3Search.Load");
         ui.logToOutput('S3Search.LoadLogs Started');
-        if(!S3TreeView.Current){return;}
+        if(!S3Service.Instance){return;}
 
         var result = await api.SearchObject(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, this.FileName, this.FileExtension, this.FolderName);
         if(result.isSuccessful)
@@ -186,7 +186,7 @@ export class S3Search {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}"
-                                src="${S3TreeView.Current?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}">
+                                src="${S3Service.Instance?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}">
                             </img>
                         </td>
                         <td style="white-space:nowrap;">
@@ -394,7 +394,7 @@ export class S3Search {
   
     private AddShortcut(key: string) {
         Telemetry.Current?.send("S3Search.AddShortcut");
-        S3TreeView.Current?.AddOrRemoveShortcut(this.S3ExplorerItem.Bucket, key);
+        S3Service.Instance?.AddOrRemoveShortcut(this.S3ExplorerItem.Bucket, key);
         this.RenderHtml();
     }
     

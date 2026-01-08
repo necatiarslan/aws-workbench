@@ -15,6 +15,9 @@ class SnsTreeItem extends vscode.TreeItem {
     IsHidden = false;
     MessageFilePath;
     IsRunning = false;
+    SubscriptionArn = "";
+    Protocol = "";
+    Endpoint = "";
     constructor(text, treeItemType) {
         super(text);
         this.Text = text;

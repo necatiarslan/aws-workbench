@@ -22,14 +22,14 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const SnsTreeView = require("../sns/SnsTreeView");
+const SnsService_1 = require("../SnsService");
 const fs = require("fs");
 const archiver = require("archiver");
 async function GetCredentials() {
     let credentials;
     try {
-        if (SnsTreeView.SnsTreeView.Current) {
-            process.env.AWS_PROFILE = SnsTreeView.SnsTreeView.Current.AwsProfile;
+        if (SnsService_1.SnsService.Instance) {
+            process.env.AWS_PROFILE = SnsService_1.SnsService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -51,7 +51,7 @@ async function GetSNSClient(region) {
     const sns = new client_sns_1.SNSClient({
         region,
         credentials,
-        endpoint: SnsTreeView.SnsTreeView.Current?.AwsEndPoint,
+        endpoint: SnsService_1.SnsService.Instance?.AwsEndPoint,
     });
     return sns;
 }
@@ -212,7 +212,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: SnsTreeView.SnsTreeView.Current?.AwsEndPoint,
+        endpoint: SnsService_1.SnsService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

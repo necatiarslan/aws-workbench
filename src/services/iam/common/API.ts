@@ -7,14 +7,14 @@ import { homedir } from "os";
 import { join, sep} from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as IamTreeView from '../iam/IamTreeView';
+import { IamService } from '../IamService';
 
 export async function GetCredentials() {
   let credentials;
 
   try {
-    if (IamTreeView.IamTreeView.Current) {
-      process.env.AWS_PROFILE = IamTreeView.IamTreeView.Current.AwsProfile ;
+    if (IamService.Instance) {
+      process.env.AWS_PROFILE = IamService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -54,7 +54,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: IamTreeView.IamTreeView.Current?.AwsEndPoint,
+      endpoint: IamService.Instance?.AwsEndPoint,
     }
   );
   return iamClient;
@@ -160,7 +160,7 @@ async function GetIamClient(region: string) {
   const iamClient = new IAMClient({
     region,
     credentials,
-    endpoint: IamTreeView.IamTreeView.Current?.AwsEndPoint,
+    endpoint: IamService.Instance?.AwsEndPoint,
   });
   
   return iamClient;

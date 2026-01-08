@@ -4,7 +4,7 @@ exports.ViewType = exports.S3TreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const S3TreeItem_1 = require("./S3TreeItem");
-const S3TreeView_1 = require("./S3TreeView");
+const S3Service_1 = require("../S3Service");
 class S3TreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -64,11 +64,12 @@ class S3TreeDataProvider {
     }
     AddBucket(Bucket) {
         if (this.BucketList.includes(Bucket)) {
-            return;
+            return this.BucketNodeList.find(n => n.Bucket === Bucket);
         }
         this.BucketList.push(Bucket);
         this.LoadBucketNodeList();
         this.Refresh();
+        return this.BucketNodeList.find(n => n.Bucket === Bucket);
     }
     RemoveBucket(Bucket) {
         for (let i = 0; i < this.ShortcutList.length; i++) {
@@ -182,16 +183,16 @@ class S3TreeDataProvider {
     GetBucketNodes() {
         var result = [];
         for (var node of this.BucketNodeList) {
-            if (S3TreeView_1.S3TreeView.Current && S3TreeView_1.S3TreeView.Current.FilterString && !node.IsFilterStringMatch(S3TreeView_1.S3TreeView.Current.FilterString)) {
+            if (S3Service_1.S3Service.Instance && S3Service_1.S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service_1.S3Service.Instance.FilterString)) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && S3TreeView_1.S3TreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (S3Service_1.S3Service.Instance && S3Service_1.S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && !S3TreeView_1.S3TreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (S3Service_1.S3Service.Instance && !S3Service_1.S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && !S3TreeView_1.S3TreeView.Current.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3TreeView_1.S3TreeView.Current.AwsProfile)) {
+            if (S3Service_1.S3Service.Instance && !S3Service_1.S3Service.Instance.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3Service_1.S3Service.Instance.AwsProfile)) {
                 continue;
             }
             result.push(node);
@@ -204,16 +205,16 @@ class S3TreeDataProvider {
             if (!(node.Bucket === BucketNode.Bucket)) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && S3TreeView_1.S3TreeView.Current.FilterString && !node.IsFilterStringMatch(S3TreeView_1.S3TreeView.Current.FilterString)) {
+            if (S3Service_1.S3Service.Instance && S3Service_1.S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service_1.S3Service.Instance.FilterString)) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && S3TreeView_1.S3TreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (S3Service_1.S3Service.Instance && S3Service_1.S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && !S3TreeView_1.S3TreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (S3Service_1.S3Service.Instance && !S3Service_1.S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && !S3TreeView_1.S3TreeView.Current.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3TreeView_1.S3TreeView.Current.AwsProfile)) {
+            if (S3Service_1.S3Service.Instance && !S3Service_1.S3Service.Instance.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3Service_1.S3Service.Instance.AwsProfile)) {
                 continue;
             }
             node.Parent = BucketNode;
@@ -227,13 +228,13 @@ class S3TreeDataProvider {
     GetShortcutNodes() {
         var result = [];
         for (var node of this.ShortcutNodeList) {
-            if (S3TreeView_1.S3TreeView.Current && S3TreeView_1.S3TreeView.Current.FilterString && !node.IsFilterStringMatch(S3TreeView_1.S3TreeView.Current.FilterString)) {
+            if (S3Service_1.S3Service.Instance && S3Service_1.S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service_1.S3Service.Instance.FilterString)) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && S3TreeView_1.S3TreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (S3Service_1.S3Service.Instance && S3Service_1.S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (S3TreeView_1.S3TreeView.Current && !S3TreeView_1.S3TreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (S3Service_1.S3Service.Instance && !S3Service_1.S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

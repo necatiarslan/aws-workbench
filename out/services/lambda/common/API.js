@@ -39,14 +39,14 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const LambdaTreeView = require("../lambda/LambdaTreeView");
+const LambdaService_1 = require("../LambdaService");
 const fs = require("fs");
 const archiver = require("archiver");
 async function GetCredentials() {
     let credentials;
     try {
-        if (LambdaTreeView.LambdaTreeView.Current) {
-            process.env.AWS_PROFILE = LambdaTreeView.LambdaTreeView.Current.AwsProfile;
+        if (LambdaService_1.LambdaService.Instance) {
+            process.env.AWS_PROFILE = LambdaService_1.LambdaService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -68,7 +68,7 @@ async function GetLambdaClient(region) {
     const lambdaClient = new client_lambda_1.LambdaClient({
         region,
         credentials,
-        endpoint: LambdaTreeView.LambdaTreeView.Current?.AwsEndPoint,
+        endpoint: LambdaService_1.LambdaService.Instance?.AwsEndPoint,
     });
     return lambdaClient;
 }
@@ -77,7 +77,7 @@ async function GetCloudWatchClient(region) {
     const cloudwatchLogsClient = new client_cloudwatch_logs_1.CloudWatchLogsClient({
         region,
         credentials,
-        endpoint: LambdaTreeView.LambdaTreeView.Current?.AwsEndPoint,
+        endpoint: LambdaService_1.LambdaService.Instance?.AwsEndPoint,
     });
     return cloudwatchLogsClient;
 }
@@ -487,7 +487,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: LambdaTreeView.LambdaTreeView.Current?.AwsEndPoint,
+        endpoint: LambdaService_1.LambdaService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

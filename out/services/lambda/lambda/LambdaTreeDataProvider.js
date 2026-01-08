@@ -4,7 +4,7 @@ exports.ViewType = exports.LambdaTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const LambdaTreeItem_1 = require("./LambdaTreeItem");
-const LambdaTreeView_1 = require("./LambdaTreeView");
+const LambdaService_1 = require("../LambdaService");
 class LambdaTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -18,19 +18,20 @@ class LambdaTreeDataProvider {
         this._onDidChangeTreeData.fire();
     }
     AddLambda(Region, Lambda) {
-        for (var item of LambdaTreeView_1.LambdaTreeView.Current.LambdaList) {
+        for (var item of LambdaService_1.LambdaService.Instance.LambdaList) {
             if (item.Region === Region && item.Lambda === Lambda) {
-                return;
+                return this.LambdaNodeList.find(n => n.Region === Region && n.Lambda === Lambda);
             }
         }
-        LambdaTreeView_1.LambdaTreeView.Current.LambdaList.push({ Region: Region, Lambda: Lambda });
-        this.AddNewLambdaNode(Region, Lambda);
+        LambdaService_1.LambdaService.Instance.LambdaList.push({ Region: Region, Lambda: Lambda });
+        const node = this.AddNewLambdaNode(Region, Lambda);
         this.Refresh();
+        return node;
     }
     RemoveLambda(Region, Lambda) {
-        for (var i = 0; i < LambdaTreeView_1.LambdaTreeView.Current.LambdaList.length; i++) {
-            if (LambdaTreeView_1.LambdaTreeView.Current.LambdaList[i].Region === Region && LambdaTreeView_1.LambdaTreeView.Current.LambdaList[i].Lambda === Lambda) {
-                LambdaTreeView_1.LambdaTreeView.Current.LambdaList.splice(i, 1);
+        for (var i = 0; i < LambdaService_1.LambdaService.Instance.LambdaList.length; i++) {
+            if (LambdaService_1.LambdaService.Instance.LambdaList[i].Region === Region && LambdaService_1.LambdaService.Instance.LambdaList[i].Lambda === Lambda) {
+                LambdaService_1.LambdaService.Instance.LambdaList.splice(i, 1);
                 break;
             }
         }
@@ -67,17 +68,20 @@ class LambdaTreeDataProvider {
     }
     LoadLambdaNodeList() {
         this.LambdaNodeList = [];
-        for (var item of LambdaTreeView_1.LambdaTreeView.Current.LambdaList) {
+        if (!LambdaService_1.LambdaService.Instance)
+            return;
+        for (var item of LambdaService_1.LambdaService.Instance.LambdaList) {
             let treeItem = this.NewLambdaNode(item.Region, item.Lambda);
             this.LambdaNodeList.push(treeItem);
         }
     }
     AddNewLambdaNode(Region, Lambda) {
         if (this.LambdaNodeList.some(item => item.Region === Region && item.Lambda === Lambda)) {
-            return;
+            return this.LambdaNodeList.find(n => n.Region === Region && n.Lambda === Lambda);
         }
         let treeItem = this.NewLambdaNode(Region, Lambda);
         this.LambdaNodeList.push(treeItem);
+        return treeItem;
     }
     RemoveLambdaNode(Region, Lambda) {
         for (var i = 0; i < this.LambdaNodeList.length; i++) {
@@ -114,10 +118,10 @@ class LambdaTreeDataProvider {
         triggerWithoutPayload.Region = treeItem.Region;
         triggerWithoutPayload.Parent = triggerItem;
         triggerItem.Children.push(triggerWithoutPayload);
-        for (var i = 0; i < LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList.length; i++) {
-            if (LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].Region === Region
-                && LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].Lambda === Lambda) {
-                this.AddNewPayloadPathNode(triggerItem, LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].PayloadPath);
+        for (var i = 0; i < LambdaService_1.LambdaService.Instance.PayloadPathList.length; i++) {
+            if (LambdaService_1.LambdaService.Instance.PayloadPathList[i].Region === Region
+                && LambdaService_1.LambdaService.Instance.PayloadPathList[i].Lambda === Lambda) {
+                this.AddNewPayloadPathNode(triggerItem, LambdaService_1.LambdaService.Instance.PayloadPathList[i].PayloadPath);
             }
         }
         let logsItem = new LambdaTreeItem_1.LambdaTreeItem("Logs", LambdaTreeItem_1.TreeItemType.LogGroup);
@@ -150,15 +154,15 @@ class LambdaTreeDataProvider {
         return treeItem;
     }
     AddPayloadPath(node, PayloadPath) {
-        for (var i = 0; i < LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList.length; i++) {
-            if (LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].Region === node.Region
-                && LambdaTreeView_1.LambdaTreeView.Current.CodePathList[i].Lambda === node.Lambda
-                && LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].PayloadPath === PayloadPath) {
+        for (var i = 0; i < LambdaService_1.LambdaService.Instance.PayloadPathList.length; i++) {
+            if (LambdaService_1.LambdaService.Instance.PayloadPathList[i].Region === node.Region
+                && LambdaService_1.LambdaService.Instance.CodePathList[i].Lambda === node.Lambda
+                && LambdaService_1.LambdaService.Instance.PayloadPathList[i].PayloadPath === PayloadPath) {
                 return;
             }
         }
         this.AddNewPayloadPathNode(node, PayloadPath);
-        LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList.push({ Region: node.Region, Lambda: node.Lambda, PayloadPath: PayloadPath });
+        LambdaService_1.LambdaService.Instance.PayloadPathList.push({ Region: node.Region, Lambda: node.Lambda, PayloadPath: PayloadPath });
         this.Refresh();
     }
     AddNewPayloadPathNode(node, PayloadPath) {
@@ -177,11 +181,11 @@ class LambdaTreeDataProvider {
         if (!node.Parent) {
             return;
         }
-        for (var i = 0; i < LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList.length; i++) {
-            if (LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].Region === node.Region
-                && LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].Lambda === node.Lambda
-                && LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList[i].PayloadPath === node.PayloadPath) {
-                LambdaTreeView_1.LambdaTreeView.Current.PayloadPathList.splice(i, 1);
+        for (var i = 0; i < LambdaService_1.LambdaService.Instance.PayloadPathList.length; i++) {
+            if (LambdaService_1.LambdaService.Instance.PayloadPathList[i].Region === node.Region
+                && LambdaService_1.LambdaService.Instance.PayloadPathList[i].Lambda === node.Lambda
+                && LambdaService_1.LambdaService.Instance.PayloadPathList[i].PayloadPath === node.PayloadPath) {
+                LambdaService_1.LambdaService.Instance.PayloadPathList.splice(i, 1);
             }
         }
         let parentNode = node.Parent;
@@ -196,24 +200,26 @@ class LambdaTreeDataProvider {
     }
     AddCodePath(Region, Lambda, CodePath) {
         //remove old
-        for (var i = 0; i < LambdaTreeView_1.LambdaTreeView.Current.CodePathList.length; i++) {
-            if (LambdaTreeView_1.LambdaTreeView.Current.CodePathList[i].Region === Region && LambdaTreeView_1.LambdaTreeView.Current.CodePathList[i].Lambda === Lambda) {
-                LambdaTreeView_1.LambdaTreeView.Current.CodePathList.splice(i, 1);
+        for (var i = 0; i < LambdaService_1.LambdaService.Instance.CodePathList.length; i++) {
+            if (LambdaService_1.LambdaService.Instance.CodePathList[i].Region === Region && LambdaService_1.LambdaService.Instance.CodePathList[i].Lambda === Lambda) {
+                LambdaService_1.LambdaService.Instance.CodePathList.splice(i, 1);
             }
         }
-        LambdaTreeView_1.LambdaTreeView.Current.CodePathList.push({ Region: Region, Lambda: Lambda, CodePath: CodePath });
+        LambdaService_1.LambdaService.Instance.CodePathList.push({ Region: Region, Lambda: Lambda, CodePath: CodePath });
         this.Refresh();
     }
     RemoveCodePath(Region, Lambda) {
-        for (var i = 0; i < LambdaTreeView_1.LambdaTreeView.Current.CodePathList.length; i++) {
-            if (LambdaTreeView_1.LambdaTreeView.Current.CodePathList[i].Region === Region && LambdaTreeView_1.LambdaTreeView.Current.CodePathList[i].Lambda === Lambda) {
-                LambdaTreeView_1.LambdaTreeView.Current.CodePathList.splice(i, 1);
+        for (var i = 0; i < LambdaService_1.LambdaService.Instance.CodePathList.length; i++) {
+            if (LambdaService_1.LambdaService.Instance.CodePathList[i].Region === Region && LambdaService_1.LambdaService.Instance.CodePathList[i].Lambda === Lambda) {
+                LambdaService_1.LambdaService.Instance.CodePathList.splice(i, 1);
             }
         }
         this.Refresh();
     }
     GetCodePath(Region, Lambda) {
-        for (var item of LambdaTreeView_1.LambdaTreeView.Current.CodePathList) {
+        if (!LambdaService_1.LambdaService.Instance)
+            return "";
+        for (var item of LambdaService_1.LambdaService.Instance.CodePathList) {
             if (item.Region === Region && item.Lambda === Lambda) {
                 return item.CodePath;
             }
@@ -227,15 +233,15 @@ class LambdaTreeDataProvider {
         }
         else if (node.TreeItemType === LambdaTreeItem_1.TreeItemType.EnvironmentVariableGroup && node.Children.length === 0) {
             // Auto-load environment variables when the node is expanded
-            LambdaTreeView_1.LambdaTreeView.Current.LoadEnvironmentVariables(node);
+            LambdaService_1.LambdaService.Instance.LoadEnvironmentVariables(node);
         }
         else if (node.TreeItemType === LambdaTreeItem_1.TreeItemType.TagsGroup && node.Children.length === 0) {
             // Auto-load tags when the node is expanded
-            LambdaTreeView_1.LambdaTreeView.Current.LoadTags(node);
+            LambdaService_1.LambdaService.Instance.LoadTags(node);
         }
         else if (node.TreeItemType === LambdaTreeItem_1.TreeItemType.InfoGroup && node.Children.length === 0) {
             // Auto-load info when the node is expanded
-            LambdaTreeView_1.LambdaTreeView.Current.LoadInfo(node);
+            LambdaService_1.LambdaService.Instance.LoadInfo(node);
         }
         else if (node.Children.length > 0) {
             result.push(...node.Children);
@@ -244,14 +250,16 @@ class LambdaTreeDataProvider {
     }
     GetLambdaNodes() {
         var result = [];
+        if (!LambdaService_1.LambdaService.Instance)
+            return result;
         for (var node of this.LambdaNodeList) {
-            if (LambdaTreeView_1.LambdaTreeView.Current && LambdaTreeView_1.LambdaTreeView.Current.FilterString && !node.IsFilterStringMatch(LambdaTreeView_1.LambdaTreeView.Current.FilterString)) {
+            if (LambdaService_1.LambdaService.Instance.FilterString && !node.IsFilterStringMatch(LambdaService_1.LambdaService.Instance.FilterString)) {
                 continue;
             }
-            if (LambdaTreeView_1.LambdaTreeView.Current && LambdaTreeView_1.LambdaTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (LambdaService_1.LambdaService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (LambdaTreeView_1.LambdaTreeView.Current && !LambdaTreeView_1.LambdaTreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (LambdaService_1.LambdaService.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

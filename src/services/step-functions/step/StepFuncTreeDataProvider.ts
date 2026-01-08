@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { StepFuncTreeItem, TreeItemType } from './StepFuncTreeItem';
-import { StepFuncTreeView } from './StepFuncTreeView';
+import { StepfunctionsService } from '../StepfunctionsService';
+import * as api from '../common/API';
 
 export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFuncTreeItem>
 {
@@ -19,26 +20,27 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 		this._onDidChangeTreeData.fire();
 	}
 
-	AddStepFunc(Region:string, StepFuncArn:string){
-		for(var item of StepFuncTreeView.Current.StepFuncList)
+	AddStepFunc(Region:string, StepFuncArn:string): StepFuncTreeItem | undefined {
+		for(var item of StepfunctionsService.Instance.StepFuncList)
 		{
 			if(item.Region === Region && item.StepFunc === StepFuncArn)
 			{
-				return;
+				return this.StepFuncNodeList.find(n => n.Region === Region && n.StepFuncArn === StepFuncArn);
 			}
 		}
 		
-		StepFuncTreeView.Current.StepFuncList.push({Region: Region, StepFunc: StepFuncArn});
-		this.AddNewStepFuncNode(Region, StepFuncArn);
+		StepfunctionsService.Instance.StepFuncList.push({Region: Region, StepFunc: StepFuncArn});
+		const node = this.AddNewStepFuncNode(Region, StepFuncArn);
 		this.Refresh();
+		return node;
 	}
 
 	RemoveStepFunc(Region:string, StepFunc:string){
-		for(var i=0; i<StepFuncTreeView.Current.StepFuncList.length; i++)
+		for(var i=0; i<StepfunctionsService.Instance.StepFuncList.length; i++)
 		{
-			if(StepFuncTreeView.Current.StepFuncList[i].Region === Region && StepFuncTreeView.Current.StepFuncList[i].StepFunc === StepFunc)
+			if(StepfunctionsService.Instance.StepFuncList[i].Region === Region && StepfunctionsService.Instance.StepFuncList[i].StepFunc === StepFunc)
 			{
-				StepFuncTreeView.Current.StepFuncList.splice(i, 1);
+				StepfunctionsService.Instance.StepFuncList.splice(i, 1);
 				break;
 			}
 		}
@@ -104,8 +106,9 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 	
 	LoadStepFuncNodeList(){
 		this.StepFuncNodeList = [];
+		if(!StepfunctionsService.Instance) return;
 		
-		for(var item of StepFuncTreeView.Current.StepFuncList)
+		for(var item of StepfunctionsService.Instance.StepFuncList)
 		{
 			let treeItem = this.NewStepFuncNode(item.Region, item.StepFunc);
 
@@ -113,11 +116,14 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 		}
 	}
 
-	AddNewStepFuncNode(Region:string, StepFuncArn:string){
-		if (this.StepFuncNodeList.some(item => item.Region === Region && item.StepFuncArn === StepFuncArn)) { return; }
+	AddNewStepFuncNode(Region:string, StepFuncArn:string): StepFuncTreeItem | undefined {
+		if (this.StepFuncNodeList.some(item => item.Region === Region && item.StepFuncArn === StepFuncArn)) { 
+			return this.StepFuncNodeList.find(n => n.Region === Region && n.StepFuncArn === StepFuncArn);
+		}
 
 		let treeItem = this.NewStepFuncNode(Region, StepFuncArn);
 		this.StepFuncNodeList.push(treeItem);
+		return treeItem;
 	}
 
 	RemoveStepFuncNode(Region:string, StepFunc:string){
@@ -165,12 +171,12 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 		triggerWithoutPayload.Parent = triggerItem;
 		triggerItem.Children.push(triggerWithoutPayload);
 
-		for(var i=0; i<StepFuncTreeView.Current.PayloadPathList.length; i++)
+		for(var i=0; i<StepfunctionsService.Instance.PayloadPathList.length; i++)
 		{
-			if(StepFuncTreeView.Current.PayloadPathList[i].Region === Region 
-				&& StepFuncTreeView.Current.PayloadPathList[i].StepFunc === StepFuncArn)
+			if(StepfunctionsService.Instance.PayloadPathList[i].Region === Region 
+				&& StepfunctionsService.Instance.PayloadPathList[i].StepFunc === StepFuncArn)
 			{
-				this.AddNewPayloadPathNode(triggerItem, StepFuncTreeView.Current.PayloadPathList[i].PayloadPath);
+				this.AddNewPayloadPathNode(triggerItem, StepfunctionsService.Instance.PayloadPathList[i].PayloadPath);
 			}
 		}
 
@@ -214,17 +220,17 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 
 	AddPayloadPath(node: StepFuncTreeItem, PayloadPath:string){
 		
-		for(var i=0; i<StepFuncTreeView.Current.PayloadPathList.length; i++)
+		for(var i=0; i<StepfunctionsService.Instance.PayloadPathList.length; i++)
 		{
-			if(StepFuncTreeView.Current.PayloadPathList[i].Region === node.Region 
-				&& StepFuncTreeView.Current.CodePathList[i].StepFunc === node.StepFuncArn
-				&& StepFuncTreeView.Current.PayloadPathList[i].PayloadPath === PayloadPath)
+			if(StepfunctionsService.Instance.PayloadPathList[i].Region === node.Region 
+				&& StepfunctionsService.Instance.PayloadPathList[i].StepFunc === node.StepFuncArn
+				&& StepfunctionsService.Instance.PayloadPathList[i].PayloadPath === PayloadPath)
 			{
 				return;
 			}
 		}
 		this.AddNewPayloadPathNode(node, PayloadPath);
-		StepFuncTreeView.Current.PayloadPathList.push({Region: node.Region, StepFunc: node.StepFuncArn, PayloadPath: PayloadPath});
+		StepfunctionsService.Instance.PayloadPathList.push({Region: node.Region, StepFunc: node.StepFuncArn, PayloadPath: PayloadPath});
 		this.Refresh();
 	}
 
@@ -243,14 +249,14 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 	RemovePayloadPath(node: StepFuncTreeItem){
 		if(!node.Parent) { return; }
 
-		for(var i=0; i<StepFuncTreeView.Current.PayloadPathList.length; i++)
+		for(var i=0; i<StepfunctionsService.Instance.PayloadPathList.length; i++)
 		{
-			if(StepFuncTreeView.Current.PayloadPathList[i].Region === node.Region 
-				&& StepFuncTreeView.Current.PayloadPathList[i].StepFunc === node.StepFuncArn
-				&& StepFuncTreeView.Current.PayloadPathList[i].PayloadPath === node.PayloadPath
+			if(StepfunctionsService.Instance.PayloadPathList[i].Region === node.Region 
+				&& StepfunctionsService.Instance.PayloadPathList[i].StepFunc === node.StepFuncArn
+				&& StepfunctionsService.Instance.PayloadPathList[i].PayloadPath === node.PayloadPath
 			)
 			{
-				StepFuncTreeView.Current.PayloadPathList.splice(i, 1);
+				StepfunctionsService.Instance.PayloadPathList.splice(i, 1);
 			}
 		}
 		
@@ -270,31 +276,31 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 
 	AddCodePath(Region:string, StepFunc:string, CodePath:string){
 		//remove old
-		for(var i=0; i<StepFuncTreeView.Current.CodePathList.length; i++)
+		for(var i=0; i<StepfunctionsService.Instance.CodePathList.length; i++)
 		{
-			if(StepFuncTreeView.Current.CodePathList[i].Region === Region && StepFuncTreeView.Current.CodePathList[i].StepFunc === StepFunc)
+			if(StepfunctionsService.Instance.CodePathList[i].Region === Region && StepfunctionsService.Instance.CodePathList[i].StepFunc === StepFunc)
 			{
-				StepFuncTreeView.Current.CodePathList.splice(i, 1);
+				StepfunctionsService.Instance.CodePathList.splice(i, 1);
 			}
 		}
 		
-		StepFuncTreeView.Current.CodePathList.push({Region: Region, StepFunc: StepFunc, CodePath: CodePath});
+		StepfunctionsService.Instance.CodePathList.push({Region: Region, StepFunc: StepFunc, CodePath: CodePath});
 		this.Refresh();
 	}
 
 	RemoveCodePath(Region:string, StepFunc:string){
-		for(var i=0; i<StepFuncTreeView.Current.CodePathList.length; i++)
+		for(var i=0; i<StepfunctionsService.Instance.CodePathList.length; i++)
 		{
-			if(StepFuncTreeView.Current.CodePathList[i].Region === Region && StepFuncTreeView.Current.CodePathList[i].StepFunc === StepFunc)
+			if(StepfunctionsService.Instance.CodePathList[i].Region === Region && StepfunctionsService.Instance.CodePathList[i].StepFunc === StepFunc)
 			{
-				StepFuncTreeView.Current.CodePathList.splice(i, 1);
+				StepfunctionsService.Instance.CodePathList.splice(i, 1);
 			}
 		}
 		this.Refresh();
 	}
 
 	GetCodePath(Region:string, StepFunc:string){
-		for(var item of StepFuncTreeView.Current.CodePathList)
+		for(var item of StepfunctionsService.Instance.CodePathList)
 		{
 			if(item.Region === Region && item.StepFunc === StepFunc)
 			{
@@ -322,10 +328,11 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 
 	GetStepFuncNodes(): StepFuncTreeItem[]{
 		var result: StepFuncTreeItem[] = [];
+		if(!StepfunctionsService.Instance) return result;
 		for (var node of this.StepFuncNodeList) {
-			if (StepFuncTreeView.Current && StepFuncTreeView.Current.FilterString && !node.IsFilterStringMatch(StepFuncTreeView.Current.FilterString)) { continue; }
-			if (StepFuncTreeView.Current && StepFuncTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (StepFuncTreeView.Current && !StepFuncTreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (StepfunctionsService.Instance.FilterString && !node.IsFilterStringMatch(StepfunctionsService.Instance.FilterString)) { continue; }
+			if (StepfunctionsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (StepfunctionsService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

@@ -2,7 +2,7 @@
 import * as vscode from "vscode";
 import * as ui from '../common/UI';
 import * as api from '../common/API';
-import { S3TreeView } from "./S3TreeView";
+import { S3Service } from "../S3Service";
 import { S3TreeItem, TreeItemType } from "./S3TreeItem";
 import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
@@ -66,7 +66,7 @@ export class S3Explorer {
     public async Load(){
         ui.logToOutput('S3Explorer.LoadLogs Started');
         Telemetry.Current?.send("S3Explorer.Load");
-        if(!S3TreeView.Current){return;}
+        if(!S3Service.Instance){return;}
 
         var result = await api.GetFolderList(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key);
         if(result.isSuccessful)
@@ -243,7 +243,7 @@ export class S3Explorer {
             <td style="width:20px">
                 <img 
                     id="add_shortcut_${this.S3ExplorerItem.Key}" 
-                    src="${S3TreeView.Current?.DoesShortcutExists(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key)?bookmark_yesUri:bookmark_noUri}"
+                    src="${S3Service.Instance?.DoesShortcutExists(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key)?bookmark_yesUri:bookmark_noUri}"
                     style="cursor: pointer;">
                 </img>
             </td>
@@ -274,7 +274,7 @@ export class S3Explorer {
                         <td style="width:20px">
                             <img  
                                 id="add_shortcut_${folder.Prefix}" 
-                                src="${S3TreeView.Current?.DoesShortcutExists(this.S3ExplorerItem.Bucket, folder.Prefix)?bookmark_yesUri:bookmark_noUri}"
+                                src="${S3Service.Instance?.DoesShortcutExists(this.S3ExplorerItem.Bucket, folder.Prefix)?bookmark_yesUri:bookmark_noUri}"
                                 style="cursor: pointer;">
                             </img>
                         </td>
@@ -308,7 +308,7 @@ export class S3Explorer {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}" 
-                                src="${S3TreeView.Current?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}"
+                                src="${S3Service.Instance?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}"
                                 style="cursor: pointer;">
                             </img>
                         </td>
@@ -803,7 +803,7 @@ export class S3Explorer {
   
     AddShortcut(key: string) {
         Telemetry.Current?.send("S3Explorer.AddShortcut");
-        S3TreeView.Current?.AddOrRemoveShortcut(this.S3ExplorerItem.Bucket, key);
+        S3Service.Instance?.AddOrRemoveShortcut(this.S3ExplorerItem.Bucket, key);
         this.RenderHtml();
     }
     
@@ -1028,7 +1028,7 @@ export class S3Explorer {
                     //ui.showInfoMessage(key + " is deleted " + fileCountDeleted.toString() + " object(s)");
                     progress.report({ increment: 100 / keyList.length, message: `Deleted ${key}` });
                     deleteCounter++;
-                    S3TreeView.Current?.RemoveShortcutByKey(this.S3ExplorerItem.Bucket, key);
+                    S3Service.Instance?.RemoveShortcutByKey(this.S3ExplorerItem.Bucket, key);
                     if(this.S3ExplorerItem.Key === key)
                     {
                         goto_parent_folder = true;

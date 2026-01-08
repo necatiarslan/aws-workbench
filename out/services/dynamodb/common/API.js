@@ -42,14 +42,14 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const DynamodbTreeView = require("../dynamodb/DynamodbTreeView");
+const DynamodbService_1 = require("../DynamodbService");
 const fs = require("fs");
 const archiver = require("archiver");
 async function GetCredentials() {
     let credentials;
     try {
-        if (DynamodbTreeView.DynamodbTreeView.Current) {
-            process.env.AWS_PROFILE = DynamodbTreeView.DynamodbTreeView.Current.AwsProfile;
+        if (DynamodbService_1.DynamodbService.Instance) {
+            process.env.AWS_PROFILE = DynamodbService_1.DynamodbService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -71,7 +71,7 @@ async function GetDynamodbClient(region) {
     const dynamodbClient = new client_dynamodb_1.DynamoDBClient({
         region,
         credentials,
-        endpoint: DynamodbTreeView.DynamodbTreeView.Current?.AwsEndPoint,
+        endpoint: DynamodbService_1.DynamodbService.Instance?.AwsEndPoint,
     });
     return dynamodbClient;
 }
@@ -80,7 +80,7 @@ async function GetCloudWatchClient(region) {
     const cloudwatchLogsClient = new client_cloudwatch_logs_1.CloudWatchLogsClient({
         region,
         credentials,
-        endpoint: DynamodbTreeView.DynamodbTreeView.Current?.AwsEndPoint,
+        endpoint: DynamodbService_1.DynamodbService.Instance?.AwsEndPoint,
     });
     return cloudwatchLogsClient;
 }
@@ -778,7 +778,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: DynamodbTreeView.DynamodbTreeView.Current?.AwsEndPoint,
+        endpoint: DynamodbService_1.DynamodbService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

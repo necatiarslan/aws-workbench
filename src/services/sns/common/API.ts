@@ -8,7 +8,7 @@ import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as SnsTreeView from '../sns/SnsTreeView';
+import { SnsService } from '../SnsService';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
 
@@ -16,8 +16,8 @@ export async function GetCredentials() {
   let credentials;
 
   try {
-    if (SnsTreeView.SnsTreeView.Current) {
-      process.env.AWS_PROFILE = SnsTreeView.SnsTreeView.Current.AwsProfile ;
+    if (SnsService.Instance) {
+      process.env.AWS_PROFILE = SnsService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -42,7 +42,7 @@ async function GetSNSClient(region: string) {
   const sns = new SNSClient({
     region,
     credentials,
-    endpoint: SnsTreeView.SnsTreeView.Current?.AwsEndPoint,
+    endpoint: SnsService.Instance?.AwsEndPoint,
   });
   
   return sns;
@@ -259,7 +259,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: SnsTreeView.SnsTreeView.Current?.AwsEndPoint,
+      endpoint: SnsService.Instance?.AwsEndPoint,
     }
   );
   return iamClient;

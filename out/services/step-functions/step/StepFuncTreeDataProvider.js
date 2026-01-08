@@ -4,7 +4,7 @@ exports.ViewType = exports.StepFuncTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const StepFuncTreeItem_1 = require("./StepFuncTreeItem");
-const StepFuncTreeView_1 = require("./StepFuncTreeView");
+const StepfunctionsService_1 = require("../StepfunctionsService");
 class StepFuncTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -18,19 +18,20 @@ class StepFuncTreeDataProvider {
         this._onDidChangeTreeData.fire();
     }
     AddStepFunc(Region, StepFuncArn) {
-        for (var item of StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList) {
+        for (var item of StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList) {
             if (item.Region === Region && item.StepFunc === StepFuncArn) {
-                return;
+                return this.StepFuncNodeList.find(n => n.Region === Region && n.StepFuncArn === StepFuncArn);
             }
         }
-        StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList.push({ Region: Region, StepFunc: StepFuncArn });
-        this.AddNewStepFuncNode(Region, StepFuncArn);
+        StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList.push({ Region: Region, StepFunc: StepFuncArn });
+        const node = this.AddNewStepFuncNode(Region, StepFuncArn);
         this.Refresh();
+        return node;
     }
     RemoveStepFunc(Region, StepFunc) {
-        for (var i = 0; i < StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList.length; i++) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList[i].Region === Region && StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList[i].StepFunc === StepFunc) {
-                StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList.splice(i, 1);
+        for (var i = 0; i < StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList.length; i++) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList[i].Region === Region && StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList[i].StepFunc === StepFunc) {
+                StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList.splice(i, 1);
                 break;
             }
         }
@@ -87,17 +88,20 @@ class StepFuncTreeDataProvider {
     }
     LoadStepFuncNodeList() {
         this.StepFuncNodeList = [];
-        for (var item of StepFuncTreeView_1.StepFuncTreeView.Current.StepFuncList) {
+        if (!StepfunctionsService_1.StepfunctionsService.Instance)
+            return;
+        for (var item of StepfunctionsService_1.StepfunctionsService.Instance.StepFuncList) {
             let treeItem = this.NewStepFuncNode(item.Region, item.StepFunc);
             this.StepFuncNodeList.push(treeItem);
         }
     }
     AddNewStepFuncNode(Region, StepFuncArn) {
         if (this.StepFuncNodeList.some(item => item.Region === Region && item.StepFuncArn === StepFuncArn)) {
-            return;
+            return this.StepFuncNodeList.find(n => n.Region === Region && n.StepFuncArn === StepFuncArn);
         }
         let treeItem = this.NewStepFuncNode(Region, StepFuncArn);
         this.StepFuncNodeList.push(treeItem);
+        return treeItem;
     }
     RemoveStepFuncNode(Region, StepFunc) {
         for (var i = 0; i < this.StepFuncNodeList.length; i++) {
@@ -135,10 +139,10 @@ class StepFuncTreeDataProvider {
         triggerWithoutPayload.Region = treeItem.Region;
         triggerWithoutPayload.Parent = triggerItem;
         triggerItem.Children.push(triggerWithoutPayload);
-        for (var i = 0; i < StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList.length; i++) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].Region === Region
-                && StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].StepFunc === StepFuncArn) {
-                this.AddNewPayloadPathNode(triggerItem, StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].PayloadPath);
+        for (var i = 0; i < StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList.length; i++) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].Region === Region
+                && StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].StepFunc === StepFuncArn) {
+                this.AddNewPayloadPathNode(triggerItem, StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].PayloadPath);
             }
         }
         let logsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Logs", StepFuncTreeItem_1.TreeItemType.LogGroup);
@@ -174,15 +178,15 @@ class StepFuncTreeDataProvider {
         return treeItem;
     }
     AddPayloadPath(node, PayloadPath) {
-        for (var i = 0; i < StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList.length; i++) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].Region === node.Region
-                && StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList[i].StepFunc === node.StepFuncArn
-                && StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].PayloadPath === PayloadPath) {
+        for (var i = 0; i < StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList.length; i++) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].Region === node.Region
+                && StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].StepFunc === node.StepFuncArn
+                && StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].PayloadPath === PayloadPath) {
                 return;
             }
         }
         this.AddNewPayloadPathNode(node, PayloadPath);
-        StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList.push({ Region: node.Region, StepFunc: node.StepFuncArn, PayloadPath: PayloadPath });
+        StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList.push({ Region: node.Region, StepFunc: node.StepFuncArn, PayloadPath: PayloadPath });
         this.Refresh();
     }
     AddNewPayloadPathNode(node, PayloadPath) {
@@ -201,11 +205,11 @@ class StepFuncTreeDataProvider {
         if (!node.Parent) {
             return;
         }
-        for (var i = 0; i < StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList.length; i++) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].Region === node.Region
-                && StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].StepFunc === node.StepFuncArn
-                && StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList[i].PayloadPath === node.PayloadPath) {
-                StepFuncTreeView_1.StepFuncTreeView.Current.PayloadPathList.splice(i, 1);
+        for (var i = 0; i < StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList.length; i++) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].Region === node.Region
+                && StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].StepFunc === node.StepFuncArn
+                && StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].PayloadPath === node.PayloadPath) {
+                StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList.splice(i, 1);
             }
         }
         let parentNode = node.Parent;
@@ -220,24 +224,24 @@ class StepFuncTreeDataProvider {
     }
     AddCodePath(Region, StepFunc, CodePath) {
         //remove old
-        for (var i = 0; i < StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList.length; i++) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList[i].Region === Region && StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList[i].StepFunc === StepFunc) {
-                StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList.splice(i, 1);
+        for (var i = 0; i < StepfunctionsService_1.StepfunctionsService.Instance.CodePathList.length; i++) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.CodePathList[i].Region === Region && StepfunctionsService_1.StepfunctionsService.Instance.CodePathList[i].StepFunc === StepFunc) {
+                StepfunctionsService_1.StepfunctionsService.Instance.CodePathList.splice(i, 1);
             }
         }
-        StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList.push({ Region: Region, StepFunc: StepFunc, CodePath: CodePath });
+        StepfunctionsService_1.StepfunctionsService.Instance.CodePathList.push({ Region: Region, StepFunc: StepFunc, CodePath: CodePath });
         this.Refresh();
     }
     RemoveCodePath(Region, StepFunc) {
-        for (var i = 0; i < StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList.length; i++) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList[i].Region === Region && StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList[i].StepFunc === StepFunc) {
-                StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList.splice(i, 1);
+        for (var i = 0; i < StepfunctionsService_1.StepfunctionsService.Instance.CodePathList.length; i++) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.CodePathList[i].Region === Region && StepfunctionsService_1.StepfunctionsService.Instance.CodePathList[i].StepFunc === StepFunc) {
+                StepfunctionsService_1.StepfunctionsService.Instance.CodePathList.splice(i, 1);
             }
         }
         this.Refresh();
     }
     GetCodePath(Region, StepFunc) {
-        for (var item of StepFuncTreeView_1.StepFuncTreeView.Current.CodePathList) {
+        for (var item of StepfunctionsService_1.StepfunctionsService.Instance.CodePathList) {
             if (item.Region === Region && item.StepFunc === StepFunc) {
                 return item.CodePath;
             }
@@ -256,14 +260,16 @@ class StepFuncTreeDataProvider {
     }
     GetStepFuncNodes() {
         var result = [];
+        if (!StepfunctionsService_1.StepfunctionsService.Instance)
+            return result;
         for (var node of this.StepFuncNodeList) {
-            if (StepFuncTreeView_1.StepFuncTreeView.Current && StepFuncTreeView_1.StepFuncTreeView.Current.FilterString && !node.IsFilterStringMatch(StepFuncTreeView_1.StepFuncTreeView.Current.FilterString)) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.FilterString && !node.IsFilterStringMatch(StepfunctionsService_1.StepfunctionsService.Instance.FilterString)) {
                 continue;
             }
-            if (StepFuncTreeView_1.StepFuncTreeView.Current && StepFuncTreeView_1.StepFuncTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (StepFuncTreeView_1.StepFuncTreeView.Current && !StepFuncTreeView_1.StepFuncTreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (StepfunctionsService_1.StepfunctionsService.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

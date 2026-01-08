@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ViewType = exports.DynamodbTreeDataProvider = void 0;
+exports.DynamodbTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const DynamodbTreeItem_1 = require("./DynamodbTreeItem");
-const DynamodbTreeView_1 = require("./DynamodbTreeView");
+const DynamodbService_1 = require("../DynamodbService");
 const api = require("../common/API");
 class DynamodbTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -19,19 +19,20 @@ class DynamodbTreeDataProvider {
         this._onDidChangeTreeData.fire();
     }
     AddDynamodb(Region, Dynamodb) {
-        for (var item of DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList) {
+        for (var item of DynamodbService_1.DynamodbService.Instance.DynamodbList) {
             if (item.Region === Region && item.Dynamodb === Dynamodb) {
-                return;
+                return this.DynamodbNodeList.find(n => n.Region === Region && n.Dynamodb === Dynamodb);
             }
         }
-        DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList.push({ Region: Region, Dynamodb: Dynamodb });
-        this.AddNewDynamodbNode(Region, Dynamodb);
+        DynamodbService_1.DynamodbService.Instance.DynamodbList.push({ Region: Region, Dynamodb: Dynamodb });
+        const node = this.AddNewDynamodbNode(Region, Dynamodb);
         this.Refresh();
+        return node;
     }
     RemoveDynamodb(Region, Dynamodb) {
-        for (var i = 0; i < DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList.length; i++) {
-            if (DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList[i].Region === Region && DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList[i].Dynamodb === Dynamodb) {
-                DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList.splice(i, 1);
+        for (var i = 0; i < DynamodbService_1.DynamodbService.Instance.DynamodbList.length; i++) {
+            if (DynamodbService_1.DynamodbService.Instance.DynamodbList[i].Region === Region && DynamodbService_1.DynamodbService.Instance.DynamodbList[i].Dynamodb === Dynamodb) {
+                DynamodbService_1.DynamodbService.Instance.DynamodbList.splice(i, 1);
                 break;
             }
         }
@@ -68,17 +69,20 @@ class DynamodbTreeDataProvider {
     }
     LoadDynamodbNodeList() {
         this.DynamodbNodeList = [];
-        for (var item of DynamodbTreeView_1.DynamodbTreeView.Current.DynamodbList) {
+        if (!DynamodbService_1.DynamodbService.Instance)
+            return;
+        for (var item of DynamodbService_1.DynamodbService.Instance.DynamodbList) {
             let treeItem = this.NewDynamodbNode(item.Region, item.Dynamodb);
             this.DynamodbNodeList.push(treeItem);
         }
     }
     AddNewDynamodbNode(Region, Dynamodb) {
         if (this.DynamodbNodeList.some(item => item.Region === Region && item.Dynamodb === Dynamodb)) {
-            return;
+            return this.DynamodbNodeList.find(n => n.Region === Region && n.Dynamodb === Dynamodb);
         }
         let treeItem = this.NewDynamodbNode(Region, Dynamodb);
         this.DynamodbNodeList.push(treeItem);
+        return treeItem;
     }
     RemoveDynamodbNode(Region, Dynamodb) {
         for (var i = 0; i < this.DynamodbNodeList.length; i++) {
@@ -133,6 +137,8 @@ class DynamodbTreeDataProvider {
         if (!node || node.TreeItemType !== DynamodbTreeItem_1.TreeItemType.Dynamodb) {
             return;
         }
+        if (!DynamodbService_1.DynamodbService.Instance)
+            return;
         try {
             const response = await api.GetDynamodb(node.Region, node.Dynamodb);
             if (!response.isSuccessful || !response.result) {
@@ -174,7 +180,7 @@ class DynamodbTreeDataProvider {
                     readCapacityItem.ReadCapacity = details.readCapacity;
                     readCapacityItem.tooltip = 'Click for read capacity details';
                     readCapacityItem.command = {
-                        command: 'dynamodb.showCapacityExplanation',
+                        command: 'DynamodbTreeView.showCapacityExplanation',
                         title: 'Show Capacity Explanation',
                         arguments: [readCapacityItem, 'read']
                     };
@@ -187,7 +193,7 @@ class DynamodbTreeDataProvider {
                     writeCapacityItem.WriteCapacity = details.writeCapacity;
                     writeCapacityItem.tooltip = 'Click for write capacity details';
                     writeCapacityItem.command = {
-                        command: 'dynamodb.showCapacityExplanation',
+                        command: 'DynamodbTreeView.showCapacityExplanation',
                         title: 'Show Capacity Explanation',
                         arguments: [writeCapacityItem, 'write']
                     };
@@ -276,77 +282,6 @@ class DynamodbTreeDataProvider {
             // Silently fail - details will not be populated
         }
     }
-    AddPayloadPath(node, PayloadPath) {
-        for (var i = 0; i < DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList.length; i++) {
-            if (DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList[i].Region === node.Region
-                && DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList[i].Dynamodb === node.Dynamodb
-                && DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList[i].PayloadPath === PayloadPath) {
-                return;
-            }
-        }
-        this.AddNewPayloadPathNode(node, PayloadPath);
-        DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList.push({ Region: node.Region, Dynamodb: node.Dynamodb, PayloadPath: PayloadPath });
-        this.Refresh();
-    }
-    AddNewPayloadPathNode(node, PayloadPath) {
-        let fileName = PayloadPath.split("/").pop();
-        if (!fileName) {
-            fileName = PayloadPath;
-        }
-        let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem(fileName, DynamodbTreeItem_1.TreeItemType.TriggerFilePayload);
-        treeItem.Region = node.Region;
-        treeItem.Dynamodb = node.Dynamodb;
-        treeItem.PayloadPath = PayloadPath;
-        treeItem.Parent = node;
-        node.Children.push(treeItem);
-    }
-    RemovePayloadPath(node) {
-        if (!node.Parent) {
-            return;
-        }
-        for (var i = 0; i < DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList.length; i++) {
-            if (DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList[i].Region === node.Region
-                && DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList[i].Dynamodb === node.Dynamodb
-                && DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList[i].PayloadPath === node.PayloadPath) {
-                DynamodbTreeView_1.DynamodbTreeView.Current.PayloadPathList.splice(i, 1);
-            }
-        }
-        let parentNode = node.Parent;
-        for (var i = 0; i < parentNode.Children.length; i++) {
-            if (parentNode.Children[i].Region === node.Region
-                && parentNode.Children[i].Dynamodb === node.Dynamodb
-                && parentNode.Children[i].PayloadPath === node.PayloadPath) {
-                parentNode.Children.splice(i, 1);
-            }
-        }
-        this.Refresh();
-    }
-    AddCodePath(Region, Dynamodb, CodePath) {
-        //remove old
-        for (var i = 0; i < DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList.length; i++) {
-            if (DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList[i].Region === Region && DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList[i].Dynamodb === Dynamodb) {
-                DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList.splice(i, 1);
-            }
-        }
-        DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList.push({ Region: Region, Dynamodb: Dynamodb, CodePath: CodePath });
-        this.Refresh();
-    }
-    RemoveCodePath(Region, Dynamodb) {
-        for (var i = 0; i < DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList.length; i++) {
-            if (DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList[i].Region === Region && DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList[i].Dynamodb === Dynamodb) {
-                DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList.splice(i, 1);
-            }
-        }
-        this.Refresh();
-    }
-    GetCodePath(Region, Dynamodb) {
-        for (var item of DynamodbTreeView_1.DynamodbTreeView.Current.CodePathList) {
-            if (item.Region === Region && item.Dynamodb === Dynamodb) {
-                return item.CodePath;
-            }
-        }
-        return "";
-    }
     getChildren(node) {
         let result = [];
         if (!node) {
@@ -359,14 +294,16 @@ class DynamodbTreeDataProvider {
     }
     GetDynamodbNodes() {
         var result = [];
+        if (!DynamodbService_1.DynamodbService.Instance)
+            return result;
         for (var node of this.DynamodbNodeList) {
-            if (DynamodbTreeView_1.DynamodbTreeView.Current && DynamodbTreeView_1.DynamodbTreeView.Current.FilterString && !node.IsFilterStringMatch(DynamodbTreeView_1.DynamodbTreeView.Current.FilterString)) {
+            if (DynamodbService_1.DynamodbService.Instance.FilterString && !node.IsFilterStringMatch(DynamodbService_1.DynamodbService.Instance.FilterString)) {
                 continue;
             }
-            if (DynamodbTreeView_1.DynamodbTreeView.Current && DynamodbTreeView_1.DynamodbTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (DynamodbService_1.DynamodbService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (DynamodbTreeView_1.DynamodbTreeView.Current && !DynamodbTreeView_1.DynamodbTreeView.Current.isShowHiddenNodes && (node.IsHidden)) {
+            if (DynamodbService_1.DynamodbService.Instance.isShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);
@@ -378,8 +315,4 @@ class DynamodbTreeDataProvider {
     }
 }
 exports.DynamodbTreeDataProvider = DynamodbTreeDataProvider;
-var ViewType;
-(function (ViewType) {
-    ViewType[ViewType["Dynamodb"] = 1] = "Dynamodb";
-})(ViewType || (exports.ViewType = ViewType = {}));
 //# sourceMappingURL=DynamodbTreeDataProvider.js.map

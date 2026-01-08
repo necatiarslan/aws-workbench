@@ -11,7 +11,7 @@ import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as StepFuncTreeView from '../step/StepFuncTreeView';
+import { StepfunctionsService } from '../StepfunctionsService';
 import * as fs from 'fs';
 
 // add a simple in-memory cache for DescribeStateMachine responses
@@ -21,8 +21,8 @@ export async function GetCredentials() {
   let credentials;
 
   try {
-    if (StepFuncTreeView.StepFuncTreeView.Current) {
-      process.env.AWS_PROFILE = StepFuncTreeView.StepFuncTreeView.Current.AwsProfile ;
+    if (StepfunctionsService.Instance) {
+      process.env.AWS_PROFILE = StepfunctionsService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -47,7 +47,7 @@ async function GetStepFuncClient(region: string) {
   const stepFuncClient = new SFNClient({
     region,
     credentials,
-    endpoint: StepFuncTreeView.StepFuncTreeView.Current?.AwsEndPoint,
+    endpoint: StepfunctionsService.Instance?.AwsEndPoint,
   });
   
   return stepFuncClient;
@@ -58,7 +58,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: StepFuncTreeView.StepFuncTreeView.Current?.AwsEndPoint,
+    endpoint: StepfunctionsService.Instance?.AwsEndPoint,
   });
   
   return cloudwatchLogsClient;
@@ -671,7 +671,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: StepFuncTreeView.StepFuncTreeView.Current?.AwsEndPoint,
+      endpoint: StepfunctionsService.Instance?.AwsEndPoint,
     }
   );
   return iamClient;

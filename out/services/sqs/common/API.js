@@ -8,6 +8,7 @@ exports.isJsonString = isJsonString;
 exports.ParseJson = ParseJson;
 exports.SendMessage = SendMessage;
 exports.ReceiveMessage = ReceiveMessage;
+exports.PurgeQueue = PurgeQueue;
 exports.DeleteMessage = DeleteMessage;
 exports.DeleteAllMessages = DeleteAllMessages;
 exports.GetQueuePolicy = GetQueuePolicy;
@@ -26,14 +27,14 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const SqsTreeView = require("../sqs/SqsTreeView");
+const SqsService_1 = require("../SqsService");
 const fs = require("fs");
 const archiver = require("archiver");
 async function GetCredentials() {
     let credentials;
     try {
-        if (SqsTreeView.SqsTreeView.Current) {
-            process.env.AWS_PROFILE = SqsTreeView.SqsTreeView.Current.AwsProfile;
+        if (SqsService_1.SqsService.Instance) {
+            process.env.AWS_PROFILE = SqsService_1.SqsService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -55,7 +56,7 @@ async function GetSQSClient(region) {
     const sqs = new client_sqs_1.SQSClient({
         region,
         credentials,
-        endpoint: SqsTreeView.SqsTreeView.Current?.AwsEndPoint,
+        endpoint: SqsService_1.SqsService.Instance?.AwsEndPoint,
     });
     return sqs;
 }
@@ -189,6 +190,25 @@ async function ReceiveMessage(Region, QueueUrl, MaxNumberOfMessages = 1, WaitTim
     }
 }
 const client_sqs_5 = require("@aws-sdk/client-sqs");
+async function PurgeQueue(Region, QueueUrl) {
+    let result = new MethodResult_1.MethodResult();
+    try {
+        const sqs = await GetSQSClient(Region);
+        const command = new client_sqs_5.PurgeQueueCommand({ QueueUrl });
+        const response = await sqs.send(command);
+        result.result = response;
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.showErrorMessage("api.PurgeQueue Error !!!", error);
+        ui.logToOutput("api.PurgeQueue Error !!!", error);
+        return result;
+    }
+}
+const client_sqs_6 = require("@aws-sdk/client-sqs");
 async function DeleteMessage(Region, QueueUrl, ReceiptHandle) {
     let result = new MethodResult_1.MethodResult();
     try {
@@ -197,7 +217,7 @@ async function DeleteMessage(Region, QueueUrl, ReceiptHandle) {
             QueueUrl,
             ReceiptHandle,
         };
-        const command = new client_sqs_5.DeleteMessageCommand(params);
+        const command = new client_sqs_6.DeleteMessageCommand(params);
         const response = await sqs.send(command);
         result.result = response;
         result.isSuccessful = true;
@@ -235,7 +255,7 @@ async function DeleteAllMessages(Region, QueueUrl, MaxBatch = 10) {
                         QueueUrl,
                         ReceiptHandle: msg.ReceiptHandle,
                     };
-                    const deleteCommand = new client_sqs_5.DeleteMessageCommand(deleteParams);
+                    const deleteCommand = new client_sqs_6.DeleteMessageCommand(deleteParams);
                     await sqs.send(deleteCommand);
                     deletedCount++;
                 }
@@ -338,7 +358,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: SqsTreeView.SqsTreeView.Current?.AwsEndPoint,
+        endpoint: SqsService_1.SqsService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

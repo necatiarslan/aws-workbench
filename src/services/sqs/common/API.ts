@@ -8,7 +8,7 @@ import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as SqsTreeView from '../sqs/SqsTreeView';
+import { SqsService } from '../SqsService';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
 
@@ -16,8 +16,8 @@ export async function GetCredentials() {
   let credentials;
 
   try {
-    if (SqsTreeView.SqsTreeView.Current) {
-      process.env.AWS_PROFILE = SqsTreeView.SqsTreeView.Current.AwsProfile ;
+    if (SqsService.Instance) {
+      process.env.AWS_PROFILE = SqsService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -42,7 +42,7 @@ async function GetSQSClient(region: string) {
   const sqs = new SQSClient({
     region,
     credentials,
-    endpoint: SqsTreeView.SqsTreeView.Current?.AwsEndPoint,
+    endpoint: SqsService.Instance?.AwsEndPoint,
   });
   
   return sqs;
@@ -212,6 +212,26 @@ export async function ReceiveMessage(
     result.error = error;
     ui.showErrorMessage("api.ReceiveMessage Error !!!", error);
     ui.logToOutput("api.ReceiveMessage Error !!!", error);
+    return result;
+  }
+}
+
+import { PurgeQueueCommand, PurgeQueueCommandOutput } from "@aws-sdk/client-sqs";
+
+export async function PurgeQueue(Region: string, QueueUrl: string): Promise<MethodResult<PurgeQueueCommandOutput>> {
+  let result: MethodResult<PurgeQueueCommandOutput> = new MethodResult<PurgeQueueCommandOutput>();
+  try {
+    const sqs = await GetSQSClient(Region);
+    const command = new PurgeQueueCommand({ QueueUrl });
+    const response = await sqs.send(command);
+    result.result = response;
+    result.isSuccessful = true;
+    return result;
+  } catch (error: any) {
+    result.isSuccessful = false;
+    result.error = error;
+    ui.showErrorMessage("api.PurgeQueue Error !!!", error);
+    ui.logToOutput("api.PurgeQueue Error !!!", error);
     return result;
   }
 }
@@ -396,7 +416,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: SqsTreeView.SqsTreeView.Current?.AwsEndPoint,
+      endpoint: SqsService.Instance?.AwsEndPoint,
     }
   );
   return iamClient;

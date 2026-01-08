@@ -42,7 +42,7 @@ const path_2 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
 const s3_helper = require("../s3/S3Helper");
 const fs = require("fs");
-const S3TreeView = require("../s3/S3TreeView");
+const S3Service_1 = require("../S3Service");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 async function GetCredentials() {
     let credentials;
@@ -51,8 +51,8 @@ async function GetCredentials() {
         return CurrentCredentials;
     }
     try {
-        if (S3TreeView.S3TreeView.Current) {
-            process.env.AWS_PROFILE = S3TreeView.S3TreeView.Current.AwsProfile;
+        if (S3Service_1.S3Service.Instance) {
+            process.env.AWS_PROFILE = S3Service_1.S3Service.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -91,9 +91,9 @@ async function GetS3Client() {
     }
     return new client_s3_1.S3Client({
         credentials: credentials,
-        endpoint: S3TreeView.S3TreeView.Current?.AwsEndPoint,
+        endpoint: S3Service_1.S3Service.Instance?.AwsEndPoint,
         forcePathStyle: true,
-        region: S3TreeView.S3TreeView.Current?.AwsRegion,
+        region: S3Service_1.S3Service.Instance?.AwsRegion,
     });
 }
 const client_iam_1 = require("@aws-sdk/client-iam");
@@ -715,7 +715,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: S3TreeView.S3TreeView.Current?.AwsEndPoint,
+        endpoint: S3Service_1.S3Service.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

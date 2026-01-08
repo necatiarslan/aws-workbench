@@ -25,12 +25,12 @@ const MethodResult_1 = require("./MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
-const IamTreeView = require("../iam/IamTreeView");
+const IamService_1 = require("../IamService");
 async function GetCredentials() {
     let credentials;
     try {
-        if (IamTreeView.IamTreeView.Current) {
-            process.env.AWS_PROFILE = IamTreeView.IamTreeView.Current.AwsProfile;
+        if (IamService_1.IamService.Instance) {
+            process.env.AWS_PROFILE = IamService_1.IamService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -65,7 +65,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: IamTreeView.IamTreeView.Current?.AwsEndPoint,
+        endpoint: IamService_1.IamService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }
@@ -145,7 +145,7 @@ async function GetIamClient(region) {
     const iamClient = new client_iam_1.IAMClient({
         region,
         credentials,
-        endpoint: IamTreeView.IamTreeView.Current?.AwsEndPoint,
+        endpoint: IamService_1.IamService.Instance?.AwsEndPoint,
     });
     return iamClient;
 }

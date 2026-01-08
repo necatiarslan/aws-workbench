@@ -11,7 +11,7 @@ import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as LambdaTreeView from '../lambda/LambdaTreeView';
+import { LambdaService } from '../LambdaService';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
 
@@ -19,8 +19,8 @@ export async function GetCredentials() {
   let credentials;
 
   try {
-    if (LambdaTreeView.LambdaTreeView.Current) {
-      process.env.AWS_PROFILE = LambdaTreeView.LambdaTreeView.Current.AwsProfile ;
+    if (LambdaService.Instance) {
+      process.env.AWS_PROFILE = LambdaService.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -45,7 +45,7 @@ async function GetLambdaClient(region: string) {
   const lambdaClient = new LambdaClient({
     region,
     credentials,
-    endpoint: LambdaTreeView.LambdaTreeView.Current?.AwsEndPoint,
+    endpoint: LambdaService.Instance?.AwsEndPoint,
   });
   
   return lambdaClient;
@@ -56,7 +56,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: LambdaTreeView.LambdaTreeView.Current?.AwsEndPoint,
+    endpoint: LambdaService.Instance?.AwsEndPoint,
   });
   
   return cloudwatchLogsClient;
@@ -597,7 +597,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: LambdaTreeView.LambdaTreeView.Current?.AwsEndPoint,
+      endpoint: LambdaService.Instance?.AwsEndPoint,
     }
   );
   return iamClient;

@@ -8,7 +8,7 @@ import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import * as s3_helper from '../s3/S3Helper'
 import * as fs from 'fs';
-import * as S3TreeView from '../s3/S3TreeView';
+import { S3Service } from '../S3Service';
 
 
 
@@ -21,8 +21,8 @@ export async function GetCredentials() {
   }
 
   try {
-    if (S3TreeView.S3TreeView.Current) {
-      process.env.AWS_PROFILE = S3TreeView.S3TreeView.Current.AwsProfile ;
+    if (S3Service.Instance) {
+      process.env.AWS_PROFILE = S3Service.Instance.AwsProfile ;
     }
     // Get credentials using the default provider chain.
     const provider = fromNodeProviderChain({ignoreCache: true});
@@ -67,9 +67,9 @@ export async function GetS3Client() {
 
   return new S3Client({
     credentials: credentials,
-    endpoint: S3TreeView.S3TreeView.Current?.AwsEndPoint,
+    endpoint: S3Service.Instance?.AwsEndPoint,
     forcePathStyle: true,
-    region: S3TreeView.S3TreeView.Current?.AwsRegion,
+    region: S3Service.Instance?.AwsRegion,
   });
 }
 
@@ -862,7 +862,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: S3TreeView.S3TreeView.Current?.AwsEndPoint,
+      endpoint: S3Service.Instance?.AwsEndPoint,
     }
   );
   return iamClient;

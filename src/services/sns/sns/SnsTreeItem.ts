@@ -14,6 +14,10 @@ export class SnsTreeItem extends vscode.TreeItem {
 	public MessageFilePath: string | undefined
 	public IsRunning: boolean = false;
 
+	public SubscriptionArn:string = ""
+	public Protocol:string = ""
+	public Endpoint:string = ""
+
 	constructor(text:string, treeItemType:TreeItemType) {
 		super(text)
 		this.Text = text

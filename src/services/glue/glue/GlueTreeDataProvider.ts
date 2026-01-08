@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { GlueTreeItem, TreeItemType } from './GlueTreeItem';
-import { GlueTreeView } from './GlueTreeView';
+import { GlueService } from '../GlueService';
 import * as api from '../common/API';
 
 export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeItem> {
@@ -30,7 +30,7 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 				];
 			}
 			if (element.TreeItemType === TreeItemType.Info) {
-				let jobInfo = element.Payload || GlueTreeView.Current.JobInfoCache[element.ResourceName];
+				let jobInfo = element.Payload || GlueService.Instance.JobInfoCache[element.ResourceName];
 				if (!jobInfo) return [new GlueTreeItem("No Data (Refresh to Load)", TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
 				
 				let nodes: GlueTreeItem[] = [];
@@ -47,8 +47,8 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 			if (element.TreeItemType === TreeItemType.RunGroup) {
 				// Runs will be added dynamically by RefreshRuns
 				let runs = element.Payload;
-				if (element.Parent && GlueTreeView.Current.JobRunsCache[element.Parent.ResourceName]) {
-					runs = GlueTreeView.Current.JobRunsCache[element.Parent.ResourceName];
+				if (element.Parent && GlueService.Instance.JobRunsCache[element.Parent.ResourceName]) {
+					runs = GlueService.Instance.JobRunsCache[element.Parent.ResourceName];
 				}
 
 				if (!runs) return [];
@@ -61,7 +61,7 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 			}
 			if (element.TreeItemType === TreeItemType.LogGroup) {
 				// Log streams will be added dynamically by RefreshLogStreams
-				let streams = GlueTreeView.Current.LogStreamsCache[element.label!];
+				let streams = GlueService.Instance.LogStreamsCache[element.label!];
 				if (!streams) return [];
 				if (streams.length === 0) return [new GlueTreeItem("No Logs Found", TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
 				
@@ -103,15 +103,14 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 			return [];
 		} else {
 			let items: GlueTreeItem[] = [];
-			let resourceList = GlueTreeView.Current.ResourceList;
+			if(!GlueService.Instance) return items;
+			let resourceList = GlueService.Instance.ResourceList;
 
 			for (let res of resourceList) {
-				if (GlueTreeView.Current.FilterString && !res.Name.includes(GlueTreeView.Current.FilterString)) continue;
+				if (GlueService.Instance.FilterString && !res.Name.includes(GlueService.Instance.FilterString)) continue;
 				
 				let type = res.Type as TreeItemType;
-				if (type !== TreeItemType.Job) {
-					type = TreeItemType.Job; // Migration: default to Job
-				}
+				// migration logic removed or adjusted
 				items.push(new GlueTreeItem(res.Name, type, res.Region, res.Name, vscode.TreeItemCollapsibleState.Collapsed));
 			}
 
@@ -119,15 +118,18 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 		}
 	}
 
-	AddResource(region: string, name: string, type: string) {
-		if (!GlueTreeView.Current.ResourceList.find(r => r.Region === region && r.Name === name && r.Type === type)) {
-			GlueTreeView.Current.ResourceList.push({ Region: region, Name: name, Type: type });
+	AddResource(region: string, name: string, type: TreeItemType): GlueTreeItem | undefined {
+		if(!GlueService.Instance) return;
+		if (!GlueService.Instance.ResourceList.find(r => r.Region === region && r.Name === name && r.Type === type)) {
+			GlueService.Instance.ResourceList.push({ Region: region, Name: name, Type: type as any });
 			this.Refresh();
 		}
+		return new GlueTreeItem(name, type, region, name, vscode.TreeItemCollapsibleState.Collapsed);
 	}
 
-	RemoveResource(region: string, name: string, type: string) {
-		GlueTreeView.Current.ResourceList = GlueTreeView.Current.ResourceList.filter(r => !(r.Region === region && r.Name === name && r.Type === type));
+	RemoveResource(region: string, name: string, type: TreeItemType) {
+		if(!GlueService.Instance) return;
+		GlueService.Instance.ResourceList = GlueService.Instance.ResourceList.filter(r => !(r.Region === region && r.Name === name && r.Type === type));
 		this.Refresh();
 	}
 }

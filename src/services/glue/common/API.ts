@@ -11,15 +11,15 @@ import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
-import * as GlueTreeView from '../glue/GlueTreeView';
+import { GlueService } from '../GlueService';
 import * as fs from 'fs';
 
 export async function GetCredentials() {
   let credentials;
 
   try {
-    if (GlueTreeView.GlueTreeView.Current) {
-      process.env.AWS_PROFILE = GlueTreeView.GlueTreeView.Current.AwsProfile ;
+    if (GlueService.Instance) {
+      process.env.AWS_PROFILE = GlueService.Instance.AwsProfile ;
     }
     const provider = fromNodeProviderChain({ignoreCache: true});
     credentials = await provider();
@@ -42,7 +42,7 @@ async function GetGlueClient(region: string) {
   const glueClient = new GlueClient({
     region,
     credentials,
-    endpoint: GlueTreeView.GlueTreeView.Current?.AwsEndPoint,
+    endpoint: GlueService.Instance?.AwsEndPoint,
   });
   return glueClient;
 }
@@ -52,7 +52,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: GlueTreeView.GlueTreeView.Current?.AwsEndPoint,
+    endpoint: GlueService.Instance?.AwsEndPoint,
   });
   return cloudwatchLogsClient;
 }
@@ -62,7 +62,7 @@ async function GetSTSClient(region: string) {
   const stsClient = new STSClient({
     region,
     credentials,
-    endpoint: GlueTreeView.GlueTreeView.Current?.AwsEndPoint,
+    endpoint: GlueService.Instance?.AwsEndPoint,
   });
   return stsClient;
 }

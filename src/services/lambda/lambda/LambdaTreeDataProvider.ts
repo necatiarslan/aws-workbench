@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { LambdaTreeItem, TreeItemType } from './LambdaTreeItem';
-import { LambdaTreeView } from './LambdaTreeView';
+import { LambdaService } from '../LambdaService';
 
 export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTreeItem>
 {
@@ -19,26 +19,27 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		this._onDidChangeTreeData.fire();
 	}
 
-	AddLambda(Region:string, Lambda:string){
-		for(var item of LambdaTreeView.Current.LambdaList)
+	AddLambda(Region:string, Lambda:string): LambdaTreeItem | undefined {
+		for(var item of LambdaService.Instance.LambdaList)
 		{
 			if(item.Region === Region && item.Lambda === Lambda)
 			{
-				return;
+				return this.LambdaNodeList.find(n => n.Region === Region && n.Lambda === Lambda);
 			}
 		}
 		
-		LambdaTreeView.Current.LambdaList.push({Region: Region, Lambda: Lambda});
-		this.AddNewLambdaNode(Region, Lambda);
+		LambdaService.Instance.LambdaList.push({Region: Region, Lambda: Lambda});
+		const node = this.AddNewLambdaNode(Region, Lambda);
 		this.Refresh();
+		return node;
 	}
 
 	RemoveLambda(Region:string, Lambda:string){
-		for(var i=0; i<LambdaTreeView.Current.LambdaList.length; i++)
+		for(var i=0; i<LambdaService.Instance.LambdaList.length; i++)
 		{
-			if(LambdaTreeView.Current.LambdaList[i].Region === Region && LambdaTreeView.Current.LambdaList[i].Lambda === Lambda)
+			if(LambdaService.Instance.LambdaList[i].Region === Region && LambdaService.Instance.LambdaList[i].Lambda === Lambda)
 			{
-				LambdaTreeView.Current.LambdaList.splice(i, 1);
+				LambdaService.Instance.LambdaList.splice(i, 1);
 				break;
 			}
 		}
@@ -79,8 +80,9 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 	}
 	LoadLambdaNodeList(){
 		this.LambdaNodeList = [];
+		if(!LambdaService.Instance) return;
 		
-		for(var item of LambdaTreeView.Current.LambdaList)
+		for(var item of LambdaService.Instance.LambdaList)
 		{
 			let treeItem = this.NewLambdaNode(item.Region, item.Lambda);
 
@@ -88,11 +90,14 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		}
 	}
 
-	AddNewLambdaNode(Region:string, Lambda:string){
-		if (this.LambdaNodeList.some(item => item.Region === Region && item.Lambda === Lambda)) { return; }
+	AddNewLambdaNode(Region:string, Lambda:string): LambdaTreeItem | undefined {
+		if (this.LambdaNodeList.some(item => item.Region === Region && item.Lambda === Lambda)) { 
+			return this.LambdaNodeList.find(n => n.Region === Region && n.Lambda === Lambda);
+		}
 
 		let treeItem = this.NewLambdaNode(Region, Lambda);
 		this.LambdaNodeList.push(treeItem);
+		return treeItem;
 	}
 
 	RemoveLambdaNode(Region:string, Lambda:string){
@@ -139,12 +144,12 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		triggerWithoutPayload.Parent = triggerItem;
 		triggerItem.Children.push(triggerWithoutPayload);
 
-		for(var i=0; i<LambdaTreeView.Current.PayloadPathList.length; i++)
+		for(var i=0; i<LambdaService.Instance.PayloadPathList.length; i++)
 		{
-			if(LambdaTreeView.Current.PayloadPathList[i].Region === Region 
-				&& LambdaTreeView.Current.PayloadPathList[i].Lambda === Lambda)
+			if(LambdaService.Instance.PayloadPathList[i].Region === Region 
+				&& LambdaService.Instance.PayloadPathList[i].Lambda === Lambda)
 			{
-				this.AddNewPayloadPathNode(triggerItem, LambdaTreeView.Current.PayloadPathList[i].PayloadPath);
+				this.AddNewPayloadPathNode(triggerItem, LambdaService.Instance.PayloadPathList[i].PayloadPath);
 			}
 		}
 
@@ -184,17 +189,17 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 
 	AddPayloadPath(node: LambdaTreeItem, PayloadPath:string){
 		
-		for(var i=0; i<LambdaTreeView.Current.PayloadPathList.length; i++)
+		for(var i=0; i<LambdaService.Instance.PayloadPathList.length; i++)
 		{
-			if(LambdaTreeView.Current.PayloadPathList[i].Region === node.Region 
-				&& LambdaTreeView.Current.CodePathList[i].Lambda === node.Lambda
-				&& LambdaTreeView.Current.PayloadPathList[i].PayloadPath === PayloadPath)
+			if(LambdaService.Instance.PayloadPathList[i].Region === node.Region 
+				&& LambdaService.Instance.CodePathList[i].Lambda === node.Lambda
+				&& LambdaService.Instance.PayloadPathList[i].PayloadPath === PayloadPath)
 			{
 				return;
 			}
 		}
 		this.AddNewPayloadPathNode(node, PayloadPath);
-		LambdaTreeView.Current.PayloadPathList.push({Region: node.Region, Lambda: node.Lambda, PayloadPath: PayloadPath});
+		LambdaService.Instance.PayloadPathList.push({Region: node.Region, Lambda: node.Lambda, PayloadPath: PayloadPath});
 		this.Refresh();
 	}
 
@@ -213,14 +218,14 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 	RemovePayloadPath(node: LambdaTreeItem){
 		if(!node.Parent) { return; }
 
-		for(var i=0; i<LambdaTreeView.Current.PayloadPathList.length; i++)
+		for(var i=0; i<LambdaService.Instance.PayloadPathList.length; i++)
 		{
-			if(LambdaTreeView.Current.PayloadPathList[i].Region === node.Region 
-				&& LambdaTreeView.Current.PayloadPathList[i].Lambda === node.Lambda
-				&& LambdaTreeView.Current.PayloadPathList[i].PayloadPath === node.PayloadPath
+			if(LambdaService.Instance.PayloadPathList[i].Region === node.Region 
+				&& LambdaService.Instance.PayloadPathList[i].Lambda === node.Lambda
+				&& LambdaService.Instance.PayloadPathList[i].PayloadPath === node.PayloadPath
 			)
 			{
-				LambdaTreeView.Current.PayloadPathList.splice(i, 1);
+				LambdaService.Instance.PayloadPathList.splice(i, 1);
 			}
 		}
 		
@@ -240,31 +245,32 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 
 	AddCodePath(Region:string, Lambda:string, CodePath:string){
 		//remove old
-		for(var i=0; i<LambdaTreeView.Current.CodePathList.length; i++)
+		for(var i=0; i<LambdaService.Instance.CodePathList.length; i++)
 		{
-			if(LambdaTreeView.Current.CodePathList[i].Region === Region && LambdaTreeView.Current.CodePathList[i].Lambda === Lambda)
+			if(LambdaService.Instance.CodePathList[i].Region === Region && LambdaService.Instance.CodePathList[i].Lambda === Lambda)
 			{
-				LambdaTreeView.Current.CodePathList.splice(i, 1);
+				LambdaService.Instance.CodePathList.splice(i, 1);
 			}
 		}
 		
-		LambdaTreeView.Current.CodePathList.push({Region: Region, Lambda: Lambda, CodePath: CodePath});
+		LambdaService.Instance.CodePathList.push({Region: Region, Lambda: Lambda, CodePath: CodePath});
 		this.Refresh();
 	}
 
 	RemoveCodePath(Region:string, Lambda:string){
-		for(var i=0; i<LambdaTreeView.Current.CodePathList.length; i++)
+		for(var i=0; i<LambdaService.Instance.CodePathList.length; i++)
 		{
-			if(LambdaTreeView.Current.CodePathList[i].Region === Region && LambdaTreeView.Current.CodePathList[i].Lambda === Lambda)
+			if(LambdaService.Instance.CodePathList[i].Region === Region && LambdaService.Instance.CodePathList[i].Lambda === Lambda)
 			{
-				LambdaTreeView.Current.CodePathList.splice(i, 1);
+				LambdaService.Instance.CodePathList.splice(i, 1);
 			}
 		}
 		this.Refresh();
 	}
 
 	GetCodePath(Region:string, Lambda:string){
-		for(var item of LambdaTreeView.Current.CodePathList)
+		if(!LambdaService.Instance) return "";
+		for(var item of LambdaService.Instance.CodePathList)
 		{
 			if(item.Region === Region && item.Lambda === Lambda)
 			{
@@ -284,17 +290,17 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		else if(node.TreeItemType === TreeItemType.EnvironmentVariableGroup && node.Children.length === 0)
 		{
 			// Auto-load environment variables when the node is expanded
-			LambdaTreeView.Current.LoadEnvironmentVariables(node);
+			LambdaService.Instance.LoadEnvironmentVariables(node);
 		}
 		else if(node.TreeItemType === TreeItemType.TagsGroup && node.Children.length === 0)
 		{
 			// Auto-load tags when the node is expanded
-			LambdaTreeView.Current.LoadTags(node);
+			LambdaService.Instance.LoadTags(node);
 		}
 		else if(node.TreeItemType === TreeItemType.InfoGroup && node.Children.length === 0)
 		{
 			// Auto-load info when the node is expanded
-			LambdaTreeView.Current.LoadInfo(node);
+			LambdaService.Instance.LoadInfo(node);
 		}
 		else if(node.Children.length > 0)
 		{
@@ -307,10 +313,11 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 
 	GetLambdaNodes(): LambdaTreeItem[]{
 		var result: LambdaTreeItem[] = [];
+		if(!LambdaService.Instance) return result;
 		for (var node of this.LambdaNodeList) {
-			if (LambdaTreeView.Current && LambdaTreeView.Current.FilterString && !node.IsFilterStringMatch(LambdaTreeView.Current.FilterString)) { continue; }
-			if (LambdaTreeView.Current && LambdaTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (LambdaTreeView.Current && !LambdaTreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (LambdaService.Instance.FilterString && !node.IsFilterStringMatch(LambdaService.Instance.FilterString)) { continue; }
+			if (LambdaService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (LambdaService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

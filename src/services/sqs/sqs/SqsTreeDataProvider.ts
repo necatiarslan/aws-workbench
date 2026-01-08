@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { SqsTreeItem, TreeItemType } from './SqsTreeItem';
-import { SqsTreeView } from './SqsTreeView';
+import { SqsService } from '../SqsService';
 import * as api from '../common/API';
 // Import the Message type from the appropriate module
 import type { Message } from "@aws-sdk/client-sqs";
@@ -22,26 +22,27 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		this._onDidChangeTreeData.fire();
 	}
 
-	AddQueue(Region:string, QueueArn:string){
-		for(var item of SqsTreeView.Current.QueueList)
+	AddQueue(Region:string, QueueArn:string): SqsTreeItem | undefined {
+		for(var item of SqsService.Instance.QueueList)
 		{
 			if(item.Region === Region && item.QueueArn === QueueArn)
 			{
-				return;
+				return this.SqsNodeList.find(n => n.Region === Region && n.QueueArn === QueueArn);
 			}
 		}
 		
-		SqsTreeView.Current.QueueList.push({Region: Region, QueueArn: QueueArn});
-		this.AddNewSqsNode(Region, QueueArn);
+		SqsService.Instance.QueueList.push({Region: Region, QueueArn: QueueArn});
+		const node = this.AddNewSqsNode(Region, QueueArn);
 		this.Refresh();
+		return node;
 	}
 
 	RemoveQueue(Region:string, QueueArn:string){
-		for(var i=0; i<SqsTreeView.Current.QueueList.length; i++)
+		for(var i=0; i<SqsService.Instance.QueueList.length; i++)
 		{
-			if(SqsTreeView.Current.QueueList[i].Region === Region && SqsTreeView.Current.QueueList[i].QueueArn === QueueArn)
+			if(SqsService.Instance.QueueList[i].Region === Region && SqsService.Instance.QueueList[i].QueueArn === QueueArn)
 			{
-				SqsTreeView.Current.QueueList.splice(i, 1);
+				SqsService.Instance.QueueList.splice(i, 1);
 				break;
 			}
 		}
@@ -52,8 +53,9 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 	
 	LoadSqsNodeList(){
 		this.SqsNodeList = [];
+		if(!SqsService.Instance) return;
 		
-		for(var item of SqsTreeView.Current.QueueList)
+		for(var item of SqsService.Instance.QueueList)
 		{
 			let treeItem = this.NewSqsNode(item.Region, item.QueueArn);
 
@@ -61,11 +63,14 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		}
 	}
 
-	AddNewSqsNode(Region:string, QueueArn:string){
-		if (this.SqsNodeList.some(item => item.Region === Region && item.QueueArn === QueueArn)) { return; }
+	AddNewSqsNode(Region:string, QueueArn:string): SqsTreeItem | undefined {
+		if (this.SqsNodeList.some(item => item.Region === Region && item.QueueArn === QueueArn)) { 
+			return this.SqsNodeList.find(n => n.Region === Region && n.QueueArn === QueueArn);
+		}
 
 		let treeItem = this.NewSqsNode(Region, QueueArn);
 		this.SqsNodeList.push(treeItem);
+		return treeItem;
 	}
 
 	AddNewReceivedMessageNode(Node:SqsTreeItem, Region:string, QueueArn:string, Message:Message){
@@ -138,12 +143,12 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		pubJson.Parent = pubItem;
 		pubItem.Children.push(pubJson);
 
-		for(var i=0; i<SqsTreeView.Current.MessageFilePathList.length; i++)
+		for(var i=0; i<SqsService.Instance.MessageFilePathList.length; i++)
 		{
-			if(SqsTreeView.Current.MessageFilePathList[i].Region === Region 
-				&& SqsTreeView.Current.MessageFilePathList[i].QueueArn === QueueArn)
+			if(SqsService.Instance.MessageFilePathList[i].Region === Region 
+				&& SqsService.Instance.MessageFilePathList[i].QueueArn === QueueArn)
 			{
-				this.AddNewMessagePathNode(pubItem, SqsTreeView.Current.MessageFilePathList[i].MessageFilePath);
+				this.AddNewMessagePathNode(pubItem, SqsService.Instance.MessageFilePathList[i].MessageFilePath);
 			}
 		}
 
@@ -170,17 +175,17 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 
 	AddMessageFilePath(node: SqsTreeItem, MessageFilePath:string){
 		
-		for(var i=0; i<SqsTreeView.Current.MessageFilePathList.length; i++)
+		for(var i=0; i<SqsService.Instance.MessageFilePathList.length; i++)
 		{
-			if(SqsTreeView.Current.MessageFilePathList[i].Region === node.Region 
-				&& SqsTreeView.Current.MessageFilePathList[i].QueueArn === node.QueueArn
-				&& SqsTreeView.Current.MessageFilePathList[i].MessageFilePath === MessageFilePath)
+			if(SqsService.Instance.MessageFilePathList[i].Region === node.Region 
+				&& SqsService.Instance.MessageFilePathList[i].QueueArn === node.QueueArn
+				&& SqsService.Instance.MessageFilePathList[i].MessageFilePath === MessageFilePath)
 			{
 				return;
 			}
 		}
 		this.AddNewMessagePathNode(node, MessageFilePath);
-		SqsTreeView.Current.MessageFilePathList.push({Region: node.Region, QueueArn: node.QueueArn, MessageFilePath: MessageFilePath});
+		SqsService.Instance.MessageFilePathList.push({Region: node.Region, QueueArn: node.QueueArn, MessageFilePath: MessageFilePath});
 		this.Refresh();
 	}
 
@@ -199,14 +204,14 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 	RemoveMessageFilePath(node: SqsTreeItem){
 		if(!node.Parent) { return; }
 
-		for(var i=0; i<SqsTreeView.Current.MessageFilePathList.length; i++)
+		for(var i=0; i<SqsService.Instance.MessageFilePathList.length; i++)
 		{
-			if(SqsTreeView.Current.MessageFilePathList[i].Region === node.Region 
-				&& SqsTreeView.Current.MessageFilePathList[i].QueueArn === node.QueueArn
-				&& SqsTreeView.Current.MessageFilePathList[i].MessageFilePath === node.MessageFilePath
+			if(SqsService.Instance.MessageFilePathList[i].Region === node.Region 
+				&& SqsService.Instance.MessageFilePathList[i].QueueArn === node.QueueArn
+				&& SqsService.Instance.MessageFilePathList[i].MessageFilePath === node.MessageFilePath
 			)
 			{
-				SqsTreeView.Current.MessageFilePathList.splice(i, 1);
+				SqsService.Instance.MessageFilePathList.splice(i, 1);
 			}
 		}
 		
@@ -242,10 +247,11 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 
 	GetSqsNodes(): SqsTreeItem[]{
 		var result: SqsTreeItem[] = [];
+		if(!SqsService.Instance) return result;
 		for (var node of this.SqsNodeList) {
-			if (SqsTreeView.Current && SqsTreeView.Current.FilterString && !node.IsFilterStringMatch(SqsTreeView.Current.FilterString)) { continue; }
-			if (SqsTreeView.Current && SqsTreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (SqsTreeView.Current && !SqsTreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (SqsService.Instance.FilterString && !node.IsFilterStringMatch(SqsService.Instance.FilterString)) { continue; }
+			if (SqsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (SqsService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

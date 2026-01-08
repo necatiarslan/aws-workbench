@@ -28,7 +28,11 @@ function activate(context) {
         access_ext.activate(context);
         // 2. Initialize the Unified "Aws Workbench" Tree Provider
         const treeProvider = new WorkbenchTreeProvider_1.WorkbenchTreeProvider(context);
-        vscode.window.registerTreeDataProvider('AwsWorkbenchTree', treeProvider);
+        const treeView = vscode.window.createTreeView('AwsWorkbenchTree', {
+            treeDataProvider: treeProvider,
+            showCollapseAll: true
+        });
+        context.subscriptions.push(treeView);
         // 3. Register our Service wrappers for the Unified Tree to fetch children from
         const serviceManager = ServiceManager_1.ServiceManager.Instance;
         serviceManager.registerService(new S3Service_1.S3Service(context));
@@ -52,13 +56,24 @@ function activate(context) {
                 placeHolder: 'Select AWS resource type to add'
             });
             if (selected) {
-                await selected.service.addResource();
+                const node = await selected.service.addResource();
                 treeProvider.refresh();
+                if (node) {
+                    try {
+                        // Give VS Code a moment to refresh before revealing
+                        setTimeout(() => {
+                            treeView.reveal(node, { select: true, focus: true, expand: true });
+                        }, 500);
+                    }
+                    catch (e) {
+                        console.error('Error revealing node:', e);
+                    }
+                }
             }
         }));
         // 5. Register each service's commands
         for (const service of serviceManager.getAllServices()) {
-            service.registerCommands(context, treeProvider);
+            service.registerCommands(context, treeProvider, treeView);
         }
         console.log('All AWS services activated successfully.');
     }

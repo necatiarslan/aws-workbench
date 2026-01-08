@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { S3TreeItem, TreeItemType } from './S3TreeItem';
-import { S3TreeView } from './S3TreeView';
+import { S3Service } from '../S3Service';
 import * as ui from '../common/UI';
 
 export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
@@ -75,12 +75,15 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 		return "";
 	}
 
-	AddBucket(Bucket:string){
-		if(this.BucketList.includes(Bucket)){ return; }
+	AddBucket(Bucket:string): S3TreeItem | undefined {
+		if(this.BucketList.includes(Bucket)){ 
+			return this.BucketNodeList.find(n => n.Bucket === Bucket);
+		}
 
 		this.BucketList.push(Bucket);
 		this.LoadBucketNodeList();
 		this.Refresh();
+		return this.BucketNodeList.find(n => n.Bucket === Bucket);
 	}
 
 	RemoveBucket(Bucket:string){
@@ -230,10 +233,10 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 	GetBucketNodes(): S3TreeItem[]{
 		var result: S3TreeItem[] = [];
 		for (var node of this.BucketNodeList) {
-			if (S3TreeView.Current && S3TreeView.Current.FilterString && !node.IsFilterStringMatch(S3TreeView.Current.FilterString)) { continue; }
-			if (S3TreeView.Current && S3TreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (S3TreeView.Current && !S3TreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
-			if (S3TreeView.Current && !S3TreeView.Current.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3TreeView.Current.AwsProfile)) { continue; }
+			if (S3Service.Instance && S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service.Instance.FilterString)) { continue; }
+			if (S3Service.Instance && S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3Service.Instance.AwsProfile)) { continue; }
 			
 			result.push(node);
 		}
@@ -244,10 +247,10 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 		var result: S3TreeItem[] = [];
 		for (var node of this.ShortcutNodeList) {
 			if(!(node.Bucket === BucketNode.Bucket)) { continue; }
-			if (S3TreeView.Current && S3TreeView.Current.FilterString && !node.IsFilterStringMatch(S3TreeView.Current.FilterString)) { continue; }
-			if (S3TreeView.Current && S3TreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (S3TreeView.Current && !S3TreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
-			if (S3TreeView.Current && !S3TreeView.Current.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3TreeView.Current.AwsProfile)) { continue; }
+			if (S3Service.Instance && S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service.Instance.FilterString)) { continue; }
+			if (S3Service.Instance && S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3Service.Instance.AwsProfile)) { continue; }
 
 			node.Parent = BucketNode;
 			if(BucketNode.Children.indexOf(node) === -1)
@@ -262,9 +265,9 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 	GetShortcutNodes(): S3TreeItem[]{
 		var result: S3TreeItem[] = [];
 		for (var node of this.ShortcutNodeList) {
-			if (S3TreeView.Current && S3TreeView.Current.FilterString && !node.IsFilterStringMatch(S3TreeView.Current.FilterString)) { continue; }
-			if (S3TreeView.Current && S3TreeView.Current.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (S3TreeView.Current && !S3TreeView.Current.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (S3Service.Instance && S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service.Instance.FilterString)) { continue; }
+			if (S3Service.Instance && S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}
