@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { SnsTreeDataProvider } from './SnsTreeDataProvider';
-import { SnsTreeItem, TreeItemType } from './SnsTreeItem';
+import { SnsTreeItem } from './SnsTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -143,7 +144,7 @@ export class SnsService implements IService {
     }
 
     async RemoveTopic(node: SnsTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Topic || !node.Region || !node.TopicArn) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.SNSTopic || !node.Region || !node.TopicArn) { return; }
         this.treeDataProvider.RemoveTopic(node.Region, node.TopicArn);
         this.SaveState();
     }

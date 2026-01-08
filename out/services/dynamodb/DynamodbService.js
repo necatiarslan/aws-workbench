@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DynamodbService = void 0;
 const vscode = require("vscode");
 const DynamodbTreeDataProvider_1 = require("./DynamodbTreeDataProvider");
-const DynamodbTreeItem_1 = require("./DynamodbTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -116,7 +116,7 @@ class DynamodbService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveDynamodb(node) {
-        if (!node || node.TreeItemType !== DynamodbTreeItem_1.TreeItemType.Dynamodb || !node.Region || !node.Dynamodb) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.DynamoDBTable || !node.Region || !node.Dynamodb) {
             return;
         }
         this.treeDataProvider.RemoveDynamodb(node.Region, node.Dynamodb);

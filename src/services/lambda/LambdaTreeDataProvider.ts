@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-import { LambdaTreeItem, TreeItemType } from './LambdaTreeItem';
+import { LambdaTreeItem } from './LambdaTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { LambdaService } from './LambdaService';
 
 export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTreeItem>
@@ -54,7 +55,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 						now.getMinutes().toString().padStart(2, '0') + ':' + 
 						now.getSeconds().toString().padStart(2, '0');
 
-		let treeItem = new LambdaTreeItem("Response - " + currentTime, TreeItemType.ResponsePayload);
+		let treeItem = new LambdaTreeItem("Response - " + currentTime, TreeItemType.LambdaResponsePayload);
 		treeItem.Region = node.Region;
 		treeItem.Lambda = node.Lambda;
 		treeItem.ResponsePayload = payloadString
@@ -69,7 +70,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		{
 			if(node.Children.find((item) => item.LogStreamName === streamName)){ continue; }
 			
-			let treeItem = new LambdaTreeItem(streamName, TreeItemType.LogStream);
+			let treeItem = new LambdaTreeItem(streamName, TreeItemType.LambdaLogStream);
 			treeItem.Region = node.Region;
 			treeItem.Lambda = node.Lambda;
 			treeItem.LogStreamName = streamName
@@ -113,32 +114,32 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 
 	private NewLambdaNode(Region: string, Lambda: string) : LambdaTreeItem
 	{
-		let treeItem = new LambdaTreeItem(Lambda, TreeItemType.Lambda);
+		let treeItem = new LambdaTreeItem(Lambda, TreeItemType.LambdaFunction);
 		treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		treeItem.Region = Region;
 		treeItem.Lambda = Lambda;
 
-		let codeItem = new LambdaTreeItem("Code", TreeItemType.Code);
+		let codeItem = new LambdaTreeItem("Code", TreeItemType.LambdaCode);
 		codeItem.Lambda = treeItem.Lambda;
 		codeItem.Region = treeItem.Region;
 		codeItem.Parent = treeItem;
 		codeItem.CodePath = this.GetCodePath(treeItem.Region, treeItem.Lambda);
 		treeItem.Children.push(codeItem);
 
-		let triggerItem = new LambdaTreeItem("Trigger", TreeItemType.TriggerGroup);
+		let triggerItem = new LambdaTreeItem("Trigger", TreeItemType.LambdaTriggerGroup);
 		triggerItem.Lambda = treeItem.Lambda;
 		triggerItem.Region = treeItem.Region;
 		triggerItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		triggerItem.Parent = treeItem;
 		treeItem.Children.push(triggerItem);
 
-		let triggerWithPayload = new LambdaTreeItem("With Paylod", TreeItemType.TriggerWithPayload);
+		let triggerWithPayload = new LambdaTreeItem("With Paylod", TreeItemType.LambdaTriggerWithPayload);
 		triggerWithPayload.Lambda = treeItem.Lambda;
 		triggerWithPayload.Region = treeItem.Region;
 		triggerWithPayload.Parent = triggerItem;
 		triggerItem.Children.push(triggerWithPayload);
 
-		let triggerWithoutPayload = new LambdaTreeItem("Without Paylod", TreeItemType.TriggerNoPayload);
+		let triggerWithoutPayload = new LambdaTreeItem("Without Paylod", TreeItemType.LambdaTriggerNoPayload);
 		triggerWithoutPayload.Lambda = treeItem.Lambda;
 		triggerWithoutPayload.Region = treeItem.Region;
 		triggerWithoutPayload.Parent = triggerItem;
@@ -153,7 +154,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 			}
 		}
 
-		let logsItem = new LambdaTreeItem("Logs", TreeItemType.LogGroup);
+		let logsItem = new LambdaTreeItem("Logs", TreeItemType.LambdaLogGroup);
 		logsItem.Lambda = treeItem.Lambda;
 		logsItem.Region = treeItem.Region;
 		logsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -161,7 +162,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		treeItem.Children.push(logsItem);
 
 		// Add Environment Variables Group
-		let envVarsItem = new LambdaTreeItem("Environment Variables", TreeItemType.EnvironmentVariableGroup);
+		let envVarsItem = new LambdaTreeItem("Environment Variables", TreeItemType.LambdaEnvironmentVariableGroup);
 		envVarsItem.Lambda = treeItem.Lambda;
 		envVarsItem.Region = treeItem.Region;
 		envVarsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -169,7 +170,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		treeItem.Children.push(envVarsItem);
 
 		// Add Tags Group
-		let tagsItem = new LambdaTreeItem("Tags", TreeItemType.TagsGroup);
+		let tagsItem = new LambdaTreeItem("Tags", TreeItemType.LambdaTagsGroup);
 		tagsItem.Lambda = treeItem.Lambda;
 		tagsItem.Region = treeItem.Region;
 		tagsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -177,7 +178,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		treeItem.Children.push(tagsItem);
 
 		// Add Info Group
-		let infoItem = new LambdaTreeItem("Info", TreeItemType.InfoGroup);
+		let infoItem = new LambdaTreeItem("Info", TreeItemType.LambdaInfoGroup);
 		infoItem.Lambda = treeItem.Lambda;
 		infoItem.Region = treeItem.Region;
 		infoItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -207,7 +208,7 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		let fileName = PayloadPath.split("/").pop();
 		if (!fileName) { fileName = PayloadPath; }
 
-		let treeItem = new LambdaTreeItem(fileName, TreeItemType.TriggerFilePayload);
+		let treeItem = new LambdaTreeItem(fileName, TreeItemType.LambdaTriggerFilePayload);
 		treeItem.Region = node.Region;
 		treeItem.Lambda = node.Lambda;
 		treeItem.PayloadPath = PayloadPath;
@@ -287,17 +288,17 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		{
 			result.push(...this.GetLambdaNodes());
 		}
-		else if(node.TreeItemType === TreeItemType.EnvironmentVariableGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.LambdaEnvironmentVariableGroup && node.Children.length === 0)
 		{
 			// Auto-load environment variables when the node is expanded
 			LambdaService.Instance.LoadEnvironmentVariables(node);
 		}
-		else if(node.TreeItemType === TreeItemType.TagsGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.LambdaTagsGroup && node.Children.length === 0)
 		{
 			// Auto-load tags when the node is expanded
 			LambdaService.Instance.LoadTags(node);
 		}
-		else if(node.TreeItemType === TreeItemType.InfoGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.LambdaInfoGroup && node.Children.length === 0)
 		{
 			// Auto-load info when the node is expanded
 			LambdaService.Instance.LoadInfo(node);

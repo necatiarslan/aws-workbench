@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GlueService = void 0;
 const vscode = require("vscode");
 const GlueTreeDataProvider_1 = require("./GlueTreeDataProvider");
-const GlueTreeItem_1 = require("./GlueTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -97,16 +97,16 @@ class GlueService {
         }
         let lastAddedItem;
         for (var selectedJob of selectedJobList) {
-            lastAddedItem = this.treeDataProvider.AddResource(selectedRegion, selectedJob, GlueTreeItem_1.TreeItemType.Job);
+            lastAddedItem = this.treeDataProvider.AddResource(selectedRegion, selectedJob, TreeItemType_1.TreeItemType.GlueJob);
         }
         this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveGlueJob(node) {
-        if (!node || node.TreeItemType !== GlueTreeItem_1.TreeItemType.Job || !node.Region || !node.ResourceName) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.GlueJob || !node.Region || !node.ResourceName) {
             return;
         }
-        this.treeDataProvider.RemoveResource(node.Region, node.ResourceName, GlueTreeItem_1.TreeItemType.Job);
+        this.treeDataProvider.RemoveResource(node.Region, node.ResourceName, TreeItemType_1.TreeItemType.GlueJob);
         this.SaveState();
     }
     async Filter() {

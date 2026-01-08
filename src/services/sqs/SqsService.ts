@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { SqsTreeDataProvider } from './SqsTreeDataProvider';
-import { SqsTreeItem, TreeItemType } from './SqsTreeItem';
+import { SqsTreeItem } from './SqsTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -155,7 +156,7 @@ export class SqsService implements IService {
     }
 
     async RemoveQueue(node: SqsTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Queue || !node.Region || !node.QueueArn) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.SQSQueue || !node.Region || !node.QueueArn) { return; }
         this.treeDataProvider.RemoveQueue(node.Region, node.QueueArn);
         this.SaveState();
     }

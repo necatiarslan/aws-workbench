@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepfunctionsService = void 0;
 const vscode = require("vscode");
 const StepFuncTreeDataProvider_1 = require("./StepFuncTreeDataProvider");
-const StepFuncTreeItem_1 = require("./StepFuncTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -118,7 +118,7 @@ class StepfunctionsService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveStepFunc(node) {
-        if (!node || node.TreeItemType !== StepFuncTreeItem_1.TreeItemType.StepFunc || !node.Region || !node.StepFuncArn) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.StepFunctionsStateMachine || !node.Region || !node.StepFuncArn) {
             return;
         }
         this.treeDataProvider.RemoveStepFunc(node.Region, node.StepFuncArn);

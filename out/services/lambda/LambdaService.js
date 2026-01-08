@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaService = void 0;
 const vscode = require("vscode");
-const LambdaTreeItem_1 = require("./LambdaTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const LambdaTreeDataProvider_1 = require("./LambdaTreeDataProvider");
 const ui = require("../../common/UI");
@@ -132,7 +132,7 @@ class LambdaService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveLambda(node) {
-        if (!node || node.TreeItemType !== LambdaTreeItem_1.TreeItemType.Lambda || !node.Region || !node.Lambda) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.LambdaFunction || !node.Region || !node.Lambda) {
             return;
         }
         this.treeDataProvider.RemoveLambda(node.Region, node.Lambda);

@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TreeItemType = exports.SqsTreeItem = void 0;
+exports.SqsTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class SqsTreeItem extends vscode.TreeItem {
     IsFav = false;
     TreeItemType;
@@ -25,35 +26,35 @@ class SqsTreeItem extends vscode.TreeItem {
         this.refreshUI();
     }
     refreshUI() {
-        if (this.TreeItemType === TreeItemType.Queue) {
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSQueue) {
             this.iconPath = new vscode.ThemeIcon('package'); // inbox
             this.contextValue = "Queue";
         }
-        else if (this.TreeItemType === TreeItemType.PublishGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSPublishGroup) {
             this.iconPath = new vscode.ThemeIcon('send');
             this.contextValue = "PublishGroup";
         }
-        else if (this.TreeItemType === TreeItemType.PublishAdhoc) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSPublishAdhoc) {
             this.iconPath = new vscode.ThemeIcon('report');
             this.contextValue = "PublishAdhoc";
         }
-        else if (this.TreeItemType === TreeItemType.PublishFile) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSPublishFile) {
             this.iconPath = new vscode.ThemeIcon('mail');
             this.contextValue = "PublishFile";
         }
-        else if (this.TreeItemType === TreeItemType.ReceiveGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSReceiveGroup) {
             this.iconPath = new vscode.ThemeIcon('inbox');
             this.contextValue = "ReceiveGroup";
         }
-        else if (this.TreeItemType === TreeItemType.ReceivedMessage) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSReceivedMessage) {
             this.iconPath = new vscode.ThemeIcon('mail');
             this.contextValue = "ReceivedMessage";
         }
-        else if (this.TreeItemType === TreeItemType.DeletedMessage) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSDeletedMessage) {
             this.iconPath = new vscode.ThemeIcon('mail-read');
             this.contextValue = "DeletedMessage";
         }
-        else if (this.TreeItemType === TreeItemType.Policy) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SQSPolicy) {
             this.iconPath = new vscode.ThemeIcon('shield');
             this.contextValue = "Policy";
         }
@@ -101,18 +102,4 @@ class SqsTreeItem extends vscode.TreeItem {
     }
 }
 exports.SqsTreeItem = SqsTreeItem;
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType[TreeItemType["Queue"] = 1] = "Queue";
-    TreeItemType[TreeItemType["PublishGroup"] = 2] = "PublishGroup";
-    TreeItemType[TreeItemType["PublishAdhoc"] = 3] = "PublishAdhoc";
-    TreeItemType[TreeItemType["PublishFile"] = 4] = "PublishFile";
-    TreeItemType[TreeItemType["ReceiveGroup"] = 5] = "ReceiveGroup";
-    TreeItemType[TreeItemType["ReceivedMessage"] = 6] = "ReceivedMessage";
-    TreeItemType[TreeItemType["DetailGroup"] = 7] = "DetailGroup";
-    TreeItemType[TreeItemType["DetailItem"] = 8] = "DetailItem";
-    TreeItemType[TreeItemType["Policy"] = 9] = "Policy";
-    TreeItemType[TreeItemType["DeletedMessage"] = 10] = "DeletedMessage";
-    TreeItemType[TreeItemType["Other"] = 99] = "Other";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=SqsTreeItem.js.map

@@ -4,6 +4,7 @@ exports.DynamodbTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const DynamodbTreeItem_1 = require("./DynamodbTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const DynamodbService_1 = require("./DynamodbService");
 const api = require("./API");
 class DynamodbTreeDataProvider {
@@ -44,7 +45,7 @@ class DynamodbTreeDataProvider {
         let currentTime = now.getHours().toString().padStart(2, '0') + ':' +
             now.getMinutes().toString().padStart(2, '0') + ':' +
             now.getSeconds().toString().padStart(2, '0');
-        let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem("Response - " + currentTime, DynamodbTreeItem_1.TreeItemType.ResponsePayload);
+        let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem("Response - " + currentTime, TreeItemType_1.TreeItemType.DynamoDBResponsePayload);
         treeItem.Region = node.Region;
         treeItem.Dynamodb = node.Dynamodb;
         treeItem.ResponsePayload = payloadString;
@@ -58,7 +59,7 @@ class DynamodbTreeDataProvider {
             if (node.Children.find((item) => item.LogStreamName === streamName)) {
                 continue;
             }
-            let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem(streamName, DynamodbTreeItem_1.TreeItemType.LogStream);
+            let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem(streamName, TreeItemType_1.TreeItemType.DynamoDBLogStream);
             treeItem.Region = node.Region;
             treeItem.Dynamodb = node.Dynamodb;
             treeItem.LogStreamName = streamName;
@@ -93,39 +94,39 @@ class DynamodbTreeDataProvider {
         }
     }
     NewDynamodbNode(Region, Dynamodb) {
-        let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem(Dynamodb, DynamodbTreeItem_1.TreeItemType.Dynamodb);
+        let treeItem = new DynamodbTreeItem_1.DynamodbTreeItem(Dynamodb, TreeItemType_1.TreeItemType.DynamoDBTable);
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         treeItem.Region = Region;
         treeItem.Dynamodb = Dynamodb;
         // Primary Keys node
-        let primaryKeyItem = new DynamodbTreeItem_1.DynamodbTreeItem("Primary Keys", DynamodbTreeItem_1.TreeItemType.PrimaryKey);
+        let primaryKeyItem = new DynamodbTreeItem_1.DynamodbTreeItem("Primary Keys", TreeItemType_1.TreeItemType.DynamoDBPrimaryKey);
         primaryKeyItem.Dynamodb = treeItem.Dynamodb;
         primaryKeyItem.Region = treeItem.Region;
         primaryKeyItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         primaryKeyItem.Parent = treeItem;
         treeItem.Children.push(primaryKeyItem);
         // Capacity node
-        let capacityItem = new DynamodbTreeItem_1.DynamodbTreeItem("Capacity", DynamodbTreeItem_1.TreeItemType.Capacity);
+        let capacityItem = new DynamodbTreeItem_1.DynamodbTreeItem("Capacity", TreeItemType_1.TreeItemType.DynamoDBCapacity);
         capacityItem.Dynamodb = treeItem.Dynamodb;
         capacityItem.Region = treeItem.Region;
         capacityItem.Parent = treeItem;
         treeItem.Children.push(capacityItem);
         // Table Info node
-        let tableInfoItem = new DynamodbTreeItem_1.DynamodbTreeItem("Table Info", DynamodbTreeItem_1.TreeItemType.TableInfo);
+        let tableInfoItem = new DynamodbTreeItem_1.DynamodbTreeItem("Table Info", TreeItemType_1.TreeItemType.DynamoDBTableInfo);
         tableInfoItem.Dynamodb = treeItem.Dynamodb;
         tableInfoItem.Region = treeItem.Region;
         tableInfoItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         tableInfoItem.Parent = treeItem;
         treeItem.Children.push(tableInfoItem);
         // Indexes node
-        let indexesItem = new DynamodbTreeItem_1.DynamodbTreeItem("Indexes", DynamodbTreeItem_1.TreeItemType.Indexes);
+        let indexesItem = new DynamodbTreeItem_1.DynamodbTreeItem("Indexes", TreeItemType_1.TreeItemType.DynamoDBIndexes);
         indexesItem.Dynamodb = treeItem.Dynamodb;
         indexesItem.Region = treeItem.Region;
         indexesItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         indexesItem.Parent = treeItem;
         treeItem.Children.push(indexesItem);
         // Tags node
-        let tagsItem = new DynamodbTreeItem_1.DynamodbTreeItem("Tags", DynamodbTreeItem_1.TreeItemType.Tags);
+        let tagsItem = new DynamodbTreeItem_1.DynamodbTreeItem("Tags", TreeItemType_1.TreeItemType.DynamoDBTags);
         tagsItem.Dynamodb = treeItem.Dynamodb;
         tagsItem.Region = treeItem.Region;
         tagsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -134,7 +135,7 @@ class DynamodbTreeDataProvider {
         return treeItem;
     }
     async PopulateTableDetails(node) {
-        if (!node || node.TreeItemType !== DynamodbTreeItem_1.TreeItemType.Dynamodb) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.DynamoDBTable) {
             return;
         }
         if (!DynamodbService_1.DynamodbService.Instance)
@@ -146,22 +147,22 @@ class DynamodbTreeDataProvider {
             }
             const details = api.ExtractTableDetails(response.result);
             // Find and populate Primary Keys node
-            const primaryKeyNode = node.Children.find(c => c.TreeItemType === DynamodbTreeItem_1.TreeItemType.PrimaryKey);
+            const primaryKeyNode = node.Children.find(c => c.TreeItemType === TreeItemType_1.TreeItemType.DynamoDBPrimaryKey);
             if (primaryKeyNode) {
                 primaryKeyNode.Children = [];
                 if (details.partitionKey) {
-                    const pkItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Partition Key: ${details.partitionKey.name} (${details.partitionKey.type})`, DynamodbTreeItem_1.TreeItemType.PartitionKey);
+                    const pkItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Partition Key: ${details.partitionKey.name} (${details.partitionKey.type})`, TreeItemType_1.TreeItemType.DynamoDBPartitionKey);
                     pkItem.Parent = primaryKeyNode;
                     primaryKeyNode.Children.push(pkItem);
                 }
                 if (details.sortKey) {
-                    const skItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Sort Key: ${details.sortKey.name} (${details.sortKey.type})`, DynamodbTreeItem_1.TreeItemType.SortKey);
+                    const skItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Sort Key: ${details.sortKey.name} (${details.sortKey.type})`, TreeItemType_1.TreeItemType.DynamoDBSortKey);
                     skItem.Parent = primaryKeyNode;
                     primaryKeyNode.Children.push(skItem);
                 }
             }
             // Update Capacity node
-            const capacityNode = node.Children.find(c => c.TreeItemType === DynamodbTreeItem_1.TreeItemType.Capacity);
+            const capacityNode = node.Children.find(c => c.TreeItemType === TreeItemType_1.TreeItemType.DynamoDBCapacity);
             if (capacityNode) {
                 capacityNode.Children = [];
                 capacityNode.tooltip = 'Click on read/write capacity for detailed information';
@@ -173,7 +174,7 @@ class DynamodbTreeDataProvider {
                     capacityNode.label = `Capacity: Provisioned`;
                     capacityNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
                     // Add Read Capacity sub-node
-                    const readCapacityItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Read Capacity: ${details.readCapacity || 0}`, DynamodbTreeItem_1.TreeItemType.ReadCapacity);
+                    const readCapacityItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Read Capacity: ${details.readCapacity || 0}`, TreeItemType_1.TreeItemType.DynamoDBReadCapacity);
                     readCapacityItem.Parent = capacityNode;
                     readCapacityItem.Region = node.Region;
                     readCapacityItem.Dynamodb = node.Dynamodb;
@@ -186,7 +187,7 @@ class DynamodbTreeDataProvider {
                     };
                     capacityNode.Children.push(readCapacityItem);
                     // Add Write Capacity sub-node
-                    const writeCapacityItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Write Capacity: ${details.writeCapacity || 0}`, DynamodbTreeItem_1.TreeItemType.WriteCapacity);
+                    const writeCapacityItem = new DynamodbTreeItem_1.DynamodbTreeItem(`Write Capacity: ${details.writeCapacity || 0}`, TreeItemType_1.TreeItemType.DynamoDBWriteCapacity);
                     writeCapacityItem.Parent = capacityNode;
                     writeCapacityItem.Region = node.Region;
                     writeCapacityItem.Dynamodb = node.Dynamodb;
@@ -201,54 +202,54 @@ class DynamodbTreeDataProvider {
                 }
             }
             // Update Table Info node with children
-            const tableInfoNode = node.Children.find(c => c.TreeItemType === DynamodbTreeItem_1.TreeItemType.TableInfo);
+            const tableInfoNode = node.Children.find(c => c.TreeItemType === TreeItemType_1.TreeItemType.DynamoDBTableInfo);
             if (tableInfoNode) {
                 tableInfoNode.Children = [];
                 tableInfoNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
                 // Add Size node
                 const sizeInMB = details.tableSize ? (details.tableSize / (1024 * 1024)).toFixed(2) : '0';
-                const sizeNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Size: ${sizeInMB} MB`, DynamodbTreeItem_1.TreeItemType.TableSize);
+                const sizeNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Size: ${sizeInMB} MB`, TreeItemType_1.TreeItemType.DynamoDBTableSize);
                 sizeNode.Parent = tableInfoNode;
                 tableInfoNode.Children.push(sizeNode);
                 // Add Item Count node
-                const itemCountNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Item Count: ${details.itemCount || 0}`, DynamodbTreeItem_1.TreeItemType.ItemCount);
+                const itemCountNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Item Count: ${details.itemCount || 0}`, TreeItemType_1.TreeItemType.DynamoDBItemCount);
                 itemCountNode.Parent = tableInfoNode;
                 tableInfoNode.Children.push(itemCountNode);
                 // Add Table Class node
-                const tableClassNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Table Class: ${details.tableClass || 'STANDARD'}`, DynamodbTreeItem_1.TreeItemType.TableClass);
+                const tableClassNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Table Class: ${details.tableClass || 'STANDARD'}`, TreeItemType_1.TreeItemType.DynamoDBTableClass);
                 tableClassNode.Parent = tableInfoNode;
                 tableInfoNode.Children.push(tableClassNode);
                 // Add Table Status node
-                const tableStatusNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Status: ${details.tableStatus || 'UNKNOWN'}`, DynamodbTreeItem_1.TreeItemType.TableStatus);
+                const tableStatusNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Status: ${details.tableStatus || 'UNKNOWN'}`, TreeItemType_1.TreeItemType.DynamoDBTableStatus);
                 tableStatusNode.Parent = tableInfoNode;
                 tableInfoNode.Children.push(tableStatusNode);
                 // Add Table ARN node
                 if (details.tableArn) {
-                    const arnNode = new DynamodbTreeItem_1.DynamodbTreeItem(`ARN: ${details.tableArn}`, DynamodbTreeItem_1.TreeItemType.TableArn);
+                    const arnNode = new DynamodbTreeItem_1.DynamodbTreeItem(`ARN: ${details.tableArn}`, TreeItemType_1.TreeItemType.DynamoDBTableArn);
                     arnNode.Parent = tableInfoNode;
                     tableInfoNode.Children.push(arnNode);
                 }
                 // Add Average Item Size node
                 if (details.averageItemSize !== undefined) {
-                    const avgSizeNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Avg Item Size: ${details.averageItemSize} bytes`, DynamodbTreeItem_1.TreeItemType.AverageItemSize);
+                    const avgSizeNode = new DynamodbTreeItem_1.DynamodbTreeItem(`Avg Item Size: ${details.averageItemSize} bytes`, TreeItemType_1.TreeItemType.DynamoDBAverageItemSize);
                     avgSizeNode.Parent = tableInfoNode;
                     tableInfoNode.Children.push(avgSizeNode);
                 }
             }
             // Populate Indexes node
-            const indexesNode = node.Children.find(c => c.TreeItemType === DynamodbTreeItem_1.TreeItemType.Indexes);
+            const indexesNode = node.Children.find(c => c.TreeItemType === TreeItemType_1.TreeItemType.DynamoDBIndexes);
             if (indexesNode) {
                 indexesNode.Children = [];
                 if (details.globalSecondaryIndexes) {
                     for (const gsi of details.globalSecondaryIndexes) {
-                        const indexItem = new DynamodbTreeItem_1.DynamodbTreeItem(`GSI: ${gsi.name} - ${gsi.keys}`, DynamodbTreeItem_1.TreeItemType.Index);
+                        const indexItem = new DynamodbTreeItem_1.DynamodbTreeItem(`GSI: ${gsi.name} - ${gsi.keys}`, TreeItemType_1.TreeItemType.DynamoDBIndex);
                         indexItem.Parent = indexesNode;
                         indexesNode.Children.push(indexItem);
                     }
                 }
                 if (details.localSecondaryIndexes) {
                     for (const lsi of details.localSecondaryIndexes) {
-                        const indexItem = new DynamodbTreeItem_1.DynamodbTreeItem(`LSI: ${lsi.name} - ${lsi.keys}`, DynamodbTreeItem_1.TreeItemType.Index);
+                        const indexItem = new DynamodbTreeItem_1.DynamodbTreeItem(`LSI: ${lsi.name} - ${lsi.keys}`, TreeItemType_1.TreeItemType.DynamoDBIndex);
                         indexItem.Parent = indexesNode;
                         indexesNode.Children.push(indexItem);
                     }
@@ -258,14 +259,14 @@ class DynamodbTreeDataProvider {
                 }
             }
             // Populate Tags node
-            const tagsNode = node.Children.find(c => c.TreeItemType === DynamodbTreeItem_1.TreeItemType.Tags);
+            const tagsNode = node.Children.find(c => c.TreeItemType === TreeItemType_1.TreeItemType.DynamoDBTags);
             if (tagsNode && details.tableArn) {
                 tagsNode.Children = [];
                 // Fetch tags from AWS
                 const tagsResponse = await api.GetTableTags(node.Region, details.tableArn);
                 if (tagsResponse.isSuccessful && tagsResponse.result && tagsResponse.result.length > 0) {
                     for (const tag of tagsResponse.result) {
-                        const tagItem = new DynamodbTreeItem_1.DynamodbTreeItem(`${tag.key}: ${tag.value}`, DynamodbTreeItem_1.TreeItemType.TagItem);
+                        const tagItem = new DynamodbTreeItem_1.DynamodbTreeItem(`${tag.key}: ${tag.value}`, TreeItemType_1.TreeItemType.DynamoDBTagItem);
                         tagItem.Parent = tagsNode;
                         tagsNode.Children.push(tagItem);
                     }

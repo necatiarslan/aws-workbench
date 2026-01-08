@@ -1,19 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GlueTreeItem = exports.TreeItemType = void 0;
+exports.GlueTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType["Job"] = "Job";
-    TreeItemType["RunGroup"] = "RunGroup";
-    TreeItemType["LogGroup"] = "LogGroup";
-    TreeItemType["LogStream"] = "LogStream";
-    TreeItemType["Run"] = "Run";
-    TreeItemType["Detail"] = "Detail";
-    TreeItemType["Arguments"] = "Arguments";
-    TreeItemType["Info"] = "Info";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class GlueTreeItem extends vscode.TreeItem {
     label;
     TreeItemType;
@@ -33,7 +23,7 @@ class GlueTreeItem extends vscode.TreeItem {
         this.command = command;
         this.Parent = Parent;
         this.Payload = Payload;
-        this.contextValue = TreeItemType;
+        // contextValue is set in setIcons
         this.setIcons();
     }
     IsFav = false;
@@ -43,29 +33,37 @@ class GlueTreeItem extends vscode.TreeItem {
     setIcons() {
         let iconName = "";
         switch (this.TreeItemType) {
-            case TreeItemType.Job:
+            case TreeItemType_1.TreeItemType.GlueJob:
                 iconName = "settings-gear";
+                this.contextValue = "GlueJob";
                 break;
-            case TreeItemType.RunGroup:
+            case TreeItemType_1.TreeItemType.GlueRunGroup:
                 iconName = "history";
+                this.contextValue = "GlueRunGroup";
                 break;
-            case TreeItemType.LogGroup:
+            case TreeItemType_1.TreeItemType.GlueLogGroup:
                 iconName = "output";
+                this.contextValue = "GlueLogGroup";
                 break;
-            case TreeItemType.LogStream:
+            case TreeItemType_1.TreeItemType.GlueLogStream:
                 iconName = "list-unordered";
+                this.contextValue = "GlueLogStream";
                 break;
-            case TreeItemType.Run:
+            case TreeItemType_1.TreeItemType.GlueRun:
                 iconName = "play";
+                this.contextValue = "GlueRun";
                 break;
-            case TreeItemType.Detail:
+            case TreeItemType_1.TreeItemType.GlueDetail:
                 iconName = "info";
+                this.contextValue = "GlueDetail";
                 break;
-            case TreeItemType.Arguments:
+            case TreeItemType_1.TreeItemType.GlueArguments:
                 iconName = "list-selection";
+                this.contextValue = "GlueArguments";
                 break;
-            case TreeItemType.Info:
+            case TreeItemType_1.TreeItemType.GlueInfo:
                 iconName = "info";
+                this.contextValue = "GlueInfo";
                 break;
         }
         if (this.IsRunning) {

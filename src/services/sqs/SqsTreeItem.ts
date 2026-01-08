@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
 export class SqsTreeItem extends vscode.TreeItem {
 	public IsFav: boolean = false
@@ -26,42 +27,42 @@ export class SqsTreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.Queue)
+		if(this.TreeItemType === TreeItemType.SQSQueue)
 		{
 			this.iconPath = new vscode.ThemeIcon('package'); // inbox
 			this.contextValue = "Queue"
 		}
-		else if(this.TreeItemType === TreeItemType.PublishGroup)
+		else if(this.TreeItemType === TreeItemType.SQSPublishGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('send');
 			this.contextValue = "PublishGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.PublishAdhoc)
+		else if(this.TreeItemType === TreeItemType.SQSPublishAdhoc)
 		{
 			this.iconPath = new vscode.ThemeIcon('report');
 			this.contextValue = "PublishAdhoc"
 		}
-		else if(this.TreeItemType === TreeItemType.PublishFile)
+		else if(this.TreeItemType === TreeItemType.SQSPublishFile)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail');
 			this.contextValue = "PublishFile"
 		}
-		else if(this.TreeItemType === TreeItemType.ReceiveGroup)
+		else if(this.TreeItemType === TreeItemType.SQSReceiveGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('inbox');
 			this.contextValue = "ReceiveGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.ReceivedMessage)
+		else if(this.TreeItemType === TreeItemType.SQSReceivedMessage)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail');
 			this.contextValue = "ReceivedMessage"
 		}
-		else if(this.TreeItemType === TreeItemType.DeletedMessage)
+		else if(this.TreeItemType === TreeItemType.SQSDeletedMessage)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail-read');
 			this.contextValue = "DeletedMessage"
 		}
-		else if(this.TreeItemType === TreeItemType.Policy)
+		else if(this.TreeItemType === TreeItemType.SQSPolicy)
 		{
 			this.iconPath = new vscode.ThemeIcon('shield');
 			this.contextValue = "Policy"
@@ -127,18 +128,4 @@ export class SqsTreeItem extends vscode.TreeItem {
 
 		return false;
 	}
-}
-
-export enum TreeItemType{
-	Queue = 1,
-	PublishGroup = 2,
-	PublishAdhoc= 3,
-	PublishFile= 4,
-	ReceiveGroup = 5,
-	ReceivedMessage = 6,
-	DetailGroup = 7,
-	DetailItem = 8,
-	Policy = 9,
-	DeletedMessage = 10,
-	Other = 99
 }

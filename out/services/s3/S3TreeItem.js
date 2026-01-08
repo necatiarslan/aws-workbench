@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TreeItemType = exports.S3TreeItem = void 0;
+exports.S3TreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class S3TreeItem extends vscode.TreeItem {
     _isFav = false;
     TreeItemType;
@@ -41,19 +42,19 @@ class S3TreeItem extends vscode.TreeItem {
         this.refreshUI();
     }
     setContextValue() {
-        let contextValue = "#";
+        let contextValue = "#Type:S3#";
         contextValue += this.IsFav ? "Fav#" : "!Fav#";
         contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
-        contextValue += this.TreeItemType === TreeItemType.Bucket ? "Bucket#" : "";
-        contextValue += this.TreeItemType === TreeItemType.Shortcut ? "Shortcut#" : "";
+        contextValue += this.TreeItemType === TreeItemType_1.TreeItemType.S3Bucket ? "Bucket#" : "";
+        contextValue += this.TreeItemType === TreeItemType_1.TreeItemType.S3Shortcut ? "Shortcut#" : "";
         contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
         this.contextValue = contextValue;
     }
     refreshUI() {
-        if (this.TreeItemType === TreeItemType.Bucket) {
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.S3Bucket) {
             this.iconPath = new vscode.ThemeIcon('package');
         }
-        else if (this.TreeItemType === TreeItemType.Shortcut) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.S3Shortcut) {
             this.iconPath = new vscode.ThemeIcon('file-symlink-directory');
         }
         else {
@@ -97,9 +98,4 @@ class S3TreeItem extends vscode.TreeItem {
     }
 }
 exports.S3TreeItem = S3TreeItem;
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType[TreeItemType["Bucket"] = 1] = "Bucket";
-    TreeItemType[TreeItemType["Shortcut"] = 2] = "Shortcut";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=S3TreeItem.js.map

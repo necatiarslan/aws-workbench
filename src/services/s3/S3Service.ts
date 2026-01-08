@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { S3TreeDataProvider } from './S3TreeDataProvider';
-import { S3TreeItem, TreeItemType } from './S3TreeItem';
+import { S3TreeItem } from './S3TreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -239,7 +240,7 @@ export class S3Service implements IService {
 
     async ShowOnlyInThisProfile(node: S3TreeItem) {
         ui.logToOutput('S3Service.ShowOnlyInThisProfile Started');
-        if (!node || node.TreeItemType !== TreeItemType.Bucket) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.S3Bucket) { return; }
         if (!node.Bucket) { return; }
         if (this.AwsProfile) {
             node.ProfileToShow = this.AwsProfile;
@@ -251,7 +252,7 @@ export class S3Service implements IService {
 
     async ShowInAnyProfile(node: S3TreeItem) {
         ui.logToOutput('S3Service.ShowInAnyProfile Started');
-        if (!node || node.TreeItemType !== TreeItemType.Bucket) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.S3Bucket) { return; }
         if (!node.Bucket) { return; }
         node.ProfileToShow = "";
         this.treeDataProvider.RemoveBucketProfile(node.Bucket);
@@ -352,7 +353,7 @@ export class S3Service implements IService {
     }
 
     async RemoveBucket(node: S3TreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Bucket || !node.Bucket) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.S3Bucket || !node.Bucket) { return; }
         Telemetry.Current?.send("S3Service.RemoveBucket");
         ui.logToOutput('S3Service.RemoveBucket Started');
         this.treeDataProvider.RemoveBucket(node.Bucket);
@@ -360,7 +361,7 @@ export class S3Service implements IService {
     }
 
     async Goto(node: S3TreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Bucket || !node.Bucket) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.S3Bucket || !node.Bucket) { return; }
         ui.logToOutput('S3Service.Goto Started');
         let shortcut = await vscode.window.showInputBox({ placeHolder: 'Enter a Folder/File Key' });
         if (shortcut === undefined) { return; }
@@ -368,7 +369,7 @@ export class S3Service implements IService {
     }
 
     async RemoveShortcut(node: S3TreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Shortcut || !node.Bucket || !node.Shortcut) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.S3Shortcut || !node.Bucket || !node.Shortcut) { return; }
         Telemetry.Current?.send("S3Service.RemoveShortcut");
         ui.logToOutput('S3Service.RemoveShortcut Started');
         this.treeDataProvider.RemoveShortcut(node.Bucket, node.Shortcut);
@@ -386,7 +387,7 @@ export class S3Service implements IService {
     }
 
     async CopyShortcut(node: S3TreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Shortcut || !node.Shortcut) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.S3Shortcut || !node.Shortcut) { return; }
         ui.logToOutput('S3Service.CopyShortcut Started');
         vscode.env.clipboard.writeText(node.Shortcut);
     }

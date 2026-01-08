@@ -4,6 +4,7 @@ exports.ViewType = exports.IamTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const IamTreeItem_1 = require("./IamTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const IamService_1 = require("./IamService");
 class IamTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -64,33 +65,33 @@ class IamTreeDataProvider {
         }
     }
     NewIamRoleNode(Region, IamRole) {
-        let treeItem = new IamTreeItem_1.IamTreeItem(IamRole, IamTreeItem_1.TreeItemType.IamRole);
+        let treeItem = new IamTreeItem_1.IamTreeItem(IamRole, TreeItemType_1.TreeItemType.IAMRole);
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         treeItem.Region = Region;
         treeItem.IamRole = IamRole;
         // Add Permissions Group
-        let permissionsItem = new IamTreeItem_1.IamTreeItem("Permissions", IamTreeItem_1.TreeItemType.PermissionsGroup);
+        let permissionsItem = new IamTreeItem_1.IamTreeItem("Permissions", TreeItemType_1.TreeItemType.IAMPermissionsGroup);
         permissionsItem.IamRole = treeItem.IamRole;
         permissionsItem.Region = treeItem.Region;
         permissionsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         permissionsItem.Parent = treeItem;
         treeItem.Children.push(permissionsItem);
         // Add Trust Relationships Group
-        let trustItem = new IamTreeItem_1.IamTreeItem("Trust Relationships", IamTreeItem_1.TreeItemType.TrustRelationshipsGroup);
+        let trustItem = new IamTreeItem_1.IamTreeItem("Trust Relationships", TreeItemType_1.TreeItemType.IAMTrustRelationshipsGroup);
         trustItem.IamRole = treeItem.IamRole;
         trustItem.Region = treeItem.Region;
         trustItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         trustItem.Parent = treeItem;
         treeItem.Children.push(trustItem);
         // Add Tags Group
-        let tagsItem = new IamTreeItem_1.IamTreeItem("Tags", IamTreeItem_1.TreeItemType.TagsGroup);
+        let tagsItem = new IamTreeItem_1.IamTreeItem("Tags", TreeItemType_1.TreeItemType.IAMTagsGroup);
         tagsItem.IamRole = treeItem.IamRole;
         tagsItem.Region = treeItem.Region;
         tagsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         tagsItem.Parent = treeItem;
         treeItem.Children.push(tagsItem);
         // Add Info Group
-        let infoItem = new IamTreeItem_1.IamTreeItem("Info", IamTreeItem_1.TreeItemType.InfoGroup);
+        let infoItem = new IamTreeItem_1.IamTreeItem("Info", TreeItemType_1.TreeItemType.IAMInfoGroup);
         infoItem.IamRole = treeItem.IamRole;
         infoItem.Region = treeItem.Region;
         infoItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -103,19 +104,19 @@ class IamTreeDataProvider {
         if (!node) {
             result.push(...this.GetIamRoleNodes());
         }
-        else if (node.TreeItemType === IamTreeItem_1.TreeItemType.PermissionsGroup && node.Children.length === 0) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.IAMPermissionsGroup && node.Children.length === 0) {
             // Auto-load permissions when the node is expanded
             IamService_1.IamService.Instance.LoadPermissions(node);
         }
-        else if (node.TreeItemType === IamTreeItem_1.TreeItemType.TrustRelationshipsGroup && node.Children.length === 0) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.IAMTrustRelationshipsGroup && node.Children.length === 0) {
             // Auto-load trust relationships when the node is expanded
             IamService_1.IamService.Instance.LoadTrustRelationships(node);
         }
-        else if (node.TreeItemType === IamTreeItem_1.TreeItemType.TagsGroup && node.Children.length === 0) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.IAMTagsGroup && node.Children.length === 0) {
             // Auto-load tags when the node is expanded
             IamService_1.IamService.Instance.LoadTags(node);
         }
-        else if (node.TreeItemType === IamTreeItem_1.TreeItemType.InfoGroup && node.Children.length === 0) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.IAMInfoGroup && node.Children.length === 0) {
             // Auto-load info when the node is expanded
             IamService_1.IamService.Instance.LoadInfo(node);
         }

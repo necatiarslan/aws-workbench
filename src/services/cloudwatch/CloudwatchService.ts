@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { CloudWatchTreeDataProvider } from './CloudWatchTreeDataProvider';
-import { CloudWatchTreeItem, TreeItemType } from './CloudWatchTreeItem';
+import { CloudWatchTreeItem } from './CloudWatchTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -142,7 +143,7 @@ export class CloudwatchService implements IService {
     }
 
     async RemoveLogGroup(node: CloudWatchTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.LogGroup || !node.Region || !node.LogGroup) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.CloudWatchLogGroup || !node.Region || !node.LogGroup) { return; }
         this.treeDataProvider.RemoveLogGroup(node.Region, node.LogGroup);
         this.SaveState();
     }

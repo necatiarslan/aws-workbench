@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-import { IamTreeItem, TreeItemType } from './IamTreeItem';
+import { IamTreeItem } from './IamTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { IamService } from './IamService';
 
 export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
@@ -83,13 +84,13 @@ export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 
 	private NewIamRoleNode(Region: string, IamRole: string) : IamTreeItem
 	{
-		let treeItem = new IamTreeItem(IamRole, TreeItemType.IamRole);
+		let treeItem = new IamTreeItem(IamRole, TreeItemType.IAMRole);
 		treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		treeItem.Region = Region;
 		treeItem.IamRole = IamRole;
 
 		// Add Permissions Group
-		let permissionsItem = new IamTreeItem("Permissions", TreeItemType.PermissionsGroup);
+		let permissionsItem = new IamTreeItem("Permissions", TreeItemType.IAMPermissionsGroup);
 		permissionsItem.IamRole = treeItem.IamRole;
 		permissionsItem.Region = treeItem.Region;
 		permissionsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -97,7 +98,7 @@ export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 		treeItem.Children.push(permissionsItem);
 
 		// Add Trust Relationships Group
-		let trustItem = new IamTreeItem("Trust Relationships", TreeItemType.TrustRelationshipsGroup);
+		let trustItem = new IamTreeItem("Trust Relationships", TreeItemType.IAMTrustRelationshipsGroup);
 		trustItem.IamRole = treeItem.IamRole;
 		trustItem.Region = treeItem.Region;
 		trustItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -105,7 +106,7 @@ export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 		treeItem.Children.push(trustItem);
 
 		// Add Tags Group
-		let tagsItem = new IamTreeItem("Tags", TreeItemType.TagsGroup);
+		let tagsItem = new IamTreeItem("Tags", TreeItemType.IAMTagsGroup);
 		tagsItem.IamRole = treeItem.IamRole;
 		tagsItem.Region = treeItem.Region;
 		tagsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -113,7 +114,7 @@ export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 		treeItem.Children.push(tagsItem);
 
 		// Add Info Group
-		let infoItem = new IamTreeItem("Info", TreeItemType.InfoGroup);
+		let infoItem = new IamTreeItem("Info", TreeItemType.IAMInfoGroup);
 		infoItem.IamRole = treeItem.IamRole;
 		infoItem.Region = treeItem.Region;
 		infoItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -130,22 +131,22 @@ export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 		{
 			result.push(...this.GetIamRoleNodes());
 		}
-		else if(node.TreeItemType === TreeItemType.PermissionsGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.IAMPermissionsGroup && node.Children.length === 0)
 		{
 			// Auto-load permissions when the node is expanded
 			IamService.Instance.LoadPermissions(node);
 		}
-		else if(node.TreeItemType === TreeItemType.TrustRelationshipsGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.IAMTrustRelationshipsGroup && node.Children.length === 0)
 		{
 			// Auto-load trust relationships when the node is expanded
 			IamService.Instance.LoadTrustRelationships(node);
 		}
-		else if(node.TreeItemType === TreeItemType.TagsGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.IAMTagsGroup && node.Children.length === 0)
 		{
 			// Auto-load tags when the node is expanded
 			IamService.Instance.LoadTags(node);
 		}
-		else if(node.TreeItemType === TreeItemType.InfoGroup && node.Children.length === 0)
+		else if(node.TreeItemType === TreeItemType.IAMInfoGroup && node.Children.length === 0)
 		{
 			// Auto-load info when the node is expanded
 			IamService.Instance.LoadInfo(node);

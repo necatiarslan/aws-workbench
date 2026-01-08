@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TreeItemType = exports.SnsTreeItem = void 0;
+exports.SnsTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class SnsTreeItem extends vscode.TreeItem {
     IsFav = false;
     TreeItemType;
@@ -25,31 +26,31 @@ class SnsTreeItem extends vscode.TreeItem {
         this.refreshUI();
     }
     refreshUI() {
-        if (this.TreeItemType === TreeItemType.Topic) {
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSTopic) {
             this.iconPath = new vscode.ThemeIcon('package'); // inbox
             this.contextValue = "Topic";
         }
-        else if (this.TreeItemType === TreeItemType.PublishGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishGroup) {
             this.iconPath = new vscode.ThemeIcon('send');
             this.contextValue = "PublishGroup";
         }
-        else if (this.TreeItemType === TreeItemType.PublishAdhoc) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishAdhoc) {
             this.iconPath = new vscode.ThemeIcon('report');
             this.contextValue = "PublishAdhoc";
         }
-        else if (this.TreeItemType === TreeItemType.PublishFile) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishFile) {
             this.iconPath = new vscode.ThemeIcon('mail');
             this.contextValue = "PublishFile";
         }
-        else if (this.TreeItemType === TreeItemType.SubscriptionGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscriptionGroup) {
             this.iconPath = new vscode.ThemeIcon('organization');
             this.contextValue = "SubscriptionGroup";
         }
-        else if (this.TreeItemType === TreeItemType.Subscription) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscription) {
             this.iconPath = new vscode.ThemeIcon('person');
             this.contextValue = "Subscription";
         }
-        else {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSOther) {
             this.iconPath = new vscode.ThemeIcon('circle-outline');
             this.contextValue = "Other";
         }
@@ -93,14 +94,4 @@ class SnsTreeItem extends vscode.TreeItem {
     }
 }
 exports.SnsTreeItem = SnsTreeItem;
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType[TreeItemType["Topic"] = 1] = "Topic";
-    TreeItemType[TreeItemType["PublishGroup"] = 2] = "PublishGroup";
-    TreeItemType[TreeItemType["PublishAdhoc"] = 3] = "PublishAdhoc";
-    TreeItemType[TreeItemType["PublishFile"] = 4] = "PublishFile";
-    TreeItemType[TreeItemType["SubscriptionGroup"] = 5] = "SubscriptionGroup";
-    TreeItemType[TreeItemType["Subscription"] = 6] = "Subscription";
-    TreeItemType[TreeItemType["Other"] = 99] = "Other";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=SnsTreeItem.js.map

@@ -3,7 +3,8 @@ import * as vscode from "vscode";
 import * as ui from '../../common/UI';
 import * as api from './API';
 import { S3Service } from "./S3Service";
-import { S3TreeItem, TreeItemType } from "./S3TreeItem";
+import { S3TreeItem } from "./S3TreeItem";
+import { TreeItemType } from '../../tree/TreeItemType';
 import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
 import { S3Search } from "./S3Search";
@@ -42,11 +43,11 @@ export class S3Explorer {
     }
 
     public SetS3ExplorerItem(node:S3TreeItem){
-        if(node.TreeItemType === TreeItemType.Bucket && node.Bucket)
+        if(node.TreeItemType === TreeItemType.S3Bucket && node.Bucket)
         {
             this.S3ExplorerItem = new S3ExplorerItem(node.Bucket, "");
         }
-        else if(node.TreeItemType === TreeItemType.Shortcut && node.Bucket && node.Shortcut)
+        else if(node.TreeItemType === TreeItemType.S3Shortcut && node.Bucket && node.Shortcut)
         {
             this.S3ExplorerItem = new S3ExplorerItem(node.Bucket, node.Shortcut);
         }
@@ -635,12 +636,12 @@ export class S3Explorer {
                         let node:S3TreeItem;
                         if(this.S3ExplorerItem.IsRoot())
                         {
-                            node = new S3TreeItem("", TreeItemType.Bucket);
+                            node = new S3TreeItem("", TreeItemType.S3Bucket);
                             node.Bucket = this.S3ExplorerItem.Bucket;
                         }
                         else
                         {
-                            node = new S3TreeItem("", TreeItemType.Shortcut);
+                            node = new S3TreeItem("", TreeItemType.S3Shortcut);
                             node.Bucket = this.S3ExplorerItem.Bucket;
                             node.Shortcut = this.S3ExplorerItem.Key;
                         }

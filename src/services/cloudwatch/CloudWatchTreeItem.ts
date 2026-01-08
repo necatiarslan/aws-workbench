@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
 export class CloudWatchTreeItem extends vscode.TreeItem {
 	public TreeItemType:TreeItemType;
@@ -63,31 +64,31 @@ export class CloudWatchTreeItem extends vscode.TreeItem {
 		contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
 		switch(this.TreeItemType)
 		{
-			case TreeItemType.Region:
+			case TreeItemType.CloudWatchRegion:
 				contextValue += "Region#";
 				break;
-			case TreeItemType.LogGroup:
+			case TreeItemType.CloudWatchLogGroup:
 				contextValue += "LogGroup#";
 				break;
-			case TreeItemType.LogStream:
+			case TreeItemType.CloudWatchLogStream:
 				contextValue += "LogStream#";
 				break;
-			case TreeItemType.Info:
+			case TreeItemType.CloudWatchInfo:
 				contextValue += "Info#";
 				break;
-			case TreeItemType.InfoDetail:
+			case TreeItemType.CloudWatchInfoDetail:
 				contextValue += "InfoDetail#";
 				break;
-			case TreeItemType.Today:
+			case TreeItemType.CloudWatchToday:
 				contextValue += "Today#";
 				break;
-			case TreeItemType.Yesterday:
+			case TreeItemType.CloudWatchYesterday:
 				contextValue += "Yesterday#";
 				break;
-			case TreeItemType.History:
+			case TreeItemType.CloudWatchHistory:
 				contextValue += "History#";
 				break;
-			case TreeItemType.RefreshAction:
+			case TreeItemType.CloudWatchRefreshAction:
 				contextValue += "RefreshAction#";
 				break;
 		}
@@ -97,31 +98,31 @@ export class CloudWatchTreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.Region)
+		if(this.TreeItemType === TreeItemType.CloudWatchRegion)
 		{
 			this.iconPath = new vscode.ThemeIcon('globe');
 		}
-		else if(this.TreeItemType === TreeItemType.LogGroup)
+		else if(this.TreeItemType === TreeItemType.CloudWatchLogGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('folder');
 		}
-		else if(this.TreeItemType === TreeItemType.Info)
+		else if(this.TreeItemType === TreeItemType.CloudWatchInfo)
 		{
 			this.iconPath = new vscode.ThemeIcon('info');
 		}
-		else if(this.TreeItemType === TreeItemType.InfoDetail)
+		else if(this.TreeItemType === TreeItemType.CloudWatchInfoDetail)
 		{
 			this.iconPath = new vscode.ThemeIcon('circle-filled');
 		}
-		else if(this.TreeItemType === TreeItemType.Today || this.TreeItemType === TreeItemType.Yesterday || this.TreeItemType === TreeItemType.History)
+		else if(this.TreeItemType === TreeItemType.CloudWatchToday || this.TreeItemType === TreeItemType.CloudWatchYesterday || this.TreeItemType === TreeItemType.CloudWatchHistory)
 		{
 			this.iconPath = new vscode.ThemeIcon('calendar');
 		}
-		else if(this.TreeItemType === TreeItemType.RefreshAction)
+		else if(this.TreeItemType === TreeItemType.CloudWatchRefreshAction)
 		{
 			this.iconPath = new vscode.ThemeIcon('refresh');
 		}
-		else if(this.TreeItemType === TreeItemType.LogStream)
+		else if(this.TreeItemType === TreeItemType.CloudWatchLogStream)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
 		}
@@ -182,16 +183,4 @@ export class CloudWatchTreeItem extends vscode.TreeItem {
 
 		return false;
 	}
-}
-
-export enum TreeItemType{
-	Region = 1,
-	LogGroup = 2,
-	LogStream = 3,
-	Info = 4,
-	InfoDetail = 5,
-	Today = 6,
-	Yesterday = 7,
-	History = 8,
-	RefreshAction = 9,
 }

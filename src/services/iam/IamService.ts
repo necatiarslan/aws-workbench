@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { IamTreeDataProvider } from './IamTreeDataProvider';
-import { IamTreeItem, TreeItemType } from './IamTreeItem';
+import { IamTreeItem } from './IamTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -140,7 +141,7 @@ export class IamService implements IService {
     }
 
     async RemoveIamRole(node: IamTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.IamRole || !node.Region || !node.IamRole) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.IAMRole || !node.Region || !node.IamRole) { return; }
         this.treeDataProvider.RemoveIamRole(node.Region, node.IamRole);
         this.SaveState();
     }

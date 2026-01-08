@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TreeItemType = exports.CloudWatchTreeItem = void 0;
+exports.CloudWatchTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class CloudWatchTreeItem extends vscode.TreeItem {
     TreeItemType;
     Text;
@@ -58,56 +59,56 @@ class CloudWatchTreeItem extends vscode.TreeItem {
         contextValue += this.IsPinned ? "Pinned#" : "NotPinned#";
         contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
         switch (this.TreeItemType) {
-            case TreeItemType.Region:
+            case TreeItemType_1.TreeItemType.CloudWatchRegion:
                 contextValue += "Region#";
                 break;
-            case TreeItemType.LogGroup:
+            case TreeItemType_1.TreeItemType.CloudWatchLogGroup:
                 contextValue += "LogGroup#";
                 break;
-            case TreeItemType.LogStream:
+            case TreeItemType_1.TreeItemType.CloudWatchLogStream:
                 contextValue += "LogStream#";
                 break;
-            case TreeItemType.Info:
+            case TreeItemType_1.TreeItemType.CloudWatchInfo:
                 contextValue += "Info#";
                 break;
-            case TreeItemType.InfoDetail:
+            case TreeItemType_1.TreeItemType.CloudWatchInfoDetail:
                 contextValue += "InfoDetail#";
                 break;
-            case TreeItemType.Today:
+            case TreeItemType_1.TreeItemType.CloudWatchToday:
                 contextValue += "Today#";
                 break;
-            case TreeItemType.Yesterday:
+            case TreeItemType_1.TreeItemType.CloudWatchYesterday:
                 contextValue += "Yesterday#";
                 break;
-            case TreeItemType.History:
+            case TreeItemType_1.TreeItemType.CloudWatchHistory:
                 contextValue += "History#";
                 break;
-            case TreeItemType.RefreshAction:
+            case TreeItemType_1.TreeItemType.CloudWatchRefreshAction:
                 contextValue += "RefreshAction#";
                 break;
         }
         this.contextValue = contextValue;
     }
     refreshUI() {
-        if (this.TreeItemType === TreeItemType.Region) {
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchRegion) {
             this.iconPath = new vscode.ThemeIcon('globe');
         }
-        else if (this.TreeItemType === TreeItemType.LogGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchLogGroup) {
             this.iconPath = new vscode.ThemeIcon('folder');
         }
-        else if (this.TreeItemType === TreeItemType.Info) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchInfo) {
             this.iconPath = new vscode.ThemeIcon('info');
         }
-        else if (this.TreeItemType === TreeItemType.InfoDetail) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchInfoDetail) {
             this.iconPath = new vscode.ThemeIcon('circle-filled');
         }
-        else if (this.TreeItemType === TreeItemType.Today || this.TreeItemType === TreeItemType.Yesterday || this.TreeItemType === TreeItemType.History) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchToday || this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchYesterday || this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchHistory) {
             this.iconPath = new vscode.ThemeIcon('calendar');
         }
-        else if (this.TreeItemType === TreeItemType.RefreshAction) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchRefreshAction) {
             this.iconPath = new vscode.ThemeIcon('refresh');
         }
-        else if (this.TreeItemType === TreeItemType.LogStream) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchLogStream) {
             this.iconPath = new vscode.ThemeIcon('output');
         }
         else {
@@ -151,16 +152,4 @@ class CloudWatchTreeItem extends vscode.TreeItem {
     }
 }
 exports.CloudWatchTreeItem = CloudWatchTreeItem;
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType[TreeItemType["Region"] = 1] = "Region";
-    TreeItemType[TreeItemType["LogGroup"] = 2] = "LogGroup";
-    TreeItemType[TreeItemType["LogStream"] = 3] = "LogStream";
-    TreeItemType[TreeItemType["Info"] = 4] = "Info";
-    TreeItemType[TreeItemType["InfoDetail"] = 5] = "InfoDetail";
-    TreeItemType[TreeItemType["Today"] = 6] = "Today";
-    TreeItemType[TreeItemType["Yesterday"] = 7] = "Yesterday";
-    TreeItemType[TreeItemType["History"] = 8] = "History";
-    TreeItemType[TreeItemType["RefreshAction"] = 9] = "RefreshAction";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=CloudWatchTreeItem.js.map

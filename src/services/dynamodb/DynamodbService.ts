@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { DynamodbTreeDataProvider } from './DynamodbTreeDataProvider';
-import { DynamodbTreeItem, TreeItemType } from './DynamodbTreeItem';
+import { DynamodbTreeItem } from './DynamodbTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -140,7 +141,7 @@ export class DynamodbService implements IService {
     }
 
     async RemoveDynamodb(node: DynamodbTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Dynamodb || !node.Region || !node.Dynamodb) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.DynamoDBTable || !node.Region || !node.Dynamodb) { return; }
         this.treeDataProvider.RemoveDynamodb(node.Region, node.Dynamodb);
         this.SaveState();
     }

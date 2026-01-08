@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SnsService = void 0;
 const vscode = require("vscode");
 const SnsTreeDataProvider_1 = require("./SnsTreeDataProvider");
-const SnsTreeItem_1 = require("./SnsTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -118,7 +118,7 @@ class SnsService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveTopic(node) {
-        if (!node || node.TreeItemType !== SnsTreeItem_1.TreeItemType.Topic || !node.Region || !node.TopicArn) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.SNSTopic || !node.Region || !node.TopicArn) {
             return;
         }
         this.treeDataProvider.RemoveTopic(node.Region, node.TopicArn);

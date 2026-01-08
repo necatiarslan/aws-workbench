@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TreeItemType = exports.LambdaTreeItem = void 0;
+exports.LambdaTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class LambdaTreeItem extends vscode.TreeItem {
     IsFav = false;
     TreeItemType;
@@ -31,12 +32,12 @@ class LambdaTreeItem extends vscode.TreeItem {
         this.refreshUI();
     }
     set CodePath(path) {
-        if (this.TreeItemType !== TreeItemType.Code) {
+        if (this.TreeItemType !== TreeItemType_1.TreeItemType.LambdaCode) {
             return;
         }
         this.codePath = path;
         if (path && this.Children.length === 0) {
-            let node = new LambdaTreeItem(path, TreeItemType.CodePath);
+            let node = new LambdaTreeItem(path, TreeItemType_1.TreeItemType.LambdaCodePath);
             node.Lambda = this.Lambda;
             node.Region = this.Region;
             node.Parent = this;
@@ -58,71 +59,71 @@ class LambdaTreeItem extends vscode.TreeItem {
         return this.codePath;
     }
     refreshUI() {
-        if (this.TreeItemType === TreeItemType.Lambda) {
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaFunction) {
             this.iconPath = new vscode.ThemeIcon('server-process');
             this.contextValue = "Lambda";
         }
-        else if (this.TreeItemType === TreeItemType.Code) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaCode) {
             this.iconPath = new vscode.ThemeIcon('file-code');
             this.contextValue = "Code";
         }
-        else if (this.TreeItemType === TreeItemType.TriggerGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerGroup) {
             this.iconPath = new vscode.ThemeIcon('run-all');
             this.contextValue = "TriggerGroup";
         }
-        else if (this.TreeItemType === TreeItemType.TriggerSavedPayload) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerSavedPayload) {
             this.iconPath = new vscode.ThemeIcon('bracket');
             this.contextValue = "TriggerSavedPayload";
         }
-        else if (this.TreeItemType === TreeItemType.TriggerWithPayload) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerWithPayload) {
             this.iconPath = new vscode.ThemeIcon('bracket-dot');
             this.contextValue = "TriggerWithPayload";
         }
-        else if (this.TreeItemType === TreeItemType.TriggerFilePayload) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerFilePayload) {
             this.iconPath = new vscode.ThemeIcon('file');
             this.contextValue = "TriggerFilePayload";
         }
-        else if (this.TreeItemType === TreeItemType.TriggerNoPayload) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerNoPayload) {
             this.iconPath = new vscode.ThemeIcon('bracket-error');
             this.contextValue = "TriggerNoPayload";
         }
-        else if (this.TreeItemType === TreeItemType.ResponsePayload) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaResponsePayload) {
             this.iconPath = new vscode.ThemeIcon('output');
             this.contextValue = "ResponsePayload";
         }
-        else if (this.TreeItemType === TreeItemType.LogGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaLogGroup) {
             this.iconPath = new vscode.ThemeIcon('output');
             this.contextValue = "LogGroup";
         }
-        else if (this.TreeItemType === TreeItemType.LogStream) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaLogStream) {
             this.iconPath = new vscode.ThemeIcon('output');
             this.contextValue = "LogStream";
         }
-        else if (this.TreeItemType === TreeItemType.CodePath) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaCodePath) {
             this.iconPath = new vscode.ThemeIcon('file');
             this.contextValue = "CodePath";
         }
-        else if (this.TreeItemType === TreeItemType.EnvironmentVariableGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaEnvironmentVariableGroup) {
             this.iconPath = new vscode.ThemeIcon('wrench');
             this.contextValue = "EnvironmentVariableGroup";
         }
-        else if (this.TreeItemType === TreeItemType.EnvironmentVariable) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaEnvironmentVariable) {
             this.iconPath = new vscode.ThemeIcon('wrench');
             this.contextValue = "EnvironmentVariable";
         }
-        else if (this.TreeItemType === TreeItemType.TagsGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTagsGroup) {
             this.iconPath = new vscode.ThemeIcon('tag');
             this.contextValue = "TagsGroup";
         }
-        else if (this.TreeItemType === TreeItemType.Tag) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTag) {
             this.iconPath = new vscode.ThemeIcon('tag');
             this.contextValue = "Tag";
         }
-        else if (this.TreeItemType === TreeItemType.InfoGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaInfoGroup) {
             this.iconPath = new vscode.ThemeIcon('info');
             this.contextValue = "InfoGroup";
         }
-        else if (this.TreeItemType === TreeItemType.InfoItem) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaInfoItem) {
             this.iconPath = new vscode.ThemeIcon('symbol-property');
             this.contextValue = "InfoItem";
         }
@@ -170,24 +171,4 @@ class LambdaTreeItem extends vscode.TreeItem {
     }
 }
 exports.LambdaTreeItem = LambdaTreeItem;
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType[TreeItemType["Lambda"] = 1] = "Lambda";
-    TreeItemType[TreeItemType["Code"] = 2] = "Code";
-    TreeItemType[TreeItemType["LogGroup"] = 3] = "LogGroup";
-    TreeItemType[TreeItemType["LogStream"] = 4] = "LogStream";
-    TreeItemType[TreeItemType["TriggerGroup"] = 5] = "TriggerGroup";
-    TreeItemType[TreeItemType["TriggerSavedPayload"] = 6] = "TriggerSavedPayload";
-    TreeItemType[TreeItemType["CodePath"] = 7] = "CodePath";
-    TreeItemType[TreeItemType["TriggerNoPayload"] = 8] = "TriggerNoPayload";
-    TreeItemType[TreeItemType["TriggerWithPayload"] = 9] = "TriggerWithPayload";
-    TreeItemType[TreeItemType["TriggerFilePayload"] = 10] = "TriggerFilePayload";
-    TreeItemType[TreeItemType["ResponsePayload"] = 11] = "ResponsePayload";
-    TreeItemType[TreeItemType["EnvironmentVariableGroup"] = 12] = "EnvironmentVariableGroup";
-    TreeItemType[TreeItemType["EnvironmentVariable"] = 13] = "EnvironmentVariable";
-    TreeItemType[TreeItemType["TagsGroup"] = 14] = "TagsGroup";
-    TreeItemType[TreeItemType["Tag"] = 15] = "Tag";
-    TreeItemType[TreeItemType["InfoGroup"] = 16] = "InfoGroup";
-    TreeItemType[TreeItemType["InfoItem"] = 17] = "InfoItem";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=LambdaTreeItem.js.map

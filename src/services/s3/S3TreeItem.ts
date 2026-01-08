@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
 export class S3TreeItem extends vscode.TreeItem {
 	private _isFav: boolean = false;
@@ -47,11 +48,11 @@ export class S3TreeItem extends vscode.TreeItem {
 	}
 
 	public setContextValue(){
-		let contextValue = "#";
+		let contextValue = "#Type:S3#";
 		contextValue += this.IsFav ? "Fav#" : "!Fav#";
 		contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
-		contextValue += this.TreeItemType === TreeItemType.Bucket ? "Bucket#" : "";
-		contextValue += this.TreeItemType === TreeItemType.Shortcut ? "Shortcut#" : "";
+		contextValue += this.TreeItemType === TreeItemType.S3Bucket ? "Bucket#" : "";
+		contextValue += this.TreeItemType === TreeItemType.S3Shortcut ? "Shortcut#" : "";
 		contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
 
 		this.contextValue = contextValue;
@@ -59,11 +60,11 @@ export class S3TreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.Bucket)
+		if(this.TreeItemType === TreeItemType.S3Bucket)
 		{
 			this.iconPath = new vscode.ThemeIcon('package');
 		}
-		else if(this.TreeItemType === TreeItemType.Shortcut)
+		else if(this.TreeItemType === TreeItemType.S3Shortcut)
 		{
 			this.iconPath = new vscode.ThemeIcon('file-symlink-directory');
 		}
@@ -123,9 +124,4 @@ export class S3TreeItem extends vscode.TreeItem {
 
 		return false;
 	}
-}
-
-export enum TreeItemType{
-	Bucket = 1,
-	Shortcut = 2,
 }

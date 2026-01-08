@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-import { GlueTreeItem, TreeItemType } from './GlueTreeItem';
+import { GlueTreeItem } from './GlueTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { GlueService } from './GlueService';
 
 export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeItem> {
@@ -20,30 +21,30 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 
 	async getChildren(element?: GlueTreeItem): Promise<GlueTreeItem[]> {
 		if (element) {
-			if (element.TreeItemType === TreeItemType.Job) {
+			if (element.TreeItemType === TreeItemType.GlueJob) {
 				return [
-					new GlueTreeItem("Info", TreeItemType.Info, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element),
-					new GlueTreeItem("Runs", TreeItemType.RunGroup, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element),
-					new GlueTreeItem("/aws-glue/jobs/output", TreeItemType.LogGroup, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element),
-					new GlueTreeItem("/aws-glue/jobs/error", TreeItemType.LogGroup, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element)
+					new GlueTreeItem("Info", TreeItemType.GlueInfo, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element),
+					new GlueTreeItem("Runs", TreeItemType.GlueRunGroup, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element),
+					new GlueTreeItem("/aws-glue/jobs/output", TreeItemType.GlueLogGroup, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element),
+					new GlueTreeItem("/aws-glue/jobs/error", TreeItemType.GlueLogGroup, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element)
 				];
 			}
-			if (element.TreeItemType === TreeItemType.Info) {
+			if (element.TreeItemType === TreeItemType.GlueInfo) {
 				let jobInfo = element.Payload || GlueService.Instance.JobInfoCache[element.ResourceName];
-				if (!jobInfo) return [new GlueTreeItem("No Data (Refresh to Load)", TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
+				if (!jobInfo) return [new GlueTreeItem("No Data (Refresh to Load)", TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
 				
 				let nodes: GlueTreeItem[] = [];
 				for (let key in jobInfo) {
 					let val = jobInfo[key];
 					if (typeof val === 'object' && val !== null) {
-						nodes.push(new GlueTreeItem(`${key}: ...`, TreeItemType.Info, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element, val));
+						nodes.push(new GlueTreeItem(`${key}: ...`, TreeItemType.GlueInfo, element.Region, element.ResourceName, vscode.TreeItemCollapsibleState.Collapsed, undefined, element, val));
 					} else {
-						nodes.push(new GlueTreeItem(`${key}: ${val}`, TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
+						nodes.push(new GlueTreeItem(`${key}: ${val}`, TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
 					}
 				}
 				return nodes;
 			}
-			if (element.TreeItemType === TreeItemType.RunGroup) {
+			if (element.TreeItemType === TreeItemType.GlueRunGroup) {
 				// Runs will be added dynamically by RefreshRuns
 				let runs = element.Payload;
 				if (element.Parent && GlueService.Instance.JobRunsCache[element.Parent.ResourceName]) {
@@ -51,52 +52,52 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 				}
 
 				if (!runs) return [];
-				if (runs.length === 0) return [new GlueTreeItem("No Runs Found", TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
+				if (runs.length === 0) return [new GlueTreeItem("No Runs Found", TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
 				
 				return (runs as any[]).map(run => {
 					let runLabel = `${run.Id} (${run.JobRunState})`;
-					return new GlueTreeItem(runLabel, TreeItemType.Run, element.Region, run.Id, vscode.TreeItemCollapsibleState.Collapsed, undefined, element, run);
+					return new GlueTreeItem(runLabel, TreeItemType.GlueRun, element.Region, run.Id, vscode.TreeItemCollapsibleState.Collapsed, undefined, element, run);
 				});
 			}
-			if (element.TreeItemType === TreeItemType.LogGroup) {
+			if (element.TreeItemType === TreeItemType.GlueLogGroup) {
 				// Log streams will be added dynamically by RefreshLogStreams
 				let streams = GlueService.Instance.LogStreamsCache[element.label!];
 				if (!streams) return [];
-				if (streams.length === 0) return [new GlueTreeItem("No Logs Found", TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
+				if (streams.length === 0) return [new GlueTreeItem("No Logs Found", TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element)];
 				
-				return streams.map(s => new GlueTreeItem(s, TreeItemType.LogStream, element.Region, s, vscode.TreeItemCollapsibleState.None, undefined, element));
+				return streams.map(s => new GlueTreeItem(s, TreeItemType.GlueLogStream, element.Region, s, vscode.TreeItemCollapsibleState.None, undefined, element));
 			}
-			if (element.TreeItemType === TreeItemType.Run) {
+			if (element.TreeItemType === TreeItemType.GlueRun) {
 				if (!element.Payload) return [];
 				let run = element.Payload;
 				let children: GlueTreeItem[] = [];
 
 				// Log nodes
-				let outLog = new GlueTreeItem("View Output Logs", TreeItemType.LogStream, element.Region, run.Id, vscode.TreeItemCollapsibleState.None, undefined, element, { LogGroupName: "/aws-glue/jobs/output" });
+				let outLog = new GlueTreeItem("View Output Logs", TreeItemType.GlueLogStream, element.Region, run.Id, vscode.TreeItemCollapsibleState.None, undefined, element, { LogGroupName: "/aws-glue/jobs/output" });
 				outLog.command = { command: 'aws-workbench.glue.ViewLog', title: 'View Log', arguments: [outLog] };
 				children.push(outLog);
 
-				let errLog = new GlueTreeItem("View Error Logs", TreeItemType.LogStream, element.Region, run.Id, vscode.TreeItemCollapsibleState.None, undefined, element, { LogGroupName: "/aws-glue/jobs/error" });
+				let errLog = new GlueTreeItem("View Error Logs", TreeItemType.GlueLogStream, element.Region, run.Id, vscode.TreeItemCollapsibleState.None, undefined, element, { LogGroupName: "/aws-glue/jobs/error" });
 				errLog.command = { command: 'aws-workbench.glue.ViewLog', title: 'View Log', arguments: [errLog] };
 				children.push(errLog);
 
 				// Arguments node
 				if (run.Arguments) {
-					children.push(new GlueTreeItem("Input Arguments", TreeItemType.Arguments, element.Region, "", vscode.TreeItemCollapsibleState.Collapsed, undefined, element, run.Arguments));
+					children.push(new GlueTreeItem("Input Arguments", TreeItemType.GlueArguments, element.Region, "", vscode.TreeItemCollapsibleState.Collapsed, undefined, element, run.Arguments));
 				}
 
 				// Status details
-				children.push(new GlueTreeItem(`Status: ${run.JobRunState}`, TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
-				children.push(new GlueTreeItem(`Started: ${run.StartedOn ? new Date(run.StartedOn).toLocaleString() : 'N/A'}`, TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
-				children.push(new GlueTreeItem(`ExecutionTime: ${run.ExecutionTime}s`, TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
+				children.push(new GlueTreeItem(`Status: ${run.JobRunState}`, TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
+				children.push(new GlueTreeItem(`Started: ${run.StartedOn ? new Date(run.StartedOn).toLocaleString() : 'N/A'}`, TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
+				children.push(new GlueTreeItem(`ExecutionTime: ${run.ExecutionTime}s`, TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element));
 				
 				return children;
 			}
-			if (element.TreeItemType === TreeItemType.Arguments) {
+			if (element.TreeItemType === TreeItemType.GlueArguments) {
 				if (!element.Payload) return [];
 				let args = element.Payload;
 				return Object.keys(args).map(key => {
-					return new GlueTreeItem(`${key}: ${args[key]}`, TreeItemType.Detail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element);
+					return new GlueTreeItem(`${key}: ${args[key]}`, TreeItemType.GlueDetail, element.Region, "", vscode.TreeItemCollapsibleState.None, undefined, element);
 				});
 			}
 			return [];

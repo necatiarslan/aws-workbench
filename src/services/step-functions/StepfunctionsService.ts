@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { StepFuncTreeDataProvider } from './StepFuncTreeDataProvider';
-import { StepFuncTreeItem, TreeItemType } from './StepFuncTreeItem';
+import { StepFuncTreeItem } from './StepFuncTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -142,7 +143,7 @@ export class StepfunctionsService implements IService {
     }
 
     async RemoveStepFunc(node: StepFuncTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.StepFunc || !node.Region || !node.StepFuncArn) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.StepFunctionsStateMachine || !node.Region || !node.StepFuncArn) { return; }
         this.treeDataProvider.RemoveStepFunc(node.Region, node.StepFuncArn);
         this.SaveState();
     }

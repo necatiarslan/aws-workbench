@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
 export class SnsTreeItem extends vscode.TreeItem {
 	public IsFav: boolean = false
@@ -27,37 +28,37 @@ export class SnsTreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.Topic)
+		if(this.TreeItemType === TreeItemType.SNSTopic)
 		{
 			this.iconPath = new vscode.ThemeIcon('package'); // inbox
 			this.contextValue = "Topic"
 		}
-		else if(this.TreeItemType === TreeItemType.PublishGroup)
+		else if(this.TreeItemType === TreeItemType.SNSPublishGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('send');
 			this.contextValue = "PublishGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.PublishAdhoc)
+		else if(this.TreeItemType === TreeItemType.SNSPublishAdhoc)
 		{
 			this.iconPath = new vscode.ThemeIcon('report');
 			this.contextValue = "PublishAdhoc"
 		}
-		else if(this.TreeItemType === TreeItemType.PublishFile)
+		else if(this.TreeItemType === TreeItemType.SNSPublishFile)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail');
 			this.contextValue = "PublishFile"
 		}
-		else if(this.TreeItemType === TreeItemType.SubscriptionGroup)
+		else if(this.TreeItemType === TreeItemType.SNSSubscriptionGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('organization');
 			this.contextValue = "SubscriptionGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.Subscription)
+		else if(this.TreeItemType === TreeItemType.SNSSubscription)
 		{
 			this.iconPath = new vscode.ThemeIcon('person');
 			this.contextValue = "Subscription"
 		}
-		else
+		else if(this.TreeItemType === TreeItemType.SNSOther)
 		{
 			this.iconPath = new vscode.ThemeIcon('circle-outline');
 			this.contextValue = "Other"
@@ -118,14 +119,4 @@ export class SnsTreeItem extends vscode.TreeItem {
 
 		return false;
 	}
-}
-
-export enum TreeItemType{
-	Topic = 1,
-	PublishGroup = 2,
-	PublishAdhoc= 3,
-	PublishFile= 4,
-	SubscriptionGroup = 5,
-	Subscription = 6,
-	Other = 99
 }

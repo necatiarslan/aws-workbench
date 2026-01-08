@@ -4,6 +4,7 @@ exports.CloudWatchTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const CloudWatchTreeItem_1 = require("./CloudWatchTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const CloudwatchService_1 = require("./CloudwatchService");
 const api = require("./API");
 class CloudWatchTreeDataProvider {
@@ -50,7 +51,7 @@ class CloudWatchTreeDataProvider {
     AddNewLogGroupNode(Region, LogGroup) {
         let regionNode = this.RegionNodeList.find(node => node.label === Region);
         if (!regionNode) {
-            regionNode = new CloudWatchTreeItem_1.CloudWatchTreeItem(Region, CloudWatchTreeItem_1.TreeItemType.Region);
+            regionNode = new CloudWatchTreeItem_1.CloudWatchTreeItem(Region, TreeItemType_1.TreeItemType.CloudWatchRegion);
             regionNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
             regionNode.Region = Region;
             this.RegionNodeList.push(regionNode);
@@ -58,7 +59,7 @@ class CloudWatchTreeDataProvider {
         if (regionNode.Children.some(item => item.LogGroup === LogGroup)) {
             return regionNode.Children.find(item => item.LogGroup === LogGroup);
         }
-        let treeItem = new CloudWatchTreeItem_1.CloudWatchTreeItem(LogGroup, CloudWatchTreeItem_1.TreeItemType.LogGroup);
+        let treeItem = new CloudWatchTreeItem_1.CloudWatchTreeItem(LogGroup, TreeItemType_1.TreeItemType.CloudWatchLogGroup);
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         treeItem.Region = Region;
         treeItem.LogGroup = LogGroup;
@@ -88,10 +89,10 @@ class CloudWatchTreeDataProvider {
         else if (node.Children.length > 0) {
             result.push(...node.Children);
         }
-        else if (node.TreeItemType === CloudWatchTreeItem_1.TreeItemType.LogGroup) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.CloudWatchLogGroup) {
             return api.GetLogStreamList(node.Region, node.LogGroup).then(streams => {
                 for (var stream of streams.result) {
-                    let streamNode = new CloudWatchTreeItem_1.CloudWatchTreeItem(stream, CloudWatchTreeItem_1.TreeItemType.LogStream);
+                    let streamNode = new CloudWatchTreeItem_1.CloudWatchTreeItem(stream, TreeItemType_1.TreeItemType.CloudWatchLogStream);
                     streamNode.Region = node.Region;
                     streamNode.LogGroup = node.LogGroup;
                     streamNode.LogStream = stream;

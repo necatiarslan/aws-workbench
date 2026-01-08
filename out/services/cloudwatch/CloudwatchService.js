@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudwatchService = void 0;
 const vscode = require("vscode");
 const CloudWatchTreeDataProvider_1 = require("./CloudWatchTreeDataProvider");
-const CloudWatchTreeItem_1 = require("./CloudWatchTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -118,7 +118,7 @@ class CloudwatchService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveLogGroup(node) {
-        if (!node || node.TreeItemType !== CloudWatchTreeItem_1.TreeItemType.LogGroup || !node.Region || !node.LogGroup) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.CloudWatchLogGroup || !node.Region || !node.LogGroup) {
             return;
         }
         this.treeDataProvider.RemoveLogGroup(node.Region, node.LogGroup);

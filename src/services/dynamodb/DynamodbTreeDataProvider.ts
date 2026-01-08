@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-import { DynamodbTreeItem, TreeItemType } from './DynamodbTreeItem';
+import { DynamodbTreeItem } from './DynamodbTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { DynamodbService } from './DynamodbService';
 import * as api from './API';
 
@@ -55,7 +56,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 						now.getMinutes().toString().padStart(2, '0') + ':' + 
 						now.getSeconds().toString().padStart(2, '0');
 
-		let treeItem = new DynamodbTreeItem("Response - " + currentTime, TreeItemType.ResponsePayload);
+		let treeItem = new DynamodbTreeItem("Response - " + currentTime, TreeItemType.DynamoDBResponsePayload);
 		treeItem.Region = node.Region;
 		treeItem.Dynamodb = node.Dynamodb;
 		treeItem.ResponsePayload = payloadString
@@ -70,7 +71,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		{
 			if(node.Children.find((item) => item.LogStreamName === streamName)){ continue; }
 			
-			let treeItem = new DynamodbTreeItem(streamName, TreeItemType.LogStream);
+			let treeItem = new DynamodbTreeItem(streamName, TreeItemType.DynamoDBLogStream);
 			treeItem.Region = node.Region;
 			treeItem.Dynamodb = node.Dynamodb;
 			treeItem.LogStreamName = streamName
@@ -114,13 +115,13 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 
 	private NewDynamodbNode(Region: string, Dynamodb: string) : DynamodbTreeItem
 	{
-		let treeItem = new DynamodbTreeItem(Dynamodb, TreeItemType.Dynamodb);
+		let treeItem = new DynamodbTreeItem(Dynamodb, TreeItemType.DynamoDBTable);
 		treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		treeItem.Region = Region;
 		treeItem.Dynamodb = Dynamodb;
 
 		// Primary Keys node
-		let primaryKeyItem = new DynamodbTreeItem("Primary Keys", TreeItemType.PrimaryKey);
+		let primaryKeyItem = new DynamodbTreeItem("Primary Keys", TreeItemType.DynamoDBPrimaryKey);
 		primaryKeyItem.Dynamodb = treeItem.Dynamodb;
 		primaryKeyItem.Region = treeItem.Region;
 		primaryKeyItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -128,14 +129,14 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		treeItem.Children.push(primaryKeyItem);
 
 		// Capacity node
-		let capacityItem = new DynamodbTreeItem("Capacity", TreeItemType.Capacity);
+		let capacityItem = new DynamodbTreeItem("Capacity", TreeItemType.DynamoDBCapacity);
 		capacityItem.Dynamodb = treeItem.Dynamodb;
 		capacityItem.Region = treeItem.Region;
 		capacityItem.Parent = treeItem;
 		treeItem.Children.push(capacityItem);
 
 		// Table Info node
-		let tableInfoItem = new DynamodbTreeItem("Table Info", TreeItemType.TableInfo);
+		let tableInfoItem = new DynamodbTreeItem("Table Info", TreeItemType.DynamoDBTableInfo);
 		tableInfoItem.Dynamodb = treeItem.Dynamodb;
 		tableInfoItem.Region = treeItem.Region;
 		tableInfoItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -143,7 +144,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		treeItem.Children.push(tableInfoItem);
 
 		// Indexes node
-	let indexesItem = new DynamodbTreeItem("Indexes", TreeItemType.Indexes);
+	let indexesItem = new DynamodbTreeItem("Indexes", TreeItemType.DynamoDBIndexes);
 	indexesItem.Dynamodb = treeItem.Dynamodb;
 	indexesItem.Region = treeItem.Region;
 	indexesItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -151,7 +152,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	treeItem.Children.push(indexesItem);
 
 	// Tags node
-	let tagsItem = new DynamodbTreeItem("Tags", TreeItemType.Tags);
+	let tagsItem = new DynamodbTreeItem("Tags", TreeItemType.DynamoDBTags);
 	tagsItem.Dynamodb = treeItem.Dynamodb;
 	tagsItem.Region = treeItem.Region;
 	tagsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -162,7 +163,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	}
 
 	async PopulateTableDetails(node: DynamodbTreeItem) {
-		if (!node || node.TreeItemType !== TreeItemType.Dynamodb) { return; }
+		if (!node || node.TreeItemType !== TreeItemType.DynamoDBTable) { return; }
 		if(!DynamodbService.Instance) return;
 		
 		try {
@@ -172,14 +173,14 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			const details = api.ExtractTableDetails(response.result);
 
 			// Find and populate Primary Keys node
-			const primaryKeyNode = node.Children.find(c => c.TreeItemType === TreeItemType.PrimaryKey);
+			const primaryKeyNode = node.Children.find(c => c.TreeItemType === TreeItemType.DynamoDBPrimaryKey);
 			if (primaryKeyNode) {
 				primaryKeyNode.Children = [];
 				
 				if (details.partitionKey) {
 					const pkItem = new DynamodbTreeItem(
 						`Partition Key: ${details.partitionKey.name} (${details.partitionKey.type})`,
-						TreeItemType.PartitionKey
+						TreeItemType.DynamoDBPartitionKey
 					);
 					pkItem.Parent = primaryKeyNode;
 					primaryKeyNode.Children.push(pkItem);
@@ -188,7 +189,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 				if (details.sortKey) {
 					const skItem = new DynamodbTreeItem(
 						`Sort Key: ${details.sortKey.name} (${details.sortKey.type})`,
-						TreeItemType.SortKey
+						TreeItemType.DynamoDBSortKey
 					);
 					skItem.Parent = primaryKeyNode;
 					primaryKeyNode.Children.push(skItem);
@@ -196,7 +197,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			}
 
 			// Update Capacity node
-		const capacityNode = node.Children.find(c => c.TreeItemType === TreeItemType.Capacity);
+		const capacityNode = node.Children.find(c => c.TreeItemType === TreeItemType.DynamoDBCapacity);
 	if (capacityNode) {
 		capacityNode.Children = [];
 		capacityNode.tooltip = 'Click on read/write capacity for detailed information';
@@ -211,7 +212,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			// Add Read Capacity sub-node
 			const readCapacityItem = new DynamodbTreeItem(
 				`Read Capacity: ${details.readCapacity || 0}`,
-				TreeItemType.ReadCapacity
+				TreeItemType.DynamoDBReadCapacity
 			);
 			readCapacityItem.Parent = capacityNode;
 			readCapacityItem.Region = node.Region;
@@ -228,7 +229,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			// Add Write Capacity sub-node
 			const writeCapacityItem = new DynamodbTreeItem(
 				`Write Capacity: ${details.writeCapacity || 0}`,
-				TreeItemType.WriteCapacity
+				TreeItemType.DynamoDBWriteCapacity
 			);
 			writeCapacityItem.Parent = capacityNode;
 			writeCapacityItem.Region = node.Region;
@@ -245,7 +246,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	}
 
 			// Update Table Info node with children
-		const tableInfoNode = node.Children.find(c => c.TreeItemType === TreeItemType.TableInfo);
+		const tableInfoNode = node.Children.find(c => c.TreeItemType === TreeItemType.DynamoDBTableInfo);
 		if (tableInfoNode) {
 			tableInfoNode.Children = [];
 			tableInfoNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -254,7 +255,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			const sizeInMB = details.tableSize ? (details.tableSize / (1024 * 1024)).toFixed(2) : '0';
 			const sizeNode = new DynamodbTreeItem(
 				`Size: ${sizeInMB} MB`,
-				TreeItemType.TableSize
+				TreeItemType.DynamoDBTableSize
 			);
 			sizeNode.Parent = tableInfoNode;
 			tableInfoNode.Children.push(sizeNode);
@@ -262,7 +263,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			// Add Item Count node
 			const itemCountNode = new DynamodbTreeItem(
 				`Item Count: ${details.itemCount || 0}`,
-				TreeItemType.ItemCount
+				TreeItemType.DynamoDBItemCount
 			);
 			itemCountNode.Parent = tableInfoNode;
 			tableInfoNode.Children.push(itemCountNode);
@@ -270,7 +271,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			// Add Table Class node
 			const tableClassNode = new DynamodbTreeItem(
 				`Table Class: ${details.tableClass || 'STANDARD'}`,
-				TreeItemType.TableClass
+				TreeItemType.DynamoDBTableClass
 			);
 			tableClassNode.Parent = tableInfoNode;
 			tableInfoNode.Children.push(tableClassNode);
@@ -278,7 +279,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			// Add Table Status node
 		const tableStatusNode = new DynamodbTreeItem(
 			`Status: ${details.tableStatus || 'UNKNOWN'}`,
-			TreeItemType.TableStatus
+			TreeItemType.DynamoDBTableStatus
 		);
 		tableStatusNode.Parent = tableInfoNode;
 		tableInfoNode.Children.push(tableStatusNode);
@@ -287,7 +288,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		if (details.tableArn) {
 			const arnNode = new DynamodbTreeItem(
 				`ARN: ${details.tableArn}`,
-				TreeItemType.TableArn
+				TreeItemType.DynamoDBTableArn
 			);
 			arnNode.Parent = tableInfoNode;
 			tableInfoNode.Children.push(arnNode);
@@ -297,7 +298,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		if (details.averageItemSize !== undefined) {
 			const avgSizeNode = new DynamodbTreeItem(
 				`Avg Item Size: ${details.averageItemSize} bytes`,
-				TreeItemType.AverageItemSize
+				TreeItemType.DynamoDBAverageItemSize
 			);
 			avgSizeNode.Parent = tableInfoNode;
 			tableInfoNode.Children.push(avgSizeNode);
@@ -305,7 +306,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 	}
 
 			// Populate Indexes node
-			const indexesNode = node.Children.find(c => c.TreeItemType === TreeItemType.Indexes);
+			const indexesNode = node.Children.find(c => c.TreeItemType === TreeItemType.DynamoDBIndexes);
 			if (indexesNode) {
 				indexesNode.Children = [];
 				
@@ -313,7 +314,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 					for (const gsi of details.globalSecondaryIndexes) {
 						const indexItem = new DynamodbTreeItem(
 							`GSI: ${gsi.name} - ${gsi.keys}`,
-							TreeItemType.Index
+							TreeItemType.DynamoDBIndex
 						);
 						indexItem.Parent = indexesNode;
 						indexesNode.Children.push(indexItem);
@@ -324,7 +325,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 					for (const lsi of details.localSecondaryIndexes) {
 						const indexItem = new DynamodbTreeItem(
 							`LSI: ${lsi.name} - ${lsi.keys}`,
-							TreeItemType.Index
+							TreeItemType.DynamoDBIndex
 						);
 						indexItem.Parent = indexesNode;
 						indexesNode.Children.push(indexItem);
@@ -337,7 +338,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		}
 
 		// Populate Tags node
-		const tagsNode = node.Children.find(c => c.TreeItemType === TreeItemType.Tags);
+		const tagsNode = node.Children.find(c => c.TreeItemType === TreeItemType.DynamoDBTags);
 		if (tagsNode && details.tableArn) {
 			tagsNode.Children = [];
 			
@@ -347,7 +348,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 				for (const tag of tagsResponse.result) {
 					const tagItem = new DynamodbTreeItem(
 						`${tag.key}: ${tag.value}`,
-						TreeItemType.TagItem
+						TreeItemType.DynamoDBTagItem
 					);
 					tagItem.Parent = tagsNode;
 					tagsNode.Children.push(tagItem);

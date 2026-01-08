@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-import { SqsTreeItem, TreeItemType } from './SqsTreeItem';
+import { SqsTreeItem } from './SqsTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { SqsService } from './SqsService';
 import * as api from './API';
 // Import the Message type from the appropriate module
@@ -78,7 +79,7 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		let receiptHandle = Message.ReceiptHandle ? Message.ReceiptHandle : "Undefined ReceiptHandle";
 		let body = Message.Body ? Message.Body : "Undefined Body";
 
-		let treeItem = new SqsTreeItem(msgId, TreeItemType.ReceivedMessage);
+		let treeItem = new SqsTreeItem(msgId, TreeItemType.SQSReceivedMessage);
 		treeItem.Region = Region;
 		treeItem.QueueArn = QueueArn;
 		treeItem.MessageId = msgId;
@@ -111,33 +112,33 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 	private NewSqsNode(Region: string, QueueArn: string) : SqsTreeItem
 	{
 		let queueName = this.GetQueueName(QueueArn);
-		let treeItem = new SqsTreeItem(queueName, TreeItemType.Queue);
+		let treeItem = new SqsTreeItem(queueName, TreeItemType.SQSQueue);
 		treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		treeItem.Region = Region;
 		treeItem.QueueArn = QueueArn;
 
-		let detailGroup = new SqsTreeItem("Details", TreeItemType.DetailGroup);
+		let detailGroup = new SqsTreeItem("Details", TreeItemType.SQSDetailGroup);
 		detailGroup.QueueArn = treeItem.QueueArn;
 		detailGroup.Region = treeItem.Region;
 		detailGroup.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		detailGroup.Parent = treeItem;
 		treeItem.Children.push(detailGroup);
 
-		let policy = new SqsTreeItem("Policy", TreeItemType.Policy);
+		let policy = new SqsTreeItem("Policy", TreeItemType.SQSPolicy);
 		policy.QueueArn = treeItem.QueueArn;
 		policy.Region = treeItem.Region;
 		policy.collapsibleState = vscode.TreeItemCollapsibleState.None;
 		policy.Parent = treeItem;
 		treeItem.Children.push(policy);
 
-		let pubItem = new SqsTreeItem("Send", TreeItemType.PublishGroup);
+		let pubItem = new SqsTreeItem("Send", TreeItemType.SQSPublishGroup);
 		pubItem.QueueArn = treeItem.QueueArn;
 		pubItem.Region = treeItem.Region;
 		pubItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		pubItem.Parent = treeItem;
 		treeItem.Children.push(pubItem);
 
-		let pubJson = new SqsTreeItem("Adhoc", TreeItemType.PublishAdhoc);
+		let pubJson = new SqsTreeItem("Adhoc", TreeItemType.SQSPublishAdhoc);
 		pubJson.QueueArn = treeItem.QueueArn;
 		pubJson.Region = treeItem.Region;
 		pubJson.Parent = pubItem;
@@ -152,7 +153,7 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 			}
 		}
 
-		let subItem = new SqsTreeItem("Receive", TreeItemType.ReceiveGroup);
+		let subItem = new SqsTreeItem("Receive", TreeItemType.SQSReceiveGroup);
 		subItem.QueueArn = treeItem.QueueArn;
 		subItem.Region = treeItem.Region;
 		subItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -162,7 +163,7 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		//call API.GetQueueDetails
 		api.GetQueueDetails(Region, QueueArn).then(details => {
 			for (let [key, value] of Object.entries(details)) {
-				let detailItem = new SqsTreeItem(`${key}: ${value}`, TreeItemType.DetailItem);
+				let detailItem = new SqsTreeItem(`${key}: ${value}`, TreeItemType.SQSDetailItem);
 				detailItem.QueueArn = treeItem.QueueArn;
 				detailItem.Region = treeItem.Region;
 				detailItem.Parent = detailGroup;
@@ -193,7 +194,7 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		let fileName = MessageFilePath.split("/").pop();
 		if (!fileName) { fileName = MessageFilePath; }
 
-		let treeItem = new SqsTreeItem(fileName, TreeItemType.PublishFile);
+		let treeItem = new SqsTreeItem(fileName, TreeItemType.SQSPublishFile);
 		treeItem.Region = node.Region;
 		treeItem.QueueArn = node.QueueArn;
 		treeItem.MessageFilePath = MessageFilePath;

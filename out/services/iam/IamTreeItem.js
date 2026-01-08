@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TreeItemType = exports.IamTreeItem = void 0;
+exports.IamTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 class IamTreeItem extends vscode.TreeItem {
     IsFav = false;
     TreeItemType;
@@ -28,39 +29,39 @@ class IamTreeItem extends vscode.TreeItem {
         this.refreshUI();
     }
     refreshUI() {
-        if (this.TreeItemType === TreeItemType.IamRole) {
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMRole) {
             this.iconPath = new vscode.ThemeIcon('shield');
             this.contextValue = "IamRole";
         }
-        else if (this.TreeItemType === TreeItemType.PermissionsGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMPermissionsGroup) {
             this.iconPath = new vscode.ThemeIcon('lock');
             this.contextValue = "PermissionsGroup";
         }
-        else if (this.TreeItemType === TreeItemType.Permission) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMPermission) {
             this.iconPath = new vscode.ThemeIcon('key');
             this.contextValue = "Permission";
         }
-        else if (this.TreeItemType === TreeItemType.TrustRelationshipsGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMTrustRelationshipsGroup) {
             this.iconPath = new vscode.ThemeIcon('references');
             this.contextValue = "TrustRelationshipsGroup";
         }
-        else if (this.TreeItemType === TreeItemType.TrustRelationship) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMTrustRelationship) {
             this.iconPath = new vscode.ThemeIcon('person');
             this.contextValue = "TrustRelationship";
         }
-        else if (this.TreeItemType === TreeItemType.TagsGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMTagsGroup) {
             this.iconPath = new vscode.ThemeIcon('tag');
             this.contextValue = "TagsGroup";
         }
-        else if (this.TreeItemType === TreeItemType.Tag) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMTag) {
             this.iconPath = new vscode.ThemeIcon('tag');
             this.contextValue = "Tag";
         }
-        else if (this.TreeItemType === TreeItemType.InfoGroup) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMInfoGroup) {
             this.iconPath = new vscode.ThemeIcon('info');
             this.contextValue = "InfoGroup";
         }
-        else if (this.TreeItemType === TreeItemType.InfoItem) {
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.IAMInfoItem) {
             this.iconPath = new vscode.ThemeIcon('symbol-property');
             this.contextValue = "InfoItem";
         }
@@ -108,16 +109,4 @@ class IamTreeItem extends vscode.TreeItem {
     }
 }
 exports.IamTreeItem = IamTreeItem;
-var TreeItemType;
-(function (TreeItemType) {
-    TreeItemType[TreeItemType["IamRole"] = 1] = "IamRole";
-    TreeItemType[TreeItemType["PermissionsGroup"] = 2] = "PermissionsGroup";
-    TreeItemType[TreeItemType["Permission"] = 3] = "Permission";
-    TreeItemType[TreeItemType["TrustRelationshipsGroup"] = 4] = "TrustRelationshipsGroup";
-    TreeItemType[TreeItemType["TrustRelationship"] = 5] = "TrustRelationship";
-    TreeItemType[TreeItemType["TagsGroup"] = 6] = "TagsGroup";
-    TreeItemType[TreeItemType["Tag"] = 7] = "Tag";
-    TreeItemType[TreeItemType["InfoGroup"] = 8] = "InfoGroup";
-    TreeItemType[TreeItemType["InfoItem"] = 9] = "InfoItem";
-})(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=IamTreeItem.js.map

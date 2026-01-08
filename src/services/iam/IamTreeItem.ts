@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
 export class IamTreeItem extends vscode.TreeItem {
 	public IsFav: boolean = false
@@ -29,47 +30,47 @@ export class IamTreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.IamRole)
+		if(this.TreeItemType === TreeItemType.IAMRole)
 		{
 			this.iconPath = new vscode.ThemeIcon('shield');
 			this.contextValue = "IamRole"
 		}
-		else if(this.TreeItemType === TreeItemType.PermissionsGroup)
+		else if(this.TreeItemType === TreeItemType.IAMPermissionsGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('lock');
 			this.contextValue = "PermissionsGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.Permission)
+		else if(this.TreeItemType === TreeItemType.IAMPermission)
 		{
 			this.iconPath = new vscode.ThemeIcon('key');
 			this.contextValue = "Permission"
 		}
-		else if(this.TreeItemType === TreeItemType.TrustRelationshipsGroup)
+		else if(this.TreeItemType === TreeItemType.IAMTrustRelationshipsGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('references');
 			this.contextValue = "TrustRelationshipsGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.TrustRelationship)
+		else if(this.TreeItemType === TreeItemType.IAMTrustRelationship)
 		{
 			this.iconPath = new vscode.ThemeIcon('person');
 			this.contextValue = "TrustRelationship"
 		}
-		else if(this.TreeItemType === TreeItemType.TagsGroup)
+		else if(this.TreeItemType === TreeItemType.IAMTagsGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('tag');
 			this.contextValue = "TagsGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.Tag)
+		else if(this.TreeItemType === TreeItemType.IAMTag)
 		{
 			this.iconPath = new vscode.ThemeIcon('tag');
 			this.contextValue = "Tag"
 		}
-		else if(this.TreeItemType === TreeItemType.InfoGroup)
+		else if(this.TreeItemType === TreeItemType.IAMInfoGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('info');
 			this.contextValue = "InfoGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.InfoItem)
+		else if(this.TreeItemType === TreeItemType.IAMInfoItem)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-property');
 			this.contextValue = "InfoItem"
@@ -135,16 +136,4 @@ export class IamTreeItem extends vscode.TreeItem {
 
 		return false;
 	}
-}
-
-export enum TreeItemType{
-	IamRole = 1,
-	PermissionsGroup = 2,
-	Permission = 3,
-	TrustRelationshipsGroup = 4,
-	TrustRelationship = 5,
-	TagsGroup = 6,
-	Tag = 7,
-	InfoGroup = 8,
-	InfoItem = 9
 }

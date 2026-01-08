@@ -4,6 +4,7 @@ exports.ViewType = exports.StepFuncTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const StepFuncTreeItem_1 = require("./StepFuncTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const StepfunctionsService_1 = require("./StepfunctionsService");
 class StepFuncTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -43,7 +44,7 @@ class StepFuncTreeDataProvider {
         let currentTime = now.getHours().toString().padStart(2, '0') + ':' +
             now.getMinutes().toString().padStart(2, '0') + ':' +
             now.getSeconds().toString().padStart(2, '0');
-        let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem("Execution - " + currentTime, StepFuncTreeItem_1.TreeItemType.Execution);
+        let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem("Execution - " + currentTime, TreeItemType_1.TreeItemType.StepFunctionsExecution);
         treeItem.Region = Node.Region;
         treeItem.StepFuncArn = Node.StepFuncArn;
         treeItem.ExecutionArn = ExecutionArn;
@@ -57,7 +58,7 @@ class StepFuncTreeDataProvider {
             if (node.Children.find((item) => item.LogStreamName === streamName)) {
                 continue;
             }
-            let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(streamName, StepFuncTreeItem_1.TreeItemType.LogStream);
+            let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(streamName, TreeItemType_1.TreeItemType.StepFunctionsLogStream);
             treeItem.Region = node.Region;
             treeItem.StepFuncArn = node.StepFuncArn;
             treeItem.LogStreamName = streamName;
@@ -76,7 +77,7 @@ class StepFuncTreeDataProvider {
             if (startDate) {
                 label += ` - ${startDate}`;
             }
-            let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(label, StepFuncTreeItem_1.TreeItemType.Execution);
+            let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(label, TreeItemType_1.TreeItemType.StepFunctionsExecution);
             treeItem.Region = node.Region;
             treeItem.StepFuncArn = node.StepFuncArn;
             treeItem.ExecutionArn = execution.executionArn;
@@ -113,28 +114,28 @@ class StepFuncTreeDataProvider {
     }
     NewStepFuncNode(Region, StepFuncArn) {
         let StepFuncName = StepFuncTreeItem_1.StepFuncTreeItem.GetStepFuncName(StepFuncArn);
-        let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(StepFuncName, StepFuncTreeItem_1.TreeItemType.StepFunc);
+        let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(StepFuncName, TreeItemType_1.TreeItemType.StepFunctionsStateMachine);
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         treeItem.Region = Region;
         treeItem.StepFuncArn = StepFuncArn;
-        let codeItem = new StepFuncTreeItem_1.StepFuncTreeItem("Code", StepFuncTreeItem_1.TreeItemType.Code);
+        let codeItem = new StepFuncTreeItem_1.StepFuncTreeItem("Code", TreeItemType_1.TreeItemType.StepFunctionsCode);
         codeItem.StepFuncArn = treeItem.StepFuncArn;
         codeItem.Region = treeItem.Region;
         codeItem.Parent = treeItem;
         codeItem.CodePath = this.GetCodePath(treeItem.Region, treeItem.StepFuncArn);
         treeItem.Children.push(codeItem);
-        let triggerItem = new StepFuncTreeItem_1.StepFuncTreeItem("Trigger", StepFuncTreeItem_1.TreeItemType.TriggerGroup);
+        let triggerItem = new StepFuncTreeItem_1.StepFuncTreeItem("Trigger", TreeItemType_1.TreeItemType.StepFunctionsTriggerGroup);
         triggerItem.StepFuncArn = treeItem.StepFuncArn;
         triggerItem.Region = treeItem.Region;
         triggerItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         triggerItem.Parent = treeItem;
         treeItem.Children.push(triggerItem);
-        let triggerWithPayload = new StepFuncTreeItem_1.StepFuncTreeItem("With Paylod", StepFuncTreeItem_1.TreeItemType.TriggerWithPayload);
+        let triggerWithPayload = new StepFuncTreeItem_1.StepFuncTreeItem("With Paylod", TreeItemType_1.TreeItemType.StepFunctionsTriggerWithPayload);
         triggerWithPayload.StepFuncArn = treeItem.StepFuncArn;
         triggerWithPayload.Region = treeItem.Region;
         triggerWithPayload.Parent = triggerItem;
         triggerItem.Children.push(triggerWithPayload);
-        let triggerWithoutPayload = new StepFuncTreeItem_1.StepFuncTreeItem("Without Paylod", StepFuncTreeItem_1.TreeItemType.TriggerNoPayload);
+        let triggerWithoutPayload = new StepFuncTreeItem_1.StepFuncTreeItem("Without Paylod", TreeItemType_1.TreeItemType.StepFunctionsTriggerNoPayload);
         triggerWithoutPayload.StepFuncArn = treeItem.StepFuncArn;
         triggerWithoutPayload.Region = treeItem.Region;
         triggerWithoutPayload.Parent = triggerItem;
@@ -145,31 +146,31 @@ class StepFuncTreeDataProvider {
                 this.AddNewPayloadPathNode(triggerItem, StepfunctionsService_1.StepfunctionsService.Instance.PayloadPathList[i].PayloadPath);
             }
         }
-        let logsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Logs", StepFuncTreeItem_1.TreeItemType.LogGroup);
+        let logsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Logs", TreeItemType_1.TreeItemType.StepFunctionsLogGroup);
         logsItem.StepFuncArn = treeItem.StepFuncArn;
         logsItem.Region = treeItem.Region;
         logsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         logsItem.Parent = treeItem;
         treeItem.Children.push(logsItem);
-        let executionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Executions", StepFuncTreeItem_1.TreeItemType.ExecutionGroup);
+        let executionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Executions", TreeItemType_1.TreeItemType.StepFunctionsExecutionGroup);
         executionsItem.StepFuncArn = treeItem.StepFuncArn;
         executionsItem.Region = treeItem.Region;
         executionsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         executionsItem.Parent = treeItem;
         treeItem.Children.push(executionsItem);
-        let runningExecutionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Running Executions", StepFuncTreeItem_1.TreeItemType.RunningExecutionGroup);
+        let runningExecutionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Running Executions", TreeItemType_1.TreeItemType.StepFunctionsRunningExecutionGroup);
         runningExecutionsItem.StepFuncArn = treeItem.StepFuncArn;
         runningExecutionsItem.Region = treeItem.Region;
         runningExecutionsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         runningExecutionsItem.Parent = treeItem;
         treeItem.Children.push(runningExecutionsItem);
-        let successfulExecutionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Successful Executions", StepFuncTreeItem_1.TreeItemType.SuccessfulExecutionGroup);
+        let successfulExecutionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Successful Executions", TreeItemType_1.TreeItemType.StepFunctionsSuccessfulExecutionGroup);
         successfulExecutionsItem.StepFuncArn = treeItem.StepFuncArn;
         successfulExecutionsItem.Region = treeItem.Region;
         successfulExecutionsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         successfulExecutionsItem.Parent = treeItem;
         treeItem.Children.push(successfulExecutionsItem);
-        let failedExecutionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Failed Executions", StepFuncTreeItem_1.TreeItemType.FailedExecutionGroup);
+        let failedExecutionsItem = new StepFuncTreeItem_1.StepFuncTreeItem("Failed Executions", TreeItemType_1.TreeItemType.StepFunctionsFailedExecutionGroup);
         failedExecutionsItem.StepFuncArn = treeItem.StepFuncArn;
         failedExecutionsItem.Region = treeItem.Region;
         failedExecutionsItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -194,7 +195,7 @@ class StepFuncTreeDataProvider {
         if (!fileName) {
             fileName = PayloadPath;
         }
-        let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(fileName, StepFuncTreeItem_1.TreeItemType.TriggerFilePayload);
+        let treeItem = new StepFuncTreeItem_1.StepFuncTreeItem(fileName, TreeItemType_1.TreeItemType.StepFunctionsTriggerFilePayload);
         treeItem.Region = node.Region;
         treeItem.StepFuncArn = node.StepFuncArn;
         treeItem.PayloadPath = PayloadPath;

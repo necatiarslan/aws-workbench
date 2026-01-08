@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
 export class DynamodbTreeItem extends vscode.TreeItem {
 	public IsFav: boolean = false
@@ -29,10 +30,10 @@ export class DynamodbTreeItem extends vscode.TreeItem {
 	}
 
 	public set CodePath(path: string | undefined) {
-		if(this.TreeItemType !== TreeItemType.Code) { return;}
+		if(this.TreeItemType !== TreeItemType.DynamoDBCode) { return;}
 		this.codePath = path;
 		if (path && this.Children.length === 0) {
-			let node = new DynamodbTreeItem(path, TreeItemType.CodePath)
+			let node = new DynamodbTreeItem(path, TreeItemType.DynamoDBCodePath)
 			node.Dynamodb = this.Dynamodb;
 			node.Region = this.Region;
 			node.Parent = this;
@@ -58,157 +59,157 @@ export class DynamodbTreeItem extends vscode.TreeItem {
 
 	public refreshUI() {
 
-		if(this.TreeItemType === TreeItemType.Dynamodb)
+		if(this.TreeItemType === TreeItemType.DynamoDBTable)
 		{
 			this.iconPath = new vscode.ThemeIcon('server-process');
 			this.contextValue = "Dynamodb"
 		}
-		else if(this.TreeItemType === TreeItemType.Code)
+		else if(this.TreeItemType === TreeItemType.DynamoDBCode)
 		{
 			this.iconPath = new vscode.ThemeIcon('file-code');
 			this.contextValue = "Code"
 		}
-		else if(this.TreeItemType === TreeItemType.TriggerGroup)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTriggerGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('run-all');
 			this.contextValue = "TriggerGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.TriggerSavedPayload)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTriggerSavedPayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('bracket');
 			this.contextValue = "TriggerSavedPayload"
 		}
-		else if(this.TreeItemType === TreeItemType.TriggerWithPayload)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTriggerWithPayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('bracket-dot');
 			this.contextValue = "TriggerWithPayload"
 		}
-		else if(this.TreeItemType === TreeItemType.TriggerFilePayload)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTriggerFilePayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('file');
 			this.contextValue = "TriggerFilePayload"
 		}
-		else if(this.TreeItemType === TreeItemType.TriggerNoPayload)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTriggerNoPayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('bracket-error');
 			this.contextValue = "TriggerNoPayload"
 		}
-		else if(this.TreeItemType === TreeItemType.ResponsePayload)
+		else if(this.TreeItemType === TreeItemType.DynamoDBResponsePayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
 			this.contextValue = "ResponsePayload"
 		}
-		else if(this.TreeItemType === TreeItemType.LogGroup)
+		else if(this.TreeItemType === TreeItemType.DynamoDBLogGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
 			this.contextValue = "LogGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.LogStream)
+		else if(this.TreeItemType === TreeItemType.DynamoDBLogStream)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
 			this.contextValue = "LogStream"
 		}
-		else if(this.TreeItemType === TreeItemType.CodePath)
+		else if(this.TreeItemType === TreeItemType.DynamoDBCodePath)
 		{
 			this.iconPath = new vscode.ThemeIcon('file');
 			this.contextValue = "CodePath"
 		}
-		else if(this.TreeItemType === TreeItemType.EnvironmentVariableGroup)
+		else if(this.TreeItemType === TreeItemType.DynamoDBEnvironmentVariableGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('wrench');
 			this.contextValue = "EnvironmentVariableGroup"
 		}
-		else if(this.TreeItemType === TreeItemType.EnvironmentVariable)
+		else if(this.TreeItemType === TreeItemType.DynamoDBEnvironmentVariable)
 		{
 			this.iconPath = new vscode.ThemeIcon('wrench');
 			this.contextValue = "EnvironmentVariable"
 		}
-		else if(this.TreeItemType === TreeItemType.PrimaryKey)
+		else if(this.TreeItemType === TreeItemType.DynamoDBPrimaryKey)
 		{
 			this.iconPath = new vscode.ThemeIcon('key');
 			this.contextValue = "PrimaryKey"
 		}
-		else if(this.TreeItemType === TreeItemType.PartitionKey)
+		else if(this.TreeItemType === TreeItemType.DynamoDBPartitionKey)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-key');
 			this.contextValue = "PartitionKey"
 		}
-		else if(this.TreeItemType === TreeItemType.SortKey)
+		else if(this.TreeItemType === TreeItemType.DynamoDBSortKey)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-key');
 			this.contextValue = "SortKey"
 		}
-		else if(this.TreeItemType === TreeItemType.Capacity)
+		else if(this.TreeItemType === TreeItemType.DynamoDBCapacity)
 		{
 			this.iconPath = new vscode.ThemeIcon('dashboard');
 			this.contextValue = "Capacity"
 		}
-		else if(this.TreeItemType === TreeItemType.TableInfo)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTableInfo)
 		{
 			this.iconPath = new vscode.ThemeIcon('info');
 			this.contextValue = "TableInfo"
 		}
-		else if(this.TreeItemType === TreeItemType.Indexes)
+		else if(this.TreeItemType === TreeItemType.DynamoDBIndexes)
 		{
 			this.iconPath = new vscode.ThemeIcon('list-tree');
 			this.contextValue = "Indexes"
 		}
-		else if(this.TreeItemType === TreeItemType.Index)
+		else if(this.TreeItemType === TreeItemType.DynamoDBIndex)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-array');
 			this.contextValue = "Index"
 		}
-		else if(this.TreeItemType === TreeItemType.TableSize)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTableSize)
 		{
 			this.iconPath = new vscode.ThemeIcon('database');
 			this.contextValue = "TableSize"
 		}
-		else if(this.TreeItemType === TreeItemType.ItemCount)
+		else if(this.TreeItemType === TreeItemType.DynamoDBItemCount)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-number');
 			this.contextValue = "ItemCount"
 		}
-		else if(this.TreeItemType === TreeItemType.TableClass)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTableClass)
 		{
 			this.iconPath = new vscode.ThemeIcon('archive');
 			this.contextValue = "TableClass"
 		}
-		else if(this.TreeItemType === TreeItemType.TableStatus)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTableStatus)
 		{
 			this.iconPath = new vscode.ThemeIcon('pulse');
 			this.contextValue = "TableStatus"
 		}
-		else if(this.TreeItemType === TreeItemType.ReadCapacity)
+		else if(this.TreeItemType === TreeItemType.DynamoDBReadCapacity)
 		{
 			this.iconPath = new vscode.ThemeIcon('arrow-down');
 			this.contextValue = "ReadCapacity"
 		}
-		else if(this.TreeItemType === TreeItemType.WriteCapacity)
+		else if(this.TreeItemType === TreeItemType.DynamoDBWriteCapacity)
 		{
 			this.iconPath = new vscode.ThemeIcon('arrow-up');
 			this.contextValue = "WriteCapacity"
 		}
-		else if(this.TreeItemType === TreeItemType.Tags)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTags)
 		{
 			this.iconPath = new vscode.ThemeIcon('tag');
 			this.contextValue = "Tags"
 		}
-		else if(this.TreeItemType === TreeItemType.TagItem)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTagItem)
 		{
 			this.iconPath = new vscode.ThemeIcon('tag');
 			this.contextValue = "TagItem"
 		}
-		else if(this.TreeItemType === TreeItemType.CapacityExplanation)
+		else if(this.TreeItemType === TreeItemType.DynamoDBCapacityExplanation)
 		{
 			this.iconPath = new vscode.ThemeIcon('info');
 			this.contextValue = "CapacityExplanation"
 		}
-		else if(this.TreeItemType === TreeItemType.TableArn)
+		else if(this.TreeItemType === TreeItemType.DynamoDBTableArn)
 		{
 			this.iconPath = new vscode.ThemeIcon('link');
 			this.contextValue = "TableArn"
 		}
-		else if(this.TreeItemType === TreeItemType.AverageItemSize)
+		else if(this.TreeItemType === TreeItemType.DynamoDBAverageItemSize)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-ruler');
 			this.contextValue = "AverageItemSize"
@@ -274,38 +275,4 @@ export class DynamodbTreeItem extends vscode.TreeItem {
 
 		return false;
 	}
-}
-
-export enum TreeItemType{
-	Dynamodb = 1,
-	Code = 2,
-	LogGroup = 3,
-	LogStream = 4,
-	TriggerGroup = 5,
-	TriggerSavedPayload = 6,
-	CodePath = 7,
-	TriggerNoPayload= 8,
-	TriggerWithPayload= 9,
-	TriggerFilePayload= 10,
-	ResponsePayload= 11,
-	EnvironmentVariableGroup= 12,
-	EnvironmentVariable= 13,
-	PrimaryKey= 14,
-	PartitionKey= 15,
-	SortKey= 16,
-	Capacity= 17,
-	TableInfo= 18,
-	Indexes= 19,
-	Index= 20,
-	TableSize= 21,
-	ItemCount= 22,
-	TableClass= 23,
-	TableStatus= 24,
-	ReadCapacity= 25,
-	WriteCapacity= 26,
-	Tags= 27,
-	TagItem= 28,
-	CapacityExplanation= 29,
-	TableArn= 30,
-	AverageItemSize= 31
 }

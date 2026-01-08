@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IamService = void 0;
 const vscode = require("vscode");
 const IamTreeDataProvider_1 = require("./IamTreeDataProvider");
-const IamTreeItem_1 = require("./IamTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -116,7 +116,7 @@ class IamService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveIamRole(node) {
-        if (!node || node.TreeItemType !== IamTreeItem_1.TreeItemType.IamRole || !node.Region || !node.IamRole) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.IAMRole || !node.Region || !node.IamRole) {
             return;
         }
         this.treeDataProvider.RemoveIamRole(node.Region, node.IamRole);

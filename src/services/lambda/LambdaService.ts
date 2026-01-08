@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { LambdaTreeItem, TreeItemType } from './LambdaTreeItem';
+import { LambdaTreeItem } from './LambdaTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import { LambdaTreeDataProvider } from './LambdaTreeDataProvider';
@@ -163,7 +164,7 @@ export class LambdaService implements IService {
     }
 
     async RemoveLambda(node: LambdaTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Lambda || !node.Region || !node.Lambda) { return; }
+        if (!node || node.TreeItemType !== TreeItemType.LambdaFunction || !node.Region || !node.Lambda) { return; }
         this.treeDataProvider.RemoveLambda(node.Region, node.Lambda);
         this.SaveState();
     }

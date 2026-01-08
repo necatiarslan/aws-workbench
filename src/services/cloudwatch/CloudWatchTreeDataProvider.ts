@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-import { CloudWatchTreeItem, TreeItemType } from './CloudWatchTreeItem';
+import { CloudWatchTreeItem } from './CloudWatchTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { CloudwatchService } from './CloudwatchService';
 import * as api from './API';
 
@@ -63,7 +64,7 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 		let regionNode = this.RegionNodeList.find(node => node.label === Region);
 		if(!regionNode)
 		{
-			regionNode = new CloudWatchTreeItem(Region, TreeItemType.Region);
+			regionNode = new CloudWatchTreeItem(Region, TreeItemType.CloudWatchRegion);
 			regionNode.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 			regionNode.Region = Region;
 			this.RegionNodeList.push(regionNode);
@@ -73,7 +74,7 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 			return regionNode.Children.find(item => item.LogGroup === LogGroup);
 		}
 
-		let treeItem = new CloudWatchTreeItem(LogGroup, TreeItemType.LogGroup);
+		let treeItem = new CloudWatchTreeItem(LogGroup, TreeItemType.CloudWatchLogGroup);
 		treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 		treeItem.Region = Region;
 		treeItem.LogGroup = LogGroup;
@@ -112,12 +113,12 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 		{
 			result.push(...node.Children);
 		}
-		else if(node.TreeItemType === TreeItemType.LogGroup)
+		else if(node.TreeItemType === TreeItemType.CloudWatchLogGroup)
 		{
 			return api.GetLogStreamList(node.Region!, node.LogGroup!).then(streams => {
 				for(var stream of streams.result)
 				{
-					let streamNode = new CloudWatchTreeItem(stream, TreeItemType.LogStream);
+					let streamNode = new CloudWatchTreeItem(stream, TreeItemType.CloudWatchLogStream);
 					streamNode.Region = node.Region;
 					streamNode.LogGroup = node.LogGroup;
 					streamNode.LogStream = stream;

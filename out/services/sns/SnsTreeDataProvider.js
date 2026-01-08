@@ -4,6 +4,7 @@ exports.SnsTreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const SnsTreeItem_1 = require("./SnsTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const SnsService_1 = require("./SnsService");
 const api = require("./API");
 class SnsTreeDataProvider {
@@ -76,17 +77,17 @@ class SnsTreeDataProvider {
     }
     NewSnsNode(Region, TopicArn) {
         let topicName = this.GetTopicName(TopicArn);
-        let treeItem = new SnsTreeItem_1.SnsTreeItem(topicName, SnsTreeItem_1.TreeItemType.Topic);
+        let treeItem = new SnsTreeItem_1.SnsTreeItem(topicName, TreeItemType_1.TreeItemType.SNSTopic);
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         treeItem.Region = Region;
         treeItem.TopicArn = TopicArn;
-        let pubItem = new SnsTreeItem_1.SnsTreeItem("Publish", SnsTreeItem_1.TreeItemType.PublishGroup);
+        let pubItem = new SnsTreeItem_1.SnsTreeItem("Publish", TreeItemType_1.TreeItemType.SNSPublishGroup);
         pubItem.TopicArn = treeItem.TopicArn;
         pubItem.Region = treeItem.Region;
         pubItem.collapsibleState = vscode.ThemeIcon.File === undefined ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.None; // Default to None
         pubItem.Parent = treeItem;
         treeItem.Children.push(pubItem);
-        let subItem = new SnsTreeItem_1.SnsTreeItem("Subscriptions", SnsTreeItem_1.TreeItemType.SubscriptionGroup);
+        let subItem = new SnsTreeItem_1.SnsTreeItem("Subscriptions", TreeItemType_1.TreeItemType.SNSSubscriptionGroup);
         subItem.TopicArn = treeItem.TopicArn;
         subItem.Region = treeItem.Region;
         subItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -99,11 +100,11 @@ class SnsTreeDataProvider {
         if (!node) {
             result.push(...this.GetSnsNodes());
         }
-        else if (node.TreeItemType === SnsTreeItem_1.TreeItemType.SubscriptionGroup && node.Children.length === 0) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscriptionGroup && node.Children.length === 0) {
             return api.GetSubscriptions(node.Region, node.TopicArn).then(subs => {
                 if (subs.isSuccessful && subs.result && subs.result.Subscriptions) {
                     for (var sub of subs.result.Subscriptions) {
-                        let subNode = new SnsTreeItem_1.SnsTreeItem(sub.SubscriptionArn ? sub.SubscriptionArn : "No ARN", SnsTreeItem_1.TreeItemType.Subscription);
+                        let subNode = new SnsTreeItem_1.SnsTreeItem(sub.SubscriptionArn ? sub.SubscriptionArn : "No ARN", TreeItemType_1.TreeItemType.SNSSubscription);
                         subNode.Region = node.Region;
                         subNode.TopicArn = node.TopicArn;
                         subNode.SubscriptionArn = sub.SubscriptionArn || "";

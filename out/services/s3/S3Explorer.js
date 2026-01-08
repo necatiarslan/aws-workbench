@@ -7,6 +7,7 @@ const ui = require("../../common/UI");
 const api = require("./API");
 const S3Service_1 = require("./S3Service");
 const S3TreeItem_1 = require("./S3TreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
 const S3Search_1 = require("./S3Search");
@@ -37,10 +38,10 @@ class S3Explorer {
         ui.logToOutput('S3Explorer.constructor Completed');
     }
     SetS3ExplorerItem(node) {
-        if (node.TreeItemType === S3TreeItem_1.TreeItemType.Bucket && node.Bucket) {
+        if (node.TreeItemType === TreeItemType_1.TreeItemType.S3Bucket && node.Bucket) {
             this.S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem(node.Bucket, "");
         }
-        else if (node.TreeItemType === S3TreeItem_1.TreeItemType.Shortcut && node.Bucket && node.Shortcut) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.S3Shortcut && node.Bucket && node.Shortcut) {
             this.S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem(node.Bucket, node.Shortcut);
         }
         else {
@@ -583,11 +584,11 @@ class S3Explorer {
                 case "search":
                     let node;
                     if (this.S3ExplorerItem.IsRoot()) {
-                        node = new S3TreeItem_1.S3TreeItem("", S3TreeItem_1.TreeItemType.Bucket);
+                        node = new S3TreeItem_1.S3TreeItem("", TreeItemType_1.TreeItemType.S3Bucket);
                         node.Bucket = this.S3ExplorerItem.Bucket;
                     }
                     else {
-                        node = new S3TreeItem_1.S3TreeItem("", S3TreeItem_1.TreeItemType.Shortcut);
+                        node = new S3TreeItem_1.S3TreeItem("", TreeItemType_1.TreeItemType.S3Shortcut);
                         node.Bucket = this.S3ExplorerItem.Bucket;
                         node.Shortcut = this.S3ExplorerItem.Key;
                     }

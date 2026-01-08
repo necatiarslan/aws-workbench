@@ -1,16 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+import { TreeItemType } from '../../tree/TreeItemType';
 
-export enum TreeItemType {
-	Job = "Job",
-	RunGroup = "RunGroup",
-	LogGroup = "LogGroup",
-	LogStream = "LogStream",
-	Run = "Run",
-	Detail = "Detail",
-	Arguments = "Arguments",
-	Info = "Info"
-}
+
 
 export class GlueTreeItem extends vscode.TreeItem {
 
@@ -25,7 +17,7 @@ export class GlueTreeItem extends vscode.TreeItem {
 		public Payload?: any
 	) {
 		super(label, collapsibleState);
-		this.contextValue = TreeItemType;
+		// contextValue is set in setIcons
 		this.setIcons();
 	}
 
@@ -37,29 +29,37 @@ export class GlueTreeItem extends vscode.TreeItem {
 	setIcons() {
 		let iconName = "";
 		switch (this.TreeItemType) {
-			case TreeItemType.Job:
+			case TreeItemType.GlueJob:
 				iconName = "settings-gear";
+				this.contextValue = "GlueJob";
 				break;
-			case TreeItemType.RunGroup:
+			case TreeItemType.GlueRunGroup:
 				iconName = "history";
+				this.contextValue = "GlueRunGroup";
 				break;
-			case TreeItemType.LogGroup:
+			case TreeItemType.GlueLogGroup:
 				iconName = "output";
+				this.contextValue = "GlueLogGroup";
 				break;
-			case TreeItemType.LogStream:
+			case TreeItemType.GlueLogStream:
 				iconName = "list-unordered";
+				this.contextValue = "GlueLogStream";
 				break;
-			case TreeItemType.Run:
+			case TreeItemType.GlueRun:
 				iconName = "play";
+				this.contextValue = "GlueRun";
 				break;
-			case TreeItemType.Detail:
+			case TreeItemType.GlueDetail:
 				iconName = "info";
+				this.contextValue = "GlueDetail";
 				break;
-			case TreeItemType.Arguments:
+			case TreeItemType.GlueArguments:
 				iconName = "list-selection";
+				this.contextValue = "GlueArguments";
 				break;
-			case TreeItemType.Info:
+			case TreeItemType.GlueInfo:
 				iconName = "info";
+				this.contextValue = "GlueInfo";
 				break;
 		}
 

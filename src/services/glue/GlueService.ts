@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
 import { GlueTreeDataProvider } from './GlueTreeDataProvider';
-import { GlueTreeItem, TreeItemType } from './GlueTreeItem';
+import { GlueTreeItem } from './GlueTreeItem';
+import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
@@ -19,7 +20,7 @@ export class GlueService implements IService {
     public AwsProfile: string = "default";	
     public AwsEndPoint: string | undefined;
 
-    public ResourceList: {Region: string, Name: string, Type: string}[] = [];
+    public ResourceList: {Region: string, Name: string, Type: any}[] = [];
     public JobInfoCache: { [key: string]: any } = {};
     public JobRunsCache: { [key: string]: any[] } = {};
     public LogStreamsCache: { [key: string]: string[] } = {};
@@ -115,15 +116,15 @@ export class GlueService implements IService {
         
         let lastAddedItem: GlueTreeItem | undefined;
         for (var selectedJob of selectedJobList) {
-            lastAddedItem = this.treeDataProvider.AddResource(selectedRegion, selectedJob, TreeItemType.Job);
+            lastAddedItem = this.treeDataProvider.AddResource(selectedRegion, selectedJob, TreeItemType.GlueJob);
         }
         this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
 
     async RemoveGlueJob(node: GlueTreeItem) {
-        if (!node || node.TreeItemType !== TreeItemType.Job || !node.Region || !node.ResourceName) { return; }
-        this.treeDataProvider.RemoveResource(node.Region, node.ResourceName, TreeItemType.Job);
+        if (!node || node.TreeItemType !== TreeItemType.GlueJob || !node.Region || !node.ResourceName) { return; }
+        this.treeDataProvider.RemoveResource(node.Region, node.ResourceName, TreeItemType.GlueJob);
         this.SaveState();
     }
 

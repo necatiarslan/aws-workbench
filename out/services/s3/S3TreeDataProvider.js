@@ -4,6 +4,7 @@ exports.ViewType = exports.S3TreeDataProvider = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const S3TreeItem_1 = require("./S3TreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const S3Service_1 = require("./S3Service");
 class S3TreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -142,7 +143,7 @@ class S3TreeDataProvider {
     LoadBucketNodeList() {
         this.BucketNodeList = [];
         for (var bucket of this.BucketList) {
-            let treeItem = new S3TreeItem_1.S3TreeItem(bucket, S3TreeItem_1.TreeItemType.Bucket);
+            let treeItem = new S3TreeItem_1.S3TreeItem(bucket, TreeItemType_1.TreeItemType.S3Bucket);
             treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
             treeItem.Bucket = bucket;
             treeItem.ProfileToShow = this.GetBucketProfile(bucket);
@@ -152,7 +153,7 @@ class S3TreeDataProvider {
     LoadShortcutNodeList() {
         this.ShortcutNodeList = [];
         for (var lg of this.ShortcutList) {
-            let treeItem = new S3TreeItem_1.S3TreeItem(lg["Shortcut"], S3TreeItem_1.TreeItemType.Shortcut);
+            let treeItem = new S3TreeItem_1.S3TreeItem(lg["Shortcut"], TreeItemType_1.TreeItemType.S3Shortcut);
             treeItem.Bucket = lg["Bucket"];
             treeItem.Shortcut = lg["Shortcut"];
             this.ShortcutNodeList.push(treeItem);
@@ -175,7 +176,7 @@ class S3TreeDataProvider {
         if (!node) {
             result = this.GetBucketNodes();
         }
-        else if (node.TreeItemType === S3TreeItem_1.TreeItemType.Bucket) {
+        else if (node.TreeItemType === TreeItemType_1.TreeItemType.S3Bucket) {
             result = this.GetShortcutNodesParentBucket(node);
         }
         return result;

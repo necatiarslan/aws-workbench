@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SqsService = void 0;
 const vscode = require("vscode");
 const SqsTreeDataProvider_1 = require("./SqsTreeDataProvider");
-const SqsTreeItem_1 = require("./SqsTreeItem");
+const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
@@ -127,7 +127,7 @@ class SqsService {
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveQueue(node) {
-        if (!node || node.TreeItemType !== SqsTreeItem_1.TreeItemType.Queue || !node.Region || !node.QueueArn) {
+        if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.SQSQueue || !node.Region || !node.QueueArn) {
             return;
         }
         this.treeDataProvider.RemoveQueue(node.Region, node.QueueArn);
