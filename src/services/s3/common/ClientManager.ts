@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Session } from './Session';
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 
 /**
  * Manages AWS SDK clients and handles lifecycle/caching.

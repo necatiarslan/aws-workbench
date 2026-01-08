@@ -18,12 +18,12 @@ const credential_providers_1 = require("@aws-sdk/credential-providers");
 const client_glue_1 = require("@aws-sdk/client-glue");
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
 const client_sts_1 = require("@aws-sdk/client-sts");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const MethodResult_1 = require("./MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../../common/aws-sdk/parseKnownFiles");
 const GlueService_1 = require("../GlueService");
 async function GetCredentials() {
     let credentials;

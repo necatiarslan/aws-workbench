@@ -20,11 +20,11 @@ exports.GetPolicyDocument = GetPolicyDocument;
 /* eslint-disable @typescript-eslint/naming-convention */
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 const client_iam_1 = require("@aws-sdk/client-iam");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const MethodResult_1 = require("./MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../../common/aws-sdk/parseKnownFiles");
 const IamService_1 = require("../IamService");
 async function GetCredentials() {
     let credentials;

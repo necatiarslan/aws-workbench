@@ -4,7 +4,7 @@ import { S3TreeDataProvider } from './s3/S3TreeDataProvider';
 import { S3TreeItem, TreeItemType } from './s3/S3TreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 import { S3Explorer } from './s3/S3Explorer';
 import { S3Search } from './s3/S3Search';

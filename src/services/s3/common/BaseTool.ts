@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 import { needsConfirmation, confirmProceed } from './ActionGuard';
 import { CommandHistoryManager } from './CommandHistoryManager';
 import { Session } from './Session';

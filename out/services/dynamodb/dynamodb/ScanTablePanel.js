@@ -4,7 +4,7 @@ exports.ScanTablePanel = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const api = require("../common/API");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 class ScanTablePanel {
     static currentPanel;
     _panel;

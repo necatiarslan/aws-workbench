@@ -5,7 +5,7 @@ exports.CommandHistoryView = void 0;
 const vscode = require("vscode");
 const path = require("path");
 const os = require("os");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const CommandHistoryManager_1 = require("./CommandHistoryManager");
 class CommandHistoryView {
     static Current;

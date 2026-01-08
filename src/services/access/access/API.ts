@@ -4,7 +4,7 @@ import { join } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../../../common/aws-sdk/parseKnownFiles";
 import { ParsedIniData, AwsCredentialIdentity } from "@aws-sdk/types";
 import { CloudWatchLogsClient, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 import { fromNodeProviderChain, fromIni } from "@aws-sdk/credential-providers";
 import * as StatusBarItem from './StatusBarItem';
 

@@ -13,7 +13,7 @@ const client_s3_1 = require("@aws-sdk/client-s3");
 const client_iam_1 = require("@aws-sdk/client-iam");
 const client_sts_1 = require("@aws-sdk/client-sts");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 /**
  * Singleton class to manage AWS connections
  * Provides connection pooling and proper lifecycle management

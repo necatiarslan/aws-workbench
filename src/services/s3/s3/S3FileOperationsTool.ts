@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 import { BaseTool, BaseToolInput } from '../common/BaseTool';
 import { ClientManager } from '../common/ClientManager';
 import { AIHandler } from '../chat/AIHandler';

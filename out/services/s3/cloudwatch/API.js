@@ -10,12 +10,12 @@ exports.GetLogEvents = GetLogEvents;
 exports.GetAwsProfileList = GetAwsProfileList;
 exports.getIniProfileData = getIniProfileData;
 /* eslint-disable @typescript-eslint/naming-convention */
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const MethodResult_1 = require("../common/MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../../common/aws-sdk/parseKnownFiles");
 const Session_1 = require("../common/Session");
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
 async function GetCloudWatchLogsClient(Region = Session_1.Session.Current?.AwsRegion) {

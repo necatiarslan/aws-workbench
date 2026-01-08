@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 import * as api from '../common/API';
 import { OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import { CloudwatchService } from "../CloudwatchService";
@@ -442,10 +442,6 @@ export class CloudWatchLogView {
                         this.ExportLogs();
                         return;
                     
-                    case "ask_ai":
-                        this.AskAI();
-                        return;
-                    
                     case "toggle_wrap":
                         this.WrapText = message.wrap_text;
                         this.RenderHtml();
@@ -541,28 +537,5 @@ export class CloudWatchLogView {
 
     }
 
-    async AskAI(){
-        ui.logToOutput('CloudWatchLogView.AskAI Started');
 
-        try 
-        {
-            const { CloudWatchAIHandler } = await import('../language_tools/CloudWatchAIHandler');
-            if (!CloudWatchAIHandler.Current) {
-                ui.showErrorMessage('CloudWatchAIHandler not initialized', new Error('AI handler is not available'));
-                return;
-            }
-
-            await CloudWatchAIHandler.Current.askAIWithLogsContext(
-                this.Region,
-                this.LogGroup,
-                this.LogStream,
-                this.LogEvents
-            );
-        } 
-        catch (error: unknown) 
-        {
-            ui.showErrorMessage('AskAI Error !!!', error as Error);
-            ui.logToOutput("AskAI Error !!!", error as Error); 
-        }
-    }
 }

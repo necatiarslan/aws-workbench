@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const DynamodbTreeDataProvider_1 = require("./dynamodb/DynamodbTreeDataProvider");
 const DynamodbTreeItem_1 = require("./dynamodb/DynamodbTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class DynamodbService {
     static Instance;

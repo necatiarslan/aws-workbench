@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientManager = void 0;
 const Session_1 = require("./Session");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 /**
  * Manages AWS SDK clients and handles lifecycle/caching.
  * Automatically clears clients when the session (profile/region) changes.

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestAwsConnectionTool = void 0;
 const vscode = require("vscode");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const BaseTool_1 = require("../common/BaseTool");
 const ClientManager_1 = require("../common/ClientManager");
 const client_sts_1 = require("@aws-sdk/client-sts");

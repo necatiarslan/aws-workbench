@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseTool = void 0;
 const vscode = require("vscode");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const ActionGuard_1 = require("./ActionGuard");
 const CommandHistoryManager_1 = require("./CommandHistoryManager");
 const Session_1 = require("./Session");

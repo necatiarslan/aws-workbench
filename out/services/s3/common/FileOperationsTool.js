@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileOperationsTool = void 0;
 const vscode = require("vscode");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const fs = require("fs");
 const fs_1 = require("fs");
 const path_1 = require("path");

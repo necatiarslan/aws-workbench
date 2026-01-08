@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 import * as api from '../common/API';
 import { S3Service } from "../S3Service";
 import { S3TreeItem, TreeItemType } from "./S3TreeItem";

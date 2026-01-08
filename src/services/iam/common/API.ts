@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 import { IAMClient } from "@aws-sdk/client-iam";
-import * as ui from "./UI";
+import * as ui from "../../../common/UI";
 import { MethodResult } from './MethodResult';
 import { homedir } from "os";
 import { join, sep} from "path";
-import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
+import { parseKnownFiles, SourceProfileInit } from "../../../common/aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import { IamService } from '../IamService';
 

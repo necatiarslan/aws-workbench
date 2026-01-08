@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as api from '../common/API';
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 
 export class AddItemPanel {
 	public static currentPanel: AddItemPanel | undefined;

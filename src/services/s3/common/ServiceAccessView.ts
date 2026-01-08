@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 import { Session } from "./Session";
 
 // Tool registry with all commands for each tool

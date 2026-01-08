@@ -6,7 +6,7 @@ const vscode = require("vscode");
 const path = require("path");
 const fs = require("fs");
 const api = require("../common/API");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 class EditItemPanel {
     static currentPanel;
     _panel;

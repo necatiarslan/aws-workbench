@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const GlueTreeDataProvider_1 = require("./glue/GlueTreeDataProvider");
 const GlueTreeItem_1 = require("./glue/GlueTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class GlueService {
     static Instance;

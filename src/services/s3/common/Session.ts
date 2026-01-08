@@ -1,4 +1,4 @@
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 import * as vscode from 'vscode';
 import { AwsCredentialIdentity } from '@aws-sdk/types';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';

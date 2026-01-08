@@ -1,5 +1,5 @@
 import { GetCallerIdentityCommand, STSClient } from "@aws-sdk/client-sts";
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 import { Session } from '../common/Session';
 import { MethodResult } from "../common/MethodResult";
 import * as api from '../common/API';

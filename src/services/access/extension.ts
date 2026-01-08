@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as ui from './access/UI';
+import * as ui from '../../common/UI';
 import * as StatusBar from './access/StatusBarItem';
 
 export function activate(context: vscode.ExtensionContext) {

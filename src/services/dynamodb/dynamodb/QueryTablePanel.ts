@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import * as api from '../common/API';
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 
 export class QueryTablePanel {
 	public static currentPanel: QueryTablePanel | undefined;

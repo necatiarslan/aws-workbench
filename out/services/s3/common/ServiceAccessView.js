@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceAccessView = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const Session_1 = require("./Session");
 const TOOL_REGISTRY = [
     {

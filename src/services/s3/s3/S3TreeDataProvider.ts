@@ -2,7 +2,7 @@
 import * as vscode from 'vscode';
 import { S3TreeItem, TreeItemType } from './S3TreeItem';
 import { S3Service } from '../S3Service';
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 
 export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 {

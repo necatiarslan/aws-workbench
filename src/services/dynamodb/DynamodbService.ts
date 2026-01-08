@@ -4,7 +4,7 @@ import { DynamodbTreeDataProvider } from './dynamodb/DynamodbTreeDataProvider';
 import { DynamodbTreeItem, TreeItemType } from './dynamodb/DynamodbTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class DynamodbService implements IService {

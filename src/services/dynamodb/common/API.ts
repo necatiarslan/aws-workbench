@@ -19,12 +19,12 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { CloudWatchLogsClient, OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import { IAMClient } from "@aws-sdk/client-iam";
-import * as ui from "./UI";
+import * as ui from "../../../common/UI";
 import { MethodResult } from './MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
-import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
+import { parseKnownFiles, SourceProfileInit } from "../../../common/aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import { DynamodbService } from '../DynamodbService';
 import * as fs from 'fs';

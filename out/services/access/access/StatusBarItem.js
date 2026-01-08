@@ -4,7 +4,7 @@ exports.StatusBarItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const api = require("./API");
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const fs_1 = require("fs");
 class StatusBarItem {
     static LoadingText = "$(cloud) Aws $(sync~spin)";

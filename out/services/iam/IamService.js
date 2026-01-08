@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const IamTreeDataProvider_1 = require("./iam/IamTreeDataProvider");
 const IamTreeItem_1 = require("./iam/IamTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class IamService {
     static Instance;

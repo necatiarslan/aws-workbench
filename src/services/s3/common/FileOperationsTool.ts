@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 import * as fs from 'fs';
 import { readFileSync } from 'fs';
 import { join, dirname, basename } from 'path';

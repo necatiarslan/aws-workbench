@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as ui from "../common/UI";
+import * as ui from "../../../common/UI";
 import { Session } from "../common/Session";
 import * as fs from "fs";
 import * as path from "path";

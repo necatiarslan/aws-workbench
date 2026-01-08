@@ -4,7 +4,7 @@ import { LambdaTreeItem, TreeItemType } from './lambda/LambdaTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import { LambdaTreeDataProvider } from './lambda/LambdaTreeDataProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class LambdaService implements IService {

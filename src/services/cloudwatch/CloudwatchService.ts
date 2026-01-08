@@ -4,7 +4,7 @@ import { CloudWatchTreeDataProvider } from './cloudwatch/CloudWatchTreeDataProvi
 import { CloudWatchTreeItem, TreeItemType } from './cloudwatch/CloudWatchTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class CloudwatchService implements IService {

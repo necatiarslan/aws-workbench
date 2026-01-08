@@ -34,12 +34,12 @@ exports.TestAwsConnection = TestAwsConnection;
 exports.GetAwsProfileList = GetAwsProfileList;
 exports.getIniProfileData = getIniProfileData;
 /* eslint-disable @typescript-eslint/naming-convention */
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const MethodResult_1 = require("./MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../../common/aws-sdk/parseKnownFiles");
 const s3_helper = require("../s3/S3Helper");
 const fs = require("fs");
 const S3Service_1 = require("../S3Service");

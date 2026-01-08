@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIHandler = void 0;
 const vscode = require("vscode");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const Session_1 = require("../common/Session");
 const fs = require("fs");
 const path = require("path");

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import * as api from '../common/API';
-import * as ui from '../common/UI';
+import * as ui from '../../../common/UI';
 
 export class ScanTablePanel {
 	public static currentPanel: ScanTablePanel | undefined;

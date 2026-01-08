@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Session = void 0;
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const vscode = require("vscode");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 const MessageHub = require("./MessageHub");

@@ -2,7 +2,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as os from "os";
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 import { CommandHistoryManager } from "./CommandHistoryManager";
 import { AIHandler } from "../chat/AIHandler";
 

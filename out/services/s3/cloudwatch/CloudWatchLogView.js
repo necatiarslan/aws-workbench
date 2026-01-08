@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudWatchLogView = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const api = require("./API");
 const tmp = require("tmp");
 const fs = require("fs");

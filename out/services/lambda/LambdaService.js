@@ -5,7 +5,7 @@ const vscode = require("vscode");
 const LambdaTreeItem_1 = require("./lambda/LambdaTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const LambdaTreeDataProvider_1 = require("./lambda/LambdaTreeDataProvider");
-const ui = require("./common/UI");
+const ui = require("../../common/UI");
 const api = require("./common/API");
 class LambdaService {
     static Instance;

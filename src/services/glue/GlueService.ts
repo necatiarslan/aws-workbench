@@ -4,7 +4,7 @@ import { GlueTreeDataProvider } from './glue/GlueTreeDataProvider';
 import { GlueTreeItem, TreeItemType } from './glue/GlueTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import * as ui from './common/UI';
+import * as ui from '../../common/UI';
 import * as api from './common/API';
 
 export class GlueService implements IService {

@@ -11,12 +11,12 @@ exports.GetLogEvents = GetLogEvents;
 exports.GetAwsProfileList = GetAwsProfileList;
 exports.getIniProfileData = getIniProfileData;
 /* eslint-disable @typescript-eslint/naming-convention */
-const ui = require("./UI");
+const ui = require("../../../common/UI");
 const MethodResult_1 = require("./MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../../common/aws-sdk/parseKnownFiles");
 const CloudwatchService_1 = require("../CloudwatchService");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 async function GetCredentials() {

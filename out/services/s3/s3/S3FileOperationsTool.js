@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3FileOperationsTool = void 0;
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const BaseTool_1 = require("../common/BaseTool");
 const ClientManager_1 = require("../common/ClientManager");
 const AIHandler_1 = require("../chat/AIHandler");

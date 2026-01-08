@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudWatchLogView = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-const ui = require("../common/UI");
+const ui = require("../../../common/UI");
 const api = require("../common/API");
 const CloudwatchService_1 = require("../CloudwatchService");
 const tmp = require("tmp");
@@ -391,9 +391,6 @@ class CloudWatchLogView {
                 case "export_logs":
                     this.ExportLogs();
                     return;
-                case "ask_ai":
-                    this.AskAI();
-                    return;
                 case "toggle_wrap":
                     this.WrapText = message.wrap_text;
                     this.RenderHtml();
@@ -464,21 +461,6 @@ class CloudWatchLogView {
         catch (error) {
             ui.showErrorMessage('ExportLogs Error !!!', error);
             ui.logToOutput("ExportLogs Error !!!", error);
-        }
-    }
-    async AskAI() {
-        ui.logToOutput('CloudWatchLogView.AskAI Started');
-        try {
-            const { CloudWatchAIHandler } = await Promise.resolve().then(() => require('../language_tools/CloudWatchAIHandler'));
-            if (!CloudWatchAIHandler.Current) {
-                ui.showErrorMessage('CloudWatchAIHandler not initialized', new Error('AI handler is not available'));
-                return;
-            }
-            await CloudWatchAIHandler.Current.askAIWithLogsContext(this.Region, this.LogGroup, this.LogStream, this.LogEvents);
-        }
-        catch (error) {
-            ui.showErrorMessage('AskAI Error !!!', error);
-            ui.logToOutput("AskAI Error !!!", error);
         }
     }
 }

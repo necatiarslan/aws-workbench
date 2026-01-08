@@ -11,7 +11,7 @@ import { IAMClient } from "@aws-sdk/client-iam";
 import { STSClient } from "@aws-sdk/client-sts";
 import { AwsCredentialIdentity } from "@aws-sdk/types";
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
-import * as ui from './UI';
+import * as ui from '../../../common/UI';
 
 /**
  * Connection configuration interface
