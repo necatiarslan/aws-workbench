@@ -24,7 +24,7 @@ const ui = require("../../common/UI");
 const MethodResult_1 = require("../../common/MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
-const parseKnownFiles_1 = require("../../common/aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
 const IamService_1 = require("./IamService");
 async function GetCredentials() {
     let credentials;

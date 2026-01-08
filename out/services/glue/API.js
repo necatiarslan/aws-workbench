@@ -23,7 +23,7 @@ const MethodResult_1 = require("../../common/MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
-const parseKnownFiles_1 = require("../../common/aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
 const GlueService_1 = require("./GlueService");
 async function GetCredentials() {
     let credentials;

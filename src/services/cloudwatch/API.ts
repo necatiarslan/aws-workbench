@@ -4,7 +4,7 @@ import { MethodResult } from '../../common/MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join } from "path";
-import { parseKnownFiles, SourceProfileInit } from "../../common/aws-sdk/parseKnownFiles";
+import { parseKnownFiles, SourceProfileInit } from "../../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import { CloudwatchService } from "./CloudwatchService";
 
