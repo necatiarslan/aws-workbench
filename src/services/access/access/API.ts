@@ -1,7 +1,7 @@
 import { homedir } from "os";
 import { sep } from "path";
 import { join } from "path";
-import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
+import { parseKnownFiles, SourceProfileInit } from "../../../common/aws-sdk/parseKnownFiles";
 import { ParsedIniData, AwsCredentialIdentity } from "@aws-sdk/types";
 import { CloudWatchLogsClient, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
 import * as ui from './UI';
