@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
-import { fromIni } from "@aws-sdk/credential-provider-ini";
 import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
 import { CloudWatchLogsClient, OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import { IAMClient } from "@aws-sdk/client-iam";

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
-import { fromIni } from "@aws-sdk/credential-provider-ini";
 import { GlueClient, GetJobsCommand, StartJobRunCommand, GetJobRunCommand, GetJobRunsCommand } from "@aws-sdk/client-glue";
 import { CloudWatchLogsClient, OutputLogEvent, DescribeLogStreamsCommand, GetLogEventsCommand, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
@@ -12,7 +11,6 @@ import { join, basename, extname, dirname } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import { GlueService } from './GlueService';
-import * as fs from 'fs';
 
 export async function GetCredentials() {
   let credentials;
