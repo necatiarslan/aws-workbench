@@ -3,7 +3,36 @@ import * as vscode from 'vscode';
 import { TreeItemType } from '../../tree/TreeItemType';
 
 export class SqsTreeItem extends vscode.TreeItem {
-	public IsFav: boolean = false
+	private _isFav: boolean = false;
+	private _isHidden: boolean = false;
+	private _profileToShow: string = "";
+
+	public set ProfileToShow(value: string) {
+		this._profileToShow = value;
+		this.setContextValue();
+	}
+
+	public get ProfileToShow(): string {
+		return this._profileToShow;
+	}
+
+	public set IsHidden(value: boolean) {
+		this._isHidden = value;
+		this.setContextValue();
+	}
+
+	public get IsHidden(): boolean {
+		return this._isHidden;
+	}
+
+	public set IsFav(value: boolean) {
+		this._isFav = value;
+		this.setContextValue();
+	}
+
+	public get IsFav(): boolean {
+		return this._isFav;
+	}
 	public TreeItemType:TreeItemType
 	public Text:string
 	public QueueArn:string = ""
@@ -11,7 +40,7 @@ export class SqsTreeItem extends vscode.TreeItem {
 	public Region:string = ""
 	public Parent:SqsTreeItem | undefined
 	public Children:SqsTreeItem[] = []
-	public IsHidden: boolean = false
+
 	public MessageFilePath: string | undefined
 	public IsRunning: boolean = false;
 	public MessageId: string | undefined;
@@ -25,58 +54,97 @@ export class SqsTreeItem extends vscode.TreeItem {
 		this.refreshUI()
 	}
 
+	public setContextValue(){
+		let contextValue = "#Type:SQS#";
+		contextValue += this.IsFav ? "Fav#" : "!Fav#";
+		contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+		contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
+
+		if(this.TreeItemType === TreeItemType.SQSQueue)
+		{
+			contextValue += "Queue#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSPublishGroup)
+		{
+			contextValue += "PublishGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSPublishAdhoc)
+		{
+			contextValue += "PublishAdhoc#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSPublishFile)
+		{
+			contextValue += "PublishFile#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSReceiveGroup)
+		{
+			contextValue += "ReceiveGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSReceivedMessage)
+		{
+			contextValue += "ReceivedMessage#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSDeletedMessage)
+		{
+			contextValue += "DeletedMessage#";
+		}
+		else if(this.TreeItemType === TreeItemType.SQSPolicy)
+		{
+			contextValue += "Policy#";
+		}
+		else
+		{
+			contextValue += "Other#";
+		}
+
+		this.contextValue = contextValue;
+	}
+
 	public refreshUI() {
 
 		if(this.TreeItemType === TreeItemType.SQSQueue)
 		{
 			this.iconPath = new vscode.ThemeIcon('package'); // inbox
-			this.contextValue = "Queue"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSPublishGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('send');
-			this.contextValue = "PublishGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSPublishAdhoc)
 		{
 			this.iconPath = new vscode.ThemeIcon('report');
-			this.contextValue = "PublishAdhoc"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSPublishFile)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail');
-			this.contextValue = "PublishFile"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSReceiveGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('inbox');
-			this.contextValue = "ReceiveGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSReceivedMessage)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail');
-			this.contextValue = "ReceivedMessage"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSDeletedMessage)
 		{
 			this.iconPath = new vscode.ThemeIcon('mail-read');
-			this.contextValue = "DeletedMessage"
 		}
 		else if(this.TreeItemType === TreeItemType.SQSPolicy)
 		{
 			this.iconPath = new vscode.ThemeIcon('shield');
-			this.contextValue = "Policy"
 		}
 		else
 		{
 			this.iconPath = new vscode.ThemeIcon('circle-outline');
-			this.contextValue = "Other"
 		}
 
 		if(this.IsRunning)
 		{
 			this.iconPath = new vscode.ThemeIcon('loading~spin');
 		}
+		
+		this.setContextValue();
 	}
 
 	public IsAnyChidrenFav(){

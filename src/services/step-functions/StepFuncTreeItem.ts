@@ -3,7 +3,36 @@ import * as vscode from 'vscode';
 import { TreeItemType } from '../../tree/TreeItemType';
 
 export class StepFuncTreeItem extends vscode.TreeItem {
-	public IsFav: boolean = false
+	private _isFav: boolean = false;
+	private _isHidden: boolean = false;
+	private _profileToShow: string = "";
+
+	public set ProfileToShow(value: string) {
+		this._profileToShow = value;
+		this.setContextValue();
+	}
+
+	public get ProfileToShow(): string {
+		return this._profileToShow;
+	}
+
+	public set IsHidden(value: boolean) {
+		this._isHidden = value;
+		this.setContextValue();
+	}
+
+	public get IsHidden(): boolean {
+		return this._isHidden;
+	}
+
+	public set IsFav(value: boolean) {
+		this._isFav = value;
+		this.setContextValue();
+	}
+
+	public get IsFav(): boolean {
+		return this._isFav;
+	}
 	public TreeItemType:TreeItemType
 	public Text:string
 	public StepFuncArn:string = ""
@@ -13,7 +42,7 @@ export class StepFuncTreeItem extends vscode.TreeItem {
 	public LogStreamName:string | undefined
 	public Parent:StepFuncTreeItem | undefined
 	public Children:StepFuncTreeItem[] = []
-	public IsHidden: boolean = false
+
 	public TriggerConfigPath: string | undefined
 	private codePath: string | undefined;
 	public PayloadPath: string | undefined;
@@ -30,6 +59,92 @@ export class StepFuncTreeItem extends vscode.TreeItem {
 		this.StepFuncName = text
 		this.TreeItemType = treeItemType
 		this.refreshUI()
+	}
+
+	public setContextValue(){
+		let contextValue = "#Type:StepFunctions#";
+		contextValue += this.IsFav ? "Fav#" : "!Fav#";
+		contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+		contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
+
+		if(this.TreeItemType === TreeItemType.StepFunctionsStateMachine)
+		{
+			contextValue += "StepFunc#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsCode)
+		{
+			contextValue += "Code#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerGroup)
+		{
+			contextValue += "TriggerGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerSavedPayload)
+		{
+			contextValue += "TriggerSavedPayload#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerWithPayload)
+		{
+			contextValue += "TriggerWithPayload#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerFilePayload)
+		{
+			contextValue += "TriggerFilePayload#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerNoPayload)
+		{
+			contextValue += "TriggerNoPayload#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsResponsePayload)
+		{
+			contextValue += "ResponsePayload#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsLogGroup)
+		{
+			contextValue += "LogGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsLogStream)
+		{
+			contextValue += "LogStream#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsCodePath)
+		{
+			contextValue += "CodePath#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsEnvironmentVariableGroup)
+		{
+			contextValue += "EnvironmentVariableGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsEnvironmentVariable)
+		{
+			contextValue += "EnvironmentVariable#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsExecutionGroup)
+		{
+			contextValue += "ExecutionGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsExecution)
+		{
+			contextValue += "Execution#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsSuccessfulExecutionGroup)
+		{
+			contextValue += "SuccessfulExecutionGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsFailedExecutionGroup)
+		{
+			contextValue += "FailedExecutionGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.StepFunctionsRunningExecutionGroup)
+		{
+			contextValue += "RunningExecutionGroup#";
+		}
+		else
+		{
+			contextValue += "Other#";
+		}
+
+		this.contextValue = contextValue;
 	}
 
 	public static GetStepFuncName(stepFuncArn: string): string {
@@ -74,103 +189,86 @@ export class StepFuncTreeItem extends vscode.TreeItem {
 		if(this.TreeItemType === TreeItemType.StepFunctionsStateMachine)
 		{
 			this.iconPath = new vscode.ThemeIcon('server-process');
-			this.contextValue = "StepFunc"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsCode)
 		{
 			this.iconPath = new vscode.ThemeIcon('file-code');
-			this.contextValue = "Code"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('run-all');
-			this.contextValue = "TriggerGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerSavedPayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('bracket');
-			this.contextValue = "TriggerSavedPayload"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerWithPayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('bracket-dot');
-			this.contextValue = "TriggerWithPayload"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerFilePayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('file');
-			this.contextValue = "TriggerFilePayload"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsTriggerNoPayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('bracket-error');
-			this.contextValue = "TriggerNoPayload"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsResponsePayload)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
-			this.contextValue = "ResponsePayload"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsLogGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
-			this.contextValue = "LogGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsLogStream)
 		{
 			this.iconPath = new vscode.ThemeIcon('output');
-			this.contextValue = "LogStream"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsCodePath)
 		{
 			this.iconPath = new vscode.ThemeIcon('file');
-			this.contextValue = "CodePath"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsEnvironmentVariableGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('wrench');
-			this.contextValue = "EnvironmentVariableGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsEnvironmentVariable)
 		{
 			this.iconPath = new vscode.ThemeIcon('wrench');
-			this.contextValue = "EnvironmentVariable"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsExecutionGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('list-tree');
-			this.contextValue = "ExecutionGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsExecution)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-event');
-			this.contextValue = "Execution"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsSuccessfulExecutionGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('pass');
-			this.contextValue = "SuccessfulExecutionGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsFailedExecutionGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('error');
-			this.contextValue = "FailedExecutionGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.StepFunctionsRunningExecutionGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('sync');
-			this.contextValue = "RunningExecutionGroup"
 		}
 		else
 		{
 			this.iconPath = new vscode.ThemeIcon('circle-outline');
-			this.contextValue = "Other"
 		}
 
 		if(this.IsRunning)
 		{
 			this.iconPath = new vscode.ThemeIcon('loading~spin');
 		}
+		
+		this.setContextValue();
 	}
 
 	public IsAnyChidrenFav(){

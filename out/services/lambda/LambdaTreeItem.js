@@ -5,7 +5,30 @@ exports.LambdaTreeItem = void 0;
 const vscode = require("vscode");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 class LambdaTreeItem extends vscode.TreeItem {
-    IsFav = false;
+    _isFav = false;
+    _isHidden = false;
+    _profileToShow = "";
+    set ProfileToShow(value) {
+        this._profileToShow = value;
+        this.setContextValue();
+    }
+    get ProfileToShow() {
+        return this._profileToShow;
+    }
+    set IsHidden(value) {
+        this._isHidden = value;
+        this.setContextValue();
+    }
+    get IsHidden() {
+        return this._isHidden;
+    }
+    set IsFav(value) {
+        this._isFav = value;
+        this.setContextValue();
+    }
+    get IsFav() {
+        return this._isFav;
+    }
     TreeItemType;
     Text;
     Lambda = "";
@@ -13,7 +36,6 @@ class LambdaTreeItem extends vscode.TreeItem {
     LogStreamName;
     Parent;
     Children = [];
-    IsHidden = false;
     TriggerConfigPath;
     codePath;
     PayloadPath;
@@ -30,6 +52,67 @@ class LambdaTreeItem extends vscode.TreeItem {
         this.Text = text;
         this.TreeItemType = treeItemType;
         this.refreshUI();
+    }
+    setContextValue() {
+        let contextValue = "#Type:Lambda#";
+        contextValue += this.IsFav ? "Fav#" : "!Fav#";
+        contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+        contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaFunction) {
+            contextValue += "Lambda#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaCode) {
+            contextValue += "Code#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerGroup) {
+            contextValue += "TriggerGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerSavedPayload) {
+            contextValue += "TriggerSavedPayload#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerWithPayload) {
+            contextValue += "TriggerWithPayload#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerFilePayload) {
+            contextValue += "TriggerFilePayload#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerNoPayload) {
+            contextValue += "TriggerNoPayload#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaResponsePayload) {
+            contextValue += "ResponsePayload#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaLogGroup) {
+            contextValue += "LogGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaLogStream) {
+            contextValue += "LogStream#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaCodePath) {
+            contextValue += "CodePath#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaEnvironmentVariableGroup) {
+            contextValue += "EnvironmentVariableGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaEnvironmentVariable) {
+            contextValue += "EnvironmentVariable#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTagsGroup) {
+            contextValue += "TagsGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTag) {
+            contextValue += "Tag#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaInfoGroup) {
+            contextValue += "InfoGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaInfoItem) {
+            contextValue += "InfoItem#";
+        }
+        else {
+            contextValue += "Other#";
+        }
+        this.contextValue = contextValue;
     }
     set CodePath(path) {
         if (this.TreeItemType !== TreeItemType_1.TreeItemType.LambdaCode) {
@@ -61,79 +144,62 @@ class LambdaTreeItem extends vscode.TreeItem {
     refreshUI() {
         if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaFunction) {
             this.iconPath = new vscode.ThemeIcon('server-process');
-            this.contextValue = "Lambda";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaCode) {
             this.iconPath = new vscode.ThemeIcon('file-code');
-            this.contextValue = "Code";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerGroup) {
             this.iconPath = new vscode.ThemeIcon('run-all');
-            this.contextValue = "TriggerGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerSavedPayload) {
             this.iconPath = new vscode.ThemeIcon('bracket');
-            this.contextValue = "TriggerSavedPayload";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerWithPayload) {
             this.iconPath = new vscode.ThemeIcon('bracket-dot');
-            this.contextValue = "TriggerWithPayload";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerFilePayload) {
             this.iconPath = new vscode.ThemeIcon('file');
-            this.contextValue = "TriggerFilePayload";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTriggerNoPayload) {
             this.iconPath = new vscode.ThemeIcon('bracket-error');
-            this.contextValue = "TriggerNoPayload";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaResponsePayload) {
             this.iconPath = new vscode.ThemeIcon('output');
-            this.contextValue = "ResponsePayload";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaLogGroup) {
             this.iconPath = new vscode.ThemeIcon('output');
-            this.contextValue = "LogGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaLogStream) {
             this.iconPath = new vscode.ThemeIcon('output');
-            this.contextValue = "LogStream";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaCodePath) {
             this.iconPath = new vscode.ThemeIcon('file');
-            this.contextValue = "CodePath";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaEnvironmentVariableGroup) {
             this.iconPath = new vscode.ThemeIcon('wrench');
-            this.contextValue = "EnvironmentVariableGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaEnvironmentVariable) {
             this.iconPath = new vscode.ThemeIcon('wrench');
-            this.contextValue = "EnvironmentVariable";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTagsGroup) {
             this.iconPath = new vscode.ThemeIcon('tag');
-            this.contextValue = "TagsGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaTag) {
             this.iconPath = new vscode.ThemeIcon('tag');
-            this.contextValue = "Tag";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaInfoGroup) {
             this.iconPath = new vscode.ThemeIcon('info');
-            this.contextValue = "InfoGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.LambdaInfoItem) {
             this.iconPath = new vscode.ThemeIcon('symbol-property');
-            this.contextValue = "InfoItem";
         }
         else {
             this.iconPath = new vscode.ThemeIcon('circle-outline');
-            this.contextValue = "Other";
         }
         if (this.IsRunning) {
             this.iconPath = new vscode.ThemeIcon('loading~spin');
         }
+        this.setContextValue();
     }
     IsAnyChidrenFav() {
         return this.IsAnyChidrenFavInternal(this);

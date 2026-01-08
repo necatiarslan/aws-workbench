@@ -3,14 +3,42 @@ import * as vscode from 'vscode';
 import { TreeItemType } from '../../tree/TreeItemType';
 
 export class IamTreeItem extends vscode.TreeItem {
-	public IsFav: boolean = false
+	private _isFav: boolean = false;
+	private _isHidden: boolean = false;
+	private _profileToShow: string = "";
+
+	public set ProfileToShow(value: string) {
+		this._profileToShow = value;
+		this.setContextValue();
+	}
+
+	public get ProfileToShow(): string {
+		return this._profileToShow;
+	}
+
+	public set IsHidden(value: boolean) {
+		this._isHidden = value;
+		this.setContextValue();
+	}
+
+	public get IsHidden(): boolean {
+		return this._isHidden;
+	}
+
+	public set IsFav(value: boolean) {
+		this._isFav = value;
+		this.setContextValue();
+	}
+
+	public get IsFav(): boolean {
+		return this._isFav;
+	}
 	public TreeItemType:TreeItemType
 	public Text:string
 	public IamRole:string = ""
 	public Region:string = ""
 	public Parent:IamTreeItem | undefined
 	public Children:IamTreeItem[] = []
-	public IsHidden: boolean = false
 	public TagKey: string | undefined;
 	public TagValue: string | undefined;
 	public InfoKey: string | undefined;
@@ -28,63 +56,105 @@ export class IamTreeItem extends vscode.TreeItem {
 		this.refreshUI()
 	}
 
+	public setContextValue(){
+		let contextValue = "#Type:IAM#";
+		contextValue += this.IsFav ? "Fav#" : "!Fav#";
+		contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+		contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
+
+		if(this.TreeItemType === TreeItemType.IAMRole)
+		{
+			contextValue += "IamRole#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMPermissionsGroup)
+		{
+			contextValue += "PermissionsGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMPermission)
+		{
+			contextValue += "Permission#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMTrustRelationshipsGroup)
+		{
+			contextValue += "TrustRelationshipsGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMTrustRelationship)
+		{
+			contextValue += "TrustRelationship#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMTagsGroup)
+		{
+			contextValue += "TagsGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMTag)
+		{
+			contextValue += "Tag#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMInfoGroup)
+		{
+			contextValue += "InfoGroup#";
+		}
+		else if(this.TreeItemType === TreeItemType.IAMInfoItem)
+		{
+			contextValue += "InfoItem#";
+		}
+		else
+		{
+			contextValue += "Other#";
+		}
+
+		this.contextValue = contextValue;
+	}
+
 	public refreshUI() {
 
 		if(this.TreeItemType === TreeItemType.IAMRole)
 		{
 			this.iconPath = new vscode.ThemeIcon('shield');
-			this.contextValue = "IamRole"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMPermissionsGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('lock');
-			this.contextValue = "PermissionsGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMPermission)
 		{
 			this.iconPath = new vscode.ThemeIcon('key');
-			this.contextValue = "Permission"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMTrustRelationshipsGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('references');
-			this.contextValue = "TrustRelationshipsGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMTrustRelationship)
 		{
 			this.iconPath = new vscode.ThemeIcon('person');
-			this.contextValue = "TrustRelationship"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMTagsGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('tag');
-			this.contextValue = "TagsGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMTag)
 		{
 			this.iconPath = new vscode.ThemeIcon('tag');
-			this.contextValue = "Tag"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMInfoGroup)
 		{
 			this.iconPath = new vscode.ThemeIcon('info');
-			this.contextValue = "InfoGroup"
 		}
 		else if(this.TreeItemType === TreeItemType.IAMInfoItem)
 		{
 			this.iconPath = new vscode.ThemeIcon('symbol-property');
-			this.contextValue = "InfoItem"
 		}
 		else
 		{
 			this.iconPath = new vscode.ThemeIcon('circle-outline');
-			this.contextValue = "Other"
 		}
 
 		if(this.IsRunning)
 		{
 			this.iconPath = new vscode.ThemeIcon('loading~spin');
 		}
+
+		this.setContextValue();
 	}
 
 	public IsAnyChidrenFav(){

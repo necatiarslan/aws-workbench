@@ -5,7 +5,30 @@ exports.SnsTreeItem = void 0;
 const vscode = require("vscode");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 class SnsTreeItem extends vscode.TreeItem {
-    IsFav = false;
+    _isFav = false;
+    _isHidden = false;
+    _profileToShow = "";
+    set ProfileToShow(value) {
+        this._profileToShow = value;
+        this.setContextValue();
+    }
+    get ProfileToShow() {
+        return this._profileToShow;
+    }
+    set IsHidden(value) {
+        this._isHidden = value;
+        this.setContextValue();
+    }
+    get IsHidden() {
+        return this._isHidden;
+    }
+    set IsFav(value) {
+        this._isFav = value;
+        this.setContextValue();
+    }
+    get IsFav() {
+        return this._isFav;
+    }
     TreeItemType;
     Text;
     TopicArn = "";
@@ -13,7 +36,6 @@ class SnsTreeItem extends vscode.TreeItem {
     Region = "";
     Parent;
     Children = [];
-    IsHidden = false;
     MessageFilePath;
     IsRunning = false;
     SubscriptionArn = "";
@@ -25,38 +47,60 @@ class SnsTreeItem extends vscode.TreeItem {
         this.TreeItemType = treeItemType;
         this.refreshUI();
     }
+    setContextValue() {
+        let contextValue = "#Type:SNS#";
+        contextValue += this.IsFav ? "Fav#" : "!Fav#";
+        contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+        contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
+        if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSTopic) {
+            contextValue += "Topic#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishGroup) {
+            contextValue += "PublishGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishAdhoc) {
+            contextValue += "PublishAdhoc#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishFile) {
+            contextValue += "PublishFile#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscriptionGroup) {
+            contextValue += "SubscriptionGroup#";
+        }
+        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscription) {
+            contextValue += "Subscription#";
+        }
+        else {
+            contextValue += "Other#";
+        }
+        this.contextValue = contextValue;
+    }
     refreshUI() {
         if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSTopic) {
             this.iconPath = new vscode.ThemeIcon('package'); // inbox
-            this.contextValue = "Topic";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishGroup) {
             this.iconPath = new vscode.ThemeIcon('send');
-            this.contextValue = "PublishGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishAdhoc) {
             this.iconPath = new vscode.ThemeIcon('report');
-            this.contextValue = "PublishAdhoc";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSPublishFile) {
             this.iconPath = new vscode.ThemeIcon('mail');
-            this.contextValue = "PublishFile";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscriptionGroup) {
             this.iconPath = new vscode.ThemeIcon('organization');
-            this.contextValue = "SubscriptionGroup";
         }
         else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSSubscription) {
             this.iconPath = new vscode.ThemeIcon('person');
-            this.contextValue = "Subscription";
         }
-        else if (this.TreeItemType === TreeItemType_1.TreeItemType.SNSOther) {
+        else {
             this.iconPath = new vscode.ThemeIcon('circle-outline');
-            this.contextValue = "Other";
         }
         if (this.IsRunning) {
             this.iconPath = new vscode.ThemeIcon('loading~spin');
         }
+        this.setContextValue();
     }
     IsAnyChidrenFav() {
         return this.IsAnyChidrenFavInternal(this);

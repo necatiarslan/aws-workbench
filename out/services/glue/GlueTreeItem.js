@@ -26,44 +26,91 @@ class GlueTreeItem extends vscode.TreeItem {
         // contextValue is set in setIcons
         this.setIcons();
     }
-    IsFav = false;
-    IsHidden = false;
+    _isFav = false;
+    _isHidden = false;
+    _profileToShow = "";
+    set ProfileToShow(value) {
+        this._profileToShow = value;
+        this.setContextValue();
+    }
+    get ProfileToShow() {
+        return this._profileToShow;
+    }
+    set IsHidden(value) {
+        this._isHidden = value;
+        this.setContextValue();
+    }
+    get IsHidden() {
+        return this._isHidden;
+    }
+    set IsFav(value) {
+        this._isFav = value;
+        this.setContextValue();
+    }
+    get IsFav() {
+        return this._isFav;
+    }
     IsRunning = false;
     RunId;
+    setContextValue() {
+        let contextValue = "#Type:Glue#";
+        contextValue += this.IsFav ? "Fav#" : "!Fav#";
+        contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
+        contextValue += this.ProfileToShow ? "Profile#" : "NoProfile#";
+        switch (this.TreeItemType) {
+            case TreeItemType_1.TreeItemType.GlueJob:
+                contextValue += "GlueJob#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueRunGroup:
+                contextValue += "GlueRunGroup#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueLogGroup:
+                contextValue += "GlueLogGroup#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueLogStream:
+                contextValue += "GlueLogStream#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueRun:
+                contextValue += "GlueRun#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueDetail:
+                contextValue += "GlueDetail#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueArguments:
+                contextValue += "GlueArguments#";
+                break;
+            case TreeItemType_1.TreeItemType.GlueInfo:
+                contextValue += "GlueInfo#";
+                break;
+        }
+        this.contextValue = contextValue;
+    }
     setIcons() {
         let iconName = "";
         switch (this.TreeItemType) {
             case TreeItemType_1.TreeItemType.GlueJob:
                 iconName = "settings-gear";
-                this.contextValue = "GlueJob";
                 break;
             case TreeItemType_1.TreeItemType.GlueRunGroup:
                 iconName = "history";
-                this.contextValue = "GlueRunGroup";
                 break;
             case TreeItemType_1.TreeItemType.GlueLogGroup:
                 iconName = "output";
-                this.contextValue = "GlueLogGroup";
                 break;
             case TreeItemType_1.TreeItemType.GlueLogStream:
                 iconName = "list-unordered";
-                this.contextValue = "GlueLogStream";
                 break;
             case TreeItemType_1.TreeItemType.GlueRun:
                 iconName = "play";
-                this.contextValue = "GlueRun";
                 break;
             case TreeItemType_1.TreeItemType.GlueDetail:
                 iconName = "info";
-                this.contextValue = "GlueDetail";
                 break;
             case TreeItemType_1.TreeItemType.GlueArguments:
                 iconName = "list-selection";
-                this.contextValue = "GlueArguments";
                 break;
             case TreeItemType_1.TreeItemType.GlueInfo:
                 iconName = "info";
-                this.contextValue = "GlueInfo";
                 break;
         }
         if (this.IsRunning) {
@@ -75,6 +122,7 @@ class GlueTreeItem extends vscode.TreeItem {
     }
     refreshUI() {
         this.setIcons();
+        this.setContextValue();
     }
 }
 exports.GlueTreeItem = GlueTreeItem;

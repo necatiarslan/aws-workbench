@@ -53,7 +53,7 @@ class CloudWatchTreeItem extends vscode.TreeItem {
         this.refreshUI();
     }
     setContextValue() {
-        let contextValue = "#";
+        let contextValue = "#Type:CloudWatch#";
         contextValue += this.IsFav ? "Fav#" : "!Fav#";
         contextValue += this.IsHidden ? "Hidden#" : "!Hidden#";
         contextValue += this.IsPinned ? "Pinned#" : "NotPinned#";
