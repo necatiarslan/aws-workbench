@@ -17,13 +17,13 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
-const CloudwatchService_1 = require("./CloudwatchService");
+const CloudWatchService_1 = require("./CloudWatchService");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 async function GetCredentials() {
     let credentials;
     try {
-        if (CloudwatchService_1.CloudwatchService.Instance) {
-            process.env.AWS_PROFILE = CloudwatchService_1.CloudwatchService.Instance.AwsProfile;
+        if (CloudWatchService_1.CloudWatchService.Instance) {
+            process.env.AWS_PROFILE = CloudWatchService_1.CloudWatchService.Instance.AwsProfile;
         }
         // Get credentials using the default provider chain.
         const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
@@ -41,11 +41,11 @@ async function GetCredentials() {
     }
 }
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
-async function GetCloudWatchLogsClient(Region = CloudwatchService_1.CloudwatchService.Instance?.LastUsedRegion) {
+async function GetCloudWatchLogsClient(Region = CloudWatchService_1.CloudWatchService.Instance?.LastUsedRegion) {
     let credentials = await GetCredentials();
     return new client_cloudwatch_logs_1.CloudWatchLogsClient({
         credentials: credentials,
-        endpoint: CloudwatchService_1.CloudwatchService.Instance?.AwsEndPoint,
+        endpoint: CloudWatchService_1.CloudWatchService.Instance?.AwsEndPoint,
         region: Region
     });
 }

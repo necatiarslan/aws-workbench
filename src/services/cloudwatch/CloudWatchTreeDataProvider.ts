@@ -2,7 +2,7 @@
 import * as vscode from 'vscode';
 import { CloudWatchTreeItem } from './CloudWatchTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
-import { CloudwatchService } from './CloudwatchService';
+import { CloudWatchService } from './CloudWatchService';
 import * as api from './API';
 
 export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<CloudWatchTreeItem>
@@ -22,7 +22,7 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 	}
 
 	AddLogGroup(Region:string, LogGroup:string): CloudWatchTreeItem | undefined {
-		for(var item of CloudwatchService.Instance.LogGroupList)
+		for(var item of CloudWatchService.Instance.LogGroupList)
 		{
 			if(item.Region === Region && item.LogGroup === LogGroup)
 			{
@@ -30,18 +30,18 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 			}
 		}
 		
-		CloudwatchService.Instance.LogGroupList.push({Region: Region, LogGroup: LogGroup});
+		CloudWatchService.Instance.LogGroupList.push({Region: Region, LogGroup: LogGroup});
 		const node = this.AddNewLogGroupNode(Region, LogGroup);
 		this.Refresh();
 		return node;
 	}
 
 	RemoveLogGroup(Region:string, LogGroup:string){
-		for(var i=0; i<CloudwatchService.Instance.LogGroupList.length; i++)
+		for(var i=0; i<CloudWatchService.Instance.LogGroupList.length; i++)
 		{
-			if(CloudwatchService.Instance.LogGroupList[i].Region === Region && CloudwatchService.Instance.LogGroupList[i].LogGroup === LogGroup)
+			if(CloudWatchService.Instance.LogGroupList[i].Region === Region && CloudWatchService.Instance.LogGroupList[i].LogGroup === LogGroup)
 			{
-				CloudwatchService.Instance.LogGroupList.splice(i, 1);
+				CloudWatchService.Instance.LogGroupList.splice(i, 1);
 				break;
 			}
 		}
@@ -52,9 +52,9 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 	
 	LoadRegionNodeList(){
 		this.RegionNodeList = [];
-		if(!CloudwatchService.Instance) return;
+		if(!CloudWatchService.Instance) return;
 		
-		for(var item of CloudwatchService.Instance.LogGroupList)
+		for(var item of CloudWatchService.Instance.LogGroupList)
 		{
 			this.AddNewLogGroupNode(item.Region, item.LogGroup);
 		}
@@ -135,17 +135,17 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 
 	GetRegionNodes(): CloudWatchTreeItem[]{
 		var result: CloudWatchTreeItem[] = [];
-		if(!CloudwatchService.Instance) return result;
+		if(!CloudWatchService.Instance) return result;
 		for (var node of this.RegionNodeList) {
 			// Filtering at region level might be tricky, let's filter children
 			let filteredChildren = node.Children.filter(child => {
-				if (CloudwatchService.Instance.FilterString && !child.IsFilterStringMatch(CloudwatchService.Instance.FilterString)) { return false; }
-				if (CloudwatchService.Instance.isShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) { return false; }
-				if (CloudwatchService.Instance.isShowHiddenNodes && (child.IsHidden)) { return false; }
+				if (CloudWatchService.Instance.FilterString && !child.IsFilterStringMatch(CloudWatchService.Instance.FilterString)) { return false; }
+				if (CloudWatchService.Instance.isShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) { return false; }
+				if (CloudWatchService.Instance.isShowHiddenNodes && (child.IsHidden)) { return false; }
 				return true;
 			});
 
-			if(filteredChildren.length > 0 || !CloudwatchService.Instance.FilterString)
+			if(filteredChildren.length > 0 || !CloudWatchService.Instance.FilterString)
 			{
 				// We should return a copy or just mock the filtered children
 				result.push(node);

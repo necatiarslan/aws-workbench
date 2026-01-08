@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import * as ui from '../../common/UI';
 import * as api from './API';
 import { OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
-import { CloudwatchService } from "./CloudwatchService";
+import { CloudWatchService } from "./CloudWatchService";
 import * as tmp from 'tmp';
 import * as fs from 'fs';
 
@@ -56,7 +56,7 @@ export class CloudWatchLogView {
 
     public async LoadLogs(){
         ui.logToOutput('CloudWatchLogView.LoadLogs Started');
-        if(!CloudwatchService.Instance){return;}
+        if(!CloudWatchService.Instance){return;}
 
         var result = await api.GetLogEvents(this.Region, this.LogGroup, this.LogStream, this.StartTime);
         if(result.isSuccessful)
@@ -320,7 +320,7 @@ export class CloudWatchLogView {
         <table>
             <tr>
                 <td>
-                    <a href="https://github.com/necatiarslan/aws-cloudwatch/issues/new" style="cursor: pointer; text-decoration: none;">Bug Report & Feature Request</a>
+                    <a href="https://github.com/necatiarslan/aws-workbench/issues/new" style="cursor: pointer; text-decoration: none;">Bug Report & Feature Request</a>
                 </td>
             </tr>
         </table>

@@ -5,7 +5,7 @@ exports.CloudWatchTreeDataProvider = void 0;
 const vscode = require("vscode");
 const CloudWatchTreeItem_1 = require("./CloudWatchTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
-const CloudwatchService_1 = require("./CloudwatchService");
+const CloudWatchService_1 = require("./CloudWatchService");
 const api = require("./API");
 class CloudWatchTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -20,20 +20,20 @@ class CloudWatchTreeDataProvider {
         this._onDidChangeTreeData.fire();
     }
     AddLogGroup(Region, LogGroup) {
-        for (var item of CloudwatchService_1.CloudwatchService.Instance.LogGroupList) {
+        for (var item of CloudWatchService_1.CloudWatchService.Instance.LogGroupList) {
             if (item.Region === Region && item.LogGroup === LogGroup) {
                 return this.RegionNodeList.find(node => node.label === Region)?.Children.find(child => child.LogGroup === LogGroup);
             }
         }
-        CloudwatchService_1.CloudwatchService.Instance.LogGroupList.push({ Region: Region, LogGroup: LogGroup });
+        CloudWatchService_1.CloudWatchService.Instance.LogGroupList.push({ Region: Region, LogGroup: LogGroup });
         const node = this.AddNewLogGroupNode(Region, LogGroup);
         this.Refresh();
         return node;
     }
     RemoveLogGroup(Region, LogGroup) {
-        for (var i = 0; i < CloudwatchService_1.CloudwatchService.Instance.LogGroupList.length; i++) {
-            if (CloudwatchService_1.CloudwatchService.Instance.LogGroupList[i].Region === Region && CloudwatchService_1.CloudwatchService.Instance.LogGroupList[i].LogGroup === LogGroup) {
-                CloudwatchService_1.CloudwatchService.Instance.LogGroupList.splice(i, 1);
+        for (var i = 0; i < CloudWatchService_1.CloudWatchService.Instance.LogGroupList.length; i++) {
+            if (CloudWatchService_1.CloudWatchService.Instance.LogGroupList[i].Region === Region && CloudWatchService_1.CloudWatchService.Instance.LogGroupList[i].LogGroup === LogGroup) {
+                CloudWatchService_1.CloudWatchService.Instance.LogGroupList.splice(i, 1);
                 break;
             }
         }
@@ -42,9 +42,9 @@ class CloudWatchTreeDataProvider {
     }
     LoadRegionNodeList() {
         this.RegionNodeList = [];
-        if (!CloudwatchService_1.CloudwatchService.Instance)
+        if (!CloudWatchService_1.CloudWatchService.Instance)
             return;
-        for (var item of CloudwatchService_1.CloudwatchService.Instance.LogGroupList) {
+        for (var item of CloudWatchService_1.CloudWatchService.Instance.LogGroupList) {
             this.AddNewLogGroupNode(item.Region, item.LogGroup);
         }
     }
@@ -106,23 +106,23 @@ class CloudWatchTreeDataProvider {
     }
     GetRegionNodes() {
         var result = [];
-        if (!CloudwatchService_1.CloudwatchService.Instance)
+        if (!CloudWatchService_1.CloudWatchService.Instance)
             return result;
         for (var node of this.RegionNodeList) {
             // Filtering at region level might be tricky, let's filter children
             let filteredChildren = node.Children.filter(child => {
-                if (CloudwatchService_1.CloudwatchService.Instance.FilterString && !child.IsFilterStringMatch(CloudwatchService_1.CloudwatchService.Instance.FilterString)) {
+                if (CloudWatchService_1.CloudWatchService.Instance.FilterString && !child.IsFilterStringMatch(CloudWatchService_1.CloudWatchService.Instance.FilterString)) {
                     return false;
                 }
-                if (CloudwatchService_1.CloudwatchService.Instance.isShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) {
+                if (CloudWatchService_1.CloudWatchService.Instance.isShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) {
                     return false;
                 }
-                if (CloudwatchService_1.CloudwatchService.Instance.isShowHiddenNodes && (child.IsHidden)) {
+                if (CloudWatchService_1.CloudWatchService.Instance.isShowHiddenNodes && (child.IsHidden)) {
                     return false;
                 }
                 return true;
             });
-            if (filteredChildren.length > 0 || !CloudwatchService_1.CloudwatchService.Instance.FilterString) {
+            if (filteredChildren.length > 0 || !CloudWatchService_1.CloudWatchService.Instance.FilterString) {
                 // We should return a copy or just mock the filtered children
                 result.push(node);
             }

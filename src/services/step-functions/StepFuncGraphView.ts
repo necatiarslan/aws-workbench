@@ -724,7 +724,7 @@ export class StepFuncGraphView {
 		<table>
 			<tr>
 				<td>
-					<a href="https://github.com/necatiarslan/aws-step-functions-vscode-extension/issues/new">Bug Report & Feature Request</a>
+					<a href="https://github.com/necatiarslan/aws-workbench/issues/new">Bug Report & Feature Request</a>
 				</td>
 			</tr>
 		</table>

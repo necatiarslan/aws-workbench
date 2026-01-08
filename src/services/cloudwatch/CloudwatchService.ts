@@ -8,8 +8,8 @@ import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
 import * as api from './API';
 
-export class CloudwatchService implements IService {
-    public static Instance: CloudwatchService;
+export class CloudWatchService implements IService {
+    public static Instance: CloudWatchService;
     public serviceId = 'cloudwatch';
     public treeDataProvider: CloudWatchTreeDataProvider;
     public context: vscode.ExtensionContext;
@@ -24,7 +24,7 @@ export class CloudwatchService implements IService {
     public LogGroupList: {Region: string, LogGroup: string}[] = [];
 
     constructor(context: vscode.ExtensionContext) {
-        CloudwatchService.Instance = this;
+        CloudWatchService.Instance = this;
         this.context = context;
         this.treeDataProvider = new CloudWatchTreeDataProvider();
         this.LoadState();
@@ -123,7 +123,7 @@ export class CloudwatchService implements IService {
     }
 
     async AddLogGroup(): Promise<WorkbenchTreeItem | undefined> {
-        ui.logToOutput('CloudwatchService.AddLogGroup Started');
+        ui.logToOutput('CloudWatchService.AddLogGroup Started');
         let selectedRegion = await vscode.window.showInputBox({ placeHolder: 'Enter Region Eg: us-east-1', value: 'us-east-1' });
         if (selectedRegion === undefined) { return; }
         this.LastUsedRegion = selectedRegion;
@@ -201,7 +201,7 @@ export class CloudwatchService implements IService {
             this.LogGroupList = this.context.globalState.get('LogGroupList', []);
             this.LastUsedRegion = this.context.globalState.get('LastUsedRegion', 'us-east-1');
         } catch (error) {
-            ui.logToOutput("CloudwatchService.loadState Error !!!");
+            ui.logToOutput("CloudWatchService.loadState Error !!!");
         }
     }
 
@@ -214,7 +214,7 @@ export class CloudwatchService implements IService {
             this.context.globalState.update('LogGroupList', this.LogGroupList);
             this.context.globalState.update('LastUsedRegion', this.LastUsedRegion);
         } catch (error) {
-            ui.logToOutput("CloudwatchService.saveState Error !!!");
+            ui.logToOutput("CloudWatchService.saveState Error !!!");
         }
     }
 }

@@ -8,7 +8,7 @@ const WorkbenchTreeProvider_1 = require("./tree/WorkbenchTreeProvider");
 const ServiceManager_1 = require("./services/ServiceManager");
 const S3Service_1 = require("./services/s3/S3Service");
 const LambdaService_1 = require("./services/lambda/LambdaService");
-const CloudwatchService_1 = require("./services/cloudwatch/CloudwatchService");
+const CloudWatchService_1 = require("./services/cloudwatch/CloudWatchService");
 const DynamodbService_1 = require("./services/dynamodb/DynamodbService");
 const GlueService_1 = require("./services/glue/GlueService");
 const IamService_1 = require("./services/iam/IamService");
@@ -37,7 +37,7 @@ function activate(context) {
         const serviceManager = ServiceManager_1.ServiceManager.Instance;
         serviceManager.registerService(new S3Service_1.S3Service(context));
         serviceManager.registerService(new LambdaService_1.LambdaService(context));
-        serviceManager.registerService(new CloudwatchService_1.CloudwatchService(context));
+        serviceManager.registerService(new CloudWatchService_1.CloudWatchService(context));
         serviceManager.registerService(new DynamodbService_1.DynamodbService(context));
         serviceManager.registerService(new GlueService_1.GlueService(context));
         serviceManager.registerService(new IamService_1.IamService(context));
@@ -70,6 +70,28 @@ function activate(context) {
                     }
                 }
             }
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.Refresh', () => treeProvider.refresh()));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
+            vscode.commands.executeCommand('aws-access-vscode-extension.TestAwsConnectivity');
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
+            vscode.commands.executeCommand('aws-access-vscode-extension.SetActiveProfile');
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.Filter', () => {
+            vscode.window.showInformationMessage('Filter command not implemented yet.');
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => {
+            vscode.window.showInformationMessage('ShowOnlyFavorite command not implemented yet.');
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => {
+            vscode.window.showInformationMessage('ShowHiddenNodes command not implemented yet.');
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => {
+            vscode.window.showInformationMessage('UpdateAwsEndPoint command not implemented yet.');
+        }));
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => {
+            vscode.window.showInformationMessage('SetAwsRegion command not implemented yet.');
         }));
         // 5. Register each service's commands
         for (const service of serviceManager.getAllServices()) {

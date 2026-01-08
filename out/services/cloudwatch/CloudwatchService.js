@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CloudwatchService = void 0;
+exports.CloudWatchService = void 0;
 const vscode = require("vscode");
 const CloudWatchTreeDataProvider_1 = require("./CloudWatchTreeDataProvider");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
-class CloudwatchService {
+class CloudWatchService {
     static Instance;
     serviceId = 'cloudwatch';
     treeDataProvider;
@@ -20,7 +20,7 @@ class CloudwatchService {
     LastUsedRegion = "us-east-1";
     LogGroupList = [];
     constructor(context) {
-        CloudwatchService.Instance = this;
+        CloudWatchService.Instance = this;
         this.context = context;
         this.treeDataProvider = new CloudWatchTreeDataProvider_1.CloudWatchTreeDataProvider();
         this.LoadState();
@@ -92,7 +92,7 @@ class CloudwatchService {
         this.treeDataProvider.Refresh();
     }
     async AddLogGroup() {
-        ui.logToOutput('CloudwatchService.AddLogGroup Started');
+        ui.logToOutput('CloudWatchService.AddLogGroup Started');
         let selectedRegion = await vscode.window.showInputBox({ placeHolder: 'Enter Region Eg: us-east-1', value: 'us-east-1' });
         if (selectedRegion === undefined) {
             return;
@@ -177,7 +177,7 @@ class CloudwatchService {
             this.LastUsedRegion = this.context.globalState.get('LastUsedRegion', 'us-east-1');
         }
         catch (error) {
-            ui.logToOutput("CloudwatchService.loadState Error !!!");
+            ui.logToOutput("CloudWatchService.loadState Error !!!");
         }
     }
     SaveState() {
@@ -190,9 +190,9 @@ class CloudwatchService {
             this.context.globalState.update('LastUsedRegion', this.LastUsedRegion);
         }
         catch (error) {
-            ui.logToOutput("CloudwatchService.saveState Error !!!");
+            ui.logToOutput("CloudWatchService.saveState Error !!!");
         }
     }
 }
-exports.CloudwatchService = CloudwatchService;
-//# sourceMappingURL=CloudwatchService.js.map
+exports.CloudWatchService = CloudWatchService;
+//# sourceMappingURL=CloudWatchService.js.map

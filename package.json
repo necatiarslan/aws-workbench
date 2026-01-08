@@ -35,22 +35,22 @@
         "icon": "$(add)"
       },
       {
-        "command": "aws-workbench.s3.Refresh",
+        "command": "aws-workbench.Refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
       },
       {
-        "command": "aws-workbench.s3.Filter",
+        "command": "aws-workbench.Filter",
         "title": "Filter",
         "icon": "$(filter)"
       },
       {
-        "command": "aws-workbench.s3.ShowOnlyFavorite",
+        "command": "aws-workbench.ShowOnlyFavorite",
         "title": "Show Only Favorite",
         "icon": "$(bookmark)"
       },
       {
-        "command": "aws-workbench.s3.ShowHiddenNodes",
+        "command": "aws-workbench.ShowHiddenNodes",
         "title": "Show Hidden Nodes",
         "icon": "$(eye-closed)"
       },
@@ -114,20 +114,20 @@
         "icon": "$(search)"
       },
       {
-        "command": "aws-workbench.s3.SelectAwsProfile",
+        "command": "aws-workbench.SelectAwsProfile",
         "title": "Select Aws Profile",
         "icon": "$(account)"
       },
       {
-        "command": "aws-workbench.s3.UpdateAwsEndPoint",
+        "command": "aws-workbench.UpdateAwsEndPoint",
         "title": "Update Aws EndPoint"
       },
       {
-        "command": "aws-workbench.s3.SetAwsRegion",
+        "command": "aws-workbench.SetAwsRegion",
         "title": "Set Aws Region"
       },
       {
-        "command": "aws-workbench.s3.TestAwsConnection",
+        "command": "aws-workbench.TestAwsConnection",
         "title": "Test Aws Connection"
       },
       {
@@ -1252,6 +1252,46 @@
           "command": "aws-workbench.addResource",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
+        },
+        {
+          "command": "aws-workbench.Filter",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
+        },
+        {
+          "command": "aws-workbench.ShowOnlyFavorite",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
+        },
+        {
+          "command": "aws-workbench.ShowHiddenNodes",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
+        },
+        {
+          "command": "aws-workbench.SelectAwsProfile",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
+        },
+        {
+          "command": "aws-workbench.Refresh",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
+        },
+        {
+          "command": "aws-workbench.UpdateAwsEndPoint",
+          "when": "view == AwsWorkbenchTree",
+          "group": "other"
+        },
+        {
+          "command": "aws-workbench.SetAwsRegion",
+          "when": "view == AwsWorkbenchTree",
+          "group": "other"
+        },
+        {
+          "command": "aws-workbench.TestAwsConnection",
+          "when": "view == AwsWorkbenchTree",
+          "group": "other"
         }
       ],
       "view/item/context": [

@@ -5,7 +5,7 @@ exports.CloudWatchLogView = void 0;
 const vscode = require("vscode");
 const ui = require("../../common/UI");
 const api = require("./API");
-const CloudwatchService_1 = require("./CloudwatchService");
+const CloudWatchService_1 = require("./CloudWatchService");
 const tmp = require("tmp");
 const fs = require("fs");
 class CloudWatchLogView {
@@ -46,7 +46,7 @@ class CloudWatchLogView {
     }
     async LoadLogs() {
         ui.logToOutput('CloudWatchLogView.LoadLogs Started');
-        if (!CloudwatchService_1.CloudwatchService.Instance) {
+        if (!CloudWatchService_1.CloudWatchService.Instance) {
             return;
         }
         var result = await api.GetLogEvents(this.Region, this.LogGroup, this.LogStream, this.StartTime);
@@ -282,7 +282,7 @@ class CloudWatchLogView {
         <table>
             <tr>
                 <td>
-                    <a href="https://github.com/necatiarslan/aws-cloudwatch/issues/new" style="cursor: pointer; text-decoration: none;">Bug Report & Feature Request</a>
+                    <a href="https://github.com/necatiarslan/aws-workbench/issues/new" style="cursor: pointer; text-decoration: none;">Bug Report & Feature Request</a>
                 </td>
             </tr>
         </table>
