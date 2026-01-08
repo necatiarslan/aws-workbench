@@ -39,57 +39,57 @@ export class SqsService implements IService {
         };
 
         context.subscriptions.push(
-            vscode.commands.registerCommand('SqsTreeView.Refresh', () => {
+            vscode.commands.registerCommand('aws-workbench.sqs.Refresh', () => {
                 this.Refresh();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.Filter', async () => {
+            vscode.commands.registerCommand('aws-workbench.sqs.Filter', async () => {
                 await this.Filter();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.ShowOnlyFavorite', async () => {
+            vscode.commands.registerCommand('aws-workbench.sqs.ShowOnlyFavorite', async () => {
                 await this.ShowOnlyFavorite();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.ShowHiddenNodes', async () => {
+            vscode.commands.registerCommand('aws-workbench.sqs.ShowHiddenNodes', async () => {
                 await this.ShowHiddenNodes();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.AddToFav', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.AddToFav', (node: any) => {
                 this.AddToFav(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.DeleteFromFav', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.DeleteFromFav', (node: any) => {
                 this.DeleteFromFav(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.HideNode', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.HideNode', (node: any) => {
                 this.HideNode(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.UnHideNode', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.UnHideNode', (node: any) => {
                 this.UnHideNode(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.AddQueue', async () => {
+            vscode.commands.registerCommand('aws-workbench.sqs.AddQueue', async () => {
                 await this.AddQueue();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.RemoveQueue', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.RemoveQueue', async (node: any) => {
                 await this.RemoveQueue(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.PurgeQueue', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.PurgeQueue', async (node: any) => {
                 await this.PurgeQueue(wrap(node));
             }),
-            vscode.commands.registerCommand('SqsTreeView.SendMessage', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.SendMessage', async (node: any) => {
                 await this.SendMessage(wrap(node));
             }),
-            vscode.commands.registerCommand('SqsTreeView.ReceiveMessage', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.ReceiveMessage', async (node: any) => {
                 await this.ReceiveMessage(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SqsTreeView.DeleteMessage', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sqs.DeleteMessage', async (node: any) => {
                 await this.DeleteMessage(wrap(node));
                 treeProvider.refresh();
             })

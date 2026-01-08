@@ -42,97 +42,97 @@ export class S3Service implements IService {
         };
 
         context.subscriptions.push(
-            vscode.commands.registerCommand('S3TreeView.Refresh', () => {
+            vscode.commands.registerCommand('aws-workbench.s3.Refresh', () => {
                 this.Refresh();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.Filter', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.Filter', async () => {
                 await this.Filter();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.ShowOnlyFavorite', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.ShowOnlyFavorite', async () => {
                 await this.ShowOnlyFavorite();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.ShowHiddenNodes', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.ShowHiddenNodes', async () => {
                 await this.ShowHiddenNodes();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.AddToFav', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.AddToFav', (node: any) => {
                 this.AddToFav(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.DeleteFromFav', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.DeleteFromFav', (node: any) => {
                 this.DeleteFromFav(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.HideNode', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.HideNode', (node: any) => {
                 this.HideNode(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.UnHideNode', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.UnHideNode', (node: any) => {
                 this.UnHideNode(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.ShowOnlyInThisProfile', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.ShowOnlyInThisProfile', (node: any) => {
                 this.ShowOnlyInThisProfile(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.ShowInAnyProfile', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.ShowInAnyProfile', (node: any) => {
                 this.ShowInAnyProfile(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.AddBucket', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.AddBucket', async () => {
                 await this.AddBucket();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.RemoveBucket', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.RemoveBucket', async (node: any) => {
                 await this.RemoveBucket(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.Goto', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.Goto', async (node: any) => {
                 await this.Goto(wrap(node));
             }),
-            vscode.commands.registerCommand('S3TreeView.RemoveShortcut', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.RemoveShortcut', async (node: any) => {
                 await this.RemoveShortcut(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.AddShortcut', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.AddShortcut', async (node: any) => {
                 await this.AddShortcut(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.CopyShortcut', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.CopyShortcut', async (node: any) => {
                 await this.CopyShortcut(wrap(node));
             }),
-            vscode.commands.registerCommand('S3TreeView.ShowS3Explorer', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.ShowS3Explorer', (node: any) => {
                 this.ShowS3Explorer(wrap(node));
             }),
-            vscode.commands.registerCommand('S3TreeView.ShowS3Search', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.ShowS3Search', (node: any) => {
                 this.ShowS3Search(wrap(node));
             }),
-            vscode.commands.registerCommand('S3TreeView.SelectAwsProfile', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.s3.SelectAwsProfile', async (node: any) => {
                 await this.SelectAwsProfile(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.UpdateAwsEndPoint', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.UpdateAwsEndPoint', async () => {
                 await this.UpdateAwsEndPoint();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.SetAwsRegion', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.SetAwsRegion', async () => {
                 await this.SetAwsRegion();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('S3TreeView.TestAwsConnection', () => {
+            vscode.commands.registerCommand('aws-workbench.s3.TestAwsConnection', () => {
                 this.TestAwsConnection();
             }),
-            vscode.commands.registerCommand('S3TreeView.ActivatePro', () => {
+            vscode.commands.registerCommand('aws-workbench.s3.ActivatePro', () => {
                 if (Session.Current?.IsProVersion) {
                     ui.showInfoMessage('You already have an active Pro license!');
                     return;
                 }
                 vscode.env.openExternal(vscode.Uri.parse('https://necatiarslan.lemonsqueezy.com/checkout/buy/dcdda46a-2137-44cc-a9d9-30dfc75070cf'));
             }),
-            vscode.commands.registerCommand('S3TreeView.EnterLicenseKey', async () => {
+            vscode.commands.registerCommand('aws-workbench.s3.EnterLicenseKey', async () => {
                 if (Session.Current?.IsProVersion) {
                     ui.showInfoMessage('You already have an active Pro license!');
                     return;
@@ -180,7 +180,7 @@ export class S3Service implements IService {
         return await this.AddBucket();
     }
 
-    // Logic moved from S3TreeView
+    // Logic moved from aws-workbench.s3
 
     async TestAwsConnection() {
         let response = await api.TestAwsCredentials();

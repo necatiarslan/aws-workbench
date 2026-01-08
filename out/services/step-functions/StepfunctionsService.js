@@ -34,34 +34,34 @@ class StepfunctionsService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('StepFuncTreeView.Refresh', () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.step-functions.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.Filter', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.Filter', async () => {
             await this.Filter();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.ShowOnlyFavorite', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.ShowOnlyFavorite', async () => {
             await this.ShowOnlyFavorite();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.ShowHiddenNodes', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.ShowHiddenNodes', async () => {
             await this.ShowHiddenNodes();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.AddToFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.AddToFav', (node) => {
             this.AddToFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.DeleteFromFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.DeleteFromFav', (node) => {
             this.DeleteFromFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.HideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.HideNode', (node) => {
             this.HideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.UnHideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.UnHideNode', (node) => {
             this.UnHideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.AddStepFunc', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.AddStepFunc', async () => {
             await this.AddStepFunc();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('StepFuncTreeView.RemoveStepFunc', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.step-functions.RemoveStepFunc', async (node) => {
             await this.RemoveStepFunc(wrap(node));
             treeProvider.refresh();
         }));

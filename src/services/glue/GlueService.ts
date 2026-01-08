@@ -41,23 +41,23 @@ export class GlueService implements IService {
         };
 
         context.subscriptions.push(
-            vscode.commands.registerCommand('GlueTreeView.Refresh', () => {
+            vscode.commands.registerCommand('aws-workbench.glue.Refresh', () => {
                 this.Refresh();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('GlueTreeView.Filter', async () => {
+            vscode.commands.registerCommand('aws-workbench.glue.Filter', async () => {
                 await this.Filter();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('GlueTreeView.AddGlueJob', async () => {
+            vscode.commands.registerCommand('aws-workbench.glue.AddGlueJob', async () => {
                 await this.AddGlueJob();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('GlueTreeView.RemoveGlueJob', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.glue.RemoveGlueJob', async (node: any) => {
                 await this.RemoveGlueJob(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('GlueTreeView.ViewLog', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.glue.ViewLog', (node: any) => {
                 this.ViewLog(wrap(node));
             })
         );

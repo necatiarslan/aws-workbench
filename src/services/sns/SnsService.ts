@@ -38,47 +38,47 @@ export class SnsService implements IService {
         };
 
         context.subscriptions.push(
-            vscode.commands.registerCommand('SnsTreeView.Refresh', () => {
+            vscode.commands.registerCommand('aws-workbench.sns.Refresh', () => {
                 this.Refresh();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.Filter', async () => {
+            vscode.commands.registerCommand('aws-workbench.sns.Filter', async () => {
                 await this.Filter();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.ShowOnlyFavorite', async () => {
+            vscode.commands.registerCommand('aws-workbench.sns.ShowOnlyFavorite', async () => {
                 await this.ShowOnlyFavorite();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.ShowHiddenNodes', async () => {
+            vscode.commands.registerCommand('aws-workbench.sns.ShowHiddenNodes', async () => {
                 await this.ShowHiddenNodes();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.AddToFav', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sns.AddToFav', (node: any) => {
                 this.AddToFav(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.DeleteFromFav', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sns.DeleteFromFav', (node: any) => {
                 this.DeleteFromFav(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.HideNode', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sns.HideNode', (node: any) => {
                 this.HideNode(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.UnHideNode', (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sns.UnHideNode', (node: any) => {
                 this.UnHideNode(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.AddTopic', async () => {
+            vscode.commands.registerCommand('aws-workbench.sns.AddTopic', async () => {
                 await this.AddTopic();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.RemoveTopic', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sns.RemoveTopic', async (node: any) => {
                 await this.RemoveTopic(wrap(node));
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('SnsTreeView.PublishMessage', async (node: any) => {
+            vscode.commands.registerCommand('aws-workbench.sns.PublishMessage', async (node: any) => {
                 await this.PublishMessage(wrap(node));
             })
         );

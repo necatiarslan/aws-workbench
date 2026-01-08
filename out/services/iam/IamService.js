@@ -32,34 +32,34 @@ class IamService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('IamTreeView.Refresh', () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.iam.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.Filter', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.Filter', async () => {
             await this.Filter();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.ShowOnlyFavorite', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.ShowOnlyFavorite', async () => {
             await this.ShowOnlyFavorite();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.ShowHiddenNodes', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.ShowHiddenNodes', async () => {
             await this.ShowHiddenNodes();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.AddToFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.AddToFav', (node) => {
             this.AddToFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.DeleteFromFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.DeleteFromFav', (node) => {
             this.DeleteFromFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.HideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.HideNode', (node) => {
             this.HideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.UnHideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.UnHideNode', (node) => {
             this.UnHideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.AddIamRole', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.AddIamRole', async () => {
             await this.AddIamRole();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('IamTreeView.RemoveIamRole', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.iam.RemoveIamRole', async (node) => {
             await this.RemoveIamRole(wrap(node));
             treeProvider.refresh();
         }));

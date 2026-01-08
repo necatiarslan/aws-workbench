@@ -219,7 +219,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			readCapacityItem.ReadCapacity = details.readCapacity;
 			readCapacityItem.tooltip = 'Click for read capacity details';
 			readCapacityItem.command = {
-				command: 'DynamodbTreeView.showCapacityExplanation',
+				command: 'aws-workbench.dynamodb.showCapacityExplanation',
 				title: 'Show Capacity Explanation',
 				arguments: [readCapacityItem, 'read']
 			};
@@ -236,7 +236,7 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 			writeCapacityItem.WriteCapacity = details.writeCapacity;
 			writeCapacityItem.tooltip = 'Click for write capacity details';
 			writeCapacityItem.command = {
-				command: 'DynamodbTreeView.showCapacityExplanation',
+				command: 'aws-workbench.dynamodb.showCapacityExplanation',
 				title: 'Show Capacity Explanation',
 				arguments: [writeCapacityItem, 'write']
 			};

@@ -73,11 +73,11 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 
 				// Log nodes
 				let outLog = new GlueTreeItem("View Output Logs", TreeItemType.LogStream, element.Region, run.Id, vscode.TreeItemCollapsibleState.None, undefined, element, { LogGroupName: "/aws-glue/jobs/output" });
-				outLog.command = { command: 'GlueTreeView.ViewLog', title: 'View Log', arguments: [outLog] };
+				outLog.command = { command: 'aws-workbench.glue.ViewLog', title: 'View Log', arguments: [outLog] };
 				children.push(outLog);
 
 				let errLog = new GlueTreeItem("View Error Logs", TreeItemType.LogStream, element.Region, run.Id, vscode.TreeItemCollapsibleState.None, undefined, element, { LogGroupName: "/aws-glue/jobs/error" });
-				errLog.command = { command: 'GlueTreeView.ViewLog', title: 'View Log', arguments: [errLog] };
+				errLog.command = { command: 'aws-workbench.glue.ViewLog', title: 'View Log', arguments: [errLog] };
 				children.push(errLog);
 
 				// Arguments node

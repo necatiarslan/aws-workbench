@@ -35,19 +35,19 @@ class GlueService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('GlueTreeView.Refresh', () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.glue.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('GlueTreeView.Filter', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.glue.Filter', async () => {
             await this.Filter();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('GlueTreeView.AddGlueJob', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.glue.AddGlueJob', async () => {
             await this.AddGlueJob();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('GlueTreeView.RemoveGlueJob', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.glue.RemoveGlueJob', async (node) => {
             await this.RemoveGlueJob(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('GlueTreeView.ViewLog', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.glue.ViewLog', (node) => {
             this.ViewLog(wrap(node));
         }));
     }

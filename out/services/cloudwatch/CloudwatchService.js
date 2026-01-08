@@ -33,34 +33,34 @@ class CloudwatchService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('CloudWatchTreeView.Refresh', () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.cloudwatch.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.Filter', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.Filter', async () => {
             await this.Filter();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.ShowOnlyFavorite', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.ShowOnlyFavorite', async () => {
             await this.ShowOnlyFavorite();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.ShowHiddenNodes', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.ShowHiddenNodes', async () => {
             await this.ShowHiddenNodes();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.AddToFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.AddToFav', (node) => {
             this.AddToFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.DeleteFromFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.DeleteFromFav', (node) => {
             this.DeleteFromFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.HideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.HideNode', (node) => {
             this.HideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.UnHideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.UnHideNode', (node) => {
             this.UnHideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.AddLogGroup', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.AddLogGroup', async () => {
             await this.AddLogGroup();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('CloudWatchTreeView.RemoveLogGroup', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.RemoveLogGroup', async (node) => {
             await this.RemoveLogGroup(wrap(node));
             treeProvider.refresh();
         }));

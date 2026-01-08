@@ -34,49 +34,49 @@ class LambdaService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('LambdaTreeView.Refresh', () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.lambda.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.AddLambda', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.AddLambda', async () => {
             await this.AddLambda();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.Filter', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.Filter', async () => {
             await this.Filter();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.ShowOnlyFavorite', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.ShowOnlyFavorite', async () => {
             await this.ShowOnlyFavorite();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.ShowHiddenNodes', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.ShowHiddenNodes', async () => {
             await this.ShowHiddenNodes();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.AddToFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.AddToFav', (node) => {
             this.AddToFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.DeleteFromFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.DeleteFromFav', (node) => {
             this.DeleteFromFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.HideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.HideNode', (node) => {
             this.HideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.UnHideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.UnHideNode', (node) => {
             this.UnHideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.RemoveLambda', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.RemoveLambda', async (node) => {
             await this.RemoveLambda(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('LambdaTreeView.Goto', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.Goto', (node) => {
             this.Goto(wrap(node));
-        }), vscode.commands.registerCommand('LambdaTreeView.TriggerLambda', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.TriggerLambda', (node) => {
             this.TriggerLambda(wrap(node));
-        }), vscode.commands.registerCommand('LambdaTreeView.ViewLatestLog', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.ViewLatestLog', (node) => {
             this.ViewLatestLog(wrap(node));
-        }), vscode.commands.registerCommand('LambdaTreeView.LambdaView', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.LambdaView', (node) => {
             this.LambdaView(wrap(node));
-        }), vscode.commands.registerCommand('LambdaTreeView.PrintLambda', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.PrintLambda', async (node) => {
             await this.PrintLambda(wrap(node));
-        }), vscode.commands.registerCommand('LambdaTreeView.UpdateLambdaCodes', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.UpdateLambdaCodes', async (node) => {
             await this.UpdateLambdaCodes(wrap(node));
-        }), vscode.commands.registerCommand('LambdaTreeView.DownloadLambdaCode', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.lambda.DownloadLambdaCode', async (node) => {
             await this.DownloadLambdaCode(wrap(node));
         }));
     }

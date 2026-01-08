@@ -32,34 +32,34 @@ class DynamodbService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('DynamodbTreeView.Refresh', () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.dynamodb.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.Filter', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.Filter', async () => {
             await this.Filter();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.ShowOnlyFavorite', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.ShowOnlyFavorite', async () => {
             await this.ShowOnlyFavorite();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.ShowHiddenNodes', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.ShowHiddenNodes', async () => {
             await this.ShowHiddenNodes();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.AddToFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.AddToFav', (node) => {
             this.AddToFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.DeleteFromFav', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.DeleteFromFav', (node) => {
             this.DeleteFromFav(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.HideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.HideNode', (node) => {
             this.HideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.UnHideNode', (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.UnHideNode', (node) => {
             this.UnHideNode(wrap(node));
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.AddDynamodb', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.AddDynamodb', async () => {
             await this.AddDynamodb();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('DynamodbTreeView.RemoveDynamodb', async (node) => {
+        }), vscode.commands.registerCommand('aws-workbench.dynamodb.RemoveDynamodb', async (node) => {
             await this.RemoveDynamodb(wrap(node));
             treeProvider.refresh();
         }));
