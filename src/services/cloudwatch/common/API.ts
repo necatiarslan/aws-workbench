@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as ui from "../../../common/UI";
-import { MethodResult } from './MethodResult';
+import { MethodResult } from '../../../common/MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join } from "path";

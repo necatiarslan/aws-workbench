@@ -4,7 +4,7 @@ exports.TestAwsConnection = TestAwsConnection;
 const client_sts_1 = require("@aws-sdk/client-sts");
 const ui = require("../../../common/UI");
 const Session_1 = require("../common/Session");
-const MethodResult_1 = require("../common/MethodResult");
+const MethodResult_1 = require("../../../common/MethodResult");
 const api = require("../common/API");
 async function GetSTSClient(region) {
     const credentials = await api.GetCredentials();

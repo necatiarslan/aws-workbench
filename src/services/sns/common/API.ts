@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 import { SNSClient, ListTopicsCommand } from "@aws-sdk/client-sns";
-import * as ui from "./UI";
-import { MethodResult } from './MethodResult';
+import * as ui from "../../../common/UI";
+import { MethodResult } from '../../../common/MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
-import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
+import { parseKnownFiles, SourceProfileInit } from "../../../common/aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import { SnsService } from '../SnsService';
 import * as fs from 'fs';

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { MethodResult } from './MethodResult';
+import { MethodResult } from '../../../common/MethodResult';
 
 var outputChannel: vscode.OutputChannel;
 var logsOutputChannel: vscode.OutputChannel;

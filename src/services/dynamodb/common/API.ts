@@ -20,7 +20,7 @@ import {
 import { CloudWatchLogsClient, OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import { IAMClient } from "@aws-sdk/client-iam";
 import * as ui from "../../../common/UI";
-import { MethodResult } from './MethodResult';
+import { MethodResult } from '../../../common/MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join, basename, extname, dirname } from "path";

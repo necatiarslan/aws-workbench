@@ -21,7 +21,7 @@ exports.CopyListToClipboard = CopyListToClipboard;
 const vscode = require("vscode");
 const fs_1 = require("fs");
 const path_1 = require("path");
-const MethodResult_1 = require("./MethodResult");
+const MethodResult_1 = require("../../../common/MethodResult");
 var outputChannel;
 var logsOutputChannel;
 var NEW_LINE = " | ";

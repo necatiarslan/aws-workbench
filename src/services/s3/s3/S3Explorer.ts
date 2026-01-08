@@ -8,7 +8,7 @@ import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
 import { S3Search } from "./S3Search";
 import { ListObjectsV2CommandOutput } from "@aws-sdk/client-s3";
-import { MethodResult } from '../common/MethodResult';
+import { MethodResult } from '../../../common/MethodResult';
 import { Telemetry } from "../common/Telemetry";
 import * as fs from 'fs';
 import * as os from 'os';

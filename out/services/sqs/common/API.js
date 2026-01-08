@@ -21,12 +21,12 @@ exports.getIniProfileData = getIniProfileData;
 /* eslint-disable @typescript-eslint/naming-convention */
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 const client_sqs_1 = require("@aws-sdk/client-sqs");
-const ui = require("./UI");
-const MethodResult_1 = require("./MethodResult");
+const ui = require("../../../common/UI");
+const MethodResult_1 = require("../../../common/MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
+const parseKnownFiles_1 = require("../../../common/aws-sdk/parseKnownFiles");
 const SqsService_1 = require("../SqsService");
 const fs = require("fs");
 const archiver = require("archiver");

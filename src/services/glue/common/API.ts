@@ -5,7 +5,7 @@ import { GlueClient, GetJobsCommand, StartJobRunCommand, GetJobRunCommand, GetJo
 import { CloudWatchLogsClient, OutputLogEvent, DescribeLogStreamsCommand, GetLogEventsCommand, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import * as ui from "../../../common/UI";
-import { MethodResult } from './MethodResult';
+import { MethodResult } from '../../../common/MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join, basename, extname, dirname } from "path";
