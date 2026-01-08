@@ -2,16 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Service = void 0;
 const vscode = require("vscode");
-const S3TreeDataProvider_1 = require("./s3/S3TreeDataProvider");
-const S3TreeItem_1 = require("./s3/S3TreeItem");
+const S3TreeDataProvider_1 = require("./S3TreeDataProvider");
+const S3TreeItem_1 = require("./S3TreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
-const S3Explorer_1 = require("./s3/S3Explorer");
-const S3Search_1 = require("./s3/S3Search");
-const Telemetry_1 = require("./common/Telemetry");
-const Session_1 = require("./common/Session");
-const License_1 = require("./common/License");
+const api = require("./API");
+const S3Explorer_1 = require("./S3Explorer");
+const S3Search_1 = require("./S3Search");
+const Telemetry_1 = require("./Telemetry");
+const Session_1 = require("./Session");
+const License_1 = require("./License");
 class S3Service {
     static Instance;
     serviceId = 's3';

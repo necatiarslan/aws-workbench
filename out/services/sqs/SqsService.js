@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SqsService = void 0;
 const vscode = require("vscode");
-const SqsTreeDataProvider_1 = require("./sqs/SqsTreeDataProvider");
-const SqsTreeItem_1 = require("./sqs/SqsTreeItem");
+const SqsTreeDataProvider_1 = require("./SqsTreeDataProvider");
+const SqsTreeItem_1 = require("./SqsTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class SqsService {
     static Instance;
     serviceId = 'sqs';

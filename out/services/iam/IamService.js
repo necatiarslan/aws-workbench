@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IamService = void 0;
 const vscode = require("vscode");
-const IamTreeDataProvider_1 = require("./iam/IamTreeDataProvider");
-const IamTreeItem_1 = require("./iam/IamTreeItem");
+const IamTreeDataProvider_1 = require("./IamTreeDataProvider");
+const IamTreeItem_1 = require("./IamTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class IamService {
     static Instance;
     serviceId = 'iam';

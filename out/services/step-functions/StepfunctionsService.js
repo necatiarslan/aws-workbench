@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepfunctionsService = void 0;
 const vscode = require("vscode");
-const StepFuncTreeDataProvider_1 = require("./step/StepFuncTreeDataProvider");
-const StepFuncTreeItem_1 = require("./step/StepFuncTreeItem");
+const StepFuncTreeDataProvider_1 = require("./StepFuncTreeDataProvider");
+const StepFuncTreeItem_1 = require("./StepFuncTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class StepfunctionsService {
     static Instance;
     serviceId = 'stepfunctions';

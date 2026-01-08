@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { StepFuncTreeDataProvider } from './step/StepFuncTreeDataProvider';
-import { StepFuncTreeItem, TreeItemType } from './step/StepFuncTreeItem';
+import { StepFuncTreeDataProvider } from './StepFuncTreeDataProvider';
+import { StepFuncTreeItem, TreeItemType } from './StepFuncTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class StepfunctionsService implements IService {
     public static Instance: StepfunctionsService;

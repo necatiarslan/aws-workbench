@@ -4,13 +4,13 @@ exports.S3Search = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const ui = require("../../../common/UI");
-const api = require("../common/API");
+const api = require("../API");
 const S3Service_1 = require("../S3Service");
 const S3TreeItem_1 = require("./S3TreeItem");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
 const S3Explorer_1 = require("./S3Explorer");
-const Telemetry_1 = require("../common/Telemetry");
+const Telemetry_1 = require("../Telemetry");
 class S3Search {
     static Current;
     _panel;

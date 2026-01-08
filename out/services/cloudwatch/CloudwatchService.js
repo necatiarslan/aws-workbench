@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudwatchService = void 0;
 const vscode = require("vscode");
-const CloudWatchTreeDataProvider_1 = require("./cloudwatch/CloudWatchTreeDataProvider");
-const CloudWatchTreeItem_1 = require("./cloudwatch/CloudWatchTreeItem");
+const CloudWatchTreeDataProvider_1 = require("./CloudWatchTreeDataProvider");
+const CloudWatchTreeItem_1 = require("./CloudWatchTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class CloudwatchService {
     static Instance;
     serviceId = 'cloudwatch';

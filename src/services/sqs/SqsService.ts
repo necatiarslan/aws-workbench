@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { SqsTreeDataProvider } from './sqs/SqsTreeDataProvider';
-import { SqsTreeItem, TreeItemType } from './sqs/SqsTreeItem';
+import { SqsTreeDataProvider } from './SqsTreeDataProvider';
+import { SqsTreeItem, TreeItemType } from './SqsTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class SqsService implements IService {
     public static Instance: SqsService;

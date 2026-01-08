@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GlueService = void 0;
 const vscode = require("vscode");
-const GlueTreeDataProvider_1 = require("./glue/GlueTreeDataProvider");
-const GlueTreeItem_1 = require("./glue/GlueTreeItem");
+const GlueTreeDataProvider_1 = require("./GlueTreeDataProvider");
+const GlueTreeItem_1 = require("./GlueTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class GlueService {
     static Instance;
     serviceId = 'glue';

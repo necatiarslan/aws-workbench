@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { CloudWatchTreeDataProvider } from './cloudwatch/CloudWatchTreeDataProvider';
-import { CloudWatchTreeItem, TreeItemType } from './cloudwatch/CloudWatchTreeItem';
+import { CloudWatchTreeDataProvider } from './CloudWatchTreeDataProvider';
+import { CloudWatchTreeItem, TreeItemType } from './CloudWatchTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class CloudwatchService implements IService {
     public static Instance: CloudwatchService;

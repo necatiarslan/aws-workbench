@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { GlueTreeDataProvider } from './glue/GlueTreeDataProvider';
-import { GlueTreeItem, TreeItemType } from './glue/GlueTreeItem';
+import { GlueTreeDataProvider } from './GlueTreeDataProvider';
+import { GlueTreeItem, TreeItemType } from './GlueTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class GlueService implements IService {
     public static Instance: GlueService;

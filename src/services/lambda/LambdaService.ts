@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { LambdaTreeItem, TreeItemType } from './lambda/LambdaTreeItem';
+import { LambdaTreeItem, TreeItemType } from './LambdaTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import { LambdaTreeDataProvider } from './lambda/LambdaTreeDataProvider';
+import { LambdaTreeDataProvider } from './LambdaTreeDataProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class LambdaService implements IService {
     public static Instance: LambdaService;

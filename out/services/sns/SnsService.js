@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SnsService = void 0;
 const vscode = require("vscode");
-const SnsTreeDataProvider_1 = require("./sns/SnsTreeDataProvider");
-const SnsTreeItem_1 = require("./sns/SnsTreeItem");
+const SnsTreeDataProvider_1 = require("./SnsTreeDataProvider");
+const SnsTreeItem_1 = require("./SnsTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class SnsService {
     static Instance;
     serviceId = 'sns';

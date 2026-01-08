@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { IamTreeDataProvider } from './iam/IamTreeDataProvider';
-import { IamTreeItem, TreeItemType } from './iam/IamTreeItem';
+import { IamTreeDataProvider } from './IamTreeDataProvider';
+import { IamTreeItem, TreeItemType } from './IamTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class IamService implements IService {
     public static Instance: IamService;

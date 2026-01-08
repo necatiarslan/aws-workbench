@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { SnsTreeDataProvider } from './sns/SnsTreeDataProvider';
-import { SnsTreeItem, TreeItemType } from './sns/SnsTreeItem';
+import { SnsTreeDataProvider } from './SnsTreeDataProvider';
+import { SnsTreeItem, TreeItemType } from './SnsTreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
+import * as api from './API';
 
 export class SnsService implements IService {
     public static Instance: SnsService;

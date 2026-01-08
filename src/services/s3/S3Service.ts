@@ -1,16 +1,16 @@
 import * as vscode from 'vscode';
 import { IService } from '../IService';
-import { S3TreeDataProvider } from './s3/S3TreeDataProvider';
-import { S3TreeItem, TreeItemType } from './s3/S3TreeItem';
+import { S3TreeDataProvider } from './S3TreeDataProvider';
+import { S3TreeItem, TreeItemType } from './S3TreeItem';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
-import * as api from './common/API';
-import { S3Explorer } from './s3/S3Explorer';
-import { S3Search } from './s3/S3Search';
-import { Telemetry } from './common/Telemetry';
-import { Session } from './common/Session';
-import { isLicenseValid, promptForLicense } from "./common/License";
+import * as api from './API';
+import { S3Explorer } from './S3Explorer';
+import { S3Search } from './S3Search';
+import { Telemetry } from './Telemetry';
+import { Session } from './Session';
+import { isLicenseValid, promptForLicense } from "./License";
 
 export class S3Service implements IService {
     public static Instance: S3Service;

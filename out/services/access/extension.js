@@ -4,7 +4,7 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = require("vscode");
 const ui = require("../../common/UI");
-const StatusBar = require("./access/StatusBarItem");
+const StatusBar = require("./StatusBarItem");
 function activate(context) {
     ui.logToOutput('Aws Access is now active!');
     new StatusBar.StatusBarItem(context);

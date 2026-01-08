@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaService = void 0;
 const vscode = require("vscode");
-const LambdaTreeItem_1 = require("./lambda/LambdaTreeItem");
+const LambdaTreeItem_1 = require("./LambdaTreeItem");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
-const LambdaTreeDataProvider_1 = require("./lambda/LambdaTreeDataProvider");
+const LambdaTreeDataProvider_1 = require("./LambdaTreeDataProvider");
 const ui = require("../../common/UI");
-const api = require("./common/API");
+const api = require("./API");
 class LambdaService {
     static Instance;
     serviceId = 'lambda';
