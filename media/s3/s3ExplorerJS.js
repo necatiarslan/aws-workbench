@@ -7,11 +7,6 @@ const SearchTextBox = document.getElementById("search_text");
 function main() {
   SearchTextBox.addEventListener("keydown", SearchTextBoxKeyDown);
 
-  const AskAIButton = document.getElementById("ask_ai");
-  if (AskAIButton) {
-    AskAIButton.addEventListener("click", AskAIButtonClicked);
-  }
-
   const RefreshButton = document.getElementById("refresh");
   RefreshButton.addEventListener("click", RefreshButtonClicked);
 
@@ -171,12 +166,6 @@ function RefreshButtonClicked() {
   vscode.postMessage({
     command: "refresh",
     search_text: SearchTextBox._value
-  });
-}
-
-function AskAIButtonClicked() {
-  vscode.postMessage({
-    command: "ask_ai"
   });
 }
 

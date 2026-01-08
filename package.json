@@ -211,11 +211,6 @@
         "title": "Enter License Key"
       },
       {
-        "command": "aws-workbench.s3.AskAI",
-        "title": "Ask AI",
-        "icon": "$(comment-discussion)"
-      },
-      {
         "command": "aws-workbench.sqs.Refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
@@ -1262,752 +1257,747 @@
       "view/item/context": [
         {
           "command": "aws-workbench.s3.RemoveBucket",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Bucket#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Bucket#/",
           "group": "Bucket"
         },
         {
           "command": "aws-workbench.s3.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Bucket#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Bucket#/",
           "group": "Bucket"
         },
         {
           "command": "aws-workbench.s3.RemoveShortcut",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Shortcut#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Shortcut#/",
           "group": "Shortcut"
         },
         {
           "command": "aws-workbench.s3.AddShortcut",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Bucket#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Bucket#/",
           "group": "Shortcut"
         },
         {
           "command": "aws-workbench.s3.CopyShortcut",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Shortcut#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Shortcut#/",
           "group": "Shortcut"
         },
         {
           "command": "aws-workbench.s3.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#!Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#!Fav#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.s3.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Fav#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.s3.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#!Hidden#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#!Hidden#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.s3.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Hidden#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Hidden#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.s3.ShowOnlyInThisProfile",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#NoProfile#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#NoProfile#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.s3.ShowInAnyProfile",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Profile#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Profile#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.s3.RenameFolder",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Folder#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Folder#/",
           "group": "Folder"
         },
         {
           "command": "aws-workbench.s3.RemoveFolder",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Folder#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Folder#/",
           "group": "Folder"
         },
         {
           "command": "aws-workbench.s3.ShowS3Explorer",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.s3.ShowS3Search",
-          "when": "view == AwsWorkbenchTree",
-          "group": "inline"
-        },
-        {
-          "command": "aws-workbench.s3.AskAI",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sqs.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sqs.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sqs.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sqs.RemoveQueue",
-          "when": "view == AwsWorkbenchTree && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
           "group": "Queue"
         },
         {
           "command": "aws-workbench.sqs.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == Queue",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
           "group": "Queue"
         },
         {
           "command": "aws-workbench.sqs.SendMessage",
-          "when": "view == AwsWorkbenchTree && (viewItem == Queue || viewItem == Queue || viewItem == PublishAdhoc || viewItem == PublishFile)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && (viewItem =~ /Queue#/ || viewItem =~ /PublishAdhoc#/ || viewItem =~ /PublishFile#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.AddMessageFilePath",
-          "when": "view == AwsWorkbenchTree && viewItem == PublishGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /PublishGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.ReceiveMessage",
-          "when": "view == AwsWorkbenchTree && viewItem == ReceiveGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /ReceiveGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.DeleteAllMessages",
-          "when": "view == AwsWorkbenchTree && viewItem == ReceiveGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /ReceiveGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.GetMessageCount",
-          "when": "view == AwsWorkbenchTree && viewItem == ReceiveGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /ReceiveGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.PreviewMessage",
-          "when": "view == AwsWorkbenchTree && (viewItem == ReceivedMessage || viewItem == DeletedMessage)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && (viewItem =~ /ReceivedMessage#/ || viewItem =~ /DeletedMessage#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.DeleteMessage",
-          "when": "view == AwsWorkbenchTree && viewItem == ReceivedMessage",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /ReceivedMessage#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.PreviewPolicy",
-          "when": "view == AwsWorkbenchTree && viewItem == Policy",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Policy#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sqs.RemoveMessageFilePath",
-          "when": "view == AwsWorkbenchTree && viewItem == PublishFile",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /PublishFile#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sns.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sns.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sns.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sns.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.sns.RemoveTopic",
-          "when": "view == AwsWorkbenchTree && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Topic"
         },
         {
           "command": "aws-workbench.sns.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == Topic",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Topic"
         },
         {
           "command": "aws-workbench.sns.PublishMessage",
-          "when": "view == AwsWorkbenchTree && (viewItem == Topic || viewItem == Topic || viewItem == PublishAdhoc || viewItem == PublishFile)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && (viewItem =~ /Topic#/ || viewItem =~ /PublishAdhoc#/ || viewItem =~ /PublishFile#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sns.AddMessageFilePath",
-          "when": "view == AwsWorkbenchTree && viewItem == PublishGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /PublishGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sns.RemoveMessageFilePath",
-          "when": "view == AwsWorkbenchTree && viewItem == PublishFile",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /PublishFile#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.sns.GetSubscriptions",
-          "when": "view == AwsWorkbenchTree && viewItem == SubscriptionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /SubscriptionGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.cloudwatch.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#!Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#!Fav#/",
           "group": "Fav"
         },
         {
           "command": "aws-workbench.cloudwatch.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Fav#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#Fav#/",
           "group": "Fav"
         },
         {
           "command": "aws-workbench.cloudwatch.RemoveLogGroup",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogGroup#/",
           "group": "LogGroup"
         },
         {
           "command": "aws-workbench.cloudwatch.AddLogStream",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "aws-workbench.cloudwatch.RemoveLogStream",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogStream#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogStream#/",
           "group": "LogStream"
         },
         {
           "command": "aws-workbench.cloudwatch.AddAllLogStreams",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "aws-workbench.cloudwatch.AddLogStreamsByDate",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "aws-workbench.cloudwatch.RemoveAllLogStreams",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogGroup#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogGroup#/",
           "group": "LogStream"
         },
         {
           "command": "aws-workbench.cloudwatch.ShowCloudWatchLogView",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogStream#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogStream#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.cloudwatch.PinLogStream",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#LogStream#/ && viewItem =~ /#NotPinned#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#LogStream#/ && viewItem =~ /#NotPinned#/",
           "group": "inline@2"
         },
         {
           "command": "aws-workbench.cloudwatch.RefreshDateNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Today#|#Yesterday#|#History#/",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#Today#|#Yesterday#|#History#/",
           "group": "inline@1"
         },
         {
           "command": "aws-workbench.dynamodb.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.dynamodb.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.dynamodb.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.dynamodb.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.dynamodb.RemoveDynamodb",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Dynamodb"
         },
         {
           "command": "aws-workbench.dynamodb.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Dynamodb"
         },
         {
           "command": "aws-workbench.dynamodb.PrintDynamodb",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.dynamodb.CreateTable",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/",
           "group": "navigation@5"
         },
         {
           "command": "aws-workbench.dynamodb.DeleteTable",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Dynamodb"
         },
         {
           "command": "aws-workbench.dynamodb.EditCapacity",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Dynamodb"
         },
         {
           "command": "aws-workbench.dynamodb.QueryTable",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Operations"
         },
         {
           "command": "aws-workbench.dynamodb.ScanTable",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Operations"
         },
         {
           "command": "aws-workbench.dynamodb.AddItem",
-          "when": "view == AwsWorkbenchTree && viewItem == Dynamodb",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Items"
         },
         {
           "command": "aws-workbench.iam.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.iam.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.iam.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.iam.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.iam.RemoveIamRole",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "IamRole"
         },
         {
           "command": "aws-workbench.iam.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "IamRole"
         },
         {
           "command": "aws-workbench.iam.PrintIamRole",
-          "when": "view == AwsWorkbenchTree && viewItem == IamRole",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.LoadPermissions",
-          "when": "view == AwsWorkbenchTree && viewItem == PermissionsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /PermissionsGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.ViewPolicy",
-          "when": "view == AwsWorkbenchTree && viewItem == Permission",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /Permission#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.DownloadPolicy",
-          "when": "view == AwsWorkbenchTree && viewItem == Permission",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /Permission#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.LoadTrustRelationships",
-          "when": "view == AwsWorkbenchTree && viewItem == TrustRelationshipsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /TrustRelationshipsGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.ViewTrustRelationship",
-          "when": "view == AwsWorkbenchTree && viewItem == TrustRelationship",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /TrustRelationship#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.DownloadTrustRelationship",
-          "when": "view == AwsWorkbenchTree && viewItem == TrustRelationship",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /TrustRelationship#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.LoadTags",
-          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /TagsGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.AddTag",
-          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /TagsGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.UpdateTag",
-          "when": "view == AwsWorkbenchTree && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /Tag#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.RemoveTag",
-          "when": "view == AwsWorkbenchTree && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /Tag#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.iam.LoadInfo",
-          "when": "view == AwsWorkbenchTree && viewItem == InfoGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /InfoGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.step-functions.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.step-functions.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.step-functions.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.step-functions.RemoveStepFunc",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "StepFunc"
         },
         {
           "command": "aws-workbench.step-functions.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "StepFunc"
         },
         {
           "command": "aws-workbench.step-functions.TriggerStepFunc",
-          "when": "view == AwsWorkbenchTree && (viewItem == StepFunc || viewItem == TriggerConfig || viewItem == TriggerSavedPayload || viewItem == TriggerWithPayload || viewItem == TriggerFilePayload || viewItem == TriggerNoPayload)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /StepFunc#/ || viewItem =~ /#TriggerGroup#/ || viewItem =~ /TriggerSavedPayload#/ || viewItem =~ /TriggerWithPayload#/ || viewItem =~ /TriggerFilePayload#/ || viewItem =~ /TriggerNoPayload#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.ViewLatestLog",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.PrintStepFunc",
-          "when": "view == AwsWorkbenchTree && viewItem == StepFunc",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.SetCodePath",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.UnsetCodePath",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.OpenCodeFile",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.DownloadDefinitionFromAWS",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.CompareLocalWithAWS",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.ViewCodeGraph",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.UpdateStepFuncCodes",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.AddPayloadPath",
-          "when": "view == AwsWorkbenchTree && viewItem == TriggerGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /TriggerGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.RemovePayloadPath",
-          "when": "view == AwsWorkbenchTree && viewItem == TriggerFilePayload",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /TriggerFilePayload#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.RefreshLogs",
-          "when": "view == AwsWorkbenchTree && viewItem == LogGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /LogGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.RefreshExecutions",
-          "when": "view == AwsWorkbenchTree && viewItem == ExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /ExecutionGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.RefreshRunningExecutions",
-          "when": "view == AwsWorkbenchTree && viewItem == RunningExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /RunningExecutionGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.RefreshSuccessfulExecutions",
-          "when": "view == AwsWorkbenchTree && viewItem == SuccessfulExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /SuccessfulExecutionGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.RefreshFailedExecutions",
-          "when": "view == AwsWorkbenchTree && viewItem == FailedExecutionGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /FailedExecutionGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.ViewLog",
-          "when": "view == AwsWorkbenchTree && viewItem == LogStream",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /LogStream#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.ViewResponsePayload",
-          "when": "view == AwsWorkbenchTree && viewItem == ResponsePayload",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /ResponsePayload#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.ViewExecutionDetails",
-          "when": "view == AwsWorkbenchTree && viewItem == Execution",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /Execution#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.step-functions.ViewExecutionLog",
-          "when": "view == AwsWorkbenchTree && viewItem == Execution",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /Execution#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.glue.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.glue.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.glue.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.glue.RemoveGlueJob",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Glue"
         },
         {
           "command": "aws-workbench.glue.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Glue"
         },
         {
           "command": "aws-workbench.glue.RunJob",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.ViewLatestLog",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.PrintResource",
-          "when": "view == AwsWorkbenchTree && viewItem == Job",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.RefreshLogs",
-          "when": "view == AwsWorkbenchTree && viewItem == LogGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /LogGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.RefreshRuns",
-          "when": "view == AwsWorkbenchTree && viewItem == RunGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /RunGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.RefreshJobInfo",
-          "when": "view == AwsWorkbenchTree && viewItem == Info",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /Info#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.glue.ViewLog",
-          "when": "view == AwsWorkbenchTree && viewItem == LogStream",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /LogStream#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.lambda.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.lambda.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.lambda.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "Filter"
         },
         {
           "command": "aws-workbench.lambda.RemoveLambda",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "Lambda"
         },
         {
           "command": "aws-workbench.lambda.Goto",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "Lambda"
         },
         {
           "command": "aws-workbench.lambda.TriggerLambda",
-          "when": "view == AwsWorkbenchTree && (viewItem == Lambda || viewItem == TriggerConfig || viewItem == TriggerSavedPayload || viewItem == TriggerWithPayload || viewItem == TriggerFilePayload || viewItem == TriggerNoPayload)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && (viewItem =~ /Lambda#/ || viewItem =~ /TriggerConfig#/ || viewItem =~ /TriggerSavedPayload#/ || viewItem =~ /TriggerWithPayload#/ || viewItem =~ /TriggerFilePayload#/ || viewItem =~ /TriggerNoPayload#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.ViewLatestLog",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.PrintLambda",
-          "when": "view == AwsWorkbenchTree && viewItem == Lambda",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.SetCodePath",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.UnsetCodePath",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.UpdateLambdaCodes",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.DownloadLambdaCode",
-          "when": "view == AwsWorkbenchTree && (viewItem == Code || viewItem == CodePath)",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && (viewItem =~ /Code#/ || viewItem =~ /CodePath#/)",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.AddPayloadPath",
-          "when": "view == AwsWorkbenchTree && viewItem == TriggerGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /TriggerGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.RemovePayloadPath",
-          "when": "view == AwsWorkbenchTree && viewItem == TriggerFilePayload",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /TriggerFilePayload#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.RefreshLogs",
-          "when": "view == AwsWorkbenchTree && viewItem == LogGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /LogGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.ViewLog",
-          "when": "view == AwsWorkbenchTree && viewItem == LogStream",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /LogStream#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.ViewResponsePayload",
-          "when": "view == AwsWorkbenchTree && viewItem == ResponsePayload",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /ResponsePayload#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.LoadEnvironmentVariables",
-          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariableGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /EnvironmentVariableGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.AddEnvironmentVariable",
-          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariableGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /EnvironmentVariableGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.UpdateEnvironmentVariable",
-          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariable",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /EnvironmentVariable#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.RemoveEnvironmentVariable",
-          "when": "view == AwsWorkbenchTree && viewItem == EnvironmentVariable",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /EnvironmentVariable#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.LoadTags",
-          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /TagsGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.AddTag",
-          "when": "view == AwsWorkbenchTree && viewItem == TagsGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /TagsGroup#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.UpdateTag",
-          "when": "view == AwsWorkbenchTree && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Tag#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.RemoveTag",
-          "when": "view == AwsWorkbenchTree && viewItem == Tag",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Tag#/",
           "group": "inline"
         },
         {
           "command": "aws-workbench.lambda.LoadInfo",
-          "when": "view == AwsWorkbenchTree && viewItem == InfoGroup",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /InfoGroup#/",
           "group": "inline"
         }
       ]

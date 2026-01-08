@@ -624,14 +624,7 @@ export class S3Explorer {
                         this.SearchText = message.search_text;
                         this.Load();
                         return;
-                    
-                    case "ask_ai":
-                        ui.logToOutput('S3Explorer.AskAI Started');
-
-
-
-                        return;
-
+            
                     case "search":
                         let node:S3TreeItem;
                         if(this.S3ExplorerItem.IsRoot())
