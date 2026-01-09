@@ -129,5 +129,7 @@ var TreeItemType;
     TreeItemType[TreeItemType["CloudWatchYesterday"] = 806] = "CloudWatchYesterday";
     TreeItemType[TreeItemType["CloudWatchHistory"] = 807] = "CloudWatchHistory";
     TreeItemType[TreeItemType["CloudWatchRefreshAction"] = 808] = "CloudWatchRefreshAction";
+    // FileSystem Service
+    TreeItemType[TreeItemType["FileSystemFolder"] = 900] = "FileSystemFolder";
 })(TreeItemType || (exports.TreeItemType = TreeItemType = {}));
 //# sourceMappingURL=TreeItemType.js.map

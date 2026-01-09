@@ -13,6 +13,7 @@ import { SnsService } from './services/sns/SnsService';
 import { SqsService } from './services/sqs/SqsService';
 import { StepfunctionsService } from './services/step-functions/StepfunctionsService';
 import { AccessService } from './services/access/AccessService';
+import { FileSystemService } from './services/filesystem/FileSystemService';
 
 /**
  * Activates the AWS Workbench extension.
@@ -34,6 +35,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
         // 2. Register our Service wrappers for the Unified Tree to fetch children from
         const serviceManager = ServiceManager.Instance;
+        serviceManager.registerService(new FileSystemService(context));
         serviceManager.registerService(new AccessService(context));
         serviceManager.registerService(new S3Service(context));
         serviceManager.registerService(new LambdaService(context));

@@ -133,5 +133,8 @@ export enum TreeItemType {
 	CloudWatchToday = 805,
 	CloudWatchYesterday = 806,
 	CloudWatchHistory = 807,
-	CloudWatchRefreshAction = 808,
+    CloudWatchRefreshAction = 808,
+    
+    // FileSystem Service
+    FileSystemFolder = 900
 }

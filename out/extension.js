@@ -15,6 +15,7 @@ const SnsService_1 = require("./services/sns/SnsService");
 const SqsService_1 = require("./services/sqs/SqsService");
 const StepfunctionsService_1 = require("./services/step-functions/StepfunctionsService");
 const AccessService_1 = require("./services/access/AccessService");
+const FileSystemService_1 = require("./services/filesystem/FileSystemService");
 /**
  * Activates the AWS Workbench extension.
  * Consolidates activation of all sub-services.
@@ -33,6 +34,7 @@ function activate(context) {
         context.subscriptions.push(treeView);
         // 2. Register our Service wrappers for the Unified Tree to fetch children from
         const serviceManager = ServiceManager_1.ServiceManager.Instance;
+        serviceManager.registerService(new FileSystemService_1.FileSystemService(context));
         serviceManager.registerService(new AccessService_1.AccessService(context));
         serviceManager.registerService(new S3Service_1.S3Service(context));
         serviceManager.registerService(new LambdaService_1.LambdaService(context));

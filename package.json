@@ -1244,6 +1244,26 @@
         "command": "aws-workbench.lambda.DownloadLambdaCode",
         "title": "Download Lambda Code",
         "icon": "$(cloud-download)"
+      },
+      {
+        "command": "aws-workbench.filesystem.AddFolder",
+        "title": "Add Folder",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "aws-workbench.filesystem.RemoveFolder",
+        "title": "Remove Folder",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "aws-workbench.filesystem.AddResourceToFolder",
+        "title": "Add Resource",
+        "icon": "$(add)"
+      },
+      {
+        "command": "aws-workbench.filesystem.RemoveResource",
+        "title": "Remove Resource",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
@@ -1292,9 +1312,34 @@
           "command": "aws-workbench.TestAwsConnection",
           "when": "view == AwsWorkbenchTree",
           "group": "other"
+        },
+        {
+          "command": "aws-workbench.filesystem.AddFolder",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
+        {
+          "command": "aws-workbench.filesystem.AddFolder",
+          "when": "view == AwsWorkbenchTree && viewItem == FileSystemFolder",
+          "group": "Folder"
+        },
+        {
+          "command": "aws-workbench.filesystem.RemoveFolder",
+          "when": "view == AwsWorkbenchTree && viewItem == FileSystemFolder",
+          "group": "Folder"
+        },
+        {
+          "command": "aws-workbench.filesystem.AddResourceToFolder",
+          "when": "view == AwsWorkbenchTree && viewItem == FileSystemFolder",
+          "group": "Folder"
+        },
+        {
+          "command": "aws-workbench.filesystem.RemoveResource",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#FileSystemResource#/",
+          "group": "Folder"
+        },
         {
           "command": "aws-workbench.s3.RemoveBucket",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Bucket#/",
@@ -2107,6 +2152,7 @@
     "@aws-sdk/credential-providers": "^3.939.0",
     "@aws-sdk/types": "^3.862.0",
     "@tshepomgaga/aws-sfn-graph": "^0.0.6",
+    "@types/uuid": "^10.0.0",
     "@vscode-elements/elements": "^2.3.1",
     "@vscode/codicons": "^0.0.43",
     "@vscode/extension-telemetry": "^1.2.0",
@@ -2114,6 +2160,7 @@
     "js-tiktoken": "^1.0.21",
     "js-yaml": "^4.1.1",
     "tmp": "^0.2.5",
+    "uuid": "^13.0.0",
     "yauzl": "^3.2.0"
   }
 }
