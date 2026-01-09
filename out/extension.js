@@ -5,6 +5,7 @@ exports.deactivate = deactivate;
 const vscode = require("vscode");
 const WorkbenchTreeProvider_1 = require("./tree/WorkbenchTreeProvider");
 const ServiceManager_1 = require("./services/ServiceManager");
+const Session_1 = require("./common/Session");
 const S3Service_1 = require("./services/s3/S3Service");
 const LambdaService_1 = require("./services/lambda/LambdaService");
 const CloudWatchService_1 = require("./services/cloudwatch/CloudWatchService");
@@ -23,6 +24,7 @@ const FileSystemService_1 = require("./services/filesystem/FileSystemService");
 function activate(context) {
     console.log('Activating AWS Workbench...');
     try {
+        new Session_1.Session(context); // Initialize session management
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         const treeProvider = new WorkbenchTreeProvider_1.WorkbenchTreeProvider(context);
         const treeView = vscode.window.createTreeView('AwsWorkbenchTree', {
@@ -116,13 +118,11 @@ function registerCoreCommands(context, serviceManager, treeProvider, treeView) {
         else {
             vscode.window.showInformationMessage('No active profile found in this service.');
         }
-    }), vscode.commands.registerCommand('aws-workbench.ShowInAnyProfile', (node) => executeServiceCommand(node, (s) => s.showInAnyProfile(node))), vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
-        vscode.commands.executeCommand('aws-workbench.access.TestAwsConnectivity');
-    }), vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
+    }), vscode.commands.registerCommand('aws-workbench.ShowInAnyProfile', (node) => executeServiceCommand(node, (s) => s.showInAnyProfile(node))), vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => Session_1.Session.Current?.TestAwsConnection()), vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
         vscode.commands.executeCommand('aws-workbench.access.SetActiveProfile');
     }), 
     // Placeholder commands
-    vscode.commands.registerCommand('aws-workbench.Filter', () => showNotImplemented('Filter')), vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => showNotImplemented('ShowOnlyFavorite')), vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => showNotImplemented('ShowHiddenNodes')), vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => showNotImplemented('UpdateAwsEndPoint')), vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => showNotImplemented('SetAwsRegion')));
+    vscode.commands.registerCommand('aws-workbench.Filter', () => showNotImplemented('Filter')), vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => showNotImplemented('ShowOnlyFavorite')), vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => showNotImplemented('ShowHiddenNodes')), vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => Session_1.Session.Current?.SetAwsEndpoint()), vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => Session_1.Session.Current?.SetAwsRegion()));
 }
 function showNotImplemented(feature) {
     vscode.window.showInformationMessage(`${feature} command is not implemented yet.`);

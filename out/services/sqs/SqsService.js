@@ -13,11 +13,6 @@ class SqsService extends AbstractAwsService_1.AbstractAwsService {
     serviceId = 'sqs';
     treeDataProvider;
     context;
-    FilterString = "";
-    isShowOnlyFavorite = false;
-    isShowHiddenNodes = false;
-    AwsProfile = "default";
-    AwsEndPoint;
     QueueList = [];
     MessageFilePathList = [];
     constructor(context) {
@@ -26,7 +21,6 @@ class SqsService extends AbstractAwsService_1.AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new SqsTreeDataProvider_1.SqsTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
     registerCommands(context, treeProvider, treeView) {
@@ -38,27 +32,6 @@ class SqsService extends AbstractAwsService_1.AbstractAwsService {
         };
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.sqs.Refresh', () => {
             this.Refresh();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.Filter', async () => {
-            await this.Filter();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.ShowOnlyFavorite', async () => {
-            await this.ShowOnlyFavorite();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.ShowHiddenNodes', async () => {
-            await this.ShowHiddenNodes();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.AddToFav', (node) => {
-            this.AddToFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.DeleteFromFav', (node) => {
-            this.DeleteFromFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.HideNode', (node) => {
-            this.HideNode(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.sqs.UnHideNode', (node) => {
-            this.UnHideNode(wrap(node));
             treeProvider.refresh();
         }), vscode.commands.registerCommand('aws-workbench.sqs.AddQueue', async () => {
             await this.AddQueue();
@@ -158,7 +131,6 @@ class SqsService extends AbstractAwsService_1.AbstractAwsService {
         for (var selectedQueue of selectedQueueList) {
             lastAddedItem = this.treeDataProvider.AddQueue(selectedRegion, selectedQueue);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveQueue(node) {
@@ -166,7 +138,6 @@ class SqsService extends AbstractAwsService_1.AbstractAwsService {
             return;
         }
         this.treeDataProvider.RemoveQueue(node.Region, node.QueueArn);
-        this.SaveState();
     }
     async PurgeQueue(node) {
         if (!node || !node.Region || !node.QueueArn)
@@ -213,76 +184,6 @@ class SqsService extends AbstractAwsService_1.AbstractAwsService {
         let result = await api.DeleteMessage(node.Region, node.QueueArn, node.ReceiptHandle);
         if (result.isSuccessful) {
             ui.showInfoMessage('Message Deleted Successfully');
-        }
-    }
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) {
-            return;
-        }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async AddToFav(node) {
-        if (!node)
-            return;
-        this.addToFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async DeleteFromFav(node) {
-        if (!node)
-            return;
-        this.deleteFromFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async HideNode(node) {
-        if (!node)
-            return;
-        this.hideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async UnHideNode(node) {
-        if (!node)
-            return;
-        this.unhideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.QueueList = this.context.globalState.get('QueueList', []);
-            this.MessageFilePathList = this.context.globalState.get('MessageFilePathList', []);
-        }
-        catch (error) {
-            ui.logToOutput("SqsService.loadState Error !!!");
-        }
-    }
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('QueueList', this.QueueList);
-            this.context.globalState.update('MessageFilePathList', this.MessageFilePathList);
-            this.saveBaseState();
-        }
-        catch (error) {
-            ui.logToOutput("SqsService.saveState Error !!!");
         }
     }
     addToFav(node) {

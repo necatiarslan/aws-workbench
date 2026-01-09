@@ -9,7 +9,7 @@ import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
 import { S3Explorer } from './S3Explorer';
 import { _Object } from "@aws-sdk/client-s3";
-import { Telemetry } from "./Telemetry";
+import { Telemetry } from "../../common/Telemetry";
 
 export class S3Search {
     public static Current: S3Search | undefined;

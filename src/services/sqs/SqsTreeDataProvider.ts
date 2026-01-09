@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { SqsTreeItem } from './SqsTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { SqsService } from './SqsService';
+import { Session } from '../../common/Session';
 import * as api from './API';
 // Import the Message type from the appropriate module
 import type { Message } from "@aws-sdk/client-sqs";
@@ -250,9 +251,9 @@ export class SqsTreeDataProvider implements vscode.TreeDataProvider<SqsTreeItem>
 		var result: SqsTreeItem[] = [];
 		if(!SqsService.Instance) return result;
 		for (var node of this.SqsNodeList) {
-			if (SqsService.Instance.FilterString && !node.IsFilterStringMatch(SqsService.Instance.FilterString)) { continue; }
-			if (SqsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (SqsService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

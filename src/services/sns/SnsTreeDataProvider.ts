@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { SnsTreeItem } from './SnsTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { SnsService } from './SnsService';
+import { Session } from '../../common/Session';
 import * as api from './API';
 
 export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
@@ -154,9 +155,9 @@ export class SnsTreeDataProvider implements vscode.TreeDataProvider<SnsTreeItem>
 		var result: SnsTreeItem[] = [];
 		if(!SnsService.Instance) return result;
 		for (var node of this.SnsNodeList) {
-			if (SnsService.Instance.FilterString && !node.IsFilterStringMatch(SnsService.Instance.FilterString)) { continue; }
-			if (SnsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (SnsService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

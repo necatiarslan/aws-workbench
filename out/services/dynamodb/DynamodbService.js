@@ -13,11 +13,6 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
     serviceId = 'dynamodb';
     treeDataProvider;
     context;
-    FilterString = "";
-    isShowOnlyFavorite = false;
-    isShowHiddenNodes = false;
-    AwsProfile = "default";
-    AwsEndPoint;
     DynamodbList = [];
     constructor(context) {
         super();
@@ -25,7 +20,6 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new DynamodbTreeDataProvider_1.DynamodbTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
     registerCommands(context, treeProvider, treeView) {
@@ -37,27 +31,6 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
         };
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.dynamodb.Refresh', () => {
             this.Refresh();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.Filter', async () => {
-            await this.Filter();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.ShowOnlyFavorite', async () => {
-            await this.ShowOnlyFavorite();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.ShowHiddenNodes', async () => {
-            await this.ShowHiddenNodes();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.AddToFav', (node) => {
-            this.AddToFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.DeleteFromFav', (node) => {
-            this.DeleteFromFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.HideNode', (node) => {
-            this.HideNode(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.dynamodb.UnHideNode', (node) => {
-            this.UnHideNode(wrap(node));
             treeProvider.refresh();
         }), vscode.commands.registerCommand('aws-workbench.dynamodb.AddDynamodb', async () => {
             await this.AddDynamodb();
@@ -141,7 +114,6 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
         for (var selectedTable of selectedTableList) {
             lastAddedItem = this.treeDataProvider.AddDynamodb(selectedRegion, selectedTable);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveDynamodb(node) {
@@ -149,75 +121,6 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
             return;
         }
         this.treeDataProvider.RemoveDynamodb(node.Region, node.Dynamodb);
-        this.SaveState();
-    }
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) {
-            return;
-        }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async AddToFav(node) {
-        if (!node)
-            return;
-        this.addToFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async DeleteFromFav(node) {
-        if (!node)
-            return;
-        this.deleteFromFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async HideNode(node) {
-        if (!node)
-            return;
-        this.hideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async UnHideNode(node) {
-        if (!node)
-            return;
-        this.unhideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.DynamodbList = this.context.globalState.get('DynamodbList', []);
-        }
-        catch (error) {
-            ui.logToOutput("DynamodbService.loadState Error !!!");
-        }
-    }
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('DynamodbList', this.DynamodbList);
-            this.saveBaseState();
-        }
-        catch (error) {
-            ui.logToOutput("DynamodbService.saveState Error !!!");
-        }
     }
     addToFav(node) {
         const data = node.itemData;

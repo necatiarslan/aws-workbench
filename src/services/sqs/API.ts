@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
+import { Session } from '../../common/Session';
 import { SQSClient, ListQueuesCommand } from "@aws-sdk/client-sqs";
 import * as ui from "../../common/UI";
 import { MethodResult } from '../../common/MethodResult';
@@ -13,26 +13,16 @@ import * as fs from 'fs';
 import * as archiver from 'archiver';
 
 export async function GetCredentials() {
-  let credentials;
-
   try {
-    if (SqsService.Instance) {
-      process.env.AWS_PROFILE = SqsService.Instance.AwsProfile ;
-    }
-    // Get credentials using the default provider chain.
-    const provider = fromNodeProviderChain({ignoreCache: true});
-    credentials = await provider();
-
+    const credentials = await Session.Current?.GetCredentials();
     if (!credentials) {
       throw new Error("Aws credentials not found !!!");
     }
-
-    ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
     return credentials;
   } catch (error: any) {
     ui.showErrorMessage("Aws Credentials Not Found !!!", error);
     ui.logToOutput("GetCredentials Error !!!", error);
-    return credentials;
+    return undefined;
   }
 }
 
@@ -42,7 +32,7 @@ async function GetSQSClient(region: string) {
   const sqs = new SQSClient({
     region,
     credentials,
-    endpoint: SqsService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   
   return sqs;
@@ -416,7 +406,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: SqsService.Instance?.AwsEndPoint,
+      endpoint: Session.Current?.AwsEndPoint,
     }
   );
   return iamClient;

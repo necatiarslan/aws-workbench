@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { S3TreeItem } from './S3TreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { S3Service } from './S3Service';
+import { Session } from '../../common/Session';
 
 export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 {
@@ -233,10 +234,10 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 	GetBucketNodes(): S3TreeItem[]{
 		var result: S3TreeItem[] = [];
 		for (var node of this.BucketNodeList) {
-			if (S3Service.Instance && S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service.Instance.FilterString)) { continue; }
-			if (S3Service.Instance && S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
-			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3Service.Instance.AwsProfile)) { continue; }
+			if (S3Service.Instance && Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (S3Service.Instance && Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (S3Service.Instance && !Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (S3Service.Instance && !Session.Current?.IsShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== Session.Current?.AwsProfile)) { continue; }
 			
 			result.push(node);
 		}
@@ -247,10 +248,10 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 		var result: S3TreeItem[] = [];
 		for (var node of this.ShortcutNodeList) {
 			if(!(node.Bucket === BucketNode.Bucket)) { continue; }
-			if (S3Service.Instance && S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service.Instance.FilterString)) { continue; }
-			if (S3Service.Instance && S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
-			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== S3Service.Instance.AwsProfile)) { continue; }
+			if (S3Service.Instance && Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (S3Service.Instance && Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (S3Service.Instance && !Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (S3Service.Instance && !Session.Current?.IsShowHiddenNodes && (node.ProfileToShow && node.ProfileToShow !== Session.Current?.AwsProfile)) { continue; }
 
 			node.Parent = BucketNode;
 			if(BucketNode.Children.indexOf(node) === -1)
@@ -265,9 +266,9 @@ export class S3TreeDataProvider implements vscode.TreeDataProvider<S3TreeItem>
 	GetShortcutNodes(): S3TreeItem[]{
 		var result: S3TreeItem[] = [];
 		for (var node of this.ShortcutNodeList) {
-			if (S3Service.Instance && S3Service.Instance.FilterString && !node.IsFilterStringMatch(S3Service.Instance.FilterString)) { continue; }
-			if (S3Service.Instance && S3Service.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (S3Service.Instance && !S3Service.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (S3Service.Instance && Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (S3Service.Instance && Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (S3Service.Instance && !Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

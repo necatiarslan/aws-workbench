@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AbstractAwsService } from '../AbstractAwsService';
+import { Session } from '../../common/Session';
 import { IamTreeDataProvider } from './IamTreeDataProvider';
 import { IamTreeItem } from './IamTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
@@ -13,12 +14,6 @@ export class IamService extends AbstractAwsService {
     public serviceId = 'iam';
     public treeDataProvider: IamTreeDataProvider;
     public context: vscode.ExtensionContext;
-    
-    public FilterString: string = "";
-    public isShowOnlyFavorite: boolean = false;
-    public isShowHiddenNodes: boolean = false;
-    public AwsProfile: string = "default";	
-    public AwsEndPoint: string | undefined;
 
     public IamRoleList: {Region: string, IamRole: string}[] = [];
 
@@ -28,7 +23,6 @@ export class IamService extends AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new IamTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
 
@@ -43,34 +37,6 @@ export class IamService extends AbstractAwsService {
         context.subscriptions.push(
             vscode.commands.registerCommand('aws-workbench.iam.Refresh', () => {
                 this.Refresh();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.Filter', async () => {
-                await this.Filter();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.ShowOnlyFavorite', async () => {
-                await this.ShowOnlyFavorite();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.ShowHiddenNodes', async () => {
-                await this.ShowHiddenNodes();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.AddToFav', (node: any) => {
-                this.AddToFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.DeleteFromFav', (node: any) => {
-                this.DeleteFromFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.HideNode', (node: any) => {
-                this.HideNode(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.iam.UnHideNode', (node: any) => {
-                this.UnHideNode(wrap(node));
                 treeProvider.refresh();
             }),
             vscode.commands.registerCommand('aws-workbench.iam.AddIamRole', async () => {
@@ -156,83 +122,12 @@ export class IamService extends AbstractAwsService {
         for (var selectedRole of selectedRoleList) {
             lastAddedItem = this.treeDataProvider.AddIamRole(selectedRegion, selectedRole);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
 
     async RemoveIamRole(node: IamTreeItem) {
         if (!node || node.TreeItemType !== TreeItemType.IAMRole || !node.Region || !node.IamRole) { return; }
         this.treeDataProvider.RemoveIamRole(node.Region, node.IamRole);
-        this.SaveState();
-    }
-
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) { return; }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async AddToFav(node: IamTreeItem) {
-        if (!node) return;
-        this.addToFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async DeleteFromFav(node: IamTreeItem) {
-        if (!node) return;
-        this.deleteFromFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async HideNode(node: IamTreeItem) {
-        if (!node) return;
-        this.hideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async UnHideNode(node: IamTreeItem) {
-        if (!node) return;
-        this.unhideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.IamRoleList = this.context.globalState.get('IamRoleList', []);
-        } catch (error) {
-            ui.logToOutput("IamService.loadState Error !!!");
-        }
-    }
-
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('IamRoleList', this.IamRoleList);
-            this.saveBaseState();
-        } catch (error) {
-            ui.logToOutput("IamService.saveState Error !!!");
-        }
     }
 
     LoadPermissions(node: IamTreeItem) { /* ... */ }

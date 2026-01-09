@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { CloudWatchTreeItem } from './CloudWatchTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { CloudWatchService } from './CloudWatchService';
+import { Session } from '../../common/Session';
 import * as api from './API';
 
 export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<CloudWatchTreeItem>
@@ -139,13 +140,13 @@ export class CloudWatchTreeDataProvider implements vscode.TreeDataProvider<Cloud
 		for (var node of this.RegionNodeList) {
 			// Filtering at region level might be tricky, let's filter children
 			let filteredChildren = node.Children.filter(child => {
-				if (CloudWatchService.Instance.FilterString && !child.IsFilterStringMatch(CloudWatchService.Instance.FilterString)) { return false; }
-				if (CloudWatchService.Instance.isShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) { return false; }
-				if (CloudWatchService.Instance.isShowHiddenNodes && (child.IsHidden)) { return false; }
+				if (Session.Current?.FilterString && !child.IsFilterStringMatch(Session.Current?.FilterString)) { return false; }
+				if (Session.Current?.IsShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) { return false; }
+				if (Session.Current?.IsShowHiddenNodes && (child.IsHidden)) { return false; }
 				return true;
 			});
 
-			if(filteredChildren.length > 0 || !CloudWatchService.Instance.FilterString)
+			if(filteredChildren.length > 0 || !Session.Current?.FilterString)
 			{
 				// We should return a copy or just mock the filtered children
 				result.push(node);

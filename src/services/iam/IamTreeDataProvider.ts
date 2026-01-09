@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { IamTreeItem } from './IamTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { IamService } from './IamService';
+import { Session } from '../../common/Session';
 
 export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 {
@@ -164,9 +165,9 @@ export class IamTreeDataProvider implements vscode.TreeDataProvider<IamTreeItem>
 		var result: IamTreeItem[] = [];
 		if(!IamService.Instance) return result;
 		for (var node of this.IamRoleNodeList) {
-			if (IamService.Instance.FilterString && !node.IsFilterStringMatch(IamService.Instance.FilterString)) { continue; }
-			if (IamService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (IamService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

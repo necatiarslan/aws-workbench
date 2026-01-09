@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AbstractAwsService } from '../AbstractAwsService';
+import { Session } from '../../common/Session';
 import { LambdaTreeItem } from './LambdaTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
@@ -13,12 +14,6 @@ export class LambdaService extends AbstractAwsService {
     public serviceId = 'lambda';
     public treeDataProvider: LambdaTreeDataProvider;
     public context: vscode.ExtensionContext;
-    
-    public FilterString: string = "";
-    public isShowOnlyFavorite: boolean = false;
-    public isShowHiddenNodes: boolean = false;
-    public AwsProfile: string = "default";	
-    public AwsEndPoint: string | undefined;
 
     public LambdaList: {Region: string, Lambda: string}[] = [];
     public PayloadPathList: {Region: string, Lambda: string, PayloadPath: string}[] = [];
@@ -30,7 +25,6 @@ export class LambdaService extends AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new LambdaTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
 
@@ -49,34 +43,6 @@ export class LambdaService extends AbstractAwsService {
             }),
             vscode.commands.registerCommand('aws-workbench.lambda.AddLambda', async () => {
                 await this.AddLambda();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.Filter', async () => {
-                await this.Filter();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.ShowOnlyFavorite', async () => {
-                await this.ShowOnlyFavorite();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.ShowHiddenNodes', async () => {
-                await this.ShowHiddenNodes();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.AddToFav', (node: any) => {
-                this.AddToFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.DeleteFromFav', (node: any) => {
-                this.DeleteFromFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.HideNode', (node: any) => {
-                this.HideNode(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.lambda.UnHideNode', (node: any) => {
-                this.UnHideNode(wrap(node));
                 treeProvider.refresh();
             }),
             vscode.commands.registerCommand('aws-workbench.lambda.RemoveLambda', async (node: any) => {
@@ -179,58 +145,12 @@ export class LambdaService extends AbstractAwsService {
         for (var selectedLambda of selectedLambdaList) {
             lastAddedItem = this.treeDataProvider.AddLambda(selectedRegion, selectedLambda);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
 
     async RemoveLambda(node: LambdaTreeItem) {
         if (!node || node.TreeItemType !== TreeItemType.LambdaFunction || !node.Region || !node.Lambda) { return; }
         this.treeDataProvider.RemoveLambda(node.Region, node.Lambda);
-        this.SaveState();
-    }
-
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) { return; }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async AddToFav(node: LambdaTreeItem) {
-        if (!node) return;
-        this.addToFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async DeleteFromFav(node: LambdaTreeItem) {
-        if (!node) return;
-        this.deleteFromFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async HideNode(node: LambdaTreeItem) {
-        if (!node) return;
-        this.hideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async UnHideNode(node: LambdaTreeItem) {
-        if (!node) return;
-        this.unhideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
     }
 
     Goto(node: LambdaTreeItem) {
@@ -259,35 +179,6 @@ export class LambdaService extends AbstractAwsService {
 
     async DownloadLambdaCode(node: LambdaTreeItem) {
         // Implement DownloadLambdaCode
-    }
-
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.LambdaList = this.context.globalState.get('LambdaList', []);
-            this.PayloadPathList = this.context.globalState.get('PayloadPathList', []);
-            this.CodePathList = this.context.globalState.get('CodePathList', []);
-        } catch (error) {
-            ui.logToOutput("LambdaService.loadState Error !!!");
-        }
-    }
-
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('LambdaList', this.LambdaList);
-            this.context.globalState.update('PayloadPathList', this.PayloadPathList);
-            this.context.globalState.update('CodePathList', this.CodePathList);
-            this.saveBaseState();
-        } catch (error) {
-            ui.logToOutput("LambdaService.saveState Error !!!");
-        }
     }
 
     // Proxy methods for TreeDataProvider to call back into Service for business logic if needed

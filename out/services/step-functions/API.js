@@ -26,7 +26,7 @@ exports.getIniProfileData = getIniProfileData;
 exports.GetStepFuncExecutions = GetStepFuncExecutions;
 exports.GetExecutionDetails = GetExecutionDetails;
 /* eslint-disable @typescript-eslint/naming-convention */
-const credential_providers_1 = require("@aws-sdk/credential-providers");
+const Session_1 = require("../../common/Session");
 const client_sfn_1 = require("@aws-sdk/client-sfn");
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
 const client_iam_1 = require("@aws-sdk/client-iam");
@@ -36,29 +36,21 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
-const StepfunctionsService_1 = require("./StepfunctionsService");
 const fs = require("fs");
 // add a simple in-memory cache for DescribeStateMachine responses
 const stateMachineCache = new Map();
 async function GetCredentials() {
-    let credentials;
     try {
-        if (StepfunctionsService_1.StepfunctionsService.Instance) {
-            process.env.AWS_PROFILE = StepfunctionsService_1.StepfunctionsService.Instance.AwsProfile;
-        }
-        // Get credentials using the default provider chain.
-        const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
-        credentials = await provider();
+        const credentials = await Session_1.Session.Current?.GetCredentials();
         if (!credentials) {
             throw new Error("Aws credentials not found !!!");
         }
-        ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
         return credentials;
     }
     catch (error) {
         ui.showErrorMessage("Aws Credentials Not Found !!!", error);
         ui.logToOutput("GetCredentials Error !!!", error);
-        return credentials;
+        return undefined;
     }
 }
 async function GetStepFuncClient(region) {
@@ -66,7 +58,7 @@ async function GetStepFuncClient(region) {
     const stepFuncClient = new client_sfn_1.SFNClient({
         region,
         credentials,
-        endpoint: StepfunctionsService_1.StepfunctionsService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return stepFuncClient;
 }
@@ -75,7 +67,7 @@ async function GetCloudWatchClient(region) {
     const cloudwatchLogsClient = new client_cloudwatch_logs_1.CloudWatchLogsClient({
         region,
         credentials,
-        endpoint: StepfunctionsService_1.StepfunctionsService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return cloudwatchLogsClient;
 }
@@ -576,7 +568,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: StepfunctionsService_1.StepfunctionsService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return iamClient;
 }

@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const DynamodbTreeItem_1 = require("./DynamodbTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const DynamodbService_1 = require("./DynamodbService");
+const Session_1 = require("../../common/Session");
 const api = require("./API");
 class DynamodbTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -298,13 +299,13 @@ class DynamodbTreeDataProvider {
         if (!DynamodbService_1.DynamodbService.Instance)
             return result;
         for (var node of this.DynamodbNodeList) {
-            if (DynamodbService_1.DynamodbService.Instance.FilterString && !node.IsFilterStringMatch(DynamodbService_1.DynamodbService.Instance.FilterString)) {
+            if (Session_1.Session.Current?.FilterString && !node.IsFilterStringMatch(Session_1.Session.Current?.FilterString)) {
                 continue;
             }
-            if (DynamodbService_1.DynamodbService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (Session_1.Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (DynamodbService_1.DynamodbService.Instance.isShowHiddenNodes && (node.IsHidden)) {
+            if (Session_1.Session.Current?.IsShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const LambdaTreeItem_1 = require("./LambdaTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const LambdaService_1 = require("./LambdaService");
+const Session_1 = require("../../common/Session");
 class LambdaTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -254,13 +255,13 @@ class LambdaTreeDataProvider {
         if (!LambdaService_1.LambdaService.Instance)
             return result;
         for (var node of this.LambdaNodeList) {
-            if (LambdaService_1.LambdaService.Instance.FilterString && !node.IsFilterStringMatch(LambdaService_1.LambdaService.Instance.FilterString)) {
+            if (Session_1.Session.Current?.FilterString && !node.IsFilterStringMatch(Session_1.Session.Current?.FilterString)) {
                 continue;
             }
-            if (LambdaService_1.LambdaService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (Session_1.Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (LambdaService_1.LambdaService.Instance.isShowHiddenNodes && (node.IsHidden)) {
+            if (Session_1.Session.Current?.IsShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

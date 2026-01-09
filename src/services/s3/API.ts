@@ -8,11 +8,9 @@ import { parseKnownFiles, SourceProfileInit } from "../../aws-sdk/parseKnownFile
 import { ParsedIniData } from "@aws-sdk/types";
 import * as s3_helper from './S3Helper'
 import * as fs from 'fs';
-import { S3Service } from './S3Service';
+import { Session } from '../../common/Session';
 
 
-
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 export async function GetCredentials() {
   let credentials;
   if (CurrentCredentials !== undefined) { 
@@ -21,18 +19,14 @@ export async function GetCredentials() {
   }
 
   try {
-    if (S3Service.Instance) {
-      process.env.AWS_PROFILE = S3Service.Instance.AwsProfile ;
-    }
-    // Get credentials using the default provider chain.
-    const provider = fromNodeProviderChain({ignoreCache: true});
-    credentials = await provider();
+    credentials = await Session.Current?.GetCredentials();
 
     if (!credentials) {
       throw new Error("Aws credentials not found !!!");
     }
 
     ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
+    CurrentCredentials = credentials;
     return credentials;
   } catch (error: any) {
     ui.showErrorMessage("Aws Credentials Not Found !!!", error);
@@ -67,9 +61,9 @@ export async function GetS3Client() {
 
   return new S3Client({
     credentials: credentials,
-    endpoint: S3Service.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
     forcePathStyle: true,
-    region: S3Service.Instance?.AwsRegion,
+    region: Session.Current?.AwsRegion,
   });
 }
 
@@ -862,7 +856,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: S3Service.Instance?.AwsEndPoint,
+      endpoint: Session.Current?.AwsEndPoint,
     }
   );
   return iamClient;

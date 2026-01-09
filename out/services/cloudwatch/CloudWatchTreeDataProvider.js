@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const CloudWatchTreeItem_1 = require("./CloudWatchTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const CloudWatchService_1 = require("./CloudWatchService");
+const Session_1 = require("../../common/Session");
 const api = require("./API");
 class CloudWatchTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -111,18 +112,18 @@ class CloudWatchTreeDataProvider {
         for (var node of this.RegionNodeList) {
             // Filtering at region level might be tricky, let's filter children
             let filteredChildren = node.Children.filter(child => {
-                if (CloudWatchService_1.CloudWatchService.Instance.FilterString && !child.IsFilterStringMatch(CloudWatchService_1.CloudWatchService.Instance.FilterString)) {
+                if (Session_1.Session.Current?.FilterString && !child.IsFilterStringMatch(Session_1.Session.Current?.FilterString)) {
                     return false;
                 }
-                if (CloudWatchService_1.CloudWatchService.Instance.isShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) {
+                if (Session_1.Session.Current?.IsShowOnlyFavorite && !(child.IsFav || child.IsAnyChidrenFav())) {
                     return false;
                 }
-                if (CloudWatchService_1.CloudWatchService.Instance.isShowHiddenNodes && (child.IsHidden)) {
+                if (Session_1.Session.Current?.IsShowHiddenNodes && (child.IsHidden)) {
                     return false;
                 }
                 return true;
             });
-            if (filteredChildren.length > 0 || !CloudWatchService_1.CloudWatchService.Instance.FilterString) {
+            if (filteredChildren.length > 0 || !Session_1.Session.Current?.FilterString) {
                 // We should return a copy or just mock the filtered children
                 result.push(node);
             }

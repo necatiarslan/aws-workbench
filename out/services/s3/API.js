@@ -42,8 +42,7 @@ const path_2 = require("path");
 const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
 const s3_helper = require("./S3Helper");
 const fs = require("fs");
-const S3Service_1 = require("./S3Service");
-const credential_providers_1 = require("@aws-sdk/credential-providers");
+const Session_1 = require("../../common/Session");
 async function GetCredentials() {
     let credentials;
     if (CurrentCredentials !== undefined) {
@@ -51,16 +50,12 @@ async function GetCredentials() {
         return CurrentCredentials;
     }
     try {
-        if (S3Service_1.S3Service.Instance) {
-            process.env.AWS_PROFILE = S3Service_1.S3Service.Instance.AwsProfile;
-        }
-        // Get credentials using the default provider chain.
-        const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
-        credentials = await provider();
+        credentials = await Session_1.Session.Current?.GetCredentials();
         if (!credentials) {
             throw new Error("Aws credentials not found !!!");
         }
         ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
+        CurrentCredentials = credentials;
         return credentials;
     }
     catch (error) {
@@ -91,9 +86,9 @@ async function GetS3Client() {
     }
     return new client_s3_1.S3Client({
         credentials: credentials,
-        endpoint: S3Service_1.S3Service.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
         forcePathStyle: true,
-        region: S3Service_1.S3Service.Instance?.AwsRegion,
+        region: Session_1.Session.Current?.AwsRegion,
     });
 }
 const client_iam_1 = require("@aws-sdk/client-iam");
@@ -715,7 +710,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: S3Service_1.S3Service.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return iamClient;
 }

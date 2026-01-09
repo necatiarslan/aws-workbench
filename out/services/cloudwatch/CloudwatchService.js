@@ -8,16 +8,12 @@ const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
+const Session_1 = require("../../common/Session");
 class CloudWatchService extends AbstractAwsService_1.AbstractAwsService {
     static Instance;
     serviceId = 'cloudwatch';
     treeDataProvider;
     context;
-    FilterString = "";
-    isShowOnlyFavorite = false;
-    isShowHiddenNodes = false;
-    AwsProfile = "default";
-    AwsEndPoint;
     LastUsedRegion = "us-east-1";
     LogGroupList = [];
     constructor(context) {
@@ -26,7 +22,6 @@ class CloudWatchService extends AbstractAwsService_1.AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new CloudWatchTreeDataProvider_1.CloudWatchTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
     registerCommands(context, treeProvider, treeView) {
@@ -36,31 +31,7 @@ class CloudWatchService extends AbstractAwsService_1.AbstractAwsService {
             }
             return node;
         };
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.cloudwatch.Refresh', () => {
-            this.Refresh();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.Filter', async () => {
-            await this.Filter();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.ShowOnlyFavorite', async () => {
-            await this.ShowOnlyFavorite();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.ShowHiddenNodes', async () => {
-            await this.ShowHiddenNodes();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.AddToFav', (node) => {
-            this.AddToFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.DeleteFromFav', (node) => {
-            this.DeleteFromFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.HideNode', (node) => {
-            this.HideNode(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.UnHideNode', (node) => {
-            this.UnHideNode(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.cloudwatch.AddLogGroup', async () => {
+        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.cloudwatch.AddLogGroup', async () => {
             await this.AddLogGroup();
             treeProvider.refresh();
         }), vscode.commands.registerCommand('aws-workbench.cloudwatch.RemoveLogGroup', async (node) => {
@@ -146,7 +117,6 @@ class CloudWatchService extends AbstractAwsService_1.AbstractAwsService {
         for (var selectedGroup of selectedGroupList) {
             lastAddedItem = this.treeDataProvider.AddLogGroup(selectedRegion, selectedGroup);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveLogGroup(node) {
@@ -154,26 +124,14 @@ class CloudWatchService extends AbstractAwsService_1.AbstractAwsService {
             return;
         }
         this.treeDataProvider.RemoveLogGroup(node.Region, node.LogGroup);
-        this.SaveState();
-    }
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) {
-            return;
-        }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
     }
     async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
+        Session_1.Session.Current.IsShowOnlyFavorite = !Session_1.Session.Current.IsShowOnlyFavorite;
         this.treeDataProvider.Refresh();
-        this.SaveState();
     }
     async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
+        Session_1.Session.Current.IsShowHiddenNodes = !Session_1.Session.Current.IsShowHiddenNodes;
         this.treeDataProvider.Refresh();
-        this.SaveState();
     }
     async AddToFav(node) {
         if (!node)
@@ -198,33 +156,6 @@ class CloudWatchService extends AbstractAwsService_1.AbstractAwsService {
             return;
         this.unhideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
-    }
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.LogGroupList = this.context.globalState.get('LogGroupList', []);
-            this.LastUsedRegion = this.context.globalState.get('LastUsedRegion', 'us-east-1');
-        }
-        catch (error) {
-            ui.logToOutput("CloudWatchService.loadState Error !!!");
-        }
-    }
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('LogGroupList', this.LogGroupList);
-            this.context.globalState.update('LastUsedRegion', this.LastUsedRegion);
-            this.saveBaseState();
-        }
-        catch (error) {
-            ui.logToOutput("CloudWatchService.saveState Error !!!");
-        }
     }
     addToFav(node) {
         const data = node.itemData;

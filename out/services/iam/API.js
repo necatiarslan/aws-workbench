@@ -18,33 +18,25 @@ exports.UpdateIamRoleTag = UpdateIamRoleTag;
 exports.RemoveIamRoleTag = RemoveIamRoleTag;
 exports.GetPolicyDocument = GetPolicyDocument;
 /* eslint-disable @typescript-eslint/naming-convention */
-const credential_providers_1 = require("@aws-sdk/credential-providers");
+const Session_1 = require("../../common/Session");
 const client_iam_1 = require("@aws-sdk/client-iam");
 const ui = require("../../common/UI");
 const MethodResult_1 = require("../../common/MethodResult");
 const os_1 = require("os");
 const path_1 = require("path");
 const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
-const IamService_1 = require("./IamService");
 async function GetCredentials() {
-    let credentials;
     try {
-        if (IamService_1.IamService.Instance) {
-            process.env.AWS_PROFILE = IamService_1.IamService.Instance.AwsProfile;
-        }
-        // Get credentials using the default provider chain.
-        const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
-        credentials = await provider();
+        const credentials = await Session_1.Session.Current?.GetCredentials();
         if (!credentials) {
             throw new Error("Aws credentials not found !!!");
         }
-        ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
         return credentials;
     }
     catch (error) {
         ui.showErrorMessage("Aws Credentials Not Found !!!", error);
         ui.logToOutput("GetCredentials Error !!!", error);
-        return credentials;
+        return undefined;
     }
 }
 function isJsonString(jsonString) {
@@ -65,7 +57,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: IamService_1.IamService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return iamClient;
 }
@@ -145,7 +137,7 @@ async function GetIamClient(region) {
     const iamClient = new client_iam_1.IAMClient({
         region,
         credentials,
-        endpoint: IamService_1.IamService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return iamClient;
 }

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AbstractAwsService } from '../AbstractAwsService';
+import { Session } from '../../common/Session';
 import { GlueTreeDataProvider } from './GlueTreeDataProvider';
 import { GlueTreeItem } from './GlueTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
@@ -13,12 +14,6 @@ export class GlueService extends AbstractAwsService {
     public serviceId = 'glue';
     public treeDataProvider: GlueTreeDataProvider;
     public context: vscode.ExtensionContext;
-    
-    public FilterString: string = "";
-    public isShowOnlyFavorite: boolean = false;
-    public isShowHiddenNodes: boolean = false;
-    public AwsProfile: string = "default";	
-    public AwsEndPoint: string | undefined;
 
     public ResourceList: {Region: string, Name: string, Type: any}[] = [];
     public JobInfoCache: { [key: string]: any } = {};
@@ -31,7 +26,6 @@ export class GlueService extends AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new GlueTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
 
@@ -46,10 +40,6 @@ export class GlueService extends AbstractAwsService {
         context.subscriptions.push(
             vscode.commands.registerCommand('aws-workbench.glue.Refresh', () => {
                 this.Refresh();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.glue.Filter', async () => {
-                await this.Filter();
                 treeProvider.refresh();
             }),
             vscode.commands.registerCommand('aws-workbench.glue.AddGlueJob', async () => {
@@ -138,43 +128,12 @@ export class GlueService extends AbstractAwsService {
         for (var selectedJob of selectedJobList) {
             lastAddedItem = this.treeDataProvider.AddResource(selectedRegion, selectedJob, TreeItemType.GlueJob);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
 
     async RemoveGlueJob(node: GlueTreeItem) {
         if (!node || node.TreeItemType !== TreeItemType.GlueJob || !node.Region || !node.ResourceName) { return; }
         this.treeDataProvider.RemoveResource(node.Region, node.ResourceName, TreeItemType.GlueJob);
-        this.SaveState();
-    }
-
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) { return; }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.ResourceList = this.context.globalState.get('ResourceList', []);
-        } catch (error) {
-            ui.logToOutput("GlueService.loadState Error !!!");
-        }
-    }
-
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ResourceList', this.ResourceList);
-            this.saveBaseState();
-        } catch (error) {
-            ui.logToOutput("GlueService.saveState Error !!!");
-        }
     }
 
     ViewLog(node: GlueTreeItem) { /* ... */ }

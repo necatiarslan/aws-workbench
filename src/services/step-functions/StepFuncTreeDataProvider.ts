@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { StepFuncTreeItem } from './StepFuncTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { StepfunctionsService } from './StepfunctionsService';
+import { Session } from '../../common/Session';
 
 export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFuncTreeItem>
 {
@@ -330,9 +331,9 @@ export class StepFuncTreeDataProvider implements vscode.TreeDataProvider<StepFun
 		var result: StepFuncTreeItem[] = [];
 		if(!StepfunctionsService.Instance) return result;
 		for (var node of this.StepFuncNodeList) {
-			if (StepfunctionsService.Instance.FilterString && !node.IsFilterStringMatch(StepfunctionsService.Instance.FilterString)) { continue; }
-			if (StepfunctionsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (StepfunctionsService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

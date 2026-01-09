@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
+import { Session } from '../../common/Session';
 import { ListStateMachinesCommand, StartExecutionCommand, DescribeStateMachineCommand, SFNClient, ListExecutionsCommand, ExecutionListItem, DescribeExecutionCommand, DescribeExecutionCommandOutput } from "@aws-sdk/client-sfn";
 import { CloudWatchLogsClient, OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import { IAMClient } from "@aws-sdk/client-iam";
@@ -17,26 +17,16 @@ import * as fs from 'fs';
 const stateMachineCache: Map<string, any> = new Map();
 
 export async function GetCredentials() {
-  let credentials;
-
   try {
-    if (StepfunctionsService.Instance) {
-      process.env.AWS_PROFILE = StepfunctionsService.Instance.AwsProfile ;
-    }
-    // Get credentials using the default provider chain.
-    const provider = fromNodeProviderChain({ignoreCache: true});
-    credentials = await provider();
-
+    const credentials = await Session.Current?.GetCredentials();
     if (!credentials) {
       throw new Error("Aws credentials not found !!!");
     }
-
-    ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
     return credentials;
   } catch (error: any) {
     ui.showErrorMessage("Aws Credentials Not Found !!!", error);
     ui.logToOutput("GetCredentials Error !!!", error);
-    return credentials;
+    return undefined;
   }
 }
 
@@ -46,7 +36,7 @@ async function GetStepFuncClient(region: string) {
   const stepFuncClient = new SFNClient({
     region,
     credentials,
-    endpoint: StepfunctionsService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   
   return stepFuncClient;
@@ -57,7 +47,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: StepfunctionsService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   
   return cloudwatchLogsClient;
@@ -670,7 +660,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: StepfunctionsService.Instance?.AwsEndPoint,
+      endpoint: Session.Current?.AwsEndPoint,
     }
   );
   return iamClient;

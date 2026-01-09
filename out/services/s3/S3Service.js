@@ -10,20 +10,13 @@ const ui = require("../../common/UI");
 const api = require("./API");
 const S3Explorer_1 = require("./S3Explorer");
 const S3Search_1 = require("./S3Search");
-const Telemetry_1 = require("./Telemetry");
-const Session_1 = require("./Session");
-const License_1 = require("./License");
+const Telemetry_1 = require("../../common/Telemetry");
+const Session_1 = require("../../common/Session");
 class S3Service extends AbstractAwsService_1.AbstractAwsService {
     static Instance;
     serviceId = 's3';
     treeDataProvider;
     context;
-    FilterString = "";
-    isShowOnlyFavorite = false;
-    isShowHiddenNodes = false;
-    AwsProfile = "default";
-    AwsEndPoint;
-    AwsRegion;
     constructor(context) {
         super();
         S3Service.Instance = this;
@@ -31,7 +24,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         // Load generic state (hidden/fav)
         this.loadBaseState();
         this.treeDataProvider = new S3TreeDataProvider_1.S3TreeDataProvider();
-        this.LoadState(); // Load S3 specific state
         this.Refresh();
     }
     registerCommands(context, treeProvider, treeView) {
@@ -44,14 +36,7 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.s3.Refresh', () => {
             this.Refresh();
             treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.s3.Filter', async () => {
-            await this.Filter();
-            treeProvider.refresh();
-        }), 
-        // Deprecated/Legacy Commands - keeping them but delegating or removing from UI
-        // The extension.ts registers generic commands that call methods on this service
-        // We keep specific ones for backward compatibility if needed, or remove them from package.json menus
-        vscode.commands.registerCommand('aws-workbench.s3.AddBucket', async () => {
+        }), vscode.commands.registerCommand('aws-workbench.s3.AddBucket', async () => {
             await this.AddBucket();
             treeProvider.refresh();
         }), vscode.commands.registerCommand('aws-workbench.s3.RemoveBucket', async (node) => {
@@ -71,32 +56,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
             this.ShowS3Explorer(wrap(node));
         }), vscode.commands.registerCommand('aws-workbench.s3.ShowS3Search', (node) => {
             this.ShowS3Search(wrap(node));
-        }), vscode.commands.registerCommand('aws-workbench.s3.SelectAwsProfile', async (node) => {
-            await this.SelectAwsProfile(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.s3.UpdateAwsEndPoint', async () => {
-            await this.UpdateAwsEndPoint();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.s3.SetAwsRegion', async () => {
-            await this.SetAwsRegion();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.s3.TestAwsConnection', () => {
-            this.TestAwsConnection();
-        }), vscode.commands.registerCommand('aws-workbench.s3.ActivatePro', () => {
-            if (Session_1.Session.Current?.IsProVersion) {
-                ui.showInfoMessage('You already have an active Pro license!');
-                return;
-            }
-            vscode.env.openExternal(vscode.Uri.parse('https://necatiarslan.lemonsqueezy.com/checkout/buy/dcdda46a-2137-44cc-a9d9-30dfc75070cf'));
-        }), vscode.commands.registerCommand('aws-workbench.s3.EnterLicenseKey', async () => {
-            if (Session_1.Session.Current?.IsProVersion) {
-                ui.showInfoMessage('You already have an active Pro license!');
-                return;
-            }
-            await (0, License_1.promptForLicense)(this.context);
-            if (Session_1.Session.Current) {
-                Session_1.Session.Current.IsProVersion = (0, License_1.isLicenseValid)();
-            }
         }));
     }
     async getRootNodes() {
@@ -144,7 +103,7 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
     // --- Helper to apply generic states (Hide/Fav) ---
     processNodes(nodes) {
         // 1. Filter hidden
-        const visible = this.isShowHiddenNodes ? nodes : nodes.filter(n => !this.isHidden(n));
+        const visible = Session_1.Session.Current?.IsShowHiddenNodes ? nodes : nodes.filter(n => !this.isHidden(n));
         // 2. Mark Favs and add tags
         visible.forEach(n => {
             if (this.isFav(n)) {
@@ -157,7 +116,7 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
             n.contextValue = (n.contextValue || '') + '#AwsResource#';
         });
         // 3. Filter "Show Only Fav" if enabled
-        if (this.isShowOnlyFavorite) {
+        if (Session_1.Session.Current?.IsShowOnlyFavorite) {
             return visible.filter(n => this.isFav(n));
         }
         return visible;
@@ -172,7 +131,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
             s3Node.ProfileToShow = profile;
             this.treeDataProvider.AddBucketProfile(s3Node.Bucket, profile);
             super.showOnlyInProfile(node, profile); // also save generic state if desired
-            this.SaveState();
             this.Refresh();
         }
     }
@@ -182,7 +140,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
             s3Node.ProfileToShow = "";
             this.treeDataProvider.RemoveBucketProfile(s3Node.Bucket);
             super.showInAnyProfile(node);
-            this.SaveState();
             this.Refresh();
         }
     }
@@ -221,84 +178,7 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
             return new Promise(resolve => { resolve(); });
         });
     }
-    async Filter() {
-        ui.logToOutput('S3Service.Filter Started');
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) {
-            return;
-        }
-        this.FilterString = filterStringTemp;
-        this.SaveState();
-    }
-    // Deprecated methods that were previously used by direct commands.
-    // We keep them if internal logic relies on them, but they are largely replaced by AbstractAwsService.
-    async AddToFav(node) { super.addToFav(this.mapToWorkbenchItem(node)); }
-    async DeleteFromFav(node) { super.deleteFromFav(this.mapToWorkbenchItem(node)); }
-    async HideNode(node) { super.hideResource(this.mapToWorkbenchItem(node)); }
-    async UnHideNode(node) { super.unhideResource(this.mapToWorkbenchItem(node)); }
     // ... (Keep existing SaveState/LoadState but ensuring we don't conflict)
-    SaveState() {
-        ui.logToOutput('S3Service.saveState Started');
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('BucketList', this.treeDataProvider.GetBucketList());
-            this.context.globalState.update('ShortcutList', this.treeDataProvider.GetShortcutList());
-            this.context.globalState.update('ViewType', this.treeDataProvider.ViewType);
-            this.context.globalState.update('AwsEndPoint', this.AwsEndPoint);
-            this.context.globalState.update('AwsRegion', this.AwsRegion);
-            this.context.globalState.update('BucketProfileList', this.treeDataProvider.BucketProfileList);
-            // Also save base state
-            this.saveBaseState();
-        }
-        catch (error) {
-            ui.logToOutput("S3Service.saveState Error !!!");
-        }
-    }
-    LoadState() {
-        ui.logToOutput('S3Service.loadState Started');
-        try {
-            let AwsProfileTemp = this.context.globalState.get('AwsProfile');
-            if (AwsProfileTemp) {
-                this.AwsProfile = AwsProfileTemp;
-            }
-            let filterStringTemp = this.context.globalState.get('FilterString');
-            if (filterStringTemp) {
-                this.FilterString = filterStringTemp;
-            }
-            let ShowOnlyFavoriteTemp = this.context.globalState.get('ShowOnlyFavorite');
-            if (ShowOnlyFavoriteTemp) {
-                this.isShowOnlyFavorite = ShowOnlyFavoriteTemp;
-            }
-            let ShowHiddenNodesTemp = this.context.globalState.get('ShowHiddenNodes');
-            if (ShowHiddenNodesTemp) {
-                this.isShowHiddenNodes = ShowHiddenNodesTemp;
-            }
-            let BucketProfileListTemp = this.context.globalState.get('BucketProfileList');
-            if (BucketProfileListTemp) {
-                this.treeDataProvider.BucketProfileList = BucketProfileListTemp;
-            }
-            let BucketListTemp = this.context.globalState.get('BucketList');
-            if (BucketListTemp) {
-                this.treeDataProvider.SetBucketList(BucketListTemp);
-            }
-            let ShortcutListTemp = this.context.globalState.get('ShortcutList');
-            if (ShortcutListTemp) {
-                this.treeDataProvider.SetShortcutList(ShortcutListTemp);
-            }
-            let ViewTypeTemp = this.context.globalState.get('ViewType');
-            if (ViewTypeTemp) {
-                this.treeDataProvider.ViewType = ViewTypeTemp;
-            }
-            this.AwsEndPoint = this.context.globalState.get('AwsEndPoint');
-            this.AwsRegion = this.context.globalState.get('AwsRegion');
-        }
-        catch (error) {
-            ui.logToOutput("S3Service.loadState Error !!!");
-        }
-    }
     async AddBucket() {
         Telemetry_1.Telemetry.Current?.send("S3Service.AddBucket");
         ui.logToOutput('S3Service.AddBucket Started');
@@ -318,7 +198,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         for (var selectedBucket of selectedBucketList) {
             lastAddedItem = this.treeDataProvider.AddBucket(selectedBucket);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveBucket(node) {
@@ -328,7 +207,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         Telemetry_1.Telemetry.Current?.send("S3Service.RemoveBucket");
         ui.logToOutput('S3Service.RemoveBucket Started');
         this.treeDataProvider.RemoveBucket(node.Bucket);
-        this.SaveState();
     }
     async Goto(node) {
         if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.S3Bucket || !node.Bucket) {
@@ -348,7 +226,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         Telemetry_1.Telemetry.Current?.send("S3Service.RemoveShortcut");
         ui.logToOutput('S3Service.RemoveShortcut Started');
         this.treeDataProvider.RemoveShortcut(node.Bucket, node.Shortcut);
-        this.SaveState();
     }
     async AddShortcut(node) {
         if (!node || !node.Bucket) {
@@ -361,7 +238,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
             return;
         }
         this.treeDataProvider.AddShortcut(node.Bucket, shortcut);
-        this.SaveState();
     }
     async CopyShortcut(node) {
         if (!node || node.TreeItemType !== TreeItemType_1.TreeItemType.S3Shortcut || !node.Shortcut) {
@@ -382,39 +258,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         Telemetry_1.Telemetry.Current?.send("S3Service.ShowS3Search");
         S3Search_1.S3Search.Render(this.context.extensionUri, node);
     }
-    async SelectAwsProfile(node) {
-        Telemetry_1.Telemetry.Current?.send("S3Service.SelectAwsProfile");
-        var result = await api.GetAwsProfileList();
-        if (!result.isSuccessful) {
-            return;
-        }
-        let selectedAwsProfile = await vscode.window.showQuickPick(result.result, { canPickMany: false, placeHolder: 'Select Aws Profile' });
-        if (!selectedAwsProfile) {
-            return;
-        }
-        this.AwsProfile = selectedAwsProfile;
-        this.SaveState();
-        this.treeDataProvider.Refresh();
-    }
-    async UpdateAwsEndPoint() {
-        Telemetry_1.Telemetry.Current?.send("S3Service.UpdateAwsEndPoint");
-        let awsEndPointUrl = await vscode.window.showInputBox({ placeHolder: 'Enter Aws End Point URL (Leave Empty To Return To Default)', value: this.AwsEndPoint });
-        if (awsEndPointUrl === undefined) {
-            return;
-        }
-        this.AwsEndPoint = awsEndPointUrl.length === 0 ? undefined : awsEndPointUrl;
-        this.SaveState();
-        ui.showInfoMessage('Aws End Point Updated');
-    }
-    async SetAwsRegion() {
-        Telemetry_1.Telemetry.Current?.send("S3Service.SetAwsRegion");
-        let awsRegion = await vscode.window.showInputBox({ placeHolder: 'Enter Aws Region (Leave Empty To Return To Default)' });
-        if (awsRegion === undefined) {
-            return;
-        }
-        this.AwsRegion = awsRegion.length === 0 ? undefined : awsRegion;
-        this.SaveState();
-    }
     async AddOrRemoveShortcut(Bucket, Key) {
         if (!Bucket || !Key) {
             return;
@@ -425,7 +268,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         else {
             this.treeDataProvider.AddShortcut(Bucket, Key);
         }
-        this.SaveState();
     }
     async RemoveShortcutByKey(Bucket, Key) {
         if (!Bucket || !Key) {
@@ -433,7 +275,6 @@ class S3Service extends AbstractAwsService_1.AbstractAwsService {
         }
         if (this.treeDataProvider.DoesShortcutExists(Bucket, Key)) {
             this.treeDataProvider.RemoveShortcut(Bucket, Key);
-            this.SaveState();
         }
     }
     DoesShortcutExists(Bucket, Key) {

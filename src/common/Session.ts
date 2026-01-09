@@ -1,4 +1,4 @@
-import * as ui from '../../common/UI';
+import * as ui from './UI';
 import * as vscode from 'vscode';
 import { AwsCredentialIdentity } from '@aws-sdk/types';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
@@ -8,12 +8,13 @@ export class Session implements vscode.Disposable {
 
     public Context: vscode.ExtensionContext;
     public ExtensionUri: vscode.Uri;
+    public FilterString: string = '';
+    public IsShowOnlyFavorite: boolean = false;
+    public IsShowHiddenNodes: boolean = false;
     public AwsProfile: string = "default";
     public AwsEndPoint: string | undefined;
     public AwsRegion: string = "us-east-1";
     public CurrentCredentials: AwsCredentialIdentity | undefined;
-    public DisabledTools: Set<string> = new Set<string>();
-    public DisabledCommands: Map<string, Set<string>> = new Map<string, Set<string>>();
     public HostAppName: string = '';
     public IsProVersion: boolean = false;
 
@@ -41,15 +42,9 @@ export class Session implements vscode.Disposable {
             this.Context.globalState.update('AwsProfile', Session.Current?.AwsProfile);
             this.Context.globalState.update('AwsEndPoint', Session.Current?.AwsEndPoint);
             this.Context.globalState.update('AwsRegion', Session.Current?.AwsRegion);
-            
-            // Save disabled tools and commands
-            this.Context.globalState.update('DisabledTools', Array.from(Session.Current?.DisabledTools || []));
-            const disabledCommandsObj: Record<string, string[]> = {};
-            Session.Current?.DisabledCommands.forEach((commands, tool) => {
-                disabledCommandsObj[tool] = Array.from(commands);
-            });
-            this.Context.globalState.update('DisabledCommands', disabledCommandsObj);
-            
+            this.Context.globalState.update('FilterString', Session.Current?.FilterString);
+            this.Context.globalState.update('IsShowOnlyFavorite', Session.Current?.IsShowOnlyFavorite);
+            this.Context.globalState.update('IsShowHiddenNodes', Session.Current?.IsShowHiddenNodes);
             this._onDidChangeSession.fire();
         } catch (error: any) {
             ui.logToOutput("Session.SaveState Error !!!", error);
@@ -63,24 +58,15 @@ export class Session implements vscode.Disposable {
             const AwsProfileTemp: string | undefined = this.Context.globalState.get('AwsProfile');
             const AwsEndPointTemp: string | undefined = this.Context.globalState.get('AwsEndPoint');
             const AwsRegionTemp: string | undefined = this.Context.globalState.get('AwsRegion');
-
+            const FilterStringTemp: string | undefined = this.Context.globalState.get('FilterString');
+            const IsShowOnlyFavoriteTemp: boolean | undefined = this.Context.globalState.get('IsShowOnlyFavorite');
+            const IsShowHiddenNodesTemp: boolean | undefined = this.Context.globalState.get('IsShowHiddenNodes');
             if (AwsEndPointTemp) { Session.Current!.AwsEndPoint = AwsEndPointTemp; }
             if (AwsRegionTemp) { Session.Current!.AwsRegion = AwsRegionTemp; }
             if (AwsProfileTemp) { Session.Current!.AwsProfile = AwsProfileTemp; }
-
-            // Load disabled tools and commands
-            const disabledToolsArray: string[] | undefined = this.Context.globalState.get('DisabledTools');
-            if (disabledToolsArray) {
-                Session.Current!.DisabledTools = new Set(disabledToolsArray);
-            }
-            
-            const disabledCommandsObj: Record<string, string[]> | undefined = this.Context.globalState.get('DisabledCommands');
-            if (disabledCommandsObj) {
-                Session.Current!.DisabledCommands = new Map();
-                Object.entries(disabledCommandsObj).forEach(([tool, commands]) => {
-                    Session.Current!.DisabledCommands.set(tool, new Set(commands));
-                });
-            }
+            if (FilterStringTemp) { Session.Current!.FilterString = FilterStringTemp; }
+            if (IsShowOnlyFavoriteTemp !== undefined) { Session.Current!.IsShowOnlyFavorite = IsShowOnlyFavoriteTemp; }
+            if (IsShowHiddenNodesTemp !== undefined) { Session.Current!.IsShowHiddenNodes = IsShowHiddenNodesTemp; }
 
         } catch (error: any) {
             ui.logToOutput("Session.LoadState Error !!!", error);
@@ -163,6 +149,14 @@ export class Session implements vscode.Disposable {
         this.CurrentCredentials = undefined;
         this._onDidChangeSession.fire();
         ui.logToOutput('Credentials cache cleared');
+    }
+
+    public TestAwsConnection() {
+        if (!Session.Current?.GetCredentials()) {
+            ui.showErrorMessage('AWS Connection Test Failed', new Error('No AWS credentials available'));
+            return;
+        }
+        ui.showInfoMessage('AWS Connection Test Succeeded');
     }
 
     public dispose() {

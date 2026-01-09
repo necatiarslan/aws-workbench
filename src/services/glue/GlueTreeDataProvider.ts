@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { GlueTreeItem } from './GlueTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { GlueService } from './GlueService';
+import { Session } from '../../common/Session';
 
 export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeItem> {
 
@@ -107,7 +108,7 @@ export class GlueTreeDataProvider implements vscode.TreeDataProvider<GlueTreeIte
 			let resourceList = GlueService.Instance.ResourceList;
 
 			for (let res of resourceList) {
-				if (GlueService.Instance.FilterString && !res.Name.includes(GlueService.Instance.FilterString)) continue;
+				if (Session.Current?.FilterString && !res.Name.includes(Session.Current?.FilterString)) continue;
 				
 				let type = res.Type as TreeItemType;
 				// migration logic removed or adjusted

@@ -13,11 +13,6 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
     serviceId = 'glue';
     treeDataProvider;
     context;
-    FilterString = "";
-    isShowOnlyFavorite = false;
-    isShowHiddenNodes = false;
-    AwsProfile = "default";
-    AwsEndPoint;
     ResourceList = [];
     JobInfoCache = {};
     JobRunsCache = {};
@@ -28,7 +23,6 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new GlueTreeDataProvider_1.GlueTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
     registerCommands(context, treeProvider, treeView) {
@@ -40,9 +34,6 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
         };
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.glue.Refresh', () => {
             this.Refresh();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.glue.Filter', async () => {
-            await this.Filter();
             treeProvider.refresh();
         }), vscode.commands.registerCommand('aws-workbench.glue.AddGlueJob', async () => {
             await this.AddGlueJob();
@@ -128,7 +119,6 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
         for (var selectedJob of selectedJobList) {
             lastAddedItem = this.treeDataProvider.AddResource(selectedRegion, selectedJob, TreeItemType_1.TreeItemType.GlueJob);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveGlueJob(node) {
@@ -136,37 +126,6 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
             return;
         }
         this.treeDataProvider.RemoveResource(node.Region, node.ResourceName, TreeItemType_1.TreeItemType.GlueJob);
-        this.SaveState();
-    }
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) {
-            return;
-        }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.ResourceList = this.context.globalState.get('ResourceList', []);
-        }
-        catch (error) {
-            ui.logToOutput("GlueService.loadState Error !!!");
-        }
-    }
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ResourceList', this.ResourceList);
-            this.saveBaseState();
-        }
-        catch (error) {
-            ui.logToOutput("GlueService.saveState Error !!!");
-        }
     }
     ViewLog(node) { }
     addToFav(node) {

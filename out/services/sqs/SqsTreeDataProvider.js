@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const SqsTreeItem_1 = require("./SqsTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const SqsService_1 = require("./SqsService");
+const Session_1 = require("../../common/Session");
 const api = require("./API");
 class SqsTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -202,13 +203,13 @@ class SqsTreeDataProvider {
         if (!SqsService_1.SqsService.Instance)
             return result;
         for (var node of this.SqsNodeList) {
-            if (SqsService_1.SqsService.Instance.FilterString && !node.IsFilterStringMatch(SqsService_1.SqsService.Instance.FilterString)) {
+            if (Session_1.Session.Current?.FilterString && !node.IsFilterStringMatch(Session_1.Session.Current?.FilterString)) {
                 continue;
             }
-            if (SqsService_1.SqsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (Session_1.Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (SqsService_1.SqsService.Instance.isShowHiddenNodes && (node.IsHidden)) {
+            if (Session_1.Session.Current?.IsShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

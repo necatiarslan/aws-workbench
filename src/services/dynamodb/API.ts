@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
+import { Session } from '../../common/Session';
 import { 
   DynamoDBClient, 
   ListTablesCommand, 
@@ -30,26 +30,16 @@ import * as fs from 'fs';
 import * as archiver from 'archiver';
 
 export async function GetCredentials() {
-  let credentials;
-
   try {
-    if (DynamodbService.Instance) {
-      process.env.AWS_PROFILE = DynamodbService.Instance.AwsProfile ;
-    }
-    // Get credentials using the default provider chain.
-    const provider = fromNodeProviderChain({ignoreCache: true});
-    credentials = await provider();
-
+    const credentials = await Session.Current?.GetCredentials();
     if (!credentials) {
       throw new Error("Aws credentials not found !!!");
     }
-
-    ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
     return credentials;
   } catch (error: any) {
     ui.showErrorMessage("Aws Credentials Not Found !!!", error);
     ui.logToOutput("GetCredentials Error !!!", error);
-    return credentials;
+    return undefined;
   }
 }
 
@@ -59,7 +49,7 @@ async function GetDynamodbClient(region: string) {
   const dynamodbClient = new DynamoDBClient({
     region,
     credentials,
-    endpoint: DynamodbService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   
   return dynamodbClient;
@@ -70,7 +60,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: DynamodbService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   
   return cloudwatchLogsClient;
@@ -997,7 +987,7 @@ async function GetSTSClient(region: string) {
     {
       region,
       credentials,
-      endpoint: DynamodbService.Instance?.AwsEndPoint,
+      endpoint: Session.Current?.AwsEndPoint,
     }
   );
   return iamClient;

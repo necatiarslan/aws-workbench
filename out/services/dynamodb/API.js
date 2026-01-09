@@ -32,7 +32,7 @@ exports.TestAwsConnection = TestAwsConnection;
 exports.GetAwsProfileList = GetAwsProfileList;
 exports.getIniProfileData = getIniProfileData;
 /* eslint-disable @typescript-eslint/naming-convention */
-const credential_providers_1 = require("@aws-sdk/credential-providers");
+const Session_1 = require("../../common/Session");
 const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
 const client_iam_1 = require("@aws-sdk/client-iam");
@@ -42,28 +42,20 @@ const os_1 = require("os");
 const path_1 = require("path");
 const path_2 = require("path");
 const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
-const DynamodbService_1 = require("./DynamodbService");
 const fs = require("fs");
 const archiver = require("archiver");
 async function GetCredentials() {
-    let credentials;
     try {
-        if (DynamodbService_1.DynamodbService.Instance) {
-            process.env.AWS_PROFILE = DynamodbService_1.DynamodbService.Instance.AwsProfile;
-        }
-        // Get credentials using the default provider chain.
-        const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
-        credentials = await provider();
+        const credentials = await Session_1.Session.Current?.GetCredentials();
         if (!credentials) {
             throw new Error("Aws credentials not found !!!");
         }
-        ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
         return credentials;
     }
     catch (error) {
         ui.showErrorMessage("Aws Credentials Not Found !!!", error);
         ui.logToOutput("GetCredentials Error !!!", error);
-        return credentials;
+        return undefined;
     }
 }
 async function GetDynamodbClient(region) {
@@ -71,7 +63,7 @@ async function GetDynamodbClient(region) {
     const dynamodbClient = new client_dynamodb_1.DynamoDBClient({
         region,
         credentials,
-        endpoint: DynamodbService_1.DynamodbService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return dynamodbClient;
 }
@@ -80,7 +72,7 @@ async function GetCloudWatchClient(region) {
     const cloudwatchLogsClient = new client_cloudwatch_logs_1.CloudWatchLogsClient({
         region,
         credentials,
-        endpoint: DynamodbService_1.DynamodbService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return cloudwatchLogsClient;
 }
@@ -778,7 +770,7 @@ async function GetSTSClient(region) {
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: DynamodbService_1.DynamodbService.Instance?.AwsEndPoint,
+        endpoint: Session_1.Session.Current?.AwsEndPoint,
     });
     return iamClient;
 }

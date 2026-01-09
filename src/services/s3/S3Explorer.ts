@@ -10,7 +10,7 @@ import * as s3_helper from "./S3Helper";
 import { S3Search } from "./S3Search";
 import { ListObjectsV2CommandOutput } from "@aws-sdk/client-s3";
 import { MethodResult } from '../../common/MethodResult';
-import { Telemetry } from "./Telemetry";
+import { Telemetry } from "../../common/Telemetry";
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';

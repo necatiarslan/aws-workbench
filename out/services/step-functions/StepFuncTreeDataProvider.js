@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const StepFuncTreeItem_1 = require("./StepFuncTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const StepfunctionsService_1 = require("./StepfunctionsService");
+const Session_1 = require("../../common/Session");
 class StepFuncTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -264,13 +265,13 @@ class StepFuncTreeDataProvider {
         if (!StepfunctionsService_1.StepfunctionsService.Instance)
             return result;
         for (var node of this.StepFuncNodeList) {
-            if (StepfunctionsService_1.StepfunctionsService.Instance.FilterString && !node.IsFilterStringMatch(StepfunctionsService_1.StepfunctionsService.Instance.FilterString)) {
+            if (Session_1.Session.Current?.FilterString && !node.IsFilterStringMatch(Session_1.Session.Current?.FilterString)) {
                 continue;
             }
-            if (StepfunctionsService_1.StepfunctionsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (Session_1.Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (StepfunctionsService_1.StepfunctionsService.Instance.isShowHiddenNodes && (node.IsHidden)) {
+            if (Session_1.Session.Current?.IsShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

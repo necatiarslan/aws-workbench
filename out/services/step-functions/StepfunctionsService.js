@@ -13,11 +13,6 @@ class StepfunctionsService extends AbstractAwsService_1.AbstractAwsService {
     serviceId = 'stepfunctions';
     treeDataProvider;
     context;
-    FilterString = "";
-    isShowOnlyFavorite = false;
-    isShowHiddenNodes = false;
-    AwsProfile = "default";
-    AwsEndPoint;
     StepFuncList = [];
     PayloadPathList = [];
     CodePathList = [];
@@ -27,7 +22,6 @@ class StepfunctionsService extends AbstractAwsService_1.AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new StepFuncTreeDataProvider_1.StepFuncTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
     registerCommands(context, treeProvider, treeView) {
@@ -39,27 +33,6 @@ class StepfunctionsService extends AbstractAwsService_1.AbstractAwsService {
         };
         context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.step-functions.Refresh', () => {
             this.Refresh();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.Filter', async () => {
-            await this.Filter();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.ShowOnlyFavorite', async () => {
-            await this.ShowOnlyFavorite();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.ShowHiddenNodes', async () => {
-            await this.ShowHiddenNodes();
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.AddToFav', (node) => {
-            this.AddToFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.DeleteFromFav', (node) => {
-            this.DeleteFromFav(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.HideNode', (node) => {
-            this.HideNode(wrap(node));
-            treeProvider.refresh();
-        }), vscode.commands.registerCommand('aws-workbench.step-functions.UnHideNode', (node) => {
-            this.UnHideNode(wrap(node));
             treeProvider.refresh();
         }), vscode.commands.registerCommand('aws-workbench.step-functions.AddStepFunc', async () => {
             await this.AddStepFunc();
@@ -149,7 +122,6 @@ class StepfunctionsService extends AbstractAwsService_1.AbstractAwsService {
         for (var selectedStepFunc of selectedStepFuncList) {
             lastAddedItem = this.treeDataProvider.AddStepFunc(selectedRegion, selectedStepFunc);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
     async RemoveStepFunc(node) {
@@ -157,79 +129,6 @@ class StepfunctionsService extends AbstractAwsService_1.AbstractAwsService {
             return;
         }
         this.treeDataProvider.RemoveStepFunc(node.Region, node.StepFuncArn);
-        this.SaveState();
-    }
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) {
-            return;
-        }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-    async AddToFav(node) {
-        if (!node)
-            return;
-        this.addToFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async DeleteFromFav(node) {
-        if (!node)
-            return;
-        this.deleteFromFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async HideNode(node) {
-        if (!node)
-            return;
-        this.hideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    async UnHideNode(node) {
-        if (!node)
-            return;
-        this.unhideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.StepFuncList = this.context.globalState.get('StepFuncList', []);
-            this.PayloadPathList = this.context.globalState.get('PayloadPathList', []);
-            this.CodePathList = this.context.globalState.get('CodePathList', []);
-        }
-        catch (error) {
-            ui.logToOutput("StepfunctionsService.loadState Error !!!");
-        }
-    }
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('StepFuncList', this.StepFuncList);
-            this.context.globalState.update('PayloadPathList', this.PayloadPathList);
-            this.context.globalState.update('CodePathList', this.CodePathList);
-            this.saveBaseState();
-        }
-        catch (error) {
-            ui.logToOutput("StepfunctionsService.saveState Error !!!");
-        }
     }
     addToFav(node) {
         const data = node.itemData;

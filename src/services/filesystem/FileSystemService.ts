@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
 import { IService } from '../IService';
+import { Session } from '../../common/Session';
 import { ServiceManager } from '../ServiceManager';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';

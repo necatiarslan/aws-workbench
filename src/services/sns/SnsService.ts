@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AbstractAwsService } from '../AbstractAwsService';
+import { Session } from '../../common/Session';
 import { SnsTreeDataProvider } from './SnsTreeDataProvider';
 import { SnsTreeItem } from './SnsTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
@@ -13,12 +14,6 @@ export class SnsService extends AbstractAwsService {
     public serviceId = 'sns';
     public treeDataProvider: SnsTreeDataProvider;
     public context: vscode.ExtensionContext;
-    
-    public FilterString: string = "";
-    public isShowOnlyFavorite: boolean = false;
-    public isShowHiddenNodes: boolean = false;
-    public AwsProfile: string = "default";	
-    public AwsEndPoint: string | undefined;
 
     public TopicList: {Region: string, TopicArn: string}[] = [];
 
@@ -28,7 +23,6 @@ export class SnsService extends AbstractAwsService {
         this.context = context;
         this.loadBaseState();
         this.treeDataProvider = new SnsTreeDataProvider();
-        this.LoadState();
         this.Refresh();
     }
 
@@ -43,34 +37,6 @@ export class SnsService extends AbstractAwsService {
         context.subscriptions.push(
             vscode.commands.registerCommand('aws-workbench.sns.Refresh', () => {
                 this.Refresh();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.Filter', async () => {
-                await this.Filter();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.ShowOnlyFavorite', async () => {
-                await this.ShowOnlyFavorite();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.ShowHiddenNodes', async () => {
-                await this.ShowHiddenNodes();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.AddToFav', (node: any) => {
-                this.AddToFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.DeleteFromFav', (node: any) => {
-                this.DeleteFromFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.HideNode', (node: any) => {
-                this.HideNode(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.sns.UnHideNode', (node: any) => {
-                this.UnHideNode(wrap(node));
                 treeProvider.refresh();
             }),
             vscode.commands.registerCommand('aws-workbench.sns.AddTopic', async () => {
@@ -161,14 +127,12 @@ export class SnsService extends AbstractAwsService {
         for (var selectedTopic of selectedTopicList) {
             lastAddedItem = this.treeDataProvider.AddTopic(selectedRegion, selectedTopic);
         }
-        this.SaveState();
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
 
     async RemoveTopic(node: SnsTreeItem) {
         if (!node || node.TreeItemType !== TreeItemType.SNSTopic || !node.Region || !node.TopicArn) { return; }
         this.treeDataProvider.RemoveTopic(node.Region, node.TopicArn);
-        this.SaveState();
     }
 
     async PublishMessage(node: SnsTreeItem) {
@@ -179,75 +143,6 @@ export class SnsService extends AbstractAwsService {
         let result = await api.PublishMessage(node.Region, node.TopicArn, message);
         if (result.isSuccessful) {
             ui.showInfoMessage('Message Published Successfully');
-        }
-    }
-
-    async Filter() {
-        let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
-        if (filterStringTemp === undefined) { return; }
-        this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowOnlyFavorite() {
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowHiddenNodes() {
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async AddToFav(node: SnsTreeItem) {
-        if (!node) return;
-        this.addToFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async DeleteFromFav(node: SnsTreeItem) {
-        if (!node) return;
-        this.deleteFromFav(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async HideNode(node: SnsTreeItem) {
-        if (!node) return;
-        this.hideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    async UnHideNode(node: SnsTreeItem) {
-        if (!node) return;
-        this.unhideResource(this.mapToWorkbenchItem(node));
-        this.treeDataProvider.Refresh();
-    }
-
-    LoadState() {
-        try {
-            this.AwsProfile = this.context.globalState.get('AwsProfile', 'default');
-            this.FilterString = this.context.globalState.get('FilterString', '');
-            this.isShowOnlyFavorite = this.context.globalState.get('ShowOnlyFavorite', false);
-            this.isShowHiddenNodes = this.context.globalState.get('ShowHiddenNodes', false);
-            this.TopicList = this.context.globalState.get('TopicList', []);
-        } catch (error) {
-            ui.logToOutput("SnsService.loadState Error !!!");
-        }
-    }
-
-    SaveState() {
-        try {
-            this.context.globalState.update('AwsProfile', this.AwsProfile);
-            this.context.globalState.update('FilterString', this.FilterString);
-            this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
-            this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
-            this.context.globalState.update('TopicList', this.TopicList);
-            this.saveBaseState();
-        } catch (error) {
-            ui.logToOutput("SnsService.saveState Error !!!");
         }
     }
 

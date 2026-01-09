@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const SnsTreeItem_1 = require("./SnsTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const SnsService_1 = require("./SnsService");
+const Session_1 = require("../../common/Session");
 const api = require("./API");
 class SnsTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -127,13 +128,13 @@ class SnsTreeDataProvider {
         if (!SnsService_1.SnsService.Instance)
             return result;
         for (var node of this.SnsNodeList) {
-            if (SnsService_1.SnsService.Instance.FilterString && !node.IsFilterStringMatch(SnsService_1.SnsService.Instance.FilterString)) {
+            if (Session_1.Session.Current?.FilterString && !node.IsFilterStringMatch(Session_1.Session.Current?.FilterString)) {
                 continue;
             }
-            if (SnsService_1.SnsService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
+            if (Session_1.Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) {
                 continue;
             }
-            if (SnsService_1.SnsService.Instance.isShowHiddenNodes && (node.IsHidden)) {
+            if (Session_1.Session.Current?.IsShowHiddenNodes && (node.IsHidden)) {
                 continue;
             }
             result.push(node);

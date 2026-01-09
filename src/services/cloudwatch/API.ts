@@ -7,29 +7,20 @@ import { join } from "path";
 import { parseKnownFiles, SourceProfileInit } from "../../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import { CloudWatchService } from "./CloudWatchService";
+import { Session } from '../../common/Session';
 
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 export async function GetCredentials() {
-  let credentials;
-
   try {
-    if (CloudWatchService.Instance) {
-      process.env.AWS_PROFILE = CloudWatchService.Instance.AwsProfile ;
-    }
-    // Get credentials using the default provider chain.
-    const provider = fromNodeProviderChain({ignoreCache: true});
-    credentials = await provider();
-
+    const credentials = await Session.Current?.GetCredentials();
     if (!credentials) {
       throw new Error("Aws credentials not found !!!");
     }
-
     ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
     return credentials;
   } catch (error: any) {
     ui.showErrorMessage("Aws Credentials Not Found !!!", error);
     ui.logToOutput("GetCredentials Error !!!", error);
-    return credentials;
+    return undefined;
   }
 }
 
@@ -39,7 +30,7 @@ export async function GetCloudWatchLogsClient(Region:string | undefined = CloudW
   let credentials = await GetCredentials();
   return new CloudWatchLogsClient({
     credentials: credentials,
-    endpoint: CloudWatchService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
     region: Region
   });
 }

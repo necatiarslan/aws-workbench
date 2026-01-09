@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { WorkbenchTreeProvider } from './tree/WorkbenchTreeProvider';
 import { WorkbenchTreeItem } from './tree/WorkbenchTreeItem';
 import { ServiceManager } from './services/ServiceManager';
+import { Session } from './common/Session';
 
 import { S3Service } from './services/s3/S3Service';
 import { LambdaService } from './services/lambda/LambdaService';
@@ -24,6 +25,8 @@ export function activate(context: vscode.ExtensionContext): void {
     console.log('Activating AWS Workbench...');
 
     try {
+        new Session(context); // Initialize session management
+
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         const treeProvider = new WorkbenchTreeProvider(context);
         const treeView = vscode.window.createTreeView('AwsWorkbenchTree', { 
@@ -147,9 +150,7 @@ function registerCoreCommands(
             executeServiceCommand(node, (s) => s.showInAnyProfile(node))
         ),
 
-        vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
-             vscode.commands.executeCommand('aws-workbench.access.TestAwsConnectivity');
-        }),
+        vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => Session.Current?.TestAwsConnection()),
 
         vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
              vscode.commands.executeCommand('aws-workbench.access.SetActiveProfile');
@@ -159,8 +160,8 @@ function registerCoreCommands(
         vscode.commands.registerCommand('aws-workbench.Filter', () => showNotImplemented('Filter')),
         vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => showNotImplemented('ShowOnlyFavorite')),
         vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => showNotImplemented('ShowHiddenNodes')),
-        vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => showNotImplemented('UpdateAwsEndPoint')),
-        vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => showNotImplemented('SetAwsRegion'))
+        vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => Session.Current?.SetAwsEndpoint()),
+        vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => Session.Current?.SetAwsRegion())
     );
 }
 

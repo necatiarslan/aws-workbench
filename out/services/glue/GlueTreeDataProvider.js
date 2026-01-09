@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const GlueTreeItem_1 = require("./GlueTreeItem");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const GlueService_1 = require("./GlueService");
+const Session_1 = require("../../common/Session");
 class GlueTreeDataProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -104,7 +105,7 @@ class GlueTreeDataProvider {
                 return items;
             let resourceList = GlueService_1.GlueService.Instance.ResourceList;
             for (let res of resourceList) {
-                if (GlueService_1.GlueService.Instance.FilterString && !res.Name.includes(GlueService_1.GlueService.Instance.FilterString))
+                if (Session_1.Session.Current?.FilterString && !res.Name.includes(Session_1.Session.Current?.FilterString))
                     continue;
                 let type = res.Type;
                 // migration logic removed or adjusted

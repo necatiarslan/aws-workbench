@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
+import { Session } from '../../common/Session';
 import { GlueClient, GetJobsCommand, StartJobRunCommand, GetJobRunCommand, GetJobRunsCommand } from "@aws-sdk/client-glue";
 import { CloudWatchLogsClient, OutputLogEvent, DescribeLogStreamsCommand, GetLogEventsCommand, DescribeLogGroupsCommand } from "@aws-sdk/client-cloudwatch-logs";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
@@ -13,25 +13,16 @@ import { ParsedIniData } from "@aws-sdk/types";
 import { GlueService } from './GlueService';
 
 export async function GetCredentials() {
-  let credentials;
-
   try {
-    if (GlueService.Instance) {
-      process.env.AWS_PROFILE = GlueService.Instance.AwsProfile ;
-    }
-    const provider = fromNodeProviderChain({ignoreCache: true});
-    credentials = await provider();
-
+    const credentials = await Session.Current?.GetCredentials();
     if (!credentials) {
       throw new Error("Aws credentials not found !!!");
     }
-
-    ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
     return credentials;
   } catch (error: any) {
     ui.showErrorMessage("Aws Credentials Not Found !!!", error);
     ui.logToOutput("GetCredentials Error !!!", error);
-    return credentials;
+    return undefined;
   }
 }
 
@@ -40,7 +31,7 @@ async function GetGlueClient(region: string) {
   const glueClient = new GlueClient({
     region,
     credentials,
-    endpoint: GlueService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   return glueClient;
 }
@@ -50,7 +41,7 @@ async function GetCloudWatchClient(region: string) {
   const cloudwatchLogsClient = new CloudWatchLogsClient({
     region,
     credentials,
-    endpoint: GlueService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   return cloudwatchLogsClient;
 }
@@ -60,7 +51,7 @@ async function GetSTSClient(region: string) {
   const stsClient = new STSClient({
     region,
     credentials,
-    endpoint: GlueService.Instance?.AwsEndPoint,
+    endpoint: Session.Current?.AwsEndPoint,
   });
   return stsClient;
 }

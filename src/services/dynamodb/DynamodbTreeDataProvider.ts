@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { DynamodbTreeItem } from './DynamodbTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { DynamodbService } from './DynamodbService';
+import { Session } from '../../common/Session';
 import * as api from './API';
 
 export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<DynamodbTreeItem>
@@ -386,9 +387,9 @@ export class DynamodbTreeDataProvider implements vscode.TreeDataProvider<Dynamod
 		var result: DynamodbTreeItem[] = [];
 		if(!DynamodbService.Instance) return result;
 		for (var node of this.DynamodbNodeList) {
-			if (DynamodbService.Instance.FilterString && !node.IsFilterStringMatch(DynamodbService.Instance.FilterString)) { continue; }
-			if (DynamodbService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (DynamodbService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

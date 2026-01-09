@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { LambdaTreeItem } from './LambdaTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { LambdaService } from './LambdaService';
+import { Session } from '../../common/Session';
 
 export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTreeItem>
 {
@@ -316,9 +317,9 @@ export class LambdaTreeDataProvider implements vscode.TreeDataProvider<LambdaTre
 		var result: LambdaTreeItem[] = [];
 		if(!LambdaService.Instance) return result;
 		for (var node of this.LambdaNodeList) {
-			if (LambdaService.Instance.FilterString && !node.IsFilterStringMatch(LambdaService.Instance.FilterString)) { continue; }
-			if (LambdaService.Instance.isShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
-			if (LambdaService.Instance.isShowHiddenNodes && (node.IsHidden)) { continue; }
+			if (Session.Current?.FilterString && !node.IsFilterStringMatch(Session.Current?.FilterString)) { continue; }
+			if (Session.Current?.IsShowOnlyFavorite && !(node.IsFav || node.IsAnyChidrenFav())) { continue; }
+			if (Session.Current?.IsShowHiddenNodes && (node.IsHidden)) { continue; }
 
 			result.push(node);
 		}

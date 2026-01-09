@@ -11,7 +11,7 @@ const TreeItemType_1 = require("../../tree/TreeItemType");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
 const S3Explorer_1 = require("./S3Explorer");
-const Telemetry_1 = require("./Telemetry");
+const Telemetry_1 = require("../../common/Telemetry");
 class S3Search {
     static Current;
     _panel;

@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
 import { IService } from './IService';
+import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
+import { AwsCredentialIdentity } from "@aws-sdk/types";
+import * as ui from "../common/UI";
 
 export class ServiceManager {
     private static _instance: ServiceManager;
     private services: Map<string, IService> = new Map();
+
 
     private constructor() {}
 
@@ -25,4 +29,5 @@ export class ServiceManager {
     public getAllServices(): IService[] {
         return Array.from(this.services.values());
     }
+
 }
