@@ -6,10 +6,7 @@ export class WorkbenchTreeProvider implements vscode.TreeDataProvider<WorkbenchT
     private _onDidChangeTreeData: vscode.EventEmitter<WorkbenchTreeItem | undefined | null | void> = new vscode.EventEmitter<WorkbenchTreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<WorkbenchTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
-    private rootNodes: WorkbenchTreeItem[] = [];
-
     constructor(private context: vscode.ExtensionContext) {
-        this.loadRootNodes();
     }
 
     public refresh(): void {
@@ -19,7 +16,15 @@ export class WorkbenchTreeProvider implements vscode.TreeDataProvider<WorkbenchT
     public getTreeItem(element: WorkbenchTreeItem): vscode.TreeItem | Promise<vscode.TreeItem> {
         const service = ServiceManager.Instance.getService(element.serviceId);
         if (service && element.itemData) {
-            return service.getTreeItem(element);
+            try {
+                return service.getTreeItem(element);
+            } catch (error) {
+                console.error(`Error getting tree item for ${element.label} (Service: ${element.serviceId}):`, error);
+                const errorItem = new vscode.TreeItem(element.label || 'Error', vscode.TreeItemCollapsibleState.None);
+                errorItem.description = 'Error loading item';
+                errorItem.tooltip = error instanceof Error ? error.message : String(error);
+                return errorItem;
+            }
         }
         return element;
     }
@@ -29,51 +34,41 @@ export class WorkbenchTreeProvider implements vscode.TreeDataProvider<WorkbenchT
             const services = ServiceManager.Instance.getAllServices();
             const allRootNodes: WorkbenchTreeItem[] = [];
             for (const service of services) {
-                const roots = await service.getRootNodes();
-                allRootNodes.push(...roots);
+                try {
+                    const roots = await service.getRootNodes();
+                    allRootNodes.push(...roots);
+                } catch (error) {
+                    console.error(`Error loading root nodes for service ${service.serviceId}:`, error);
+                    // Optionally push an error node so the user knows this service failed
+                    allRootNodes.push(new WorkbenchTreeItem(
+                        `${service.serviceId.toUpperCase()} (Error)`,
+                        vscode.TreeItemCollapsibleState.None,
+                        service.serviceId,
+                        'error',
+                        { error }
+                    ));
+                }
             }
             return allRootNodes;
         }
 
         const service = ServiceManager.Instance.getService(element.serviceId);
         if (service) {
-            const children = await service.getChildren(element);
-            return children;
+            try {
+                const children = await service.getChildren(element);
+                return children;
+            } catch (error) {
+                console.error(`Error loading children for ${element.label} (Service: ${element.serviceId}):`, error);
+                return [new WorkbenchTreeItem(
+                    'Error loading children',
+                    vscode.TreeItemCollapsibleState.None,
+                    element.serviceId,
+                    'error',
+                    { error }
+                )];
+            }
         }
 
         return [];
-    }
-
-    private loadRootNodes() {
-        const savedNodes = this.context.globalState.get<any[]>('workbench.rootNodes', []);
-        this.rootNodes = savedNodes.map(n => new WorkbenchTreeItem(
-            n.label,
-            vscode.TreeItemCollapsibleState.Collapsed,
-            n.serviceId,
-            n.contextValue,
-            n.itemData
-        ));
-    }
-
-    public persistRootNodes() {
-        const nodesToSave = this.rootNodes.map(n => ({
-            label: n.label,
-            serviceId: n.serviceId,
-            contextValue: n.contextValue,
-            itemData: n.itemData
-        }));
-        this.context.globalState.update('workbench.rootNodes', nodesToSave);
-    }
-
-    public addRootNode(node: WorkbenchTreeItem) {
-        this.rootNodes.push(node);
-        this.persistRootNodes();
-        this.refresh();
-    }
-
-    public removeRootNode(node: WorkbenchTreeItem) {
-        this.rootNodes = this.rootNodes.filter(n => n !== node);
-        this.persistRootNodes();
-        this.refresh();
     }
 }

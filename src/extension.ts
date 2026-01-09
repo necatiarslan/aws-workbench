@@ -17,12 +17,10 @@ import { FileSystemService } from './services/filesystem/FileSystemService';
 
 /**
  * Activates the AWS Workbench extension.
- * Consolidates activation of all sub-services.
- * 
- * @param context - The extension context provided by VSCode
+ * This is the entry point for the extension.
  */
 export function activate(context: vscode.ExtensionContext): void {
-    console.log('AWS Workbench is now active!');
+    console.log('Activating AWS Workbench...');
 
     try {
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
@@ -33,7 +31,8 @@ export function activate(context: vscode.ExtensionContext): void {
         });
         context.subscriptions.push(treeView);
 
-        // 2. Register our Service wrappers for the Unified Tree to fetch children from
+        // 2. Register Services
+        // Services are responsible for managing their own resources and tree nodes.
         const serviceManager = ServiceManager.Instance;
         serviceManager.registerService(new FileSystemService(context));
         serviceManager.registerService(new AccessService(context));
@@ -47,85 +46,84 @@ export function activate(context: vscode.ExtensionContext): void {
         serviceManager.registerService(new SqsService(context));
         serviceManager.registerService(new StepfunctionsService(context));
 
-        // 4. Register Commands
-        context.subscriptions.push(
-            vscode.commands.registerCommand('aws-workbench.addResource', async () => {
-                const services = serviceManager.getAllServices();
-                const items = services.map(s => ({
-                    label: s.serviceId.toUpperCase(),
-                    description: `Add ${s.serviceId.toUpperCase()} resource`,
-                    service: s
-                }));
+        // 3. Register Core Commands
+        registerCoreCommands(context, serviceManager, treeProvider, treeView);
 
-                const selected = await vscode.window.showQuickPick(items, {
-                    placeHolder: 'Select AWS resource type to add'
-                });
-
-                if (selected) {
-                    const node = await selected.service.addResource();
-                    treeProvider.refresh();
-                    if (node) {
-                        try {
-                            // Give VS Code a moment to refresh before revealing
-                            setTimeout(() => {
-                                treeView.reveal(node, { select: true, focus: true, expand: true });
-                            }, 500);
-                        } catch (e) {
-                            console.error('Error revealing node:', e);
-                        }
-                    }
-                }
-            })
-        );
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.Refresh', () => treeProvider.refresh()));
-        
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
-             vscode.commands.executeCommand('aws-workbench.access.TestAwsConnectivity');
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
-             vscode.commands.executeCommand('aws-workbench.access.SetActiveProfile');
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.Filter', () => {
-             vscode.window.showInformationMessage('Filter command not implemented yet.');
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => {
-             vscode.window.showInformationMessage('ShowOnlyFavorite command not implemented yet.');
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => {
-             vscode.window.showInformationMessage('ShowHiddenNodes command not implemented yet.');
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => {
-             vscode.window.showInformationMessage('UpdateAwsEndPoint command not implemented yet.');
-        }));
-
-        context.subscriptions.push(vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => {
-             vscode.window.showInformationMessage('SetAwsRegion command not implemented yet.');
-        }));
-
-        // 5. Register each service's commands
+        // 4. Register Service Commands
+        // Each service registers its own specific commands.
         for (const service of serviceManager.getAllServices()) {
             service.registerCommands(context, treeProvider, treeView);
         }
 
-        console.log('All AWS services activated successfully.');
+        console.log('AWS Workbench activated successfully.');
     } catch (error) {
-        console.error('Error activating AWS Workbench services:', error);
+        console.error('Fatal error activating AWS Workbench:', error);
+        vscode.window.showErrorMessage('AWS Workbench failed to activate. Check debug console for details.');
     }
 }
 
 /**
- * Deactivates the extension.
+ * Registers the core commands for the extension that aren't specific to a single service.
  */
+function registerCoreCommands(
+    context: vscode.ExtensionContext, 
+    serviceManager: ServiceManager, 
+    treeProvider: WorkbenchTreeProvider,
+    treeView: vscode.TreeView<any>
+) {
+    context.subscriptions.push(
+        vscode.commands.registerCommand('aws-workbench.addResource', async () => {
+            const services = serviceManager.getAllServices();
+            const items = services.map(s => ({
+                label: s.serviceId.toUpperCase(),
+                description: `Add ${s.serviceId.toUpperCase()} resource`,
+                service: s
+            }));
+
+            const selected = await vscode.window.showQuickPick(items, {
+                placeHolder: 'Select AWS resource type to add'
+            });
+
+            if (selected) {
+                try {
+                    const node = await selected.service.addResource();
+                    treeProvider.refresh();
+                    if (node) {
+                        // Small delay to ensure the tree has updated before revealing the new node
+                        setTimeout(() => {
+                            treeView.reveal(node, { select: true, focus: true, expand: true });
+                        }, 500);
+                    }
+                } catch (err) {
+                    console.error('Error adding resource:', err);
+                    vscode.window.showErrorMessage(`Failed to add resource: ${err}`);
+                }
+            }
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.Refresh', () => treeProvider.refresh()),
+        
+        vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
+             vscode.commands.executeCommand('aws-workbench.access.TestAwsConnectivity');
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.SelectAwsProfile', () => {
+             vscode.commands.executeCommand('aws-workbench.access.SetActiveProfile');
+        }),
+
+        // Placeholder commands for features not yet implemented
+        vscode.commands.registerCommand('aws-workbench.Filter', () => showNotImplemented('Filter')),
+        vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => showNotImplemented('ShowOnlyFavorite')),
+        vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => showNotImplemented('ShowHiddenNodes')),
+        vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => showNotImplemented('UpdateAwsEndPoint')),
+        vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => showNotImplemented('SetAwsRegion'))
+    );
+}
+
+function showNotImplemented(feature: string) {
+    vscode.window.showInformationMessage(`${feature} command is not implemented yet.`);
+}
+
 export function deactivate(): void {
-    try {
-        // access_ext.deactivate();
-    } catch (error) {
-        console.error('Error deactivating AWS Workbench services:', error);
-    }
+    // Cleanup is handled by context.subscriptions
 }

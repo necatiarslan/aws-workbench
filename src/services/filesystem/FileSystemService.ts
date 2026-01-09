@@ -1,343 +1,333 @@
 import * as vscode from 'vscode';
+import { v4 as uuidv4 } from 'uuid';
 import { IService } from '../IService';
+import { ServiceManager } from '../ServiceManager';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
-import { TreeItemType } from '../../tree/TreeItemType';
-import { ServiceManager } from '../ServiceManager';
-import { v4 as uuidv4 } from 'uuid';
-import * as ui from '../../common/UI';
 
-interface FolderItem {
+// --- Interfaces ---
+
+interface FileSystemNode {
     id: string;
-    name: string;
-    parentId?: string;
-    children: (FolderItem | ResourceReference)[];
+    label: string;
+    type: 'folder' | 'resource';
 }
 
-interface ResourceReference {
+interface FileSystemFolder extends FileSystemNode {
+    type: 'folder';
+    children: (FileSystemFolder | FileSystemResource)[];
+    parentId?: string;
+}
+
+interface FileSystemResource extends FileSystemNode {
     type: 'resource';
     serviceId: string;
-    // We store enough data to reconstruct or find the resource. 
-    // Ideally we store what the service needs to add/find it.
-    // For simplicity, we might store the itemData that the service uses.
-    // However, itemData can be complex.
-    // Let's store the serialized version if possible, or just the necessary IDs.
-    // For S3: Bucket Name. For Lambda: Function Name, Region.
-    data: any; 
-    label: string;
+    data: any; // The original itemData from the service
 }
 
 export class FileSystemService implements IService {
     public static Instance: FileSystemService;
-    public serviceId = 'filesystem'; // Should match package.json commands if we prefix them
-    public context: vscode.ExtensionContext;
+    public readonly serviceId = 'filesystem';
     private treeProvider!: WorkbenchTreeProvider;
+    private rootFolders: FileSystemFolder[] = [];
 
-    private folders: FolderItem[] = [];
-
-    constructor(context: vscode.ExtensionContext) {
+    constructor(private context: vscode.ExtensionContext) {
         FileSystemService.Instance = this;
-        this.context = context;
         this.loadState();
     }
 
-    registerCommands(context: vscode.ExtensionContext, treeProvider: WorkbenchTreeProvider, treeView: vscode.TreeView<WorkbenchTreeItem>): void {
+    public registerCommands(context: vscode.ExtensionContext, treeProvider: WorkbenchTreeProvider, treeView: vscode.TreeView<WorkbenchTreeItem>): void {
         this.treeProvider = treeProvider;
         context.subscriptions.push(
-            vscode.commands.registerCommand('aws-workbench.filesystem.AddFolder', (node?: WorkbenchTreeItem) => {
-                this.addFolder(node);
-            }),
-            vscode.commands.registerCommand('aws-workbench.filesystem.RemoveFolder', (node: WorkbenchTreeItem) => {
-                this.removeFolder(node);
-            }),
-            vscode.commands.registerCommand('aws-workbench.filesystem.AddResourceToFolder', (node: WorkbenchTreeItem) => {
-                this.addResourceToFolder(node);
-            }),
-            vscode.commands.registerCommand('aws-workbench.filesystem.RemoveResource', (node: WorkbenchTreeItem) => {
-                this.removeResource(node);
-            })
+            vscode.commands.registerCommand('aws-workbench.filesystem.AddFolder', (node?: WorkbenchTreeItem) => this.promptAddFolder(node)),
+            vscode.commands.registerCommand('aws-workbench.filesystem.RemoveFolder', (node: WorkbenchTreeItem) => this.confirmRemoveFolder(node)),
+            vscode.commands.registerCommand('aws-workbench.filesystem.AddResourceToFolder', (node: WorkbenchTreeItem) => this.promptAddResourceToFolder(node)),
+            vscode.commands.registerCommand('aws-workbench.filesystem.RemoveResource', (node: WorkbenchTreeItem) => this.removeResource(node))
         );
     }
 
-    async getRootNodes(): Promise<WorkbenchTreeItem[]> {
-        // Return top-level folders
-        return this.folders.map(f => this.mapFolderToTreeItem(f));
+    public async getRootNodes(): Promise<WorkbenchTreeItem[]> {
+        return this.rootFolders.map(folder => this.createFolderTreeItem(folder));
     }
 
-    async getChildren(element?: WorkbenchTreeItem): Promise<WorkbenchTreeItem[]> {
+    public async getChildren(element?: WorkbenchTreeItem): Promise<WorkbenchTreeItem[]> {
         if (!element) {
             return this.getRootNodes();
         }
 
-        const folder = element.itemData as FolderItem;
-        if (folder && folder.children) {
+        const nodeData = element.itemData as FileSystemNode;
+
+        if (nodeData.type === 'folder') {
+            const folder = nodeData as FileSystemFolder;
             const children: WorkbenchTreeItem[] = [];
+
             for (const child of folder.children) {
-                if ('children' in child) {
-                    // It's a folder
-                    children.push(this.mapFolderToTreeItem(child as FolderItem));
+                if (child.type === 'folder') {
+                    children.push(this.createFolderTreeItem(child));
                 } else {
-                    // It's a resource reference
-                    const ref = child as ResourceReference;
-                    const service = ServiceManager.Instance.getService(ref.serviceId);
-                    if (service) {
-                        try {
-                            // We need to ask the service to convert this data back to a TreeItem
-                            // But service.getTreeItem usually expects a WorkbenchTreeItem with service-specific data.
-                            // We construct a WorkbenchTreeItem that mimics what the service expects.
-                            // This might be tricky if services rely on references not stored in 'data'.
-                            // Assuming 'data' contains enough info.
-                            
-                            // HACK: We are creating a WorkbenchTreeItem with the service's ID.
-                            // When this item is expanded, WorkbenchTreeProvider will call service.getChildren(item).
-                            // So 'itemData' MUST be what the service expects.
-                            
-                            // For visual consistency, we might want to let the service format the label/icon.
-                            // But for now, use the saved label or a generic one.
-                            
-                            // If the service has a method to 'restore' an item from data, that would be best.
-                            // For now, let's assume 'ref.data' IS the itemData expected by the service.
-                            
-                            const item = new WorkbenchTreeItem(
-                                ref.label,
-                                vscode.TreeItemCollapsibleState.Collapsed, // Assume it has children?
-                                ref.serviceId,
-                                undefined, // Context value will be determined by service.getTreeItem? 
-                                           // No, contextValue is passed in constructor.
-                                           // We might need to ask service for the TreeItem to get valid contextValue and Icon.
-                                ref.data
-                            );
-                            
-                            // Let's resolve the full TreeItem from the service to get correct icon/contextValue
-                            const resolvedItem = await service.getTreeItem(item);
-                            
-                            // We recreate the WorkbenchTreeItem with the resolved properties
-                            // BUT we need to preserve the parent relationship for our file system?
-                            // Actually, 'removeResource' needs to know it's in a folder.
-                            // We might need to wrap the context value.
-                            
-                            const fileSystemContextValue = (resolvedItem.contextValue || '') + '#FileSystemResource#';
-                            
-                            children.push(new WorkbenchTreeItem(
-                                resolvedItem.label as string || ref.label,
-                                resolvedItem.collapsibleState || vscode.TreeItemCollapsibleState.None,
-                                ref.serviceId,
-                                fileSystemContextValue,
-                                ref.data
-                            ));
-                            
-                        } catch (e) {
-                            console.error(`Failed to restore resource ${ref.label}:`, e);
-                            children.push(new WorkbenchTreeItem(
-                                `${ref.label} (Error)`,
-                                vscode.TreeItemCollapsibleState.None,
-                                'filesystem',
-                                'error',
-                                undefined
-                            ));
-                        }
+                    const resourceItem = await this.createResourceTreeItem(child as FileSystemResource);
+                    if (resourceItem) {
+                        children.push(resourceItem);
                     }
                 }
             }
             return children;
         }
+
         return [];
     }
 
-    getTreeItem(element: WorkbenchTreeItem): vscode.TreeItem | Promise<vscode.TreeItem> {
-        if (element.serviceId === 'filesystem') {
-             // It's a folder
-             const folder = element.itemData as FolderItem;
-             const item = new vscode.TreeItem(folder.name, vscode.TreeItemCollapsibleState.Expanded);
-             item.contextValue = 'FileSystemFolder';
-             item.iconPath = new vscode.ThemeIcon('folder');
-             return item;
+    public getTreeItem(element: WorkbenchTreeItem): vscode.TreeItem | Promise<vscode.TreeItem> {
+        // This method is primarily called for the Folder items themselves,
+        // as the actual service resources are proxied.
+        const nodeData = element.itemData as FileSystemNode;
+
+        if (nodeData && nodeData.type === 'folder') {
+            const folder = nodeData as FileSystemFolder;
+            const item = new vscode.TreeItem(folder.label, vscode.TreeItemCollapsibleState.Expanded);
+            item.contextValue = 'FileSystemFolder';
+            item.iconPath = new vscode.ThemeIcon('folder');
+            item.id = folder.id; // Helpful for VSCode to track selection
+            return item;
         }
         
-        // If it's not filesystem, it shouldn't be here, or it's a resource.
-        // But WorkbenchTreeProvider calls getTreeItem based on element.serviceId.
-        // If element.serviceId is 's3', it calls S3Service.getTreeItem.
-        // So this method is ONLY called for folders.
         return element;
     }
 
-    async addResource(): Promise<WorkbenchTreeItem | undefined> {
-        return this.addFolder();
+    public async addResource(): Promise<WorkbenchTreeItem | undefined> {
+        return this.promptAddFolder();
     }
 
-    // --- Actions ---
+    // --- Helpers for Tree Items ---
 
-    private async addFolder(parentNode?: WorkbenchTreeItem): Promise<WorkbenchTreeItem | undefined> {
-        const name = await vscode.window.showInputBox({ placeHolder: 'Folder Name' });
-        if (!name) return;
-
-        const newFolder: FolderItem = {
-            id: uuidv4(),
-            name: name,
-            children: []
-        };
-
-        if (parentNode && parentNode.serviceId === 'filesystem') {
-            const parentFolder = parentNode.itemData as FolderItem;
-            newFolder.parentId = parentFolder.id;
-            parentFolder.children.push(newFolder);
-        } else {
-            this.folders.push(newFolder);
-        }
-
-        this.saveState();
-        this.treeProvider.refresh();
-        return this.mapFolderToTreeItem(newFolder);
-    }
-
-    private async removeFolder(node: WorkbenchTreeItem) {
-        const folder = node.itemData as FolderItem;
-        const answer = await vscode.window.showInformationMessage(`Are you sure you want to delete folder '${folder.name}'?`, "Yes", "No");
-        if (answer === "Yes") {
-             // Implementation of recursive delete or just simple remove
-             // Simplest: Find and remove.
-             this.deleteFolderRecursive(this.folders, folder.id);
-             this.saveState();
-             this.treeProvider.refresh();
-        }
-    }
-    
-    private deleteFolderRecursive(list: FolderItem[], id: string): boolean {
-        const index = list.findIndex(f => f.id === id);
-        if (index !== -1) {
-            list.splice(index, 1);
-            return true;
-        }
-        for (const f of list) {
-            if (this.deleteItemRecursive(f.children, id)) return true;
-        }
-        return false;
-    }
-
-    private deleteItemRecursive(list: (FolderItem | ResourceReference)[], id: string): boolean {
-        // This is tricky because list mixes types.
-        // We know we are looking for a folder ID, so only check folders.
-        for (let i = 0; i < list.length; i++) {
-            const item = list[i];
-            if ('children' in item) { // It's a folder
-                 if (item.id === id) {
-                     list.splice(i, 1);
-                     return true;
-                 }
-                 if (this.deleteItemRecursive(item.children, id)) return true;
-            }
-        }
-        return false;
-    }
-
-    private async addResourceToFolder(node: WorkbenchTreeItem) {
-        const folder = node.itemData as FolderItem;
-        
-        // 1. Pick Service
-        const services = ServiceManager.Instance.getAllServices().filter(s => s.serviceId !== 'filesystem' && s.serviceId !== 'access');
-        const serviceItems = services.map(s => ({ label: s.serviceId.toUpperCase(), service: s }));
-        const selectedService = await vscode.window.showQuickPick(serviceItems, { placeHolder: 'Select Service' });
-        if (!selectedService) return;
-
-        // 2. Pick Resource from that service
-        // We need a way to "Pick" a resource. existing 'addResource' usually creates new.
-        // We probably want to "Select existing" or "Create new".
-        // Most services have a "Filter" or list.
-        // Let's ask the user to "Pick" an item.
-        // Since we don't have a unified "Picker" interface on services, we might need one.
-        // OR we just assume we want to add specific things.
-        
-        // For now, let's try to reuse `addResource` logic of the service but capture the result.
-        // BUT `addResource` usually adds it to the root of that service.
-        // We want a reference.
-        
-        // Revised approach: "Add Resource by ID/Name".
-        // Or "Add from Active List" (pick from what's currently visible?).
-        
-        // Let's implement a simple "Pick from Root" for now.
-        const rootNodes = await selectedService.service.getRootNodes();
-        const pickItems = rootNodes.map(n => ({ label: n.label, item: n }));
-        const selectedNode = await vscode.window.showQuickPick(pickItems, { placeHolder: 'Select Resource to Add' });
-        
-        if (selectedNode) {
-            const ref: ResourceReference = {
-                type: 'resource',
-                serviceId: selectedService.service.serviceId,
-                label: selectedNode.item.label as string,
-                data: selectedNode.item.itemData
-            };
-            folder.children.push(ref);
-            this.saveState();
-            this.treeProvider.refresh();
-        }
-    }
-
-    private async removeResource(node: WorkbenchTreeItem) {
-        // We need to find the parent folder and remove this ref.
-        // Since we don't have back-pointers easily, we search.
-        // The node passed here is the wrapper we created in getChildren.
-        // It has itemData corresponding to ref.data.
-        // We might need to store a unique ID for the reference itself to delete it reliably.
-        
-        // Let's just create a helper to remove by object equality of data or similar?
-        // Or add IDs to references.
-        
-        // For now, assuming we can find it.
-        // Actually, we can't easily identify IT vs another instance of same resource.
-        // But for UI, maybe it's fine.
-        
-        // BETTER: When creating the tree item, pass the PARENT folder in the itemData or a wrapper?
-        // But we must pass what the Service expects for itemData.
-        
-        // Workaround: We can't implement RemoveResource cleanly without changing itemData or searching extensively.
-        // Search approach:
-        
-        this.removeResourceRecursive(this.folders, node);
-        this.saveState();
-        this.treeProvider.refresh();
-    }
-    
-    private removeResourceRecursive(list: FolderItem[], targetNode: WorkbenchTreeItem): boolean {
-        // Check top folders
-        for (const f of list) {
-            if (this.removeItemFromFolder(f, targetNode)) return true;
-        }
-        return false;
-    }
-    
-    private removeItemFromFolder(folder: FolderItem, targetNode: WorkbenchTreeItem): boolean {
-         for (let i = 0; i < folder.children.length; i++) {
-             const child = folder.children[i];
-             if ('children' in child) {
-                 // Recurse
-                 if (this.removeItemFromFolder(child, targetNode)) return true;
-             } else {
-                 const ref = child as ResourceReference;
-                 // Match?
-                 if (ref.serviceId === targetNode.serviceId && JSON.stringify(ref.data) === JSON.stringify(targetNode.itemData)) {
-                     folder.children.splice(i, 1);
-                     return true;
-                 }
-             }
-         }
-         return false;
-    }
-
-    private mapFolderToTreeItem(folder: FolderItem): WorkbenchTreeItem {
+    private createFolderTreeItem(folder: FileSystemFolder): WorkbenchTreeItem {
         return new WorkbenchTreeItem(
-            folder.name,
+            folder.label,
             vscode.TreeItemCollapsibleState.Collapsed,
-            'filesystem',
+            this.serviceId,
             'FileSystemFolder',
             folder
         );
     }
 
-    private loadState() {
-        this.folders = this.context.globalState.get('filesystem.folders', []);
+    private async createResourceTreeItem(resource: FileSystemResource): Promise<WorkbenchTreeItem | undefined> {
+        const service = ServiceManager.Instance.getService(resource.serviceId);
+        if (!service) {
+            return new WorkbenchTreeItem(
+                `${resource.label} (Unknown Service)`,
+                vscode.TreeItemCollapsibleState.None,
+                this.serviceId,
+                'error',
+                resource
+            );
+        }
+
+        try {
+            // Create a temporary item to pass to the service so it can reconstruct the full TreeItem
+            const tempItem = new WorkbenchTreeItem(
+                resource.label,
+                vscode.TreeItemCollapsibleState.Collapsed,
+                resource.serviceId,
+                undefined,
+                resource.data
+            );
+
+            // Ask the service to resolving the full details (icon, contextValue, collapsible state)
+            const resolvedItem = await service.getTreeItem(tempItem);
+
+            // Wrap the resolved context value so we can add 'FileSystemResource' features
+            // This allows us to have specific context menu actions for filesystem resources (like Remove)
+            const wrappedContextValue = (resolvedItem.contextValue || '') + '#FileSystemResource#';
+
+            return new WorkbenchTreeItem(
+                resolvedItem.label as string || resource.label,
+                resolvedItem.collapsibleState || vscode.TreeItemCollapsibleState.None,
+                resource.serviceId, // Keep the original service ID so interactions work
+                wrappedContextValue,
+                resource.data // Keep the original data so the service can function
+            );
+        } catch (error) {
+            console.error(`Failed to restore resource ${resource.label}:`, error);
+            return new WorkbenchTreeItem(
+                `${resource.label} (Error)`,
+                vscode.TreeItemCollapsibleState.None,
+                this.serviceId,
+                'error',
+                resource
+            );
+        }
     }
 
-    private saveState() {
-        this.context.globalState.update('filesystem.folders', this.folders);
+    // --- Actions ---
+
+    private async promptAddFolder(parentNode?: WorkbenchTreeItem): Promise<WorkbenchTreeItem | undefined> {
+        const name = await vscode.window.showInputBox({ 
+            placeHolder: 'Folder Name',
+            validateInput: (value) => value ? null : 'Folder name cannot be empty'
+        });
+        
+        if (!name) return;
+
+        const newFolder: FileSystemFolder = {
+            id: uuidv4(),
+            label: name,
+            type: 'folder',
+            children: []
+        };
+
+        if (parentNode && parentNode.serviceId === this.serviceId) {
+            const parentFolder = parentNode.itemData as FileSystemFolder;
+            if (parentFolder.type !== 'folder') return; // Should not happen
+            
+            newFolder.parentId = parentFolder.id;
+            parentFolder.children.push(newFolder);
+        } else {
+            this.rootFolders.push(newFolder);
+        }
+
+        await this.saveState();
+        this.treeProvider.refresh();
+        return this.createFolderTreeItem(newFolder);
+    }
+
+    private async confirmRemoveFolder(node: WorkbenchTreeItem): Promise<void> {
+        const folder = node.itemData as FileSystemFolder;
+        const answer = await vscode.window.showWarningMessage(
+            `Are you sure you want to delete folder '${folder.label}'?`, 
+            { modal: true }, 
+            "Yes"
+        );
+        
+        if (answer === "Yes") {
+            this.removeItemRecursive(this.rootFolders, folder.id);
+            await this.saveState();
+            this.treeProvider.refresh();
+        }
+    }
+
+    private async promptAddResourceToFolder(node: WorkbenchTreeItem): Promise<void> {
+        const folder = node.itemData as FileSystemFolder;
+        if (folder.type !== 'folder') return;
+
+        // 1. Pick Service (exclude meta-services)
+        const services = ServiceManager.Instance.getAllServices()
+            .filter(s => s.serviceId !== 'filesystem' && s.serviceId !== 'access');
+            
+        const servicePick = await vscode.window.showQuickPick(
+            services.map(s => ({ 
+                label: s.serviceId.toUpperCase(), 
+                service: s 
+            })), 
+            { placeHolder: 'Select Service Service' }
+        );
+
+        if (!servicePick) return;
+
+        try {
+            // 2. Pick Resource from Service's Root Nodes
+            // NOTE: This assumes services provide flat lists or we only support adding root-level items.
+            // A more advanced version would allow browsing the service tree to pick an item.
+            const rootNodes = await servicePick.service.getRootNodes();
+            const resourcePick = await vscode.window.showQuickPick(
+                rootNodes.map(n => ({ 
+                    label: n.label as string, 
+                    item: n 
+                })), 
+                { placeHolder: `Select ${servicePick.label} Resource to Add` }
+            );
+
+            if (resourcePick) {
+                const newResource: FileSystemResource = {
+                    id: uuidv4(),
+                    label: resourcePick.item.label as string,
+                    type: 'resource',
+                    serviceId: servicePick.service.serviceId,
+                    data: resourcePick.item.itemData
+                };
+
+                folder.children.push(newResource);
+                await this.saveState();
+                this.treeProvider.refresh();
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage(`Failed to list resources: ${error}`);
+        }
+    }
+
+    private async removeResource(node: WorkbenchTreeItem): Promise<void> {
+        // Since the node passed here is the 'proxied' item with the service's ID, 
+        // we can't directly identify it in our FileSystem structure easily without its wrapper logic.
+        // HOWEVER: The 'getTreeItem' logic above returns an item with 'itemData' as the ORIGINAL data.
+        // It does NOT lose the data.
+        
+        // Wait, 'removeResource' command is triggered on the tree item. 
+        // In 'getChildren', we created a `WorkbenchTreeItem` with `resource.data`.
+        // We lack the `FileSystemResource` wrapper ID in that item.
+        // This makes it hard to delete the exact instance if there are duplicates.
+        // BUT, we can just search for the first match of ServiceID + JSON(Data) in the folder structure.
+        // This is a limitation of the current proxy design but acceptable for now.
+        
+        // Strategy: We must search the entire tree for a resource that matches this node's data.
+        // Since we don't know the parent folder from the 'node' object (TreeItem doesn't enforce parent link),
+        // we have to search from roots.
+        
+        if (this.removeResourceByDataRecursive(this.rootFolders, node.serviceId, node.itemData)) {
+            await this.saveState();
+            this.treeProvider.refresh();
+        } else {
+             vscode.window.showWarningMessage("Could not find the resource in the file system folders to delete.");
+        }
+    }
+
+    // --- Recursion Helpers ---
+
+    private removeItemRecursive(list: (FileSystemFolder | FileSystemResource)[], id: string): boolean {
+        const index = list.findIndex(item => item.id === id);
+        if (index !== -1) {
+            list.splice(index, 1);
+            return true;
+        }
+
+        for (const item of list) {
+            if (item.type === 'folder') {
+                if (this.removeItemRecursive((item as FileSystemFolder).children, id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private removeResourceByDataRecursive(list: (FileSystemFolder | FileSystemResource)[], serviceId: string, data: any): boolean {
+        for (let i = 0; i < list.length; i++) {
+            const item = list[i];
+            if (item.type === 'resource') {
+                const resource = item as FileSystemResource;
+                // Deep comparison of data is expensive/tricky. 
+                // We assume if serviceId matches and JSON string of data matches, it's the same.
+                if (resource.serviceId === serviceId && JSON.stringify(resource.data) === JSON.stringify(data)) {
+                    list.splice(i, 1);
+                    return true;
+                }
+            } else if (item.type === 'folder') {
+                if (this.removeResourceByDataRecursive((item as FileSystemFolder).children, serviceId, data)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // --- State Management ---
+
+    private loadState(): void {
+        const data = this.context.globalState.get<FileSystemFolder[]>('filesystem.folders', []);
+        // Validate / Migrate data if necessary? 
+        // For now, assume it's correct or empty.
+        this.rootFolders = data;
+    }
+
+    private async saveState(): Promise<void> {
+        await this.context.globalState.update('filesystem.folders', this.rootFolders);
     }
 }
