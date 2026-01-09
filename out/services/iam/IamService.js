@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IamService = void 0;
 const vscode = require("vscode");
+const AbstractAwsService_1 = require("../AbstractAwsService");
 const IamTreeDataProvider_1 = require("./IamTreeDataProvider");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
-class IamService {
+class IamService extends AbstractAwsService_1.AbstractAwsService {
     static Instance;
     serviceId = 'iam';
     treeDataProvider;
@@ -19,8 +20,10 @@ class IamService {
     AwsEndPoint;
     IamRoleList = [];
     constructor(context) {
+        super();
         IamService.Instance = this;
         this.context = context;
+        this.loadBaseState();
         this.treeDataProvider = new IamTreeDataProvider_1.IamTreeDataProvider();
         this.LoadState();
         this.Refresh();
@@ -66,10 +69,35 @@ class IamService {
     }
     async getRootNodes() {
         const nodes = this.treeDataProvider.GetIamRoleNodes();
-        return nodes.map(n => this.mapToWorkbenchItem(n));
+        const items = nodes.map(n => this.mapToWorkbenchItem(n));
+        return this.processNodes(items);
     }
     mapToWorkbenchItem(n) {
-        return new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
+        const item = new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
+        if (!item.id) {
+            if (n.Region && n.IamRole) {
+                item.id = `${n.Region}:${n.IamRole}:${n.TreeItemType ?? ''}`;
+            }
+            else if (n.Region) {
+                item.id = n.Region;
+            }
+        }
+        if (n.iconPath) {
+            item.iconPath = n.iconPath;
+        }
+        if (n.description) {
+            item.description = n.description;
+        }
+        if (n.tooltip) {
+            item.tooltip = n.tooltip;
+        }
+        if (n.command) {
+            item.command = n.command;
+        }
+        if (n.resourceUri) {
+            item.resourceUri = n.resourceUri;
+        }
+        return item;
     }
     async getChildren(element) {
         if (!element) {
@@ -79,10 +107,11 @@ class IamService {
         if (!internalItem)
             return [];
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
     async getTreeItem(element) {
-        return element.itemData;
+        return element;
     }
     async addResource() {
         return await this.AddIamRole();
@@ -144,25 +173,25 @@ class IamService {
     async AddToFav(node) {
         if (!node)
             return;
-        node.IsFav = true;
+        this.addToFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async DeleteFromFav(node) {
         if (!node)
             return;
-        node.IsFav = false;
+        this.deleteFromFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async HideNode(node) {
         if (!node)
             return;
-        node.IsHidden = true;
+        this.hideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async UnHideNode(node) {
         if (!node)
             return;
-        node.IsHidden = false;
+        this.unhideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     LoadState() {
@@ -184,6 +213,7 @@ class IamService {
             this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
             this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
             this.context.globalState.update('IamRoleList', this.IamRoleList);
+            this.saveBaseState();
         }
         catch (error) {
             ui.logToOutput("IamService.saveState Error !!!");
@@ -193,6 +223,54 @@ class IamService {
     LoadTrustRelationships(node) { }
     LoadTags(node) { }
     LoadInfo(node) { }
+    addToFav(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsFav = true;
+            data.setContextValue();
+        }
+        super.addToFav(node);
+    }
+    deleteFromFav(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsFav = false;
+            data.setContextValue();
+        }
+        super.deleteFromFav(node);
+    }
+    hideResource(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsHidden = true;
+            data.setContextValue();
+        }
+        super.hideResource(node);
+    }
+    unhideResource(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsHidden = false;
+            data.setContextValue();
+        }
+        super.unhideResource(node);
+    }
+    showOnlyInProfile(node, profile) {
+        const data = node.itemData;
+        if (data) {
+            data.ProfileToShow = profile;
+            data.setContextValue();
+        }
+        super.showOnlyInProfile(node, profile);
+    }
+    showInAnyProfile(node) {
+        const data = node.itemData;
+        if (data) {
+            data.ProfileToShow = "";
+            data.setContextValue();
+        }
+        super.showInAnyProfile(node);
+    }
 }
 exports.IamService = IamService;
 //# sourceMappingURL=IamService.js.map

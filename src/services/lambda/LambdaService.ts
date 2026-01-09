@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { IService } from '../IService';
+import { AbstractAwsService } from '../AbstractAwsService';
 import { LambdaTreeItem } from './LambdaTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
 import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
@@ -8,7 +8,7 @@ import { LambdaTreeDataProvider } from './LambdaTreeDataProvider';
 import * as ui from '../../common/UI';
 import * as api from './API';
 
-export class LambdaService implements IService {
+export class LambdaService extends AbstractAwsService {
     public static Instance: LambdaService;
     public serviceId = 'lambda';
     public treeDataProvider: LambdaTreeDataProvider;
@@ -25,8 +25,10 @@ export class LambdaService implements IService {
     public CodePathList: {Region: string, Lambda: string, CodePath: string}[] = [];
 
     constructor(context: vscode.ExtensionContext) {
+        super();
         LambdaService.Instance = this;
         this.context = context;
+        this.loadBaseState();
         this.treeDataProvider = new LambdaTreeDataProvider();
         this.LoadState();
         this.Refresh();
@@ -107,17 +109,34 @@ export class LambdaService implements IService {
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const lambdas = await this.treeDataProvider.GetLambdaNodes();
-        return lambdas.map(l => this.mapToWorkbenchItem(l));
+        const items = lambdas.map(l => this.mapToWorkbenchItem(l));
+        return this.processNodes(items);
     }
 
     public mapToWorkbenchItem(n: any): WorkbenchTreeItem {
-        return new WorkbenchTreeItem(
+        const item = new WorkbenchTreeItem(
             typeof n.label === 'string' ? n.label : (n.label as any)?.label || '',
             n.collapsibleState || vscode.TreeItemCollapsibleState.None,
             this.serviceId,
             n.contextValue,
             n
         );
+
+        if (!item.id) {
+            if (n.Region && n.Lambda) {
+                item.id = `${n.Region}:${n.Lambda}:${n.TreeItemType ?? ''}`;
+            } else if (n.Region) {
+                item.id = `${n.Region}:${n.TreeItemType ?? ''}`;
+            }
+        }
+
+        if (n.iconPath) { item.iconPath = n.iconPath; }
+        if (n.description) { item.description = n.description; }
+        if (n.tooltip) { item.tooltip = n.tooltip; }
+        if (n.command) { item.command = n.command; }
+        if (n.resourceUri) { item.resourceUri = n.resourceUri; }
+
+        return item;
     }
 
     async getChildren(element?: WorkbenchTreeItem): Promise<WorkbenchTreeItem[]> {
@@ -129,11 +148,12 @@ export class LambdaService implements IService {
         if (!internalItem) return [];
 
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
 
     async getTreeItem(element: WorkbenchTreeItem): Promise<vscode.TreeItem> {
-        return element.itemData as vscode.TreeItem;
+        return element;
     }
 
     async addResource(): Promise<WorkbenchTreeItem | undefined> {
@@ -191,25 +211,25 @@ export class LambdaService implements IService {
 
     async AddToFav(node: LambdaTreeItem) {
         if (!node) return;
-        node.IsFav = true;
+        this.addToFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
     async DeleteFromFav(node: LambdaTreeItem) {
         if (!node) return;
-        node.IsFav = false;
+        this.deleteFromFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
     async HideNode(node: LambdaTreeItem) {
         if (!node) return;
-        node.IsHidden = true;
+        this.hideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
     async UnHideNode(node: LambdaTreeItem) {
         if (!node) return;
-        node.IsHidden = false;
+        this.unhideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
@@ -264,6 +284,7 @@ export class LambdaService implements IService {
             this.context.globalState.update('LambdaList', this.LambdaList);
             this.context.globalState.update('PayloadPathList', this.PayloadPathList);
             this.context.globalState.update('CodePathList', this.CodePathList);
+            this.saveBaseState();
         } catch (error) {
             ui.logToOutput("LambdaService.saveState Error !!!");
         }
@@ -273,4 +294,40 @@ export class LambdaService implements IService {
     LoadEnvironmentVariables(node: LambdaTreeItem) { /* ... */ }
     LoadTags(node: LambdaTreeItem) { /* ... */ }
     LoadInfo(node: LambdaTreeItem) { /* ... */ }
+
+    public override addToFav(node: WorkbenchTreeItem) {
+        const data = node.itemData as LambdaTreeItem | undefined;
+        if (data) { data.IsFav = true; data.setContextValue(); }
+        super.addToFav(node);
+    }
+
+    public override deleteFromFav(node: WorkbenchTreeItem) {
+        const data = node.itemData as LambdaTreeItem | undefined;
+        if (data) { data.IsFav = false; data.setContextValue(); }
+        super.deleteFromFav(node);
+    }
+
+    public override hideResource(node: WorkbenchTreeItem) {
+        const data = node.itemData as LambdaTreeItem | undefined;
+        if (data) { data.IsHidden = true; data.setContextValue(); }
+        super.hideResource(node);
+    }
+
+    public override unhideResource(node: WorkbenchTreeItem) {
+        const data = node.itemData as LambdaTreeItem | undefined;
+        if (data) { data.IsHidden = false; data.setContextValue(); }
+        super.unhideResource(node);
+    }
+
+    public override showOnlyInProfile(node: WorkbenchTreeItem, profile: string) {
+        const data = node.itemData as LambdaTreeItem | undefined;
+        if (data) { data.ProfileToShow = profile; data.setContextValue(); }
+        super.showOnlyInProfile(node, profile);
+    }
+
+    public override showInAnyProfile(node: WorkbenchTreeItem) {
+        const data = node.itemData as LambdaTreeItem | undefined;
+        if (data) { data.ProfileToShow = ""; data.setContextValue(); }
+        super.showInAnyProfile(node);
+    }
 }

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 import { WorkbenchTreeProvider } from './tree/WorkbenchTreeProvider';
+import { WorkbenchTreeItem } from './tree/WorkbenchTreeItem';
 import { ServiceManager } from './services/ServiceManager';
 
 import { S3Service } from './services/s3/S3Service';
@@ -71,6 +72,21 @@ function registerCoreCommands(
     treeProvider: WorkbenchTreeProvider,
     treeView: vscode.TreeView<any>
 ) {
+    // --- Generic Node Commands ---
+    // These commands delegate to the specific service instance if it inherits from AbstractAwsService
+
+    const executeServiceCommand = (node: WorkbenchTreeItem, action: (service: any) => void) => {
+        if (!node) return;
+        const service = serviceManager.getService(node.serviceId);
+        if (service && 'hideResource' in service) { 
+            // Duck typing check for AbstractAwsService methods
+            action(service);
+            treeProvider.refresh();
+        } else {
+            vscode.window.showWarningMessage(`Service '${node.serviceId}' does not support this action.`);
+        }
+    };
+
     context.subscriptions.push(
         vscode.commands.registerCommand('aws-workbench.addResource', async () => {
             const services = serviceManager.getAllServices();
@@ -89,7 +105,6 @@ function registerCoreCommands(
                     const node = await selected.service.addResource();
                     treeProvider.refresh();
                     if (node) {
-                        // Small delay to ensure the tree has updated before revealing the new node
                         setTimeout(() => {
                             treeView.reveal(node, { select: true, focus: true, expand: true });
                         }, 500);
@@ -103,6 +118,35 @@ function registerCoreCommands(
 
         vscode.commands.registerCommand('aws-workbench.Refresh', () => treeProvider.refresh()),
         
+        // --- Generic Actions ---
+        vscode.commands.registerCommand('aws-workbench.HideNode', (node: WorkbenchTreeItem) => 
+            executeServiceCommand(node, (s) => s.hideResource(node))
+        ),
+        vscode.commands.registerCommand('aws-workbench.UnHideNode', (node: WorkbenchTreeItem) => 
+            executeServiceCommand(node, (s) => s.unhideResource(node))
+        ),
+        vscode.commands.registerCommand('aws-workbench.AddToFav', (node: WorkbenchTreeItem) => 
+            executeServiceCommand(node, (s) => s.addToFav(node))
+        ),
+        vscode.commands.registerCommand('aws-workbench.DeleteFromFav', (node: WorkbenchTreeItem) => 
+            executeServiceCommand(node, (s) => s.deleteFromFav(node))
+        ),
+        vscode.commands.registerCommand('aws-workbench.ShowOnlyInThisProfile', (node: WorkbenchTreeItem) => {
+             // Access service to get current profile? Or pass it in?
+             // Since this is generic, we might need a prompt or access specific property.
+             // For now, assume service has 'AwsProfile' property or we prompt.
+             // Let's prompt or check if service has a public 'AwsProfile'
+             const service = serviceManager.getService(node.serviceId) as any;
+             if (service && service.AwsProfile) {
+                 executeServiceCommand(node, (s) => s.showOnlyInProfile(node, service.AwsProfile));
+             } else {
+                 vscode.window.showInformationMessage('No active profile found in this service.');
+             }
+        }),
+        vscode.commands.registerCommand('aws-workbench.ShowInAnyProfile', (node: WorkbenchTreeItem) => 
+            executeServiceCommand(node, (s) => s.showInAnyProfile(node))
+        ),
+
         vscode.commands.registerCommand('aws-workbench.TestAwsConnection', () => {
              vscode.commands.executeCommand('aws-workbench.access.TestAwsConnectivity');
         }),
@@ -111,7 +155,7 @@ function registerCoreCommands(
              vscode.commands.executeCommand('aws-workbench.access.SetActiveProfile');
         }),
 
-        // Placeholder commands for features not yet implemented
+        // Placeholder commands
         vscode.commands.registerCommand('aws-workbench.Filter', () => showNotImplemented('Filter')),
         vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => showNotImplemented('ShowOnlyFavorite')),
         vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => showNotImplemented('ShowHiddenNodes')),

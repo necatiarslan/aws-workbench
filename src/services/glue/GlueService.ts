@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { IService } from '../IService';
+import { AbstractAwsService } from '../AbstractAwsService';
 import { GlueTreeDataProvider } from './GlueTreeDataProvider';
 import { GlueTreeItem } from './GlueTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
@@ -8,7 +8,7 @@ import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
 import * as api from './API';
 
-export class GlueService implements IService {
+export class GlueService extends AbstractAwsService {
     public static Instance: GlueService;
     public serviceId = 'glue';
     public treeDataProvider: GlueTreeDataProvider;
@@ -26,8 +26,10 @@ export class GlueService implements IService {
     public LogStreamsCache: { [key: string]: string[] } = {};
 
     constructor(context: vscode.ExtensionContext) {
+        super();
         GlueService.Instance = this;
         this.context = context;
+        this.loadBaseState();
         this.treeDataProvider = new GlueTreeDataProvider();
         this.LoadState();
         this.Refresh();
@@ -66,17 +68,34 @@ export class GlueService implements IService {
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const nodes = await this.treeDataProvider.getChildren(undefined);
-        return nodes.map((n: GlueTreeItem) => this.mapToWorkbenchItem(n));
+        const items = nodes.map((n: GlueTreeItem) => this.mapToWorkbenchItem(n));
+        return this.processNodes(items);
     }
 
     public mapToWorkbenchItem(n: any): WorkbenchTreeItem {
-        return new WorkbenchTreeItem(
+        const item = new WorkbenchTreeItem(
             typeof n.label === 'string' ? n.label : (n.label as any)?.label || '',
             n.collapsibleState || vscode.TreeItemCollapsibleState.None,
             this.serviceId,
             n.contextValue,
             n
         );
+
+        if (!item.id) {
+            if (n.Region && n.ResourceName) {
+                item.id = `${n.Region}:${n.ResourceName}:${n.TreeItemType ?? ''}`;
+            } else if (n.Region) {
+                item.id = n.Region;
+            }
+        }
+
+        if (n.iconPath) { item.iconPath = n.iconPath; }
+        if (n.description) { item.description = n.description; }
+        if (n.tooltip) { item.tooltip = n.tooltip; }
+        if (n.command) { item.command = n.command; }
+        if (n.resourceUri) { item.resourceUri = n.resourceUri; }
+
+        return item;
     }
 
     async getChildren(element?: WorkbenchTreeItem): Promise<WorkbenchTreeItem[]> {
@@ -88,11 +107,12 @@ export class GlueService implements IService {
         if (!internalItem) return [];
 
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
 
     async getTreeItem(element: WorkbenchTreeItem): Promise<vscode.TreeItem> {
-        return element.itemData as vscode.TreeItem;
+        return element;
     }
 
     async addResource(): Promise<WorkbenchTreeItem | undefined> {
@@ -151,10 +171,47 @@ export class GlueService implements IService {
             this.context.globalState.update('AwsProfile', this.AwsProfile);
             this.context.globalState.update('FilterString', this.FilterString);
             this.context.globalState.update('ResourceList', this.ResourceList);
+            this.saveBaseState();
         } catch (error) {
             ui.logToOutput("GlueService.saveState Error !!!");
         }
     }
 
     ViewLog(node: GlueTreeItem) { /* ... */ }
+
+    public override addToFav(node: WorkbenchTreeItem) {
+        const data = node.itemData as GlueTreeItem | undefined;
+        if (data) { data.IsFav = true; data.setContextValue(); }
+        super.addToFav(node);
+    }
+
+    public override deleteFromFav(node: WorkbenchTreeItem) {
+        const data = node.itemData as GlueTreeItem | undefined;
+        if (data) { data.IsFav = false; data.setContextValue(); }
+        super.deleteFromFav(node);
+    }
+
+    public override hideResource(node: WorkbenchTreeItem) {
+        const data = node.itemData as GlueTreeItem | undefined;
+        if (data) { data.IsHidden = true; data.setContextValue(); }
+        super.hideResource(node);
+    }
+
+    public override unhideResource(node: WorkbenchTreeItem) {
+        const data = node.itemData as GlueTreeItem | undefined;
+        if (data) { data.IsHidden = false; data.setContextValue(); }
+        super.unhideResource(node);
+    }
+
+    public override showOnlyInProfile(node: WorkbenchTreeItem, profile: string) {
+        const data = node.itemData as GlueTreeItem | undefined;
+        if (data) { data.ProfileToShow = profile; data.setContextValue(); }
+        super.showOnlyInProfile(node, profile);
+    }
+
+    public override showInAnyProfile(node: WorkbenchTreeItem) {
+        const data = node.itemData as GlueTreeItem | undefined;
+        if (data) { data.ProfileToShow = ""; data.setContextValue(); }
+        super.showInAnyProfile(node);
+    }
 }

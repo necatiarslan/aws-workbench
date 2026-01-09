@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StepfunctionsService = void 0;
 const vscode = require("vscode");
+const AbstractAwsService_1 = require("../AbstractAwsService");
 const StepFuncTreeDataProvider_1 = require("./StepFuncTreeDataProvider");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
-class StepfunctionsService {
+class StepfunctionsService extends AbstractAwsService_1.AbstractAwsService {
     static Instance;
     serviceId = 'stepfunctions';
     treeDataProvider;
@@ -21,8 +22,10 @@ class StepfunctionsService {
     PayloadPathList = [];
     CodePathList = [];
     constructor(context) {
+        super();
         StepfunctionsService.Instance = this;
         this.context = context;
+        this.loadBaseState();
         this.treeDataProvider = new StepFuncTreeDataProvider_1.StepFuncTreeDataProvider();
         this.LoadState();
         this.Refresh();
@@ -68,10 +71,41 @@ class StepfunctionsService {
     }
     async getRootNodes() {
         const nodes = this.treeDataProvider.GetStepFuncNodes();
-        return nodes.map(n => this.mapToWorkbenchItem(n));
+        const items = nodes.map(n => this.mapToWorkbenchItem(n));
+        return this.processNodes(items);
     }
     mapToWorkbenchItem(n) {
-        return new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
+        const item = new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
+        if (!item.id) {
+            if (n.StepFuncArn) {
+                item.id = n.StepFuncArn;
+            }
+            else if (n.ExecutionArn) {
+                item.id = n.ExecutionArn;
+            }
+            else if (n.Region && n.StepFuncName) {
+                item.id = `${n.Region}:${n.StepFuncName}:${n.TreeItemType ?? ''}`;
+            }
+            else if (n.Region) {
+                item.id = n.Region;
+            }
+        }
+        if (n.iconPath) {
+            item.iconPath = n.iconPath;
+        }
+        if (n.description) {
+            item.description = n.description;
+        }
+        if (n.tooltip) {
+            item.tooltip = n.tooltip;
+        }
+        if (n.command) {
+            item.command = n.command;
+        }
+        if (n.resourceUri) {
+            item.resourceUri = n.resourceUri;
+        }
+        return item;
     }
     async getChildren(element) {
         if (!element) {
@@ -81,10 +115,11 @@ class StepfunctionsService {
         if (!internalItem)
             return [];
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
     async getTreeItem(element) {
-        return element.itemData;
+        return element;
     }
     async addResource() {
         return await this.AddStepFunc();
@@ -146,25 +181,25 @@ class StepfunctionsService {
     async AddToFav(node) {
         if (!node)
             return;
-        node.IsFav = true;
+        this.addToFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async DeleteFromFav(node) {
         if (!node)
             return;
-        node.IsFav = false;
+        this.deleteFromFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async HideNode(node) {
         if (!node)
             return;
-        node.IsHidden = true;
+        this.hideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async UnHideNode(node) {
         if (!node)
             return;
-        node.IsHidden = false;
+        this.unhideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     LoadState() {
@@ -190,10 +225,59 @@ class StepfunctionsService {
             this.context.globalState.update('StepFuncList', this.StepFuncList);
             this.context.globalState.update('PayloadPathList', this.PayloadPathList);
             this.context.globalState.update('CodePathList', this.CodePathList);
+            this.saveBaseState();
         }
         catch (error) {
             ui.logToOutput("StepfunctionsService.saveState Error !!!");
         }
+    }
+    addToFav(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsFav = true;
+            data.setContextValue();
+        }
+        super.addToFav(node);
+    }
+    deleteFromFav(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsFav = false;
+            data.setContextValue();
+        }
+        super.deleteFromFav(node);
+    }
+    hideResource(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsHidden = true;
+            data.setContextValue();
+        }
+        super.hideResource(node);
+    }
+    unhideResource(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsHidden = false;
+            data.setContextValue();
+        }
+        super.unhideResource(node);
+    }
+    showOnlyInProfile(node, profile) {
+        const data = node.itemData;
+        if (data) {
+            data.ProfileToShow = profile;
+            data.setContextValue();
+        }
+        super.showOnlyInProfile(node, profile);
+    }
+    showInAnyProfile(node) {
+        const data = node.itemData;
+        if (data) {
+            data.ProfileToShow = "";
+            data.setContextValue();
+        }
+        super.showInAnyProfile(node);
     }
 }
 exports.StepfunctionsService = StepfunctionsService;

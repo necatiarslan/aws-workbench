@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { IService } from '../IService';
+import { AbstractAwsService } from '../AbstractAwsService';
 import { SnsTreeDataProvider } from './SnsTreeDataProvider';
 import { SnsTreeItem } from './SnsTreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
@@ -8,7 +8,7 @@ import { WorkbenchTreeProvider } from '../../tree/WorkbenchTreeProvider';
 import * as ui from '../../common/UI';
 import * as api from './API';
 
-export class SnsService implements IService {
+export class SnsService extends AbstractAwsService {
     public static Instance: SnsService;
     public serviceId = 'sns';
     public treeDataProvider: SnsTreeDataProvider;
@@ -23,8 +23,10 @@ export class SnsService implements IService {
     public TopicList: {Region: string, TopicArn: string}[] = [];
 
     constructor(context: vscode.ExtensionContext) {
+        super();
         SnsService.Instance = this;
         this.context = context;
+        this.loadBaseState();
         this.treeDataProvider = new SnsTreeDataProvider();
         this.LoadState();
         this.Refresh();
@@ -87,17 +89,36 @@ export class SnsService implements IService {
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const nodes = this.treeDataProvider.GetSnsNodes();
-        return nodes.map(n => this.mapToWorkbenchItem(n));
+        const items = nodes.map(n => this.mapToWorkbenchItem(n));
+        return this.processNodes(items);
     }
 
     public mapToWorkbenchItem(n: any): WorkbenchTreeItem {
-        return new WorkbenchTreeItem(
+        const item = new WorkbenchTreeItem(
             typeof n.label === 'string' ? n.label : (n.label as any)?.label || '',
             n.collapsibleState || vscode.TreeItemCollapsibleState.None,
             this.serviceId,
             n.contextValue,
             n
         );
+
+        if (!item.id) {
+            if (n.TopicArn) {
+                item.id = n.TopicArn;
+            } else if (n.Region && n.TopicName) {
+                item.id = `${n.Region}:${n.TopicName}:${n.TreeItemType ?? ''}`;
+            } else if (n.Region) {
+                item.id = n.Region;
+            }
+        }
+
+        if (n.iconPath) { item.iconPath = n.iconPath; }
+        if (n.description) { item.description = n.description; }
+        if (n.tooltip) { item.tooltip = n.tooltip; }
+        if (n.command) { item.command = n.command; }
+        if (n.resourceUri) { item.resourceUri = n.resourceUri; }
+
+        return item;
     }
 
     async getChildren(element?: WorkbenchTreeItem): Promise<WorkbenchTreeItem[]> {
@@ -109,11 +130,12 @@ export class SnsService implements IService {
         if (!internalItem) return [];
 
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
 
     async getTreeItem(element: WorkbenchTreeItem): Promise<vscode.TreeItem> {
-        return element.itemData as vscode.TreeItem;
+        return element;
     }
 
     async addResource(): Promise<WorkbenchTreeItem | undefined> {
@@ -182,25 +204,25 @@ export class SnsService implements IService {
 
     async AddToFav(node: SnsTreeItem) {
         if (!node) return;
-        node.IsFav = true;
+        this.addToFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
     async DeleteFromFav(node: SnsTreeItem) {
         if (!node) return;
-        node.IsFav = false;
+        this.deleteFromFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
     async HideNode(node: SnsTreeItem) {
         if (!node) return;
-        node.IsHidden = true;
+        this.hideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
     async UnHideNode(node: SnsTreeItem) {
         if (!node) return;
-        node.IsHidden = false;
+        this.unhideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
 
@@ -223,8 +245,45 @@ export class SnsService implements IService {
             this.context.globalState.update('ShowOnlyFavorite', this.isShowOnlyFavorite);
             this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
             this.context.globalState.update('TopicList', this.TopicList);
+            this.saveBaseState();
         } catch (error) {
             ui.logToOutput("SnsService.saveState Error !!!");
         }
+    }
+
+    public override addToFav(node: WorkbenchTreeItem) {
+        const data = node.itemData as SnsTreeItem | undefined;
+        if (data) { data.IsFav = true; data.setContextValue(); }
+        super.addToFav(node);
+    }
+
+    public override deleteFromFav(node: WorkbenchTreeItem) {
+        const data = node.itemData as SnsTreeItem | undefined;
+        if (data) { data.IsFav = false; data.setContextValue(); }
+        super.deleteFromFav(node);
+    }
+
+    public override hideResource(node: WorkbenchTreeItem) {
+        const data = node.itemData as SnsTreeItem | undefined;
+        if (data) { data.IsHidden = true; data.setContextValue(); }
+        super.hideResource(node);
+    }
+
+    public override unhideResource(node: WorkbenchTreeItem) {
+        const data = node.itemData as SnsTreeItem | undefined;
+        if (data) { data.IsHidden = false; data.setContextValue(); }
+        super.unhideResource(node);
+    }
+
+    public override showOnlyInProfile(node: WorkbenchTreeItem, profile: string) {
+        const data = node.itemData as SnsTreeItem | undefined;
+        if (data) { data.ProfileToShow = profile; data.setContextValue(); }
+        super.showOnlyInProfile(node, profile);
+    }
+
+    public override showInAnyProfile(node: WorkbenchTreeItem) {
+        const data = node.itemData as SnsTreeItem | undefined;
+        if (data) { data.ProfileToShow = ""; data.setContextValue(); }
+        super.showInAnyProfile(node);
     }
 }

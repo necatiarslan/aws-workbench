@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SqsService = void 0;
 const vscode = require("vscode");
+const AbstractAwsService_1 = require("../AbstractAwsService");
 const SqsTreeDataProvider_1 = require("./SqsTreeDataProvider");
 const TreeItemType_1 = require("../../tree/TreeItemType");
 const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
 const ui = require("../../common/UI");
 const api = require("./API");
-class SqsService {
+class SqsService extends AbstractAwsService_1.AbstractAwsService {
     static Instance;
     serviceId = 'sqs';
     treeDataProvider;
@@ -20,8 +21,10 @@ class SqsService {
     QueueList = [];
     MessageFilePathList = [];
     constructor(context) {
+        super();
         SqsService.Instance = this;
         this.context = context;
+        this.loadBaseState();
         this.treeDataProvider = new SqsTreeDataProvider_1.SqsTreeDataProvider();
         this.LoadState();
         this.Refresh();
@@ -77,10 +80,41 @@ class SqsService {
     }
     async getRootNodes() {
         const nodes = this.treeDataProvider.GetSqsNodes();
-        return nodes.map(n => this.mapToWorkbenchItem(n));
+        const items = nodes.map(n => this.mapToWorkbenchItem(n));
+        return this.processNodes(items);
     }
     mapToWorkbenchItem(n) {
-        return new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
+        const item = new WorkbenchTreeItem_1.WorkbenchTreeItem(typeof n.label === 'string' ? n.label : n.label?.label || '', n.collapsibleState || vscode.TreeItemCollapsibleState.None, this.serviceId, n.contextValue, n);
+        if (!item.id) {
+            if (n.QueueArn) {
+                item.id = n.QueueArn;
+            }
+            else if (n.MessageId) {
+                item.id = n.MessageId;
+            }
+            else if (n.Region && n.QueueName) {
+                item.id = `${n.Region}:${n.QueueName}:${n.TreeItemType ?? ''}`;
+            }
+            else if (n.Region) {
+                item.id = n.Region;
+            }
+        }
+        if (n.iconPath) {
+            item.iconPath = n.iconPath;
+        }
+        if (n.description) {
+            item.description = n.description;
+        }
+        if (n.tooltip) {
+            item.tooltip = n.tooltip;
+        }
+        if (n.command) {
+            item.command = n.command;
+        }
+        if (n.resourceUri) {
+            item.resourceUri = n.resourceUri;
+        }
+        return item;
     }
     async getChildren(element) {
         if (!element) {
@@ -90,10 +124,11 @@ class SqsService {
         if (!internalItem)
             return [];
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
     async getTreeItem(element) {
-        return element.itemData;
+        return element;
     }
     async addResource() {
         return await this.AddQueue();
@@ -202,25 +237,25 @@ class SqsService {
     async AddToFav(node) {
         if (!node)
             return;
-        node.IsFav = true;
+        this.addToFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async DeleteFromFav(node) {
         if (!node)
             return;
-        node.IsFav = false;
+        this.deleteFromFav(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async HideNode(node) {
         if (!node)
             return;
-        node.IsHidden = true;
+        this.hideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     async UnHideNode(node) {
         if (!node)
             return;
-        node.IsHidden = false;
+        this.unhideResource(this.mapToWorkbenchItem(node));
         this.treeDataProvider.Refresh();
     }
     LoadState() {
@@ -244,10 +279,59 @@ class SqsService {
             this.context.globalState.update('ShowHiddenNodes', this.isShowHiddenNodes);
             this.context.globalState.update('QueueList', this.QueueList);
             this.context.globalState.update('MessageFilePathList', this.MessageFilePathList);
+            this.saveBaseState();
         }
         catch (error) {
             ui.logToOutput("SqsService.saveState Error !!!");
         }
+    }
+    addToFav(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsFav = true;
+            data.setContextValue();
+        }
+        super.addToFav(node);
+    }
+    deleteFromFav(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsFav = false;
+            data.setContextValue();
+        }
+        super.deleteFromFav(node);
+    }
+    hideResource(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsHidden = true;
+            data.setContextValue();
+        }
+        super.hideResource(node);
+    }
+    unhideResource(node) {
+        const data = node.itemData;
+        if (data) {
+            data.IsHidden = false;
+            data.setContextValue();
+        }
+        super.unhideResource(node);
+    }
+    showOnlyInProfile(node, profile) {
+        const data = node.itemData;
+        if (data) {
+            data.ProfileToShow = profile;
+            data.setContextValue();
+        }
+        super.showOnlyInProfile(node, profile);
+    }
+    showInAnyProfile(node) {
+        const data = node.itemData;
+        if (data) {
+            data.ProfileToShow = "";
+            data.setContextValue();
+        }
+        super.showInAnyProfile(node);
     }
 }
 exports.SqsService = SqsService;

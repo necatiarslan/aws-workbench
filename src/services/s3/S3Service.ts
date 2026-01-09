@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { IService } from '../IService';
+import { AbstractAwsService } from '../AbstractAwsService';
 import { S3TreeDataProvider } from './S3TreeDataProvider';
 import { S3TreeItem } from './S3TreeItem';
 import { TreeItemType } from '../../tree/TreeItemType';
@@ -13,7 +13,7 @@ import { Telemetry } from './Telemetry';
 import { Session } from './Session';
 import { isLicenseValid, promptForLicense } from "./License";
 
-export class S3Service implements IService {
+export class S3Service extends AbstractAwsService {
     public static Instance: S3Service;
     public serviceId = 's3';
     public treeDataProvider: S3TreeDataProvider;
@@ -27,14 +27,18 @@ export class S3Service implements IService {
     public AwsRegion: string | undefined;
 
     constructor(context: vscode.ExtensionContext) {
+        super();
         S3Service.Instance = this;
         this.context = context;
+        // Load generic state (hidden/fav)
+        this.loadBaseState();
+
         this.treeDataProvider = new S3TreeDataProvider();
-        this.LoadState();
+        this.LoadState(); // Load S3 specific state
         this.Refresh();
     }
 
-    registerCommands(context: vscode.ExtensionContext, treeProvider: WorkbenchTreeProvider, treeView: vscode.TreeView<WorkbenchTreeItem>): void {
+    public registerCommands(context: vscode.ExtensionContext, treeProvider: WorkbenchTreeProvider, treeView: vscode.TreeView<WorkbenchTreeItem>): void {
         const wrap = (node: any) => {
             if (node instanceof WorkbenchTreeItem) {
                 return node.itemData as S3TreeItem;
@@ -51,38 +55,10 @@ export class S3Service implements IService {
                 await this.Filter();
                 treeProvider.refresh();
             }),
-            vscode.commands.registerCommand('aws-workbench.s3.ShowOnlyFavorite', async () => {
-                await this.ShowOnlyFavorite();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.ShowHiddenNodes', async () => {
-                await this.ShowHiddenNodes();
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.AddToFav', (node: any) => {
-                this.AddToFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.DeleteFromFav', (node: any) => {
-                this.DeleteFromFav(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.HideNode', (node: any) => {
-                this.HideNode(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.UnHideNode', (node: any) => {
-                this.UnHideNode(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.ShowOnlyInThisProfile', (node: any) => {
-                this.ShowOnlyInThisProfile(wrap(node));
-                treeProvider.refresh();
-            }),
-            vscode.commands.registerCommand('aws-workbench.s3.ShowInAnyProfile', (node: any) => {
-                this.ShowInAnyProfile(wrap(node));
-                treeProvider.refresh();
-            }),
+            // Deprecated/Legacy Commands - keeping them but delegating or removing from UI
+            // The extension.ts registers generic commands that call methods on this service
+            // We keep specific ones for backward compatibility if needed, or remove them from package.json menus
+            
             vscode.commands.registerCommand('aws-workbench.s3.AddBucket', async () => {
                 await this.AddBucket();
                 treeProvider.refresh();
@@ -148,17 +124,30 @@ export class S3Service implements IService {
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const buckets = await this.treeDataProvider.GetBucketNodes();
-        return buckets.map(b => this.mapToWorkbenchItem(b));
+        const items = buckets.map(b => this.mapToWorkbenchItem(b));
+        // Apply generic filters
+        return this.processNodes(items);
     }
 
     public mapToWorkbenchItem(n: any): WorkbenchTreeItem {
-        return new WorkbenchTreeItem(
+        const item = new WorkbenchTreeItem(
             typeof n.label === 'string' ? n.label : (n.label as any)?.label || '',
             n.collapsibleState || vscode.TreeItemCollapsibleState.None,
             this.serviceId,
             n.contextValue,
             n
         );
+        // Ensure we have an ID for tracking
+        if (!item.id && n.Bucket) { item.id = n.Bucket; }
+        
+        // Proxy properties from inner item to wrapper
+        if (n.iconPath) item.iconPath = n.iconPath;
+        if (n.description) item.description = n.description;
+        if (n.tooltip) item.tooltip = n.tooltip;
+        if (n.command) item.command = n.command;
+        if (n.resourceUri) item.resourceUri = n.resourceUri;
+        
+        return item;
     }
 
     async getChildren(element?: WorkbenchTreeItem): Promise<WorkbenchTreeItem[]> {
@@ -170,18 +159,71 @@ export class S3Service implements IService {
         if (!internalItem) return [];
 
         const children = await this.treeDataProvider.getChildren(internalItem);
-        return (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        const items = (children || []).map((child: any) => this.mapToWorkbenchItem(child));
+        return this.processNodes(items);
     }
 
     async getTreeItem(element: WorkbenchTreeItem): Promise<vscode.TreeItem> {
-        return element.itemData as vscode.TreeItem;
+        return element;
     }
 
-    async addResource(): Promise<WorkbenchTreeItem | undefined> {
+    override async addResource(): Promise<WorkbenchTreeItem | undefined> {
         return await this.AddBucket();
     }
 
-    // Logic moved from aws-workbench.s3
+    // --- Helper to apply generic states (Hide/Fav) ---
+    protected processNodes(nodes: WorkbenchTreeItem[]): WorkbenchTreeItem[] {
+        // 1. Filter hidden
+        const visible = this.isShowHiddenNodes ? nodes : nodes.filter(n => !this.isHidden(n));
+        
+        // 2. Mark Favs and add tags
+        visible.forEach(n => {
+            if (this.isFav(n)) {
+                n.contextValue = (n.contextValue || '') + '#Fav#';
+            } else {
+                n.contextValue = (n.contextValue || '') + '#!Fav#';
+            }
+
+            // Tag as AwsResource to enable generic commands in package.json
+            n.contextValue = (n.contextValue || '') + '#AwsResource#';
+        });
+
+        // 3. Filter "Show Only Fav" if enabled
+        if (this.isShowOnlyFavorite) {
+            return visible.filter(n => this.isFav(n));
+        }
+
+        return visible;
+    }
+
+    // --- Actions (Overriding AbstractAwsService where necessary or using S3 specific logic) ---
+
+    // We can rely on AbstractAwsService for hide/fav/unhide/deleteFromFav
+    // But S3Service originally had specific 'ShowOnlyInThisProfile'.
+    public override showOnlyInProfile(node: WorkbenchTreeItem, profile: string) {
+        // S3 logic updates the specific Bucket profile
+        const s3Node = node.itemData as S3TreeItem;
+        if (s3Node && s3Node.Bucket) {
+             s3Node.ProfileToShow = profile;
+             this.treeDataProvider.AddBucketProfile(s3Node.Bucket, profile);
+             super.showOnlyInProfile(node, profile); // also save generic state if desired
+             this.SaveState();
+             this.Refresh();
+        }
+    }
+
+    public override showInAnyProfile(node: WorkbenchTreeItem) {
+        const s3Node = node.itemData as S3TreeItem;
+        if (s3Node && s3Node.Bucket) {
+             s3Node.ProfileToShow = "";
+             this.treeDataProvider.RemoveBucketProfile(s3Node.Bucket);
+             super.showInAnyProfile(node);
+             this.SaveState();
+             this.Refresh();
+        }
+    }
+   
+    // ... (Keep existing specific methods: AddBucket, RemoveBucket, etc.)
 
     async TestAwsConnection() {
         let response = await api.TestAwsCredentials();
@@ -217,79 +259,23 @@ export class S3Service implements IService {
         });
     }
 
-    async AddToFav(node: S3TreeItem) {
-        if (!node) return;
-        ui.logToOutput('S3Service.AddToFav Started');
-        node.IsFav = true;
-        this.treeDataProvider.Refresh();
-    }
-
-    async HideNode(node: S3TreeItem) {
-        if (!node) return;
-        ui.logToOutput('S3Service.HideNode Started');
-        node.IsHidden = true;
-        this.treeDataProvider.Refresh();
-    }
-
-    async UnHideNode(node: S3TreeItem) {
-        if (!node) return;
-        ui.logToOutput('S3Service.UnHideNode Started');
-        node.IsHidden = false;
-        this.treeDataProvider.Refresh();
-    }
-
-    async ShowOnlyInThisProfile(node: S3TreeItem) {
-        ui.logToOutput('S3Service.ShowOnlyInThisProfile Started');
-        if (!node || node.TreeItemType !== TreeItemType.S3Bucket) { return; }
-        if (!node.Bucket) { return; }
-        if (this.AwsProfile) {
-            node.ProfileToShow = this.AwsProfile;
-            this.treeDataProvider.AddBucketProfile(node.Bucket, node.ProfileToShow);
-            this.treeDataProvider.Refresh();
-            this.SaveState();
-        }
-    }
-
-    async ShowInAnyProfile(node: S3TreeItem) {
-        ui.logToOutput('S3Service.ShowInAnyProfile Started');
-        if (!node || node.TreeItemType !== TreeItemType.S3Bucket) { return; }
-        if (!node.Bucket) { return; }
-        node.ProfileToShow = "";
-        this.treeDataProvider.RemoveBucketProfile(node.Bucket);
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async DeleteFromFav(node: S3TreeItem) {
-        if (!node) return;
-        ui.logToOutput('S3Service.DeleteFromFav Started');
-        node.IsFav = false;
-        this.treeDataProvider.Refresh();
-    }
-
     async Filter() {
         ui.logToOutput('S3Service.Filter Started');
         let filterStringTemp = await vscode.window.showInputBox({ value: this.FilterString, placeHolder: 'Enter Your Filter Text' });
         if (filterStringTemp === undefined) { return; }
         this.FilterString = filterStringTemp;
-        this.treeDataProvider.Refresh();
         this.SaveState();
     }
 
-    async ShowOnlyFavorite() {
-        ui.logToOutput('S3Service.ShowOnlyFavorite Started');
-        this.isShowOnlyFavorite = !this.isShowOnlyFavorite;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
-    async ShowHiddenNodes() {
-        ui.logToOutput('S3Service.ShowHiddenNodes Started');
-        this.isShowHiddenNodes = !this.isShowHiddenNodes;
-        this.treeDataProvider.Refresh();
-        this.SaveState();
-    }
-
+    // Deprecated methods that were previously used by direct commands.
+    // We keep them if internal logic relies on them, but they are largely replaced by AbstractAwsService.
+    async AddToFav(node: S3TreeItem) { super.addToFav(this.mapToWorkbenchItem(node)); }
+    async DeleteFromFav(node: S3TreeItem) { super.deleteFromFav(this.mapToWorkbenchItem(node)); }
+    async HideNode(node: S3TreeItem) { super.hideResource(this.mapToWorkbenchItem(node)); }
+    async UnHideNode(node: S3TreeItem) { super.unhideResource(this.mapToWorkbenchItem(node)); }
+    
+    // ... (Keep existing SaveState/LoadState but ensuring we don't conflict)
+    
     SaveState() {
         ui.logToOutput('S3Service.saveState Started');
         try {
@@ -303,6 +289,9 @@ export class S3Service implements IService {
             this.context.globalState.update('AwsEndPoint', this.AwsEndPoint);
             this.context.globalState.update('AwsRegion', this.AwsRegion);
             this.context.globalState.update('BucketProfileList', this.treeDataProvider.BucketProfileList);
+            
+            // Also save base state
+            this.saveBaseState();
         } catch (error) {
             ui.logToOutput("S3Service.saveState Error !!!");
         }

@@ -55,28 +55,30 @@
         "icon": "$(eye-closed)"
       },
       {
-        "command": "aws-workbench.s3.AddToFav",
-        "title": "Fav"
+        "command": "aws-workbench.HideNode",
+        "title": "Hide Node"
       },
       {
-        "command": "aws-workbench.s3.DeleteFromFav",
-        "title": "UnFav"
+        "command": "aws-workbench.UnHideNode",
+        "title": "UnHide Node"
       },
       {
-        "command": "aws-workbench.s3.HideNode",
-        "title": "Hide"
+        "command": "aws-workbench.AddToFav",
+        "title": "Add to Favorites",
+        "icon": "$(star)"
       },
       {
-        "command": "aws-workbench.s3.UnHideNode",
-        "title": "UnHide"
+        "command": "aws-workbench.DeleteFromFav",
+        "title": "Remove from Favorites",
+        "icon": "$(star-empty)"
       },
       {
-        "command": "aws-workbench.s3.ShowOnlyInThisProfile",
-        "title": "Show Only In This Profile"
+         "command": "aws-workbench.ShowOnlyInThisProfile",
+         "title": "Show Only In This Profile"
       },
       {
-        "command": "aws-workbench.s3.ShowInAnyProfile",
-        "title": "Show In Any Profile"
+         "command": "aws-workbench.ShowInAnyProfile",
+         "title": "Show In Any Profile"
       },
       {
         "command": "aws-workbench.s3.AddBucket",
@@ -231,22 +233,6 @@
         "icon": "$(eye-closed)"
       },
       {
-        "command": "aws-workbench.sqs.AddToFav",
-        "title": "Fav"
-      },
-      {
-        "command": "aws-workbench.sqs.DeleteFromFav",
-        "title": "UnFav"
-      },
-      {
-        "command": "aws-workbench.sqs.HideNode",
-        "title": "Hide"
-      },
-      {
-        "command": "aws-workbench.sqs.UnHideNode",
-        "title": "UnHide"
-      },
-      {
         "command": "aws-workbench.sqs.AddQueue",
         "title": "Add Queue",
         "icon": "$(add)"
@@ -351,22 +337,6 @@
         "icon": "$(eye-closed)"
       },
       {
-        "command": "aws-workbench.sns.AddToFav",
-        "title": "Fav"
-      },
-      {
-        "command": "aws-workbench.sns.DeleteFromFav",
-        "title": "UnFav"
-      },
-      {
-        "command": "aws-workbench.sns.HideNode",
-        "title": "Hide"
-      },
-      {
-        "command": "aws-workbench.sns.UnHideNode",
-        "title": "UnHide"
-      },
-      {
         "command": "aws-workbench.sns.AddTopic",
         "title": "Add Topic",
         "icon": "$(add)"
@@ -445,14 +415,6 @@
         "icon": "$(bookmark)"
       },
       {
-        "command": "aws-workbench.cloudwatch.AddToFav",
-        "title": "Fav"
-      },
-      {
-        "command": "aws-workbench.cloudwatch.DeleteFromFav",
-        "title": "UnFav"
-      },
-      {
         "command": "aws-workbench.cloudwatch.AddLogGroup",
         "title": "Add Log Group (From List)",
         "icon": "$(new-folder)"
@@ -529,22 +491,6 @@
         "command": "aws-workbench.dynamodb.ShowHiddenNodes",
         "title": "Show Hidden Nodes",
         "icon": "$(eye-closed)"
-      },
-      {
-        "command": "aws-workbench.dynamodb.AddToFav",
-        "title": "Fav"
-      },
-      {
-        "command": "aws-workbench.dynamodb.DeleteFromFav",
-        "title": "UnFav"
-      },
-      {
-        "command": "aws-workbench.dynamodb.HideNode",
-        "title": "Hide"
-      },
-      {
-        "command": "aws-workbench.dynamodb.UnHideNode",
-        "title": "UnHide"
       },
       {
         "command": "aws-workbench.dynamodb.AddDynamodb",
@@ -649,22 +595,6 @@
         "command": "aws-workbench.iam.ShowHiddenNodes",
         "title": "Show Hidden Nodes",
         "icon": "$(eye-closed)"
-      },
-      {
-        "command": "aws-workbench.iam.AddToFav",
-        "title": "Fav"
-      },
-      {
-        "command": "aws-workbench.iam.DeleteFromFav",
-        "title": "UnFav"
-      },
-      {
-        "command": "aws-workbench.iam.HideNode",
-        "title": "Hide"
-      },
-      {
-        "command": "aws-workbench.iam.UnHideNode",
-        "title": "UnHide"
       },
       {
         "command": "aws-workbench.iam.AddIamRole",
@@ -779,26 +709,6 @@
         "command": "aws-workbench.step-functions.ShowHiddenNodes",
         "title": "Show Hidden Nodes",
         "icon": "$(eye-closed)"
-      },
-      {
-        "command": "aws-workbench.step-functions.AddToFav",
-        "title": "Fav",
-        "icon": "$(star)"
-      },
-      {
-        "command": "aws-workbench.step-functions.DeleteFromFav",
-        "title": "UnFav",
-        "icon": "$(star-empty)"
-      },
-      {
-        "command": "aws-workbench.step-functions.HideNode",
-        "title": "Hide",
-        "icon": "$(eye-closed)"
-      },
-      {
-        "command": "aws-workbench.step-functions.UnHideNode",
-        "title": "UnHide",
-        "icon": "$(eye)"
       },
       {
         "command": "aws-workbench.step-functions.AddStepFunc",
@@ -971,26 +881,6 @@
         "icon": "$(eye-closed)"
       },
       {
-        "command": "aws-workbench.glue.AddToFav",
-        "title": "Fav",
-        "icon": "$(star)"
-      },
-      {
-        "command": "aws-workbench.glue.DeleteFromFav",
-        "title": "UnFav",
-        "icon": "$(star-empty)"
-      },
-      {
-        "command": "aws-workbench.glue.HideNode",
-        "title": "Hide",
-        "icon": "$(eye-closed)"
-      },
-      {
-        "command": "aws-workbench.glue.UnHideNode",
-        "title": "UnHide",
-        "icon": "$(eye)"
-      },
-      {
         "command": "aws-workbench.glue.AddGlueJob",
         "title": "Add Glue Job",
         "icon": "$(add)"
@@ -1084,22 +974,6 @@
         "command": "aws-workbench.lambda.ShowHiddenNodes",
         "title": "Show Hidden Nodes",
         "icon": "$(eye-closed)"
-      },
-      {
-        "command": "aws-workbench.lambda.AddToFav",
-        "title": "Fav"
-      },
-      {
-        "command": "aws-workbench.lambda.DeleteFromFav",
-        "title": "UnFav"
-      },
-      {
-        "command": "aws-workbench.lambda.HideNode",
-        "title": "Hide"
-      },
-      {
-        "command": "aws-workbench.lambda.UnHideNode",
-        "title": "UnHide"
       },
       {
         "command": "aws-workbench.lambda.AddLambda",
@@ -1321,6 +1195,36 @@
       ],
       "view/item/context": [
         {
+          "command": "aws-workbench.AddToFav",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/ && viewItem =~ /#!Fav#/",
+          "group": "Filter"
+        },
+        {
+          "command": "aws-workbench.DeleteFromFav",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/ && viewItem =~ /#Fav#/",
+          "group": "Filter"
+        },
+        {
+          "command": "aws-workbench.HideNode",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/",
+          "group": "Filter"
+        },
+        {
+          "command": "aws-workbench.UnHideNode",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/",
+          "group": "Filter"
+        },
+        {
+           "command": "aws-workbench.ShowOnlyInThisProfile",
+           "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/",
+           "group": "Profile"
+        },
+        {
+           "command": "aws-workbench.ShowInAnyProfile",
+           "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/",
+           "group": "Profile"
+        },
+        {
           "command": "aws-workbench.filesystem.AddFolder",
           "when": "view == AwsWorkbenchTree && viewItem == FileSystemFolder",
           "group": "Folder"
@@ -1366,36 +1270,6 @@
           "group": "Shortcut"
         },
         {
-          "command": "aws-workbench.s3.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#!Fav#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.s3.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Fav#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.s3.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#!Hidden#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.s3.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Hidden#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.s3.ShowOnlyInThisProfile",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#NoProfile#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.s3.ShowInAnyProfile",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Profile#/",
-          "group": "Filter"
-        },
-        {
           "command": "aws-workbench.s3.RenameFolder",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/ && viewItem =~ /#Folder#/",
           "group": "Folder"
@@ -1414,26 +1288,6 @@
           "command": "aws-workbench.s3.ShowS3Search",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:S3#/",
           "group": "inline"
-        },
-        {
-          "command": "aws-workbench.sqs.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.sqs.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.sqs.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.sqs.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SQS#/ && viewItem =~ /Queue#/",
-          "group": "Filter"
         },
         {
           "command": "aws-workbench.sqs.RemoveQueue",
@@ -1491,26 +1345,6 @@
           "group": "inline"
         },
         {
-          "command": "aws-workbench.sns.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.sns.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.sns.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.sns.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
-          "group": "Filter"
-        },
-        {
           "command": "aws-workbench.sns.RemoveTopic",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /Topic#/",
           "group": "Topic"
@@ -1539,16 +1373,6 @@
           "command": "aws-workbench.sns.GetSubscriptions",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:SNS#/ && viewItem =~ /SubscriptionGroup#/",
           "group": "inline"
-        },
-        {
-          "command": "aws-workbench.cloudwatch.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#!Fav#/",
-          "group": "Fav"
-        },
-        {
-          "command": "aws-workbench.cloudwatch.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:CloudWatch#/ && viewItem =~ /#Fav#/",
-          "group": "Fav"
         },
         {
           "command": "aws-workbench.cloudwatch.RemoveLogGroup",
@@ -1596,26 +1420,6 @@
           "group": "inline@1"
         },
         {
-          "command": "aws-workbench.dynamodb.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.dynamodb.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.dynamodb.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.dynamodb.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
-          "group": "Filter"
-        },
-        {
           "command": "aws-workbench.dynamodb.RemoveDynamodb",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Dynamodb"
@@ -1659,26 +1463,6 @@
           "command": "aws-workbench.dynamodb.AddItem",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:DynamoDB#/ && viewItem =~ /Table#/",
           "group": "Items"
-        },
-        {
-          "command": "aws-workbench.iam.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.iam.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.iam.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.iam.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /IamRole#/",
-          "group": "Filter"
         },
         {
           "command": "aws-workbench.iam.RemoveIamRole",
@@ -1749,26 +1533,6 @@
           "command": "aws-workbench.iam.LoadInfo",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:IAM#/ && viewItem =~ /InfoGroup#/",
           "group": "inline"
-        },
-        {
-          "command": "aws-workbench.step-functions.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.step-functions.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.step-functions.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.step-functions.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:StepFunctions#/ && viewItem =~ /StepFunc#/",
-          "group": "Filter"
         },
         {
           "command": "aws-workbench.step-functions.RemoveStepFunc",
@@ -1886,26 +1650,6 @@
           "group": "inline"
         },
         {
-          "command": "aws-workbench.glue.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.glue.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.glue.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.glue.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
-          "group": "Filter"
-        },
-        {
           "command": "aws-workbench.glue.RemoveGlueJob",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /GlueJob#/",
           "group": "Glue"
@@ -1949,26 +1693,6 @@
           "command": "aws-workbench.glue.ViewLog",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Glue#/ && viewItem =~ /LogStream#/",
           "group": "inline"
-        },
-        {
-          "command": "aws-workbench.lambda.AddToFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.lambda.DeleteFromFav",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.lambda.HideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
-          "group": "Filter"
-        },
-        {
-          "command": "aws-workbench.lambda.UnHideNode",
-          "when": "view == AwsWorkbenchTree && viewItem =~ /#Type:Lambda#/ && viewItem =~ /Lambda#/",
-          "group": "Filter"
         },
         {
           "command": "aws-workbench.lambda.RemoveLambda",
