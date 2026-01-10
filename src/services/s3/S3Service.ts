@@ -25,6 +25,8 @@ export class S3Service extends AbstractAwsService {
         this.context = context;
         // Load generic state (hidden/fav)
         this.loadBaseState();
+        // Load custom resources
+        this.loadCustomResources();
 
         this.treeDataProvider = new S3TreeDataProvider();
         this.Refresh();
@@ -77,6 +79,24 @@ export class S3Service extends AbstractAwsService {
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const buckets = await this.treeDataProvider.GetBucketNodes();
         const items = buckets.map(b => this.mapToWorkbenchItem(b));
+        
+        // Add ungrouped custom resources (not in any folder)
+        const ungroupedCustomResources = this.getCustomResourcesByFolder(null);
+        for (const resource of ungroupedCustomResources) {
+            const customItem = new WorkbenchTreeItem(
+                this.getDisplayName(resource),
+                vscode.TreeItemCollapsibleState.Collapsed,
+                this.serviceId,
+                'customResource',
+                resource.resourceData
+            );
+            customItem.isCustom = true;
+            customItem.compositeKey = resource.compositeKey;
+            customItem.displayName = resource.displayName;
+            customItem.awsName = resource.awsName;
+            items.push(customItem);
+        }
+        
         // Apply generic filters
         return this.processNodes(items);
     }
@@ -119,8 +139,8 @@ export class S3Service extends AbstractAwsService {
         return element;
     }
 
-    override async addResource(): Promise<WorkbenchTreeItem | undefined> {
-        return await this.AddBucket();
+    override async addResource(folderId?: string | null): Promise<WorkbenchTreeItem | undefined> {
+        return await this.AddBucket(folderId);
     }
 
     // --- Helper to apply generic states (Hide/Fav) ---
@@ -212,9 +232,23 @@ export class S3Service extends AbstractAwsService {
     // ... (Keep existing SaveState/LoadState but ensuring we don't conflict)
     
 
-    async AddBucket(): Promise<WorkbenchTreeItem | undefined> {
+    async AddBucket(preselectedFolderId?: string | null): Promise<WorkbenchTreeItem | undefined> {
         Telemetry.Current?.send("S3Service.AddBucket");
         ui.logToOutput('S3Service.AddBucket Started');
+        
+        if (!Session.Current) {
+            ui.showErrorMessage('Session not initialized', new Error('No session'));
+            return;
+        }
+        
+        // Step 1: Select folder for this bucket (skip if folder is preselected)
+        let folderId: string | null | undefined = preselectedFolderId;
+        if (preselectedFolderId === undefined) {
+            const FolderManager = (await import('../../common/FolderManager')).FolderManager;
+            folderId = await FolderManager.showFolderQuickPick(Session.Current, this.serviceId);
+            if (folderId === undefined) { return; } // User cancelled
+        }
+        
         let selectedBucketName = await vscode.window.showInputBox({ placeHolder: 'Enter Bucket Name / Search Text' });
         if (selectedBucketName === undefined) { return; }
         var resultBucket = await api.GetBucketList(selectedBucketName);
@@ -225,6 +259,23 @@ export class S3Service extends AbstractAwsService {
         let lastAddedItem: S3TreeItem | undefined;
         for (var selectedBucket of selectedBucketList) {
             lastAddedItem = this.treeDataProvider.AddBucket(selectedBucket);
+            
+            // Step 2: Capture custom display name (optional)
+            const displayName = await vscode.window.showInputBox({
+                prompt: 'Enter custom name for this bucket (optional)',
+                placeHolder: 'Leave blank to use bucket name',
+                value: '',
+            });
+            
+            // Step 3: Save as custom resource
+            const compositeKey = `${this.serviceId}:${selectedBucket}`;
+            await this.addCustomResource(
+                compositeKey,
+                displayName || '',
+                selectedBucket,
+                { bucketName: selectedBucket },
+                folderId || undefined
+            );
         }
         return lastAddedItem ? this.mapToWorkbenchItem(lastAddedItem) : undefined;
     }
@@ -234,6 +285,10 @@ export class S3Service extends AbstractAwsService {
         Telemetry.Current?.send("S3Service.RemoveBucket");
         ui.logToOutput('S3Service.RemoveBucket Started');
         this.treeDataProvider.RemoveBucket(node.Bucket);
+        
+        // Also remove from custom resources if it exists
+        const compositeKey = `${this.serviceId}:${node.Bucket}`;
+        await this.removeCustomResource(compositeKey);
     }
 
     async Goto(node: S3TreeItem) {

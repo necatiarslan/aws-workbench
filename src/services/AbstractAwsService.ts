@@ -2,6 +2,16 @@ import * as vscode from 'vscode';
 import { IService } from './IService';
 import { WorkbenchTreeItem } from '../tree/WorkbenchTreeItem';
 import { WorkbenchTreeProvider } from '../tree/WorkbenchTreeProvider';
+import { Session } from '../common/Session';
+
+export interface CustomResource {
+    compositeKey: string; // format: ${serviceId}:${resourceId}
+    displayName: string;
+    awsName: string;
+    folderId: string | null;
+    resourceData: any;
+    createdAt: number;
+}
 
 export abstract class AbstractAwsService implements IService {
     public abstract serviceId: string;
@@ -13,7 +23,7 @@ export abstract class AbstractAwsService implements IService {
     public abstract getTreeItem(element: WorkbenchTreeItem): vscode.TreeItem | Promise<vscode.TreeItem>;
     
     // Optional methods (default no-op or specific behavior)
-    public async addResource(): Promise<WorkbenchTreeItem | undefined> { return undefined; }
+    public async addResource(folderId?: string | null): Promise<WorkbenchTreeItem | undefined> { return undefined; }
 
     // Service-specific commands registration.
     // We override this to register common commands automatically or let subclasses do it.
@@ -24,13 +34,13 @@ export abstract class AbstractAwsService implements IService {
     protected hiddenIds: Set<string> = new Set();
     protected favoriteIds: Set<string> = new Set();
     protected profileScope: Map<string, string> = new Map(); // resourceId -> profileName
+    protected customResources: Map<string, CustomResource> = new Map(); // compositeKey -> CustomResource
 
     // --- Persistence Keys ---
     protected get hiddenStorageKey(): string { return `${this.serviceId}.hiddenNodes`; }
     protected get favStorageKey(): string { return `${this.serviceId}.favoriteNodes`; }
     protected get profileStorageKey(): string { return `${this.serviceId}.profileScope`; }
-
-    // --- State Management ---
+    protected get customResourcesStorageKey(): string { return `${this.serviceId}.customResources`; }
 
     // --- Common UI State ---
     public isShowHiddenNodes: boolean = false;
@@ -38,7 +48,7 @@ export abstract class AbstractAwsService implements IService {
 
     // --- State Management ---
     protected loadBaseState() {
-        // ... (existing)
+        // Load hidden and favorite nodes
         const hidden = this.context.globalState.get<string[]>(this.hiddenStorageKey, []);
         this.hiddenIds = new Set(hidden);
 
@@ -62,6 +72,77 @@ export abstract class AbstractAwsService implements IService {
         // Save UI toggles
         this.context.globalState.update(`${this.serviceId}.isShowHiddenNodes`, this.isShowHiddenNodes);
         this.context.globalState.update(`${this.serviceId}.isShowOnlyFavorite`, this.isShowOnlyFavorite);
+    }
+
+    // --- Custom Resources Management ---
+
+    protected async loadCustomResources(): Promise<void> {
+        try {
+            const resourceArray = this.context.globalState.get<[string, CustomResource][]>(this.customResourcesStorageKey, []);
+            this.customResources = new Map(resourceArray);
+            console.log(`[${this.serviceId}] Loaded ${this.customResources.size} custom resources`);
+        } catch (error: any) {
+            console.error(`[${this.serviceId}] Failed to load custom resources:`, error);
+        }
+    }
+
+    protected async saveCustomResources(): Promise<void> {
+        try {
+            const resourceArray = Array.from(this.customResources.entries());
+            await this.context.globalState.update(this.customResourcesStorageKey, resourceArray);
+        } catch (error: any) {
+            console.error(`[${this.serviceId}] Failed to save custom resources:`, error);
+        }
+    }
+
+    protected async addCustomResource(
+        compositeKey: string,
+        displayName: string,
+        awsName: string,
+        resourceData: any,
+        folderId?: string
+    ): Promise<void> {
+        const resource: CustomResource = {
+            compositeKey,
+            displayName,
+            awsName,
+            folderId: folderId || null,
+            resourceData,
+            createdAt: Date.now(),
+        };
+        this.customResources.set(compositeKey, resource);
+        await this.saveCustomResources();
+        console.log(`[${this.serviceId}] Added custom resource: ${compositeKey}`);
+    }
+
+    protected async removeCustomResource(compositeKey: string): Promise<void> {
+        if (this.customResources.has(compositeKey)) {
+            this.customResources.delete(compositeKey);
+            await this.saveCustomResources();
+            console.log(`[${this.serviceId}] Removed custom resource: ${compositeKey}`);
+        }
+    }
+
+    public getCustomResourcesByFolder(folderId: string | null): CustomResource[] {
+        return Array.from(this.customResources.values()).filter(r => r.folderId === folderId);
+    }
+
+    public getDisplayName(resource: CustomResource): string {
+        if (resource.displayName && resource.displayName !== resource.awsName) {
+            return `${resource.displayName} → ${resource.awsName}`;
+        }
+        return resource.awsName;
+    }
+
+    // --- Helper to count resources in folders (for cascade delete confirmation) ---
+    public countResourcesInFolders(folderIds: string[]): number {
+        let count = 0;
+        for (const resource of this.customResources.values()) {
+            if (resource.folderId && folderIds.includes(resource.folderId)) {
+                count++;
+            }
+        }
+        return count;
     }
     
     // ...

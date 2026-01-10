@@ -5,6 +5,12 @@ const vscode = require("vscode");
 class WorkbenchTreeItem extends vscode.TreeItem {
     serviceId;
     itemData;
+    parentFolderId;
+    isCustom = false;
+    isFolder = false;
+    compositeKey;
+    displayName;
+    awsName;
     constructor(label, collapsibleState, serviceId, contextValue, itemData) {
         super(label, collapsibleState);
         this.serviceId = serviceId;

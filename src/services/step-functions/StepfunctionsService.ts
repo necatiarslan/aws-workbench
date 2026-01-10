@@ -23,8 +23,7 @@ export class StepfunctionsService extends AbstractAwsService {
         super();
         StepfunctionsService.Instance = this;
         this.context = context;
-        this.loadBaseState();
-        this.treeDataProvider = new StepFuncTreeDataProvider();
+        this.loadBaseState();        this.loadCustomResources();        this.treeDataProvider = new StepFuncTreeDataProvider();
         this.Refresh();
     }
 
@@ -54,8 +53,24 @@ export class StepfunctionsService extends AbstractAwsService {
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const nodes = this.treeDataProvider.GetStepFuncNodes();
-        const items = nodes.map(n => this.mapToWorkbenchItem(n));
-        return this.processNodes(items);
+        const items = nodes.map(n => this.mapToWorkbenchItem(n));        
+        // Add ungrouped custom resources (not in any folder)
+        const ungroupedCustomResources = this.getCustomResourcesByFolder(null);
+        for (const resource of ungroupedCustomResources) {
+            const customItem = new WorkbenchTreeItem(
+                this.getDisplayName(resource),
+                vscode.TreeItemCollapsibleState.Collapsed,
+                this.serviceId,
+                'customResource',
+                resource.resourceData
+            );
+            customItem.isCustom = true;
+            customItem.compositeKey = resource.compositeKey;
+            customItem.displayName = resource.displayName;
+            customItem.awsName = resource.awsName;
+            items.push(customItem);
+        }
+                return this.processNodes(items);
     }
 
     public mapToWorkbenchItem(n: any): WorkbenchTreeItem {

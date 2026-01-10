@@ -4,6 +4,7 @@ import { WorkbenchTreeProvider } from './tree/WorkbenchTreeProvider';
 import { WorkbenchTreeItem } from './tree/WorkbenchTreeItem';
 import { ServiceManager } from './services/ServiceManager';
 import { Session } from './common/Session';
+import { FolderManager } from './common/FolderManager';
 
 import { S3Service } from './services/s3/S3Service';
 import { LambdaService } from './services/lambda/LambdaService';
@@ -50,10 +51,18 @@ export function activate(context: vscode.ExtensionContext): void {
         serviceManager.registerService(new SqsService(context));
         serviceManager.registerService(new StepfunctionsService(context));
 
-        // 3. Register Core Commands
+        // 3. Load global folders from storage
+        Session.Current?.loadFolders().then(() => {
+            // Load custom resources for each service
+            for (const service of serviceManager.getAllServices()) {
+                (service as any).loadCustomResources?.();
+            }
+        });
+
+        // 4. Register Core Commands
         registerCoreCommands(context, serviceManager, treeProvider, treeView);
 
-        // 4. Register Service Commands
+        // 5. Register Service Commands
         // Each service registers its own specific commands.
         for (const service of serviceManager.getAllServices()) {
             service.registerCommands(context, treeProvider, treeView);
@@ -105,7 +114,7 @@ function registerCoreCommands(
 
             if (selected) {
                 try {
-                    const node = await selected.service.addResource();
+                    const node = await (selected.service as any).addResource?.();
                     treeProvider.refresh();
                     if (node) {
                         setTimeout(() => {
@@ -114,6 +123,40 @@ function registerCoreCommands(
                     }
                 } catch (err) {
                     console.error('Error adding resource:', err);
+                    vscode.window.showErrorMessage(`Failed to add resource: ${err}`);
+                }
+            }
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.addResourceToFolder', async (folderNode: WorkbenchTreeItem) => {
+            if (!folderNode || !folderNode.isFolder || !folderNode.itemData) {
+                vscode.window.showWarningMessage('Please select a folder');
+                return;
+            }
+
+            const folderId = (folderNode.itemData as any).id;
+            const services = serviceManager.getAllServices().filter(s => 'addResource' in s);
+            const items = services.map(s => ({
+                label: s.serviceId.toUpperCase(),
+                description: `Add ${s.serviceId.toUpperCase()} resource`,
+                service: s
+            }));
+
+            const selected = await vscode.window.showQuickPick(items, {
+                placeHolder: 'Select AWS resource type to add to folder'
+            });
+
+            if (selected) {
+                try {
+                    const node = await (selected.service as any).addResource?.(folderId);
+                    treeProvider.refresh();
+                    if (node) {
+                        setTimeout(() => {
+                            treeView.reveal(node, { select: true, focus: true, expand: true });
+                        }, 500);
+                    }
+                } catch (err) {
+                    console.error('Error adding resource to folder:', err);
                     vscode.window.showErrorMessage(`Failed to add resource: ${err}`);
                 }
             }
@@ -157,11 +200,209 @@ function registerCoreCommands(
         }),
 
         // Placeholder commands
-        vscode.commands.registerCommand('aws-workbench.Filter', () => showNotImplemented('Filter')),
-        vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => showNotImplemented('ShowOnlyFavorite')),
-        vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => showNotImplemented('ShowHiddenNodes')),
+        vscode.commands.registerCommand('aws-workbench.Filter', async () => {
+            const filterOptions = [
+                { 
+                    label: '$(folder) Filter by Folder', 
+                    description: 'Show resources in a specific folder',
+                    command: 'aws-workbench.FilterByFolder' 
+                },
+                { 
+                    label: '$(search) Filter by Resource Name', 
+                    description: 'Filter resources by name pattern',
+                    command: 'aws-workbench.FilterByResourceName' 
+                },
+                { 
+                    label: '$(clear-all) Clear All Filters', 
+                    description: 'Remove all active filters',
+                    command: 'aws-workbench.ClearFilters' 
+                }
+            ];
+
+            const selected = await vscode.window.showQuickPick(filterOptions, {
+                placeHolder: 'Select filter option'
+            });
+
+            if (selected) {
+                vscode.commands.executeCommand(selected.command);
+            }
+        }),
+        vscode.commands.registerCommand('aws-workbench.ShowOnlyFavorite', () => {
+            if (Session.Current) {
+                Session.Current.toggleShowOnlyFavorites();
+                treeProvider.refresh();
+                const status = Session.Current.isShowOnlyFavorites ? 'enabled' : 'disabled';
+                vscode.window.showInformationMessage(`Show Only Favorites ${status}`);
+            }
+        }),
+        vscode.commands.registerCommand('aws-workbench.ShowHiddenNodes', () => {
+            if (Session.Current) {
+                Session.Current.toggleShowHiddenNodes();
+                treeProvider.refresh();
+                const status = Session.Current.isShowHiddenNodes ? 'enabled' : 'disabled';
+                vscode.window.showInformationMessage(`Show Hidden Nodes ${status}`);
+            }
+        }),
         vscode.commands.registerCommand('aws-workbench.UpdateAwsEndPoint', () => Session.Current?.SetAwsEndpoint()),
-        vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => Session.Current?.SetAwsRegion())
+        vscode.commands.registerCommand('aws-workbench.SetAwsRegion', () => Session.Current?.SetAwsRegion()),
+
+        // --- Folder Management Commands ---
+        vscode.commands.registerCommand('aws-workbench.CreateFolder', async () => {
+            const session = Session.Current;
+            if (!session) return;
+
+            const folderName = await vscode.window.showInputBox({
+                prompt: 'Enter folder name',
+                placeHolder: 'New Folder',
+            });
+
+            if (folderName) {
+                await session.addFolder(folderName);
+                treeProvider.refresh();
+                vscode.window.showInformationMessage(`Folder "${folderName}" created`);
+            }
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.RenameFolder', async (node: WorkbenchTreeItem) => {
+            if (!node.isFolder || !node.itemData) return;
+            const folder = node.itemData;
+            const session = Session.Current;
+            if (!session) return;
+
+            const newName = await vscode.window.showInputBox({
+                prompt: 'Enter new folder name',
+                value: folder.name,
+            });
+
+            if (newName && newName !== folder.name) {
+                await session.updateFolder(folder.id, newName);
+                treeProvider.refresh();
+                vscode.window.showInformationMessage(`Folder renamed to "${newName}"`);
+            }
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.DeleteFolder', async (node: WorkbenchTreeItem) => {
+            if (!node.isFolder || !node.itemData) return;
+            const folder = node.itemData;
+            const session = Session.Current;
+            if (!session) return;
+
+            const descendantFolders = (session as any).getDescendantFolders(folder.id);
+            let resourceCount = 0;
+            const serviceManager = ServiceManager.Instance;
+            for (const service of serviceManager.getAllServices()) {
+                resourceCount += (service as any).countResourcesInFolders([folder.id, ...descendantFolders]);
+            }
+
+            const confirmed = await vscode.window.showWarningMessage(
+                `Delete folder "${folder.name}" and ${descendantFolders.length} subfolder(s) containing ${resourceCount} resource(s)?`,
+                'Delete',
+                'Cancel'
+            );
+
+            if (confirmed === 'Delete') {
+                await session.deleteFolder(folder.id);
+                treeProvider.refresh();
+                vscode.window.showInformationMessage(`Folder "${folder.name}" deleted`);
+            }
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.MoveResourceToFolder', async (node: WorkbenchTreeItem) => {
+            if (node.isFolder || !node.compositeKey) return;
+            const session = Session.Current;
+            if (!session) return;
+
+            const folderId = await FolderManager.showFolderQuickPick(session);
+            if (folderId === undefined) return; // User cancelled
+
+            // Update custom resource's folder
+            const service = serviceManager.getService(node.serviceId);
+            const customResources = (service as any).customResources as Map<string, any>;
+            const resource = customResources.get(node.compositeKey);
+            if (resource) {
+                resource.folderId = folderId;
+                await (service as any).saveCustomResources();
+                treeProvider.refresh();
+                const folderName = folderId ? session.getFolderPath(folderId) : 'Ungrouped';
+                vscode.window.showInformationMessage(`Resource moved to "${folderName}"`);
+            }
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.AddFolderToFav', (node: WorkbenchTreeItem) => {
+            if (!node.isFolder || !node.itemData) return;
+            const folder = node.itemData;
+            Session.Current?.addFolderToFavorites(folder.id);
+            treeProvider.refresh();
+            vscode.window.showInformationMessage(`Folder "${folder.name}" added to favorites`);
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.RemoveFolderFromFav', (node: WorkbenchTreeItem) => {
+            if (!node.isFolder || !node.itemData) return;
+            const folder = node.itemData;
+            Session.Current?.removeFolderFromFavorites(folder.id);
+            treeProvider.refresh();
+            vscode.window.showInformationMessage(`Folder "${folder.name}" removed from favorites`);
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.HideFolderNode', (node: WorkbenchTreeItem) => {
+            if (!node.isFolder || !node.itemData) return;
+            const folder = node.itemData;
+            Session.Current?.hideFolderNode(folder.id);
+            treeProvider.refresh();
+            vscode.window.showInformationMessage(`Folder "${folder.name}" hidden`);
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.UnHideFolderNode', (node: WorkbenchTreeItem) => {
+            if (!node.isFolder || !node.itemData) return;
+            const folder = node.itemData;
+            Session.Current?.unhideFolderNode(folder.id);
+            treeProvider.refresh();
+            vscode.window.showInformationMessage(`Folder "${folder.name}" unhidden`);
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.RemoveFromFolder', async (node: WorkbenchTreeItem) => {
+            if (!node.isCustom || !node.compositeKey) return;
+
+            const service = serviceManager.getService(node.serviceId);
+            const customResources = (service as any).customResources as Map<string, any>;
+            const resource = customResources.get(node.compositeKey);
+            if (resource && resource.folderId) {
+                resource.folderId = null;
+                await (service as any).saveCustomResources();
+                treeProvider.refresh();
+                vscode.window.showInformationMessage('Resource removed from folder');
+            }
+        }),
+
+        // --- Filtering Commands ---
+        vscode.commands.registerCommand('aws-workbench.FilterByFolder', async () => {
+            const session = Session.Current;
+            if (!session) return;
+
+            const folderId = await FolderManager.showFilterFolderQuickPick(session);
+            if (folderId === undefined) return; // User cancelled
+
+            treeProvider.setFolderFilter(folderId || undefined);
+            const folderName = folderId ? session.getFolderPath(folderId) : 'All Folders';
+            vscode.window.showInformationMessage(`Filtered by folder: "${folderName}"`);
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.FilterByResourceName', async () => {
+            const session = Session.Current;
+            if (!session) return;
+
+            const filter = await FolderManager.showFilterResourceNameInput(session.resourceNameFilter);
+            if (filter === undefined) return; // User cancelled
+
+            treeProvider.setResourceNameFilter(filter || undefined);
+            const filterDisplay = filter ? `"${filter}"` : 'cleared';
+            vscode.window.showInformationMessage(`Resource name filter ${filterDisplay}`);
+        }),
+
+        vscode.commands.registerCommand('aws-workbench.ClearFilters', () => {
+            treeProvider.clearFilters();
+            vscode.window.showInformationMessage('All filters cleared');
+        })
     );
 }
 

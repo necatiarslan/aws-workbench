@@ -3,22 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractAwsService = void 0;
 class AbstractAwsService {
     // Optional methods (default no-op or specific behavior)
-    async addResource() { return undefined; }
+    async addResource(folderId) { return undefined; }
     // --- Common Logic for Hide/Fav/Profile ---
     hiddenIds = new Set();
     favoriteIds = new Set();
     profileScope = new Map(); // resourceId -> profileName
+    customResources = new Map(); // compositeKey -> CustomResource
     // --- Persistence Keys ---
     get hiddenStorageKey() { return `${this.serviceId}.hiddenNodes`; }
     get favStorageKey() { return `${this.serviceId}.favoriteNodes`; }
     get profileStorageKey() { return `${this.serviceId}.profileScope`; }
-    // --- State Management ---
+    get customResourcesStorageKey() { return `${this.serviceId}.customResources`; }
     // --- Common UI State ---
     isShowHiddenNodes = false;
     isShowOnlyFavorite = false;
     // --- State Management ---
     loadBaseState() {
-        // ... (existing)
+        // Load hidden and favorite nodes
         const hidden = this.context.globalState.get(this.hiddenStorageKey, []);
         this.hiddenIds = new Set(hidden);
         const favs = this.context.globalState.get(this.favStorageKey, []);
@@ -37,6 +38,65 @@ class AbstractAwsService {
         // Save UI toggles
         this.context.globalState.update(`${this.serviceId}.isShowHiddenNodes`, this.isShowHiddenNodes);
         this.context.globalState.update(`${this.serviceId}.isShowOnlyFavorite`, this.isShowOnlyFavorite);
+    }
+    // --- Custom Resources Management ---
+    async loadCustomResources() {
+        try {
+            const resourceArray = this.context.globalState.get(this.customResourcesStorageKey, []);
+            this.customResources = new Map(resourceArray);
+            console.log(`[${this.serviceId}] Loaded ${this.customResources.size} custom resources`);
+        }
+        catch (error) {
+            console.error(`[${this.serviceId}] Failed to load custom resources:`, error);
+        }
+    }
+    async saveCustomResources() {
+        try {
+            const resourceArray = Array.from(this.customResources.entries());
+            await this.context.globalState.update(this.customResourcesStorageKey, resourceArray);
+        }
+        catch (error) {
+            console.error(`[${this.serviceId}] Failed to save custom resources:`, error);
+        }
+    }
+    async addCustomResource(compositeKey, displayName, awsName, resourceData, folderId) {
+        const resource = {
+            compositeKey,
+            displayName,
+            awsName,
+            folderId: folderId || null,
+            resourceData,
+            createdAt: Date.now(),
+        };
+        this.customResources.set(compositeKey, resource);
+        await this.saveCustomResources();
+        console.log(`[${this.serviceId}] Added custom resource: ${compositeKey}`);
+    }
+    async removeCustomResource(compositeKey) {
+        if (this.customResources.has(compositeKey)) {
+            this.customResources.delete(compositeKey);
+            await this.saveCustomResources();
+            console.log(`[${this.serviceId}] Removed custom resource: ${compositeKey}`);
+        }
+    }
+    getCustomResourcesByFolder(folderId) {
+        return Array.from(this.customResources.values()).filter(r => r.folderId === folderId);
+    }
+    getDisplayName(resource) {
+        if (resource.displayName && resource.displayName !== resource.awsName) {
+            return `${resource.displayName} → ${resource.awsName}`;
+        }
+        return resource.awsName;
+    }
+    // --- Helper to count resources in folders (for cascade delete confirmation) ---
+    countResourcesInFolders(folderIds) {
+        let count = 0;
+        for (const resource of this.customResources.values()) {
+            if (resource.folderId && folderIds.includes(resource.folderId)) {
+                count++;
+            }
+        }
+        return count;
     }
     // ...
     /**

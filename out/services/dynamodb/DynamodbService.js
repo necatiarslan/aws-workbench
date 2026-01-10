@@ -19,6 +19,7 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
         DynamodbService.Instance = this;
         this.context = context;
         this.loadBaseState();
+        this.loadCustomResources();
         this.treeDataProvider = new DynamodbTreeDataProvider_1.DynamodbTreeDataProvider();
         this.Refresh();
     }
@@ -43,6 +44,16 @@ class DynamodbService extends AbstractAwsService_1.AbstractAwsService {
     async getRootNodes() {
         const nodes = this.treeDataProvider.GetDynamodbNodes();
         const items = nodes.map(n => this.mapToWorkbenchItem(n));
+        // Add ungrouped custom resources (not in any folder)
+        const ungroupedCustomResources = this.getCustomResourcesByFolder(null);
+        for (const resource of ungroupedCustomResources) {
+            const customItem = new WorkbenchTreeItem_1.WorkbenchTreeItem(this.getDisplayName(resource), vscode.TreeItemCollapsibleState.Collapsed, this.serviceId, 'customResource', resource.resourceData);
+            customItem.isCustom = true;
+            customItem.compositeKey = resource.compositeKey;
+            customItem.displayName = resource.displayName;
+            customItem.awsName = resource.awsName;
+            items.push(customItem);
+        }
         return this.processNodes(items);
     }
     mapToWorkbenchItem(n) {

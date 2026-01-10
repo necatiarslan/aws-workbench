@@ -35,6 +35,46 @@
         "icon": "$(add)"
       },
       {
+        "command": "aws-workbench.addResourceToFolder",
+        "title": "Add Resource to Folder",
+        "icon": "$(add)"
+      },
+      {
+        "command": "aws-workbench.CreateFolder",
+        "title": "Create Folder",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "aws-workbench.RenameFolder",
+        "title": "Rename Folder"
+      },
+      {
+        "command": "aws-workbench.DeleteFolder",
+        "title": "Delete Folder"
+      },
+      {
+        "command": "aws-workbench.MoveResourceToFolder",
+        "title": "Move to Folder"
+      },
+      {
+        "command": "aws-workbench.AddFolderToFav",
+        "title": "Add Folder to Favorites",
+        "icon": "$(star)"
+      },
+      {
+        "command": "aws-workbench.RemoveFolderFromFav",
+        "title": "Remove Folder from Favorites",
+        "icon": "$(star-empty)"
+      },
+      {
+        "command": "aws-workbench.HideFolderNode",
+        "title": "Hide Folder"
+      },
+      {
+        "command": "aws-workbench.UnHideFolderNode",
+        "title": "Unhide Folder"
+      },
+      {
         "command": "aws-workbench.Refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
@@ -1148,6 +1188,11 @@
           "group": "navigation"
         },
         {
+          "command": "aws-workbench.CreateFolder",
+          "when": "view == AwsWorkbenchTree",
+          "group": "navigation"
+        },
+        {
           "command": "aws-workbench.Filter",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
@@ -1194,6 +1239,51 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "aws-workbench.addResourceToFolder",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/",
+          "group": "folder@1"
+        },
+        {
+          "command": "aws-workbench.CreateFolder",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/",
+          "group": "folder@2"
+        },
+        {
+          "command": "aws-workbench.RenameFolder",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/",
+          "group": "folder@3"
+        },
+        {
+          "command": "aws-workbench.DeleteFolder",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/",
+          "group": "folder@4"
+        },
+        {
+          "command": "aws-workbench.AddFolderToFav",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/ && viewItem =~ /#!Fav#/",
+          "group": "folder@5"
+        },
+        {
+          "command": "aws-workbench.RemoveFolderFromFav",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/ && viewItem =~ /#Fav#/",
+          "group": "folder@6"
+        },
+        {
+          "command": "aws-workbench.HideFolderNode",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/ && viewItem =~ /#!Hidden#/",
+          "group": "folder@7"
+        },
+        {
+          "command": "aws-workbench.UnHideFolderNode",
+          "when": "view == AwsWorkbenchTree && viewItem =~ /folder/ && viewItem =~ /#Hidden#/",
+          "group": "folder@8"
+        },
+        {
+          "command": "aws-workbench.MoveResourceToFolder",
+          "when": "view == AwsWorkbenchTree && viewItem == customResource",
+          "group": "customResource@1"
+        },
         {
           "command": "aws-workbench.AddToFav",
           "when": "view == AwsWorkbenchTree && viewItem =~ /#AwsResource#/ && viewItem =~ /#!Fav#/",

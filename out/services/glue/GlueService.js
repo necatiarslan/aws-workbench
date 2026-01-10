@@ -22,6 +22,7 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
         GlueService.Instance = this;
         this.context = context;
         this.loadBaseState();
+        this.loadCustomResources();
         this.treeDataProvider = new GlueTreeDataProvider_1.GlueTreeDataProvider();
         this.Refresh();
     }
@@ -48,6 +49,16 @@ class GlueService extends AbstractAwsService_1.AbstractAwsService {
     async getRootNodes() {
         const nodes = await this.treeDataProvider.getChildren(undefined);
         const items = nodes.map((n) => this.mapToWorkbenchItem(n));
+        // Add ungrouped custom resources (not in any folder)
+        const ungroupedCustomResources = this.getCustomResourcesByFolder(null);
+        for (const resource of ungroupedCustomResources) {
+            const customItem = new WorkbenchTreeItem_1.WorkbenchTreeItem(this.getDisplayName(resource), vscode.TreeItemCollapsibleState.Collapsed, this.serviceId, 'customResource', resource.resourceData);
+            customItem.isCustom = true;
+            customItem.compositeKey = resource.compositeKey;
+            customItem.displayName = resource.displayName;
+            customItem.awsName = resource.awsName;
+            items.push(customItem);
+        }
         return this.processNodes(items);
     }
     mapToWorkbenchItem(n) {

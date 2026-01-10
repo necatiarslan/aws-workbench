@@ -22,6 +22,7 @@ export class IamService extends AbstractAwsService {
         IamService.Instance = this;
         this.context = context;
         this.loadBaseState();
+        this.loadCustomResources();
         this.treeDataProvider = new IamTreeDataProvider();
         this.Refresh();
     }
@@ -52,8 +53,24 @@ export class IamService extends AbstractAwsService {
 
     async getRootNodes(): Promise<WorkbenchTreeItem[]> {
         const nodes = this.treeDataProvider.GetIamRoleNodes();
-        const items = nodes.map(n => this.mapToWorkbenchItem(n));
-        return this.processNodes(items);
+        const items = nodes.map(n => this.mapToWorkbenchItem(n));        
+        // Add ungrouped custom resources (not in any folder)
+        const ungroupedCustomResources = this.getCustomResourcesByFolder(null);
+        for (const resource of ungroupedCustomResources) {
+            const customItem = new WorkbenchTreeItem(
+                this.getDisplayName(resource),
+                vscode.TreeItemCollapsibleState.Collapsed,
+                this.serviceId,
+                'customResource',
+                resource.resourceData
+            );
+            customItem.isCustom = true;
+            customItem.compositeKey = resource.compositeKey;
+            customItem.displayName = resource.displayName;
+            customItem.awsName = resource.awsName;
+            items.push(customItem);
+        }
+                return this.processNodes(items);
     }
 
     public mapToWorkbenchItem(n: any): WorkbenchTreeItem {
