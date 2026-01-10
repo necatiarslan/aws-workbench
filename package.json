@@ -1832,7 +1832,7 @@
     "viewsWelcome": [
       {
         "view": "AwsWorkbenchTree",
-        "contents": "Welcome to AWS Workbench! \n Click the [+] button in the title bar to add AWS resources like S3 buckets, Lambda functions, etc. \n\n To Access AWS, you need to configure AWS credentials. \n [Configure Credentials](command:aws-workbench.access.ListAwsProfiles)"
+        "contents": "Please click [+] to add Aws Resources. \n [Add](command:aws-workbench.addResource) \n\n\n\n To Access Aws, you need to configure local Aws Credentials. \n For more detail on Aws Credentials, see the [AWS CLI Credentials Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). \n For a video guide, see this [YouTube Tutorial on AWS Credentials](https://www.youtube.com/watch?v=SON8sY1iOBU). \n\n [Test Aws Connection](command:aws-workbench.TestAwsConnection) \n\n [Update Aws EndPoint](command:aws-workbench.UpdateAwsEndPoint)"
       }
     ]
   },
