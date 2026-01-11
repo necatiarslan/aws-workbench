@@ -4,16 +4,16 @@ exports.GlueTreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const TreeItemType_1 = require("../../tree/TreeItemType");
-class GlueTreeItem extends vscode.TreeItem {
+const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
+class GlueTreeItem extends WorkbenchTreeItem_1.WorkbenchTreeItem {
     label;
     TreeItemType;
     Region;
     ResourceName;
     collapsibleState;
     command;
-    Parent;
     Payload;
-    constructor(label, TreeItemType, Region, ResourceName, collapsibleState, command, Parent, Payload) {
+    constructor(label, TreeItemType, Region, ResourceName, collapsibleState, command, parent, Payload) {
         super(label, collapsibleState);
         this.label = label;
         this.TreeItemType = TreeItemType;
@@ -21,35 +21,13 @@ class GlueTreeItem extends vscode.TreeItem {
         this.ResourceName = ResourceName;
         this.collapsibleState = collapsibleState;
         this.command = command;
-        this.Parent = Parent;
         this.Payload = Payload;
+        // wire parent if provided
+        this.Parent = parent;
         // contextValue is set in setIcons
         this.setIcons();
     }
-    _isFav = false;
-    _isHidden = false;
-    _profileToShow = "";
-    set ProfileToShow(value) {
-        this._profileToShow = value;
-        this.setContextValue();
-    }
-    get ProfileToShow() {
-        return this._profileToShow;
-    }
-    set IsHidden(value) {
-        this._isHidden = value;
-        this.setContextValue();
-    }
-    get IsHidden() {
-        return this._isHidden;
-    }
-    set IsFav(value) {
-        this._isFav = value;
-        this.setContextValue();
-    }
-    get IsFav() {
-        return this._isFav;
-    }
+    // flag accessors inherited from WorkbenchTreeItem
     IsRunning = false;
     RunId;
     setContextValue() {

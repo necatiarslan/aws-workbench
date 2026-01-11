@@ -4,37 +4,13 @@ exports.S3TreeItem = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
 const TreeItemType_1 = require("../../tree/TreeItemType");
-class S3TreeItem extends vscode.TreeItem {
-    _isFav = false;
+const WorkbenchTreeItem_1 = require("../../tree/WorkbenchTreeItem");
+class S3TreeItem extends WorkbenchTreeItem_1.WorkbenchTreeItem {
     TreeItemType;
     Text;
     Bucket;
     Shortcut;
-    Parent;
-    Children = [];
-    _isHidden = false;
-    _profileToShow = "";
-    set ProfileToShow(value) {
-        this._profileToShow = value;
-        this.setContextValue();
-    }
-    get ProfileToShow() {
-        return this._profileToShow;
-    }
-    set IsHidden(value) {
-        this._isHidden = value;
-        this.setContextValue();
-    }
-    get IsHidden() {
-        return this._isHidden;
-    }
-    set IsFav(value) {
-        this._isFav = value;
-        this.setContextValue();
-    }
-    get IsFav() {
-        return this._isFav;
-    }
+    // flag accessors inherited from WorkbenchTreeItem
     constructor(text, treeItemType) {
         super(text);
         this.Text = text;
@@ -61,40 +37,6 @@ class S3TreeItem extends vscode.TreeItem {
             this.iconPath = new vscode.ThemeIcon('circle-outline');
         }
         this.setContextValue();
-    }
-    IsAnyChidrenFav() {
-        return this.IsAnyChidrenFavInternal(this);
-    }
-    IsAnyChidrenFavInternal(node) {
-        for (var n of node.Children) {
-            if (n.IsFav) {
-                return true;
-            }
-            else if (n.Children.length > 0) {
-                return this.IsAnyChidrenFavInternal(n);
-            }
-        }
-        return false;
-    }
-    IsFilterStringMatch(FilterString) {
-        if (this.Text.includes(FilterString)) {
-            return true;
-        }
-        if (this.IsFilterStringMatchAnyChildren(this, FilterString)) {
-            return true;
-        }
-        return false;
-    }
-    IsFilterStringMatchAnyChildren(node, FilterString) {
-        for (var n of node.Children) {
-            if (n.Text.includes(FilterString)) {
-                return true;
-            }
-            else if (n.Children.length > 0) {
-                return this.IsFilterStringMatchAnyChildren(n, FilterString);
-            }
-        }
-        return false;
     }
 }
 exports.S3TreeItem = S3TreeItem;

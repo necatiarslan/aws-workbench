@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { TreeItemType } from '../../tree/TreeItemType';
+import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 
-export class CloudWatchTreeItem extends vscode.TreeItem {
+export class CloudWatchTreeItem extends WorkbenchTreeItem<any, CloudWatchTreeItem> {
 	public TreeItemType:TreeItemType;
 	public Text:string;
 	public Region:string | undefined;
@@ -10,44 +11,8 @@ export class CloudWatchTreeItem extends vscode.TreeItem {
 	public LogStream:string | undefined;
 	public DetailValue:string | undefined;
 	public DateFilter:Date | undefined;
-	public Parent:CloudWatchTreeItem | undefined;
-	public Children:CloudWatchTreeItem[] = [];
-	private _profileToShow: string = "";
-	private _isHidden: boolean = false;
-	private _isFav: boolean = false;
-	private _isPinned: boolean = false;
 
-	public get IsFav(): boolean {
-		return this._isFav;
-	}
-	public set IsFav(value: boolean) {
-		this._isFav = value;
-		this.setContextValue();
-	}
-
-	public get IsHidden(): boolean {
-		return this._isHidden;
-	}
-	public set IsHidden(value: boolean) {
-		this._isHidden = value;
-		this.setContextValue();
-	}
-	
-	public get ProfileToShow(): string {
-		return this._profileToShow;
-	}
-	public set ProfileToShow(value: string) {
-		this._profileToShow = value;
-		this.setContextValue();
-	}
-
-	public get IsPinned(): boolean {
-		return this._isPinned;
-	}
-	public set IsPinned(value: boolean) {
-		this._isPinned = value;
-		this.setContextValue();
-	}
+	// Flag accessors inherited from WorkbenchTreeItem
 
 	constructor(text:string, treeItemType:TreeItemType) {
 		super(text);
@@ -134,53 +99,5 @@ export class CloudWatchTreeItem extends vscode.TreeItem {
 		this.setContextValue();
 	}
 
-	public IsAnyChidrenFav(){
-		return this.IsAnyChidrenFavInternal(this);
-	}
-
-	public IsAnyChidrenFavInternal(node:CloudWatchTreeItem): boolean{
-		for(var n of node.Children)
-		{
-			if(n.IsFav)
-			{
-				return true;
-			}
-			else if (n.Children.length > 0)
-			{
-				return this.IsAnyChidrenFavInternal(n);
-			}
-		}
-
-		return false;
-	}
-
-	public IsFilterStringMatch(FilterString:string){
-		if(this.Text.includes(FilterString))
-		{
-			return true;
-		}
-
-		if(this.IsFilterStringMatchAnyChildren(this, FilterString))
-		{
-			return true;
-		}
-
-		return false;
-	}
-
-	public IsFilterStringMatchAnyChildren(node:CloudWatchTreeItem, FilterString:string): boolean{
-		for(var n of node.Children)
-		{
-			if(n.Text.includes(FilterString))
-			{
-				return true;
-			}
-			else if (n.Children.length > 0)
-			{
-				return this.IsFilterStringMatchAnyChildren(n, FilterString);
-			}
-		}
-
-		return false;
-	}
+	// Filtering helpers inherited from WorkbenchTreeItem
 }

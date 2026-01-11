@@ -1,45 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { TreeItemType } from '../../tree/TreeItemType';
+import { WorkbenchTreeItem } from '../../tree/WorkbenchTreeItem';
 
-export class LambdaTreeItem extends vscode.TreeItem {
-	private _isFav: boolean = false;
-	private _isHidden: boolean = false;
-	private _profileToShow: string = "";
+export class LambdaTreeItem extends WorkbenchTreeItem<any, LambdaTreeItem> {
 
-	public set ProfileToShow(value: string) {
-		this._profileToShow = value;
-		this.setContextValue();
-	}
-
-	public get ProfileToShow(): string {
-		return this._profileToShow;
-	}
-
-	public set IsHidden(value: boolean) {
-		this._isHidden = value;
-		this.setContextValue();
-	}
-
-	public get IsHidden(): boolean {
-		return this._isHidden;
-	}
-
-	public set IsFav(value: boolean) {
-		this._isFav = value;
-		this.setContextValue();
-	}
-
-	public get IsFav(): boolean {
-		return this._isFav;
-	}
+	// flag accessors inherited from WorkbenchTreeItem
 	public TreeItemType:TreeItemType
 	public Text:string
 	public Lambda:string = ""
 	public Region:string = ""
 	public LogStreamName:string | undefined
-	public Parent:LambdaTreeItem | undefined
-	public Children:LambdaTreeItem[] = []
+	// Parent/Children provided by WorkbenchTreeItem
 
 	public TriggerConfigPath: string | undefined
 	private codePath: string | undefined;
@@ -253,53 +225,5 @@ export class LambdaTreeItem extends vscode.TreeItem {
 		this.setContextValue();
 	}
 
-	public IsAnyChidrenFav(){
-		return this.IsAnyChidrenFavInternal(this);
-	}
-
-	public IsAnyChidrenFavInternal(node:LambdaTreeItem): boolean{
-		for(var n of node.Children)
-		{
-			if(n.IsFav)
-			{
-				return true;
-			}
-			else if (n.Children.length > 0)
-			{
-				return this.IsAnyChidrenFavInternal(n);
-			}
-		}
-
-		return false;
-	}
-
-	public IsFilterStringMatch(FilterString:string){
-		if(this.Text.includes(FilterString))
-		{
-			return true;
-		}
-
-		if(this.IsFilterStringMatchAnyChildren(this, FilterString))
-		{
-			return true;
-		}
-
-		return false;
-	}
-
-	public IsFilterStringMatchAnyChildren(node:LambdaTreeItem, FilterString:string): boolean{
-		for(var n of node.Children)
-		{
-			if(n.Text.includes(FilterString) || n.Region?.includes(FilterString) || n.Lambda?.includes(FilterString))
-			{
-				return true;
-			}
-			else if (n.Children.length > 0)
-			{
-				return this.IsFilterStringMatchAnyChildren(n, FilterString);
-			}
-		}
-
-		return false;
-	}
+	// filtering helpers inherited from WorkbenchTreeItem
 }
