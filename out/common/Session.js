@@ -5,7 +5,7 @@ const ui = require("./UI");
 const vscode = require("vscode");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 class Session {
-    static Current = undefined;
+    static Current;
     Context;
     ExtensionUri;
     FilterString = '';
@@ -314,7 +314,6 @@ class Session {
         this.SaveState();
     }
     dispose() {
-        Session.Current = undefined;
         this._onDidChangeSession.dispose();
     }
 }

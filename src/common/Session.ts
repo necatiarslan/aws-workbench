@@ -11,7 +11,7 @@ export interface Folder {
 }
 
 export class Session implements vscode.Disposable {
-    public static Current: Session | undefined = undefined;
+    public static Current: Session;
 
     public Context: vscode.ExtensionContext;
     public ExtensionUri: vscode.Uri;
@@ -340,7 +340,6 @@ export class Session implements vscode.Disposable {
     }
 
     public dispose() {
-        Session.Current = undefined;
         this._onDidChangeSession.dispose();
     }
 }

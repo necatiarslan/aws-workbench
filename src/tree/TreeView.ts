@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { NodeBase } from "./NodeBase";
 import { TreeProvider } from "./TreeProvider";
+import { Session } from "../common/Session";
 
 export class TreeView {
 
@@ -35,28 +36,44 @@ export class TreeView {
             this.ShowHidden();
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.Hide', () => {
-            this.Hide();
+        vscode.commands.registerCommand('AwsWorkbench.SelectAwsProfile', () => {
+            this.SelectAwsProfile();
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.UnHide', () => {
-            this.UnHide();
+        vscode.commands.registerCommand('AwsWorkbench.TestAwsConnection', () => {
+            this.TestAwsConnection();
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.AddFav', () => {
-            this.AddFav();
+        vscode.commands.registerCommand('AwsWorkbench.SetAwsRegion', () => {
+            this.SetAwsRegion();
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.RemoveFav', () => {
-            this.RemoveFav();
+        vscode.commands.registerCommand('AwsWorkbench.UpdateAwsEndPoint', () => {
+            this.UpdateAwsEndPoint();
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.ShowOnlyInThisProfile', () => {
-            this.ShowOnlyInThisProfile();
+        vscode.commands.registerCommand('AwsWorkbench.Hide', (node?: NodeBase) => {
+            this.Hide(node);
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.ShowInAnyProfile', () => {
-            this.ShowInAnyProfile();
+        vscode.commands.registerCommand('AwsWorkbench.UnHide', (node?: NodeBase) => {
+            this.UnHide(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.AddFav', (node?: NodeBase) => {
+            this.AddFav(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.RemoveFav', (node?: NodeBase) => {
+            this.RemoveFav(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.ShowOnlyInThisProfile', (node?: NodeBase) => {
+            this.ShowOnlyInThisProfile(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.ShowInAnyProfile', (node?: NodeBase) => {
+            this.ShowInAnyProfile(node);
         });
 
         vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
@@ -67,10 +84,28 @@ export class TreeView {
             this.Donate();
         });
 
-        vscode.commands.registerCommand('AwsWorkbench.Add', () => {
-            this.Add();
+        vscode.commands.registerCommand('AwsWorkbench.Add', (node?: NodeBase) => {
+            this.Add(node);
         });
     }
+
+	GetBoolenSign(value: boolean): string {
+		return value ? "✓ " : "✗ ";
+	}
+
+	async SetFilterMessage() {
+		if (1 === 1) {
+			this.view.message = 
+				await this.GetFilterProfilePrompt()
+				+ this.GetBoolenSign(Session.Current.IsShowOnlyFavorite) + "Fav, " 
+				+ this.GetBoolenSign(Session.Current.IsShowHiddenNodes) + "Hidden, "
+				+ (Session.Current.FilterString ? `Filter: ${Session.Current.FilterString}` : "");
+		}
+	}
+
+	async GetFilterProfilePrompt() {
+		return "Profile:" + Session.Current.AwsProfile + " ";
+	}
 
     public Add(node?: NodeBase): void {
         // Implementation for adding a resource to the tree view
@@ -92,34 +127,50 @@ export class TreeView {
         // Implementation for showing hidden items
     }
 
-    public Hide(): void {
+    public SelectAwsProfile(): void {
+        // Implementation for showing hidden items
+    }
+
+    public TestAwsConnection(): void {
+        // Implementation for showing hidden items
+    }
+
+    public SetAwsRegion(): void {
+        // Implementation for showing hidden items
+    }
+
+    public UpdateAwsEndPoint(): void {
+        // Implementation for showing hidden items
+    }
+
+    public Hide(node?: NodeBase): void {
         // Implementation for hiding items
     }
 
-    public UnHide(): void {
+    public UnHide(node?: NodeBase): void {
         // Implementation for unhiding items
     }
 
-    public AddFav(): void {
+    public AddFav(node?: NodeBase): void {
         // Implementation for adding to favorites
     }
 
-    public RemoveFav(): void {
+    public RemoveFav(node?: NodeBase): void {
         // Implementation for removing from favorites
     }
 
-    public ShowOnlyInThisProfile(): void {
+    public ShowOnlyInThisProfile(node?: NodeBase): void {
         // Implementation for showing only items in this profile
     }
 
-    public ShowInAnyProfile(): void {
+    public ShowInAnyProfile(node?: NodeBase): void {
         // Implementation for showing items in any profile
     }
 
-	public BugAndNewFeatureRequest() {
+	public BugAndNewFeatureRequest(): void {
 		vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));
 	}
-	public Donate() {
+	public Donate(): void {
 		vscode.env.openExternal(vscode.Uri.parse('https://github.com/sponsors/necatiarslan'));
 	}
 
