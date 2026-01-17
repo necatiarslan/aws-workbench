@@ -113,34 +113,46 @@ export class TreeView {
 
     public Refresh(): void {
         // Implementation for refreshing the tree view
+        
     }
 
     public Filter(): void {
         // Implementation for refreshing the tree view
+
     }
 
     public ShowOnlyFavorite(): void {
         // Implementation for showing only favorite items
+        Session.Current.IsShowOnlyFavorite = !Session.Current.IsShowOnlyFavorite;
+        Session.Current.SaveState();
+        this.Refresh();
     }
 
     public ShowHidden(): void {
         // Implementation for showing hidden items
+        Session.Current.IsShowHiddenNodes = !Session.Current.IsShowHiddenNodes;
+        Session.Current.SaveState();
+        this.Refresh();
     }
 
     public SelectAwsProfile(): void {
         // Implementation for showing hidden items
+        Session.Current.SetAwsProfile();
     }
 
     public TestAwsConnection(): void {
         // Implementation for showing hidden items
+        Session.Current.TestAwsConnection();
     }
 
     public SetAwsRegion(): void {
         // Implementation for showing hidden items
+        Session.Current.SetAwsRegion();
     }
 
     public UpdateAwsEndPoint(): void {
         // Implementation for showing hidden items
+        Session.Current.SetAwsEndpoint();
     }
 
     public Hide(node?: NodeBase): void {

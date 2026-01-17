@@ -96,21 +96,31 @@ class TreeView {
     }
     ShowOnlyFavorite() {
         // Implementation for showing only favorite items
+        Session_1.Session.Current.IsShowOnlyFavorite = !Session_1.Session.Current.IsShowOnlyFavorite;
+        Session_1.Session.Current.SaveState();
+        this.Refresh();
     }
     ShowHidden() {
         // Implementation for showing hidden items
+        Session_1.Session.Current.IsShowHiddenNodes = !Session_1.Session.Current.IsShowHiddenNodes;
+        Session_1.Session.Current.SaveState();
+        this.Refresh();
     }
     SelectAwsProfile() {
         // Implementation for showing hidden items
+        Session_1.Session.Current.SetAwsProfile();
     }
     TestAwsConnection() {
         // Implementation for showing hidden items
+        Session_1.Session.Current.TestAwsConnection();
     }
     SetAwsRegion() {
         // Implementation for showing hidden items
+        Session_1.Session.Current.SetAwsRegion();
     }
     UpdateAwsEndPoint() {
         // Implementation for showing hidden items
+        Session_1.Session.Current.SetAwsEndpoint();
     }
     Hide(node) {
         // Implementation for hiding items
