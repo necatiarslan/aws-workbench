@@ -1,9 +1,9 @@
 import { ServiceBase } from "../../tree/ServiceBase";
-import { TreeItemBase } from "../../tree/TreeItemBase";
+import { NodeBase } from "../../tree/NodeBase";
 
 export class FileSystemService extends ServiceBase {   
 
-    public addResource(treeItem?: TreeItemBase) : void {
+    public addResource(node?: NodeBase) : void {
         // Implementation for adding a file system resource
     }
 

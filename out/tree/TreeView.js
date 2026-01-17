@@ -47,11 +47,17 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.ShowInAnyProfile', () => {
             this.ShowInAnyProfile();
         });
+        vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
+            this.BugAndNewFeatureRequest();
+        });
+        vscode.commands.registerCommand('AwsWorkbench.Donate', () => {
+            this.Donate();
+        });
         vscode.commands.registerCommand('AwsWorkbench.Add', () => {
             this.Add();
         });
     }
-    Add(treeItem) {
+    Add(node) {
         // Implementation for adding a resource to the tree view
     }
     Refresh() {
@@ -83,6 +89,12 @@ class TreeView {
     }
     ShowInAnyProfile() {
         // Implementation for showing items in any profile
+    }
+    BugAndNewFeatureRequest() {
+        vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));
+    }
+    Donate() {
+        vscode.env.openExternal(vscode.Uri.parse('https://github.com/sponsors/necatiarslan'));
     }
 }
 exports.TreeView = TreeView;

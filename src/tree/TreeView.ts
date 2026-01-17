@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import { TreeItemBase } from "./TreeItemBase";
+import { NodeBase } from "./NodeBase";
 import { TreeProvider } from "./TreeProvider";
 
 export class TreeView {
 
     public static Current: TreeView;
-	public view: vscode.TreeView<TreeItemBase>;
+	public view: vscode.TreeView<NodeBase>;
 	public treeDataProvider: TreeProvider;
 	public context: vscode.ExtensionContext;
 
@@ -59,12 +59,20 @@ export class TreeView {
             this.ShowInAnyProfile();
         });
 
+        vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
+            this.BugAndNewFeatureRequest();
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.Donate', () => {
+            this.Donate();
+        });
+
         vscode.commands.registerCommand('AwsWorkbench.Add', () => {
             this.Add();
         });
     }
 
-    public Add(treeItem?: TreeItemBase): void {
+    public Add(node?: NodeBase): void {
         // Implementation for adding a resource to the tree view
     }
 
@@ -107,5 +115,12 @@ export class TreeView {
     public ShowInAnyProfile(): void {
         // Implementation for showing items in any profile
     }
+
+	public BugAndNewFeatureRequest() {
+		vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));
+	}
+	public Donate() {
+		vscode.env.openExternal(vscode.Uri.parse('https://github.com/sponsors/necatiarslan'));
+	}
 
 }

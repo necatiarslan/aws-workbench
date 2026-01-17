@@ -98,6 +98,16 @@
         "command": "AwsWorkbench.TestAwsConnection",
         "title": "Test AWS Connection",
         "icon": "$(plug)"
+      },
+      {
+        "command": "AwsWorkbench.Donate",
+        "title": "Donate",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "AwsWorkbench.BugAndNewFeatureRequest",
+        "title": "Bug and New Feature Request",
+        "icon": "$(bug)"
       }
     ],
     "menus": {
@@ -144,6 +154,16 @@
         },
         {
           "command": "AwsWorkbench.TestAwsConnection",
+          "when": "view == AwsWorkbenchTree",
+          "group": "other"
+        },
+        {
+          "command": "AwsWorkbench.Donate",
+          "when": "view == AwsWorkbenchTree",
+          "group": "other"
+        },
+        {
+          "command": "AwsWorkbench.BugAndNewFeatureRequest",
           "when": "view == AwsWorkbenchTree",
           "group": "other"
         }

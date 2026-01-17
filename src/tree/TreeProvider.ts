@@ -1,19 +1,19 @@
 import * as vscode from 'vscode';
-import { TreeItemBase } from './TreeItemBase';
+import { NodeBase } from './NodeBase';
 
-export class TreeProvider implements vscode.TreeDataProvider<TreeItemBase> {
+export class TreeProvider implements vscode.TreeDataProvider<NodeBase> {
 
     constructor(private context: vscode.ExtensionContext) 
     {
     
     }
 
-    public getTreeItem(element: TreeItemBase): vscode.TreeItem | Promise<vscode.TreeItem> {
-        return element;
+    public getTreeItem(node: NodeBase): vscode.TreeItem | Promise<vscode.TreeItem> {
+        return node;
     }
 
-    public async getChildren(element?: TreeItemBase): Promise<TreeItemBase[]> {
-        const result: TreeItemBase[] = [];
+    public async getChildren(node?: NodeBase): Promise<NodeBase[]> {
+        const result: NodeBase[] = [];
         return result;
     }
 

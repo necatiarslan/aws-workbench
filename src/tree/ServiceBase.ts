@@ -1,7 +1,7 @@
-import { TreeItemBase } from "./TreeItemBase";
+import { NodeBase } from "./NodeBase";
 
 export abstract class ServiceBase {
 
 
-    abstract addResource(treeItem?: TreeItemBase): void;
+    abstract addResource(node?: NodeBase): void;
 }

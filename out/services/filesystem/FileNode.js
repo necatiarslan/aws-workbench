@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileTreeItem = void 0;
+exports.FileNode = void 0;
 const NodeBase_1 = require("../../tree/NodeBase");
-class FileTreeItem extends NodeBase_1.NodeBase {
+class FileNode extends NodeBase_1.NodeBase {
     constructor(label) {
         super(label);
     }
 }
-exports.FileTreeItem = FileTreeItem;
-//# sourceMappingURL=FileTreeItem.js.map
+exports.FileNode = FileNode;
+//# sourceMappingURL=FileNode.js.map

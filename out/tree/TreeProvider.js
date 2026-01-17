@@ -6,10 +6,10 @@ class TreeProvider {
     constructor(context) {
         this.context = context;
     }
-    getTreeItem(element) {
-        return element;
+    getTreeItem(node) {
+        return node;
     }
-    async getChildren(element) {
+    async getChildren(node) {
         const result = [];
         return result;
     }
