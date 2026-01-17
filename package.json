@@ -30,72 +30,72 @@
   "contributes": {
     "commands": [
       {
-        "command": "aws-workbench.addResource",
-        "title": "Add AWS Resource",
+        "command": "AwsWorkbench.Add",
+        "title": "Add",
         "icon": "$(add)"
       },
       {
-        "command": "aws-workbench.Refresh",
+        "command": "AwsWorkbench.Refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
       },
       {
-        "command": "aws-workbench.Filter",
+        "command": "AwsWorkbench.Filter",
         "title": "Filter",
         "icon": "$(filter)"
       },
       {
-        "command": "aws-workbench.ShowOnlyFavorite",
+        "command": "AwsWorkbench.ShowOnlyFavorite",
         "title": "Show Only Favorite",
         "icon": "$(bookmark)"
       },
       {
-        "command": "aws-workbench.ShowHiddenNodes",
-        "title": "Show Hidden Nodes",
+        "command": "AwsWorkbench.ShowHidden",
+        "title": "Show Hidden",
         "icon": "$(eye-closed)"
       },
       {
-        "command": "aws-workbench.HideNode",
-        "title": "Hide Node"
+        "command": "AwsWorkbench.Hide",
+        "title": "Hide"
       },
       {
-        "command": "aws-workbench.UnHideNode",
-        "title": "UnHide Node"
+        "command": "AwsWorkbench.UnHide",
+        "title": "UnHide"
       },
       {
-        "command": "aws-workbench.AddToFav",
+        "command": "AwsWorkbench.AddFav",
         "title": "Add to Favorites",
         "icon": "$(star)"
       },
       {
-        "command": "aws-workbench.DeleteFromFav",
+        "command": "AwsWorkbench.RemoveFav",
         "title": "Remove from Favorites",
         "icon": "$(star-empty)"
       },
       {
-         "command": "aws-workbench.ShowOnlyInThisProfile",
+         "command": "AwsWorkbench.ShowOnlyInThisProfile",
          "title": "Show Only In This Profile"
       },
       {
-         "command": "aws-workbench.ShowInAnyProfile",
+         "command": "AwsWorkbench.ShowInAnyProfile",
          "title": "Show In Any Profile"
       },
       {
-        "command": "aws-workbench.SelectAwsProfile",
+        "command": "AwsWorkbench.SelectAwsProfile",
         "title": "Select AWS Profile",
         "icon": "$(account)"
       },
       {
-        "command": "aws-workbench.SetAwsRegion",
+        "command": "AwsWorkbench.SetAwsRegion",
         "title": "Set AWS Region",
         "icon": "$(location)"
       },
       {
-        "command": "aws-workbench.UpdateAwsEndPoint",
+        "command": "AwsWorkbench.UpdateAwsEndPoint",
         "title": "Update AWS EndPoint"
       },
       {
-        "command": "aws-workbench.TestAwsConnection",
+        "command": "AwsWorkbench.TestAwsConnection",
         "title": "Test AWS Connection",
         "icon": "$(plug)"
       }
@@ -103,47 +103,47 @@
     "menus": {
       "view/title": [
         {
-          "command": "aws-workbench.addResource",
+          "command": "AwsWorkbench.Add",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
         },
       {
-          "command": "aws-workbench.Filter",
+          "command": "AwsWorkbench.Filter",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
         },
         {
-          "command": "aws-workbench.ShowOnlyFavorite",
+          "command": "AwsWorkbench.ShowOnlyFavorite",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
         },
         {
-          "command": "aws-workbench.ShowHiddenNodes",
+          "command": "AwsWorkbench.ShowHidden",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
         },
         {
-          "command": "aws-workbench.SelectAwsProfile",
+          "command": "AwsWorkbench.SelectAwsProfile",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
         },
         {
-          "command": "aws-workbench.Refresh",
+          "command": "AwsWorkbench.Refresh",
           "when": "view == AwsWorkbenchTree",
           "group": "navigation"
         },
         {
-          "command": "aws-workbench.UpdateAwsEndPoint",
+          "command": "AwsWorkbench.UpdateAwsEndPoint",
           "when": "view == AwsWorkbenchTree",
           "group": "other"
         },
         {
-          "command": "aws-workbench.SetAwsRegion",
+          "command": "AwsWorkbench.SetAwsRegion",
           "when": "view == AwsWorkbenchTree",
           "group": "other"
         },
         {
-          "command": "aws-workbench.TestAwsConnection",
+          "command": "AwsWorkbench.TestAwsConnection",
           "when": "view == AwsWorkbenchTree",
           "group": "other"
         }
@@ -154,14 +154,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "aws-workbench",
+          "id": "AwsWorkbench",
           "title": "Aws Workbench",
           "icon": "media/aws-workbench-logo-activitybar.png"
         }
       ]
     },
     "views": {
-      "aws-workbench": [
+      "AwsWorkbench": [
         {
           "id": "AwsWorkbenchTree",
           "name": "Aws Workbench",
@@ -172,7 +172,7 @@
     "viewsWelcome": [
       {
         "view": "AwsWorkbenchTree",
-        "contents": "Please click [+] to add Aws Resources. \n [Add](command:aws-workbench.addResource) \n\n\n\n To Access Aws, you need to configure local Aws Credentials. \n For more detail on Aws Credentials, see the [AWS CLI Credentials Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). \n For a video guide, see this [YouTube Tutorial on AWS Credentials](https://www.youtube.com/watch?v=SON8sY1iOBU). \n\n [Test Aws Connection](command:aws-workbench.TestAwsConnection) \n\n [Update Aws EndPoint](command:aws-workbench.UpdateAwsEndPoint)"
+        "contents": "Please click [+] to add Aws Resources. \n [Add](command:AwsWorkbench.Add) \n\n\n\n To Access Aws, you need to configure local Aws Credentials. \n For more detail on Aws Credentials, see the [AWS CLI Credentials Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). \n For a video guide, see this [YouTube Tutorial on AWS Credentials](https://www.youtube.com/watch?v=SON8sY1iOBU). \n\n [Test Aws Connection](command:AwsWorkbench.TestAwsConnection) \n\n [Update Aws EndPoint](command:AwsWorkbench.UpdateAwsEndPoint)"
       }
     ]
   },
