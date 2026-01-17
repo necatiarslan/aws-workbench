@@ -14,7 +14,7 @@ function activate(context) {
     ui.logToOutput('Activating AWS Workbench...');
     try {
         new Session_1.Session(context); // Initialize session management
-        new ServiceHub_1.ServiceHub(); // Initialize service hub
+        new ServiceHub_1.ServiceHub(context); // Initialize service hub
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         new TreeView_1.TreeView(context);
         ui.logToOutput('AWS Workbench activated successfully.');

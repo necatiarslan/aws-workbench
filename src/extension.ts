@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     try {
         new Session(context); // Initialize session management
-        new ServiceHub();    // Initialize service hub
+        new ServiceHub(context);    // Initialize service hub
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         new TreeView(context);
 

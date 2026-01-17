@@ -19,11 +19,60 @@ export abstract class NodeBase extends vscode.TreeItem {
         TreeProvider.Current.Refresh(this);
     }
 
-    public IsFavorite: boolean = false;
-    public IsHidden: boolean = false;
+    private _isFavorite: boolean = false;
+    private _isHidden: boolean = false;
     public Parent: NodeBase | undefined = undefined;
     public Children: NodeBase[] = [];
     private _icon: string = "";
+    private _awsProfile: string = "";
+
+
+    public get AwsProfile(): string {
+        return this._awsProfile;
+    }
+
+    public set AwsProfile(value: string) {
+        this._awsProfile = value;
+        this.SetContextValue();
+    }
+
+    public SetContextValue(): void {
+        let context = "node";
+        if (this.IsFavorite) { context += "#Favorite#"; }
+        else { context += "#NotFavorite#"; }
+        
+        if (this.IsHidden) { context += "#Hidden#"; }
+        else { context += "#NotHidden#"; }
+
+        if (this.AwsProfile) { context += `#AwsProfile:${this.AwsProfile}#`; }
+        else { context += "#NoAwsProfile#"; }
+
+        this.contextValue = context;
+    }
+
+    public get HasChildren(): boolean {
+        return this.Children.length > 0;
+    }
+
+    public get IsHidden(): boolean {
+        return this._isHidden;
+    }
+
+    public set IsHidden(value: boolean) {
+        this._isHidden = value;
+        this.SetContextValue();
+        TreeProvider.Current.Refresh(this.Parent);
+    }
+
+    public get IsFavorite(): boolean {
+        return this._isFavorite;
+    }
+
+    public set IsFavorite(value: boolean) {
+        this._isFavorite = value;
+        this.SetContextValue();
+        TreeProvider.Current.Refresh(this.Parent);
+    }
 
     public get Icon(): string {
         return this._icon;
@@ -34,7 +83,6 @@ export abstract class NodeBase extends vscode.TreeItem {
         this.iconPath = new vscode.ThemeIcon(this._icon);
     }
 
-
     public IsRunning: boolean = false;
 
     public Remove(): void {
@@ -42,7 +90,7 @@ export abstract class NodeBase extends vscode.TreeItem {
             const index = this.Parent.Children.indexOf(this);
             if (index > -1) {
                 this.Parent.Children.splice(index, 1);
-                if (this.Parent.Children.length === 0) {
+                if (!this.Parent.HasChildren) {
                     this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.None;
                 }
             }
