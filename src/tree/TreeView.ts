@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { NodeBase } from "./NodeBase";
 import { TreeProvider } from "./TreeProvider";
 import { Session } from "../common/Session";
+import { ServiceHub } from "./ServiceHub";
 
 export class TreeView {
 
@@ -13,7 +14,7 @@ export class TreeView {
     constructor(context: vscode.ExtensionContext) {
 		TreeView.Current = this;
 		this.context = context;
-		this.treeDataProvider = new TreeProvider(context);
+		this.treeDataProvider = new TreeProvider();
 		this.view = vscode.window.createTreeView('AwsWorkbenchTree', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
 		context.subscriptions.push(this.view);
         this.RegisterCommands();
@@ -107,8 +108,36 @@ export class TreeView {
 		return "Profile:" + Session.Current.AwsProfile + " ";
 	}
 
-    public Add(node?: NodeBase): void {
+    public async Add(node?: NodeBase): Promise<void> {
         // Implementation for adding a resource to the tree view
+        const result:string[] = [];
+        result.push("Folder");
+        result.push("File");
+        result.push("S3 Bucket");
+        result.push("CloudWatch Log Group");
+        let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
+
+        if(!nodeType){ return; }
+
+        switch (nodeType) {
+            case "Folder":
+                ServiceHub.Current.FileSystemService.Add(node, "Folder");
+                break;
+            case "File":
+                // Logic to add a file
+                vscode.window.showInformationMessage('Add File selected');
+                break;
+            case "S3 Bucket":
+                // Logic to add an S3 Bucket
+                vscode.window.showInformationMessage('Add S3 Bucket selected');
+                break;
+            case "CloudWatch Log Group":
+                // Logic to add a CloudWatch Log Group
+                vscode.window.showInformationMessage('Add CloudWatch Log Group selected');
+                break;
+            default:
+                vscode.window.showErrorMessage('Unknown item type selected');
+        }   
     }
 
     public Refresh(): void {

@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-
-import { TreeProvider } from './tree/TreeProvider';
-import { Session } from './common/Session';
 import * as ui from './common/UI';
+import { Session } from './common/Session';
 import { TreeView } from './tree/TreeView';
+import { ServiceHub } from './tree/ServiceHub';
 
 /**
  * Activates the AWS Workbench extension.
@@ -14,7 +13,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     try {
         new Session(context); // Initialize session management
-
+        new ServiceHub();    // Initialize service hub
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         new TreeView(context);
 

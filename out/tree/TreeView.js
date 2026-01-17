@@ -4,6 +4,7 @@ exports.TreeView = void 0;
 const vscode = require("vscode");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
+const ServiceHub_1 = require("./ServiceHub");
 class TreeView {
     static Current;
     view;
@@ -12,7 +13,7 @@ class TreeView {
     constructor(context) {
         TreeView.Current = this;
         this.context = context;
-        this.treeDataProvider = new TreeProvider_1.TreeProvider(context);
+        this.treeDataProvider = new TreeProvider_1.TreeProvider();
         this.view = vscode.window.createTreeView('AwsWorkbenchTree', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         context.subscriptions.push(this.view);
         this.RegisterCommands();
@@ -85,8 +86,36 @@ class TreeView {
     async GetFilterProfilePrompt() {
         return "Profile:" + Session_1.Session.Current.AwsProfile + " ";
     }
-    Add(node) {
+    async Add(node) {
         // Implementation for adding a resource to the tree view
+        const result = [];
+        result.push("Folder");
+        result.push("File");
+        result.push("S3 Bucket");
+        result.push("CloudWatch Log Group");
+        let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
+        if (!nodeType) {
+            return;
+        }
+        switch (nodeType) {
+            case "Folder":
+                ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Folder");
+                break;
+            case "File":
+                // Logic to add a file
+                vscode.window.showInformationMessage('Add File selected');
+                break;
+            case "S3 Bucket":
+                // Logic to add an S3 Bucket
+                vscode.window.showInformationMessage('Add S3 Bucket selected');
+                break;
+            case "CloudWatch Log Group":
+                // Logic to add a CloudWatch Log Group
+                vscode.window.showInformationMessage('Add CloudWatch Log Group selected');
+                break;
+            default:
+                vscode.window.showErrorMessage('Unknown item type selected');
+        }
     }
     Refresh() {
         // Implementation for refreshing the tree view

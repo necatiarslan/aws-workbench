@@ -2,6 +2,7 @@ import { NodeBase } from "./NodeBase";
 
 export abstract class ServiceBase {
 
+    public static Current: ServiceBase;
 
-    abstract addResource(node?: NodeBase): void;
+    abstract Add(node?: NodeBase): void;
 }
