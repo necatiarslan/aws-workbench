@@ -142,8 +142,8 @@ export class TreeView {
         this.SetViewMessage();
     }
 
-    public Refresh(): void {
-        this.treeDataProvider.Refresh();
+    public Refresh(node?: NodeBase): void {
+        this.treeDataProvider.Refresh(node);
         this.SetViewMessage();
     }
 
@@ -162,17 +162,27 @@ export class TreeView {
     public ShowOnlyFavorite(): void {
         Session.Current.IsShowOnlyFavorite = !Session.Current.IsShowOnlyFavorite;
         Session.Current.SaveState();
+        NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
         this.Refresh();
     }
 
     public ShowHidden(): void {
         Session.Current.IsShowHiddenNodes = !Session.Current.IsShowHiddenNodes;
         Session.Current.SaveState();
+        NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
         this.Refresh();
     }
 
-    public SelectAwsProfile(): void {
-        Session.Current.SetAwsProfile();
+    public async SelectAwsProfile(): Promise<void> {
+        await Session.Current.SetAwsProfile();
+        NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
+        this.Refresh();
     }
 
     public TestAwsConnection(): void {
@@ -189,18 +199,26 @@ export class TreeView {
 
     public Hide(node: NodeBase): void {
         node.IsHidden = true;
+        node.SetVisible();
+        this.Refresh(node);
     }
 
     public UnHide(node: NodeBase): void {
         node.IsHidden = false;
+        node.SetVisible();
+        this.Refresh(node);
     }
 
     public AddFav(node: NodeBase): void {
         node.IsFavorite = true;
+        node.SetVisible();
+        this.Refresh(node);
     }
 
     public RemoveFav(node: NodeBase): void {
         node.IsFavorite = false;
+        node.SetVisible();
+        this.Refresh(node);
     }
 
     public ShowOnlyInThisProfile(node: NodeBase): void {

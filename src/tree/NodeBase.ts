@@ -37,6 +37,9 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (!Session.Current.IsShowHiddenNodes && this.IsHidden) {
             result = false;
         }
+        if(!Session.Current.IsShowHiddenNodes && this.AwsProfile.length > 0 && this.AwsProfile !== Session.Current.AwsProfile) {
+            result = false;
+        }
         if (Session.Current.FilterString.length > 0) {
             const filter = Session.Current.FilterString.toLowerCase();
             if (this.label &&!this.label.toString().toLowerCase().includes(filter)) {

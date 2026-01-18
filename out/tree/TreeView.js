@@ -120,8 +120,8 @@ class TreeView {
         }
         this.SetViewMessage();
     }
-    Refresh() {
-        this.treeDataProvider.Refresh();
+    Refresh(node) {
+        this.treeDataProvider.Refresh(node);
         this.SetViewMessage();
     }
     async Filter() {
@@ -139,15 +139,25 @@ class TreeView {
     ShowOnlyFavorite() {
         Session_1.Session.Current.IsShowOnlyFavorite = !Session_1.Session.Current.IsShowOnlyFavorite;
         Session_1.Session.Current.SaveState();
+        NodeBase_1.NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
         this.Refresh();
     }
     ShowHidden() {
         Session_1.Session.Current.IsShowHiddenNodes = !Session_1.Session.Current.IsShowHiddenNodes;
         Session_1.Session.Current.SaveState();
+        NodeBase_1.NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
         this.Refresh();
     }
-    SelectAwsProfile() {
-        Session_1.Session.Current.SetAwsProfile();
+    async SelectAwsProfile() {
+        await Session_1.Session.Current.SetAwsProfile();
+        NodeBase_1.NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
+        this.Refresh();
     }
     TestAwsConnection() {
         Session_1.Session.Current.TestAwsConnection();
@@ -160,15 +170,23 @@ class TreeView {
     }
     Hide(node) {
         node.IsHidden = true;
+        node.SetVisible();
+        this.Refresh(node);
     }
     UnHide(node) {
         node.IsHidden = false;
+        node.SetVisible();
+        this.Refresh(node);
     }
     AddFav(node) {
         node.IsFavorite = true;
+        node.SetVisible();
+        this.Refresh(node);
     }
     RemoveFav(node) {
         node.IsFavorite = false;
+        node.SetVisible();
+        this.Refresh(node);
     }
     ShowOnlyInThisProfile(node) {
         node.AwsProfile = Session_1.Session.Current.AwsProfile;
