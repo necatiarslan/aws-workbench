@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { AwsCredentialIdentity } from '@aws-sdk/types';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import * as api from '../aws-sdk/API';
+import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 
 export interface Folder {
     id: string;
@@ -25,9 +26,6 @@ export class Session implements vscode.Disposable {
     public CurrentCredentials: AwsCredentialIdentity | undefined;
     public HostAppName: string = '';
     public IsProVersion: boolean = false;
-
-    private _onDidChangeSession = new vscode.EventEmitter<void>();
-    public readonly onDidChangeSession = this._onDidChangeSession.event;
 
     public constructor(context: vscode.ExtensionContext) {
         Session.Current = this;
@@ -53,7 +51,6 @@ export class Session implements vscode.Disposable {
             this.Context.globalState.update('FilterString', Session.Current?.FilterString);
             this.Context.globalState.update('IsShowOnlyFavorite', Session.Current?.IsShowOnlyFavorite);
             this.Context.globalState.update('IsShowHiddenNodes', Session.Current?.IsShowHiddenNodes);
-            this._onDidChangeSession.fire();
             ui.logToOutput('State saved');
         } catch (error: any) {
             ui.logToOutput("Session.SaveState Error !!!", error);
@@ -164,26 +161,41 @@ export class Session implements vscode.Disposable {
     public RefreshCredentials() {
         this.CurrentCredentials = undefined;
         this.GetCredentials();
-        this._onDidChangeSession.fire();
         // MessageHub.CredentialsChanged();
         ui.logToOutput('Credentials cache refreshed');
     }
 
     public ClearCredentials() {
         this.CurrentCredentials = undefined;
-        this._onDidChangeSession.fire();
         ui.logToOutput('Credentials cache cleared');
     }
 
-    public TestAwsConnection() {
-        if (!Session.Current.GetCredentials()) {
-            ui.showErrorMessage('AWS Connection Test Failed', new Error('No AWS credentials available'));
+    
+    public async GetSTSClient(region: string) {
+        const credentials = await this.GetCredentials();
+        const stsClient = new STSClient({region, credentials, endpoint: this.AwsEndPoint});
+        return stsClient;
+    }
+    
+    public async TestAwsConnection() {
+        if (!await Session.Current.GetCredentials()) {
+            ui.showErrorMessage('No AWS credentials available', new Error('No AWS credentials available'));
             return;
         }
-        ui.showInfoMessage('AWS Connection Test Succeeded');
+        ui.showInfoMessage('You have valid AWS credentials configured.');
+
+        const caller = await this.GetCallerIdentity();
+        ui.showInfoMessage(`AWS Connection Test Successful. Account: ${caller.Account}, UserId: ${caller.UserId}`);
+        ui.logToOutput(`AWS Connection Test Successful. Account: ${caller.Account}, UserId: ${caller.UserId}, Arn: ${caller.Arn}`);
+    }
+
+    private async GetCallerIdentity() {
+        const sts = await this.GetSTSClient(this.AwsRegion || 'us-east-1');
+        const command = new GetCallerIdentityCommand({});
+        const result = await sts.send(command);
+        return result;
     }
 
     public dispose() {
-        this._onDidChangeSession.dispose();
     }
 }
