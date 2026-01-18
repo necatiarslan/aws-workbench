@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreeView = void 0;
 const vscode = require("vscode");
+const NodeBase_1 = require("./NodeBase");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
 const ServiceHub_1 = require("./ServiceHub");
@@ -74,8 +75,9 @@ class TreeView {
     GetBoolenSign(value) {
         return value ? "✓ " : "✗ ";
     }
-    async SetFilterMessage() {
-        if (1 === 1) {
+    async SetViewMessage() {
+        const visibleNodeCount = NodeBase_1.NodeBase.RootNodes.filter(node => node.IsVisible).length;
+        if (visibleNodeCount > 0) {
             this.view.message =
                 await this.GetFilterProfilePrompt()
                     + this.GetBoolenSign(Session_1.Session.Current.IsShowOnlyFavorite) + "Fav, "
@@ -116,12 +118,23 @@ class TreeView {
             default:
                 vscode.window.showErrorMessage('Unknown item type selected');
         }
+        this.SetViewMessage();
     }
     Refresh() {
-        // Implementation for refreshing the tree view
+        this.treeDataProvider.Refresh();
+        this.SetViewMessage();
     }
-    Filter() {
-        // Implementation for refreshing the tree view
+    async Filter() {
+        const filterString = await vscode.window.showInputBox({ placeHolder: 'Enter filter string', value: Session_1.Session.Current.FilterString });
+        if (filterString === undefined) {
+            return;
+        }
+        Session_1.Session.Current.FilterString = filterString;
+        Session_1.Session.Current.SaveState();
+        NodeBase_1.NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
+        this.Refresh();
     }
     ShowOnlyFavorite() {
         Session_1.Session.Current.IsShowOnlyFavorite = !Session_1.Session.Current.IsShowOnlyFavorite;

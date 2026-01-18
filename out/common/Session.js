@@ -32,7 +32,7 @@ class Session {
         const supportedHosts = ['Visual Studio Code', 'Visual Studio Code - Insiders', 'VSCodium'];
         return supportedHosts.includes(this.HostAppName);
     }
-    SaveState() {
+    async SaveState() {
         ui.logToOutput('Saving state...');
         try {
             this.Context.globalState.update('AwsProfile', Session.Current?.AwsProfile);

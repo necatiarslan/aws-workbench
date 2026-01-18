@@ -43,7 +43,7 @@ export class Session implements vscode.Disposable {
         return supportedHosts.includes(this.HostAppName);
     }
 
-    public SaveState() {
+    public async SaveState() {
         ui.logToOutput('Saving state...');
 
         try {

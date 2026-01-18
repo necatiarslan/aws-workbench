@@ -94,8 +94,9 @@ export class TreeView {
 		return value ? "✓ " : "✗ ";
 	}
 
-	async SetFilterMessage() {
-		if (1 === 1) {
+	public async SetViewMessage() {
+        const visibleNodeCount = NodeBase.RootNodes.filter(node => node.IsVisible).length;
+		if (visibleNodeCount > 0) {
 			this.view.message = 
 				await this.GetFilterProfilePrompt()
 				+ this.GetBoolenSign(Session.Current.IsShowOnlyFavorite) + "Fav, " 
@@ -137,17 +138,25 @@ export class TreeView {
                 break;
             default:
                 vscode.window.showErrorMessage('Unknown item type selected');
-        }   
+        }
+        this.SetViewMessage();
     }
 
     public Refresh(): void {
-        // Implementation for refreshing the tree view
-        
+        this.treeDataProvider.Refresh();
+        this.SetViewMessage();
     }
 
-    public Filter(): void {
-        // Implementation for refreshing the tree view
-
+    public async Filter(): Promise<void> {
+        const filterString = await vscode.window.showInputBox({ placeHolder: 'Enter filter string', value: Session.Current.FilterString });
+        if(filterString === undefined){ return; }
+        
+        Session.Current.FilterString = filterString;
+        Session.Current.SaveState();
+        NodeBase.RootNodes.forEach(node => {
+            node.SetVisible();
+        });
+        this.Refresh();
     }
 
     public ShowOnlyFavorite(): void {

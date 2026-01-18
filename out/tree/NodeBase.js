@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NodeBase = void 0;
 const vscode = require("vscode");
 const TreeProvider_1 = require("./TreeProvider");
+const Session_1 = require("../common/Session");
 class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
     constructor(label, parent) {
@@ -25,6 +26,31 @@ class NodeBase extends vscode.TreeItem {
     Children = [];
     _icon = "";
     _awsProfile = "";
+    IsVisible = true;
+    SetVisible() {
+        let result = true;
+        if (Session_1.Session.Current.IsShowOnlyFavorite && !this.IsFavorite) {
+            result = false;
+        }
+        if (!Session_1.Session.Current.IsShowHiddenNodes && this.IsHidden) {
+            result = false;
+        }
+        if (Session_1.Session.Current.FilterString.length > 0) {
+            const filter = Session_1.Session.Current.FilterString.toLowerCase();
+            if (this.label && !this.label.toString().toLowerCase().includes(filter)) {
+                result = false;
+            }
+        }
+        this.IsVisible = result;
+        if (this.Children.length > 0) {
+            this.Children.forEach(child => {
+                child.SetVisible();
+            });
+        }
+        if (this.IsVisible && this.Parent) {
+            this.Parent.IsVisible = true;
+        }
+    }
     get AwsProfile() {
         return this._awsProfile;
     }

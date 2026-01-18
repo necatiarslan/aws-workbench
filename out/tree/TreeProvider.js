@@ -18,9 +18,9 @@ class TreeProvider {
     }
     async getChildren(node) {
         if (node && node.Children) {
-            return node.Children;
+            return node.Children.filter(child => child.IsVisible);
         }
-        return NodeBase_1.NodeBase.RootNodes;
+        return NodeBase_1.NodeBase.RootNodes.filter(rootNode => rootNode.IsVisible);
     }
 }
 exports.TreeProvider = TreeProvider;

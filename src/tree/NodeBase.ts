@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { TreeProvider } from './TreeProvider';
+import { Session } from '../common/Session';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
@@ -26,7 +27,32 @@ export abstract class NodeBase extends vscode.TreeItem {
     public Children: NodeBase[] = [];
     private _icon: string = "";
     private _awsProfile: string = "";
+    public IsVisible: boolean = true;
 
+    public SetVisible(): void {
+        let result = true;
+        if (Session.Current.IsShowOnlyFavorite && !this.IsFavorite) {
+            result = false;
+        }
+        if (!Session.Current.IsShowHiddenNodes && this.IsHidden) {
+            result = false;
+        }
+        if (Session.Current.FilterString.length > 0) {
+            const filter = Session.Current.FilterString.toLowerCase();
+            if (this.label &&!this.label.toString().toLowerCase().includes(filter)) {
+                result = false;
+            }
+        }
+        this.IsVisible = result;
+        if(this.Children.length > 0){
+            this.Children.forEach(child => {
+                child.SetVisible();
+            });
+        }
+        if (this.IsVisible && this.Parent) {
+            this.Parent.IsVisible = true;
+        }
+    }
 
     public get AwsProfile(): string {
         return this._awsProfile;
