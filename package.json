@@ -170,6 +170,11 @@
       ],
       "view/item/context": [
         {
+          "command": "AwsWorkbench.Add",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#AddToNode#/",
+          "group": "Edit"
+        },
+        {
           "command": "AwsWorkbench.AddFav",
           "when": "view == AwsWorkbenchView && viewItem =~ /#AddFav#/",
           "group": "Filter"

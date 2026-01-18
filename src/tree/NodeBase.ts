@@ -68,6 +68,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public SetContextValue(): void {
         let context = "node";
+        context += "#AddToNode#"; 
         if (this.IsFavorite) { context += "#RemoveFav#"; }
         else { context += "#AddFav#"; }
         
