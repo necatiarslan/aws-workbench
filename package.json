@@ -35,6 +35,11 @@
         "icon": "$(add)"
       },
       {
+        "command": "AwsWorkbench.Remove",
+        "title": "Remove",
+        "icon": "$(trash)"
+      },
+      {
         "command": "AwsWorkbench.Refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
@@ -172,6 +177,11 @@
         {
           "command": "AwsWorkbench.Add",
           "when": "view == AwsWorkbenchView && viewItem =~ /#AddToNode#/",
+          "group": "Edit"
+        },
+        {
+          "command": "AwsWorkbench.Remove",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#Remove#/",
           "group": "Edit"
         },
         {

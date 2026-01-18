@@ -71,6 +71,9 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.Add', (node) => {
             this.Add(node);
         });
+        vscode.commands.registerCommand('AwsWorkbench.Remove', (node) => {
+            this.Remove(node);
+        });
     }
     GetBoolenSign(value) {
         return value ? "✓ " : "✗ ";
@@ -88,10 +91,18 @@ class TreeView {
     async GetFilterProfilePrompt() {
         return "Profile:" + Session_1.Session.Current.AwsProfile + " ";
     }
+    async Remove(node) {
+        if (!node) {
+            return;
+        }
+        node.Remove();
+        //TODO: save state
+    }
     async Add(node) {
         // Implementation for adding a resource to the tree view
         const result = [];
         result.push("Folder");
+        result.push("Note");
         result.push("File");
         result.push("S3 Bucket");
         result.push("CloudWatch Log Group");
@@ -102,6 +113,9 @@ class TreeView {
         switch (nodeType) {
             case "Folder":
                 ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Folder");
+                break;
+            case "Note":
+                ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Note");
                 break;
             case "File":
                 // Logic to add a file
