@@ -64,21 +64,21 @@
       },
       {
         "command": "AwsWorkbench.AddFav",
-        "title": "Add to Favorites",
+        "title": "Fav",
         "icon": "$(star)"
       },
       {
         "command": "AwsWorkbench.RemoveFav",
-        "title": "Remove from Favorites",
+        "title": "UnFav",
         "icon": "$(star-empty)"
       },
       {
-         "command": "AwsWorkbench.ShowOnlyInThisProfile",
-         "title": "Show Only In This Profile"
+        "command": "AwsWorkbench.ShowOnlyInThisProfile",
+        "title": "Show Only In This Profile"
       },
       {
-         "command": "AwsWorkbench.ShowInAnyProfile",
-         "title": "Show In Any Profile"
+        "command": "AwsWorkbench.ShowInAnyProfile",
+        "title": "Show In Any Profile"
       },
       {
         "command": "AwsWorkbench.SelectAwsProfile",
@@ -114,61 +114,91 @@
       "view/title": [
         {
           "command": "AwsWorkbench.Add",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "navigation"
         },
-      {
+        {
           "command": "AwsWorkbench.Filter",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "navigation"
         },
         {
           "command": "AwsWorkbench.ShowOnlyFavorite",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "navigation"
         },
         {
           "command": "AwsWorkbench.ShowHidden",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "navigation"
         },
         {
           "command": "AwsWorkbench.SelectAwsProfile",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "navigation"
         },
         {
           "command": "AwsWorkbench.Refresh",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "navigation"
         },
         {
           "command": "AwsWorkbench.UpdateAwsEndPoint",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "other"
         },
         {
           "command": "AwsWorkbench.SetAwsRegion",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "other"
         },
         {
           "command": "AwsWorkbench.TestAwsConnection",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "other"
         },
         {
           "command": "AwsWorkbench.Donate",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "other"
         },
         {
           "command": "AwsWorkbench.BugAndNewFeatureRequest",
-          "when": "view == AwsWorkbenchTree",
+          "when": "view == AwsWorkbenchView",
           "group": "other"
         }
       ],
       "view/item/context": [
+        {
+          "command": "AwsWorkbench.AddFav",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#AddFav#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.RemoveFav",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#RemoveFav#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.Hide",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#Hide#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.UnHide",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#UnHide#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.ShowOnlyInThisProfile",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#ShowOnlyInThisProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.ShowInAnyProfile",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#ShowInAnyProfile#/",
+          "group": "Filter"
+        }
       ]
     },
     "viewsContainers": {
@@ -183,7 +213,7 @@
     "views": {
       "AwsWorkbench": [
         {
-          "id": "AwsWorkbenchTree",
+          "id": "AwsWorkbenchView",
           "name": "Aws Workbench",
           "icon": "media/aws-workbench-logo-activitybar.png"
         }
@@ -191,7 +221,7 @@
     },
     "viewsWelcome": [
       {
-        "view": "AwsWorkbenchTree",
+        "view": "AwsWorkbenchView",
         "contents": "Please click [+] to add Aws Resources. \n [Add](command:AwsWorkbench.Add) \n\n\n\n To Access Aws, you need to configure local Aws Credentials. \n For more detail on Aws Credentials, see the [AWS CLI Credentials Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). \n For a video guide, see this [YouTube Tutorial on AWS Credentials](https://www.youtube.com/watch?v=SON8sY1iOBU). \n\n [Test Aws Connection](command:AwsWorkbench.TestAwsConnection) \n\n [Update Aws EndPoint](command:AwsWorkbench.UpdateAwsEndPoint)"
       }
     ]

@@ -16,6 +16,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         } else {
             NodeBase.RootNodes.push(this);
         }
+        this.SetContextValue();
         TreeProvider.Current.Refresh(this);
     }
 
@@ -38,14 +39,14 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public SetContextValue(): void {
         let context = "node";
-        if (this.IsFavorite) { context += "#Favorite#"; }
-        else { context += "#NotFavorite#"; }
+        if (this.IsFavorite) { context += "#RemoveFav#"; }
+        else { context += "#AddFav#"; }
         
-        if (this.IsHidden) { context += "#Hidden#"; }
-        else { context += "#NotHidden#"; }
+        if (this.IsHidden) { context += "#UnHide#"; }
+        else { context += "#Hide#"; }
 
-        if (this.AwsProfile) { context += `#AwsProfile:${this.AwsProfile}#`; }
-        else { context += "#NoAwsProfile#"; }
+        if (this.AwsProfile.length > 0) { context += "#ShowInAnyProfile#"; }
+        else { context += "#ShowOnlyInThisProfile#"; }
 
         this.contextValue = context;
     }

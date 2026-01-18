@@ -14,7 +14,7 @@ class TreeView {
         TreeView.Current = this;
         this.context = context;
         this.treeDataProvider = new TreeProvider_1.TreeProvider();
-        this.view = vscode.window.createTreeView('AwsWorkbenchTree', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
+        this.view = vscode.window.createTreeView('AwsWorkbenchView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         context.subscriptions.push(this.view);
         this.RegisterCommands();
     }
@@ -124,50 +124,44 @@ class TreeView {
         // Implementation for refreshing the tree view
     }
     ShowOnlyFavorite() {
-        // Implementation for showing only favorite items
         Session_1.Session.Current.IsShowOnlyFavorite = !Session_1.Session.Current.IsShowOnlyFavorite;
         Session_1.Session.Current.SaveState();
         this.Refresh();
     }
     ShowHidden() {
-        // Implementation for showing hidden items
         Session_1.Session.Current.IsShowHiddenNodes = !Session_1.Session.Current.IsShowHiddenNodes;
         Session_1.Session.Current.SaveState();
         this.Refresh();
     }
     SelectAwsProfile() {
-        // Implementation for showing hidden items
         Session_1.Session.Current.SetAwsProfile();
     }
     TestAwsConnection() {
-        // Implementation for showing hidden items
         Session_1.Session.Current.TestAwsConnection();
     }
     SetAwsRegion() {
-        // Implementation for showing hidden items
         Session_1.Session.Current.SetAwsRegion();
     }
     UpdateAwsEndPoint() {
-        // Implementation for showing hidden items
         Session_1.Session.Current.SetAwsEndpoint();
     }
     Hide(node) {
-        // Implementation for hiding items
+        node.IsHidden = true;
     }
     UnHide(node) {
-        // Implementation for unhiding items
+        node.IsHidden = false;
     }
     AddFav(node) {
-        // Implementation for adding to favorites
+        node.IsFavorite = true;
     }
     RemoveFav(node) {
-        // Implementation for removing from favorites
+        node.IsFavorite = false;
     }
     ShowOnlyInThisProfile(node) {
-        // Implementation for showing only items in this profile
+        node.AwsProfile = Session_1.Session.Current.AwsProfile;
     }
     ShowInAnyProfile(node) {
-        // Implementation for showing items in any profile
+        node.AwsProfile = "";
     }
     BugAndNewFeatureRequest() {
         vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));
