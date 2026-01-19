@@ -86,6 +86,51 @@
         "title": "Show In Any Profile"
       },
       {
+        "command": "AwsWorkbench.NodeAdd",
+        "title": "Add",
+        "icon": "$(add)"
+      },
+      {
+        "command": "AwsWorkbench.NodeRemove",
+        "title": "Remove",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "AwsWorkbench.NodeRefresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "AwsWorkbench.NodeView",
+        "title": "View",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "AwsWorkbench.NodeEdit",
+        "title": "Edit",
+        "icon": "$(pencil)"
+      },
+      {
+        "command": "AwsWorkbench.NodeRun",
+        "title": "Run",
+        "icon": "$(play)"
+      },
+      {
+        "command": "AwsWorkbench.NodeStop",
+        "title": "Stop",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "AwsWorkbench.NodeOpen",
+        "title": "Open",
+        "icon": "$(open)"
+      },
+      {
+        "command": "AwsWorkbench.NodeInfo",
+        "title": "Info",
+        "icon": "$(info)"
+      },
+      {
         "command": "AwsWorkbench.SelectAwsProfile",
         "title": "Select AWS Profile",
         "icon": "$(account)"
@@ -213,6 +258,51 @@
           "command": "AwsWorkbench.ShowInAnyProfile",
           "when": "view == AwsWorkbenchView && viewItem =~ /#ShowInAnyProfile#/",
           "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.NodeAdd",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeAdd#/",
+          "group": "inline@1"
+        },
+        {
+          "command": "AwsWorkbench.NodeRemove",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeRemove#/",
+          "group": "inline@2"
+        },
+        {
+          "command": "AwsWorkbench.NodeRefresh",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeRefresh#/",
+          "group": "inline@3"
+        },
+        {
+          "command": "AwsWorkbench.NodeView",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeView#/",
+          "group": "inline@4"
+        },
+        {
+          "command": "AwsWorkbench.NodeEdit",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeEdit#/",
+          "group": "inline@5"
+        },
+        {
+          "command": "AwsWorkbench.NodeRun",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeRun#/",
+          "group": "inline@6"
+        },
+        {
+          "command": "AwsWorkbench.NodeStop",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeStop#/",
+          "group": "inline@7"
+        },
+        {
+          "command": "AwsWorkbench.NodeOpen",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeOpen#/",
+          "group": "inline@8"
+        },
+        {
+          "command": "AwsWorkbench.NodeInfo",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeInfo#/",
+          "group": "inline@9"
         }
       ]
     },

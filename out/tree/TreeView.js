@@ -63,6 +63,33 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.ShowInAnyProfile', (node) => {
             this.ShowInAnyProfile(node);
         });
+        vscode.commands.registerCommand('AwsWorkbench.NodeAdd', (node) => {
+            this.NodeAdd(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeRemove', (node) => {
+            this.NodeRemove(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeRefresh', (node) => {
+            this.NodeRefresh(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeView', (node) => {
+            this.NodeView(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeEdit', (node) => {
+            this.NodeEdit(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeRun', (node) => {
+            this.NodeRun(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeStop', (node) => {
+            this.NodeStop(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeOpen', (node) => {
+            this.NodeOpen(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.NodeInfo', (node) => {
+            this.NodeInfo(node);
+        });
         vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
             this.BugAndNewFeatureRequest();
         });
@@ -215,6 +242,33 @@ class TreeView {
     ShowInAnyProfile(node) {
         node.AwsProfile = "";
         TreeState_1.TreeState.save();
+    }
+    NodeAdd(node) {
+        node.NodeAdd();
+    }
+    NodeRemove(node) {
+        node.NodeRemove();
+    }
+    NodeRefresh(node) {
+        node.NodeRefresh();
+    }
+    NodeView(node) {
+        node.NodeView();
+    }
+    NodeEdit(node) {
+        node.NodeEdit();
+    }
+    NodeRun(node) {
+        node.NodeRun();
+    }
+    NodeStop(node) {
+        node.NodeStop();
+    }
+    NodeOpen(node) {
+        node.NodeOpen();
+    }
+    NodeInfo(node) {
+        node.NodeInfo();
     }
     BugAndNewFeatureRequest() {
         vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));

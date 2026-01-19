@@ -14,7 +14,6 @@ const vscode = require("vscode");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
 const Serialize_1 = require("../common/serialization/Serialize");
-require("reflect-metadata");
 class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
     /**
@@ -42,6 +41,15 @@ class NodeBase extends vscode.TreeItem {
         this.SetContextValue();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
+    EnableNodeAdd = false;
+    EnableNodeRemove = false;
+    EnableNodeRefresh = false;
+    EnableNodeView = false;
+    EnableNodeEdit = false;
+    EnableNodeRun = false;
+    EnableNodeStop = false;
+    EnableNodeOpen = false;
+    EnableNodeInfo = false;
     _isFavorite = false;
     _isHidden = false;
     Parent = undefined;
@@ -103,6 +111,33 @@ class NodeBase extends vscode.TreeItem {
         }
         else {
             context += "#ShowOnlyInThisProfile#";
+        }
+        if (this.EnableNodeAdd) {
+            context += "#NodeAdd#";
+        }
+        if (this.EnableNodeRemove) {
+            context += "#NodeRemove#";
+        }
+        if (this.EnableNodeRefresh) {
+            context += "#NodeRefresh#";
+        }
+        if (this.EnableNodeView) {
+            context += "#NodeView#";
+        }
+        if (this.EnableNodeEdit) {
+            context += "#NodeEdit#";
+        }
+        if (this.EnableNodeRun) {
+            context += "#NodeRun#";
+        }
+        if (this.EnableNodeStop) {
+            context += "#NodeStop#";
+        }
+        if (this.EnableNodeOpen) {
+            context += "#NodeOpen#";
+        }
+        if (this.EnableNodeInfo) {
+            context += "#NodeInfo#";
         }
         this.contextValue = context;
     }

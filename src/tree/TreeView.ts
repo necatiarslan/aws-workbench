@@ -78,6 +78,42 @@ export class TreeView {
             this.ShowInAnyProfile(node);
         });
 
+        vscode.commands.registerCommand('AwsWorkbench.NodeAdd', (node: NodeBase) => {
+            this.NodeAdd(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeRemove', (node: NodeBase) => {
+            this.NodeRemove(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeRefresh', (node: NodeBase) => {
+            this.NodeRefresh(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeView', (node: NodeBase) => {
+            this.NodeView(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeEdit', (node: NodeBase) => {
+            this.NodeEdit(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeRun', (node: NodeBase) => {
+            this.NodeRun(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeStop', (node: NodeBase) => {
+            this.NodeStop(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeOpen', (node: NodeBase) => {
+            this.NodeOpen(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.NodeInfo', (node: NodeBase) => {
+            this.NodeInfo(node);
+        });
+
         vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
             this.BugAndNewFeatureRequest();
         });
@@ -249,6 +285,42 @@ export class TreeView {
     public ShowInAnyProfile(node: NodeBase): void {
         node.AwsProfile = "";
         TreeState.save();
+    }
+
+    public NodeAdd(node: NodeBase): void {
+        node.NodeAdd();
+    }
+
+    public NodeRemove(node: NodeBase): void {
+        node.NodeRemove();
+    }
+
+    public NodeRefresh(node: NodeBase): void {
+        node.NodeRefresh();
+    }
+
+    public NodeView(node: NodeBase): void {
+        node.NodeView();
+    }
+
+    public NodeEdit(node: NodeBase): void {
+        node.NodeEdit();
+    }
+
+    public NodeRun(node: NodeBase): void {
+        node.NodeRun();
+    }
+
+    public NodeStop(node: NodeBase): void {
+        node.NodeStop();
+    }
+
+    public NodeOpen(node: NodeBase): void {
+        node.NodeOpen();
+    }
+
+    public NodeInfo(node: NodeBase): void {
+        node.NodeInfo();
     }
 
 	public BugAndNewFeatureRequest(): void {

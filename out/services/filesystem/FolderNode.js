@@ -13,13 +13,66 @@ exports.FolderNode = void 0;
 const NodeBase_1 = require("../../tree/NodeBase");
 const Serialize_1 = require("../../common/serialization/Serialize");
 const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
+const vscode = require("vscode");
+const ServiceHub_1 = require("../../tree/ServiceHub");
+const TreeState_1 = require("../../tree/TreeState");
 class FolderNode extends NodeBase_1.NodeBase {
     constructor(FolderName, parent) {
         super(FolderName, parent);
         this.Icon = "folder";
         this.FolderName = FolderName;
+        this.EnableNodeAdd = true;
+        this.EnableNodeRemove = true;
     }
     FolderName = "";
+    async NodeAdd() {
+        const result = [];
+        result.push("Folder");
+        result.push("Note");
+        result.push("File");
+        result.push("S3 Bucket");
+        result.push("CloudWatch Log Group");
+        let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
+        if (!nodeType) {
+            return;
+        }
+        switch (nodeType) {
+            case "Folder":
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Folder");
+                break;
+            case "Note":
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Note");
+                break;
+            case "File":
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "File");
+                break;
+            case "S3 Bucket":
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "S3 Bucket");
+                break;
+            case "CloudWatch Log Group":
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "CloudWatch Log Group");
+                break;
+        }
+        TreeState_1.TreeState.save();
+    }
+    NodeRemove() {
+        this.Remove();
+        TreeState_1.TreeState.save();
+    }
+    NodeRefresh() {
+    }
+    NodeView() {
+    }
+    NodeEdit() {
+    }
+    NodeRun() {
+    }
+    NodeStop() {
+    }
+    NodeOpen() {
+    }
+    NodeInfo() {
+    }
 }
 exports.FolderNode = FolderNode;
 __decorate([

@@ -6,6 +6,24 @@ class FileNode extends NodeBase_1.NodeBase {
     constructor(label) {
         super(label);
     }
+    NodeAdd() {
+    }
+    NodeRemove() {
+    }
+    NodeRefresh() {
+    }
+    NodeView() {
+    }
+    NodeEdit() {
+    }
+    NodeRun() {
+    }
+    NodeStop() {
+    }
+    NodeOpen() {
+    }
+    NodeInfo() {
+    }
 }
 exports.FileNode = FileNode;
 //# sourceMappingURL=FileNode.js.map

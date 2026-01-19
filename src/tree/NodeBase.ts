@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import { TreeProvider } from './TreeProvider';
 import { Session } from '../common/Session';
 import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
-import 'reflect-metadata';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
@@ -37,6 +35,16 @@ export abstract class NodeBase extends vscode.TreeItem {
         this.SetContextValue();
         TreeProvider.Current.Refresh(this);
     }
+
+    public EnableNodeAdd: boolean = false;
+    public EnableNodeRemove: boolean = false;
+    public EnableNodeRefresh: boolean = false;
+    public EnableNodeView: boolean = false;
+    public EnableNodeEdit: boolean = false;
+    public EnableNodeRun: boolean = false;
+    public EnableNodeStop: boolean = false;
+    public EnableNodeOpen: boolean = false;
+    public EnableNodeInfo: boolean = false;
 
     @Serialize()
     private _isFavorite: boolean = false;
@@ -103,6 +111,16 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         if (this.AwsProfile.length > 0) { context += "#ShowInAnyProfile#"; }
         else { context += "#ShowOnlyInThisProfile#"; }
+
+        if (this.EnableNodeAdd) { context += "#NodeAdd#"; }
+        if (this.EnableNodeRemove) { context += "#NodeRemove#"; }
+        if (this.EnableNodeRefresh) { context += "#NodeRefresh#"; }
+        if (this.EnableNodeView) { context += "#NodeView#"; }
+        if (this.EnableNodeEdit) { context += "#NodeEdit#"; }
+        if (this.EnableNodeRun) { context += "#NodeRun#"; }
+        if (this.EnableNodeStop) { context += "#NodeStop#"; }
+        if (this.EnableNodeOpen) { context += "#NodeOpen#"; }
+        if (this.EnableNodeInfo) { context += "#NodeInfo#"; }
 
         this.contextValue = context;
     }
@@ -190,4 +208,14 @@ export abstract class NodeBase extends vscode.TreeItem {
         }
     }
 
+    public abstract NodeAdd(): void;
+    public abstract NodeRemove(): void;
+    public abstract NodeRefresh(): void;
+    public abstract NodeView(): void;
+    public abstract NodeEdit(): void;
+    public abstract NodeRun(): void;
+    public abstract NodeStop(): void;
+    public abstract NodeOpen(): void;
+    public abstract NodeInfo(): void;
+    
 }
