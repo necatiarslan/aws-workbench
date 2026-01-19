@@ -9,6 +9,7 @@ exports.showInfoMessage = showInfoMessage;
 exports.showWarningMessage = showWarningMessage;
 exports.showErrorMessage = showErrorMessage;
 exports.getExtensionVersion = getExtensionVersion;
+exports.getFileNameWithExtension = getFileNameWithExtension;
 exports.openFile = openFile;
 exports.getMilliSeconds = getMilliSeconds;
 exports.getSeconds = getSeconds;
@@ -24,6 +25,7 @@ const vscode = require("vscode");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const MethodResult_1 = require("./MethodResult");
+const path = require("path");
 var outputChannel;
 var logsOutputChannel;
 var NEW_LINE = " | ";
@@ -102,8 +104,11 @@ function getExtensionVersion() {
         return '1.0.0';
     }
 }
-function openFile(file) {
-    vscode.commands.executeCommand('vscode.open', vscode.Uri.file(file), vscode.ViewColumn.One);
+function getFileNameWithExtension(filePath) {
+    return path.basename(filePath);
+}
+function openFile(filePath) {
+    vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath), vscode.ViewColumn.One);
 }
 function padTo2Digits(num) {
     return num.toString().padStart(2, '0');

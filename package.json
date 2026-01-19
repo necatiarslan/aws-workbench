@@ -123,7 +123,7 @@
       {
         "command": "AwsWorkbench.NodeOpen",
         "title": "Open",
-        "icon": "$(open)"
+        "icon": "$(go-to-file)"
       },
       {
         "command": "AwsWorkbench.NodeInfo",

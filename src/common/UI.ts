@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { MethodResult } from './MethodResult';
+import path = require('path');
 
 var outputChannel: vscode.OutputChannel;
 var logsOutputChannel: vscode.OutputChannel;
@@ -106,8 +107,12 @@ export function getExtensionVersion() {
   }
 }
 
-export function openFile(file: string) {
-  vscode.commands.executeCommand('vscode.open', vscode.Uri.file(file), vscode.ViewColumn.One);
+export function getFileNameWithExtension(filePath: string): string {
+  return path.basename(filePath);
+} 
+
+export function openFile(filePath: string) {
+  vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath), vscode.ViewColumn.One);
 }
 
 function padTo2Digits(num: number) {

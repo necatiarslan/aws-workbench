@@ -16,7 +16,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label);
-        this.id = Date.now().toString();
+        this.id = Date.now().toString() + "_" + Math.floor(Math.random() * 1000).toString();
         
         // Skip tree manipulation during deserialization
         if (NodeBase.IsDeserializing) {

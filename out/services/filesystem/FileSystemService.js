@@ -5,6 +5,8 @@ const vscode = require("vscode");
 const ServiceBase_1 = require("../../tree/ServiceBase");
 const FolderNode_1 = require("./FolderNode");
 const NoteNode_1 = require("./NoteNode");
+const FileNode_1 = require("./FileNode");
+const ui = require("../../common/UI");
 class FileSystemService extends ServiceBase_1.ServiceBase {
     static Current;
     constructor() {
@@ -28,7 +30,18 @@ class FileSystemService extends ServiceBase_1.ServiceBase {
             const newNote = new NoteNode_1.NoteNode(noteTitle, node);
         }
         else if (type === "File") {
-            console.log('Unsupported type for FileSystemService.Add');
+            let param = {
+                canSelectFolders: false,
+                canSelectFiles: true,
+                openLabel: "Select File",
+                title: "Select File",
+                canSelectMany: false,
+            };
+            let selectedFileList = await vscode.window.showOpenDialog(param);
+            if (!selectedFileList || selectedFileList.length == 0) {
+                return;
+            }
+            const newFile = new FileNode_1.FileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), selectedFileList[0].fsPath, node);
         }
     }
 }

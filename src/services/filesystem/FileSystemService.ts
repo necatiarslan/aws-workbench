@@ -3,6 +3,8 @@ import { ServiceBase } from "../../tree/ServiceBase";
 import { NodeBase } from "../../tree/NodeBase";
 import { FolderNode } from "./FolderNode";
 import { NoteNode } from "./NoteNode";
+import { FileNode } from "./FileNode";
+import * as ui from "../../common/UI";
 
 export class FileSystemService extends ServiceBase {   
 
@@ -26,7 +28,17 @@ export class FileSystemService extends ServiceBase {
 
             const newNote = new NoteNode(noteTitle, node);
         } else if(type === "File"){
-            console.log('Unsupported type for FileSystemService.Add');
+            let param = {
+                canSelectFolders:false,
+                canSelectFiles:true,
+                openLabel:"Select File",
+                title:"Select File",
+                canSelectMany: false,
+            }
+            let selectedFileList = await vscode.window.showOpenDialog(param);
+            if(!selectedFileList || selectedFileList.length == 0){ return; }
+
+            const newFile = new FileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), selectedFileList[0].fsPath, node);
         }
     }
 
