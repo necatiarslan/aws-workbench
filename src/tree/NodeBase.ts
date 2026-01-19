@@ -61,6 +61,9 @@ export abstract class NodeBase extends vscode.TreeItem {
     @Serialize()
     private _awsProfile: string = "";
 
+    @Serialize()
+    private _workspace: string = "";
+
     public IsVisible: boolean = true;
 
     public IsWorking: boolean = false;
@@ -86,6 +89,9 @@ export abstract class NodeBase extends vscode.TreeItem {
             result = false;
         }
         if(!Session.Current.IsShowHiddenNodes && this.AwsProfile.length > 0 && this.AwsProfile !== Session.Current.AwsProfile) {
+            result = false;
+        }
+        if(!Session.Current.IsShowHiddenNodes && this.Workspace.length > 0 && this.Workspace !== vscode.workspace.name) {
             result = false;
         }
         if (Session.Current.FilterString.length > 0) {
@@ -114,6 +120,15 @@ export abstract class NodeBase extends vscode.TreeItem {
         this.SetContextValue();
     }
 
+    public get Workspace(): string {
+        return this._workspace;
+    }
+
+    public set Workspace(value: string) {
+        this._workspace = value;
+        this.SetContextValue();
+    }
+
     public SetContextValue(): void {
         let context = "node";
         context += "#AddToNode#Remove#"; 
@@ -125,6 +140,9 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         if (this.AwsProfile.length > 0) { context += "#ShowInAnyProfile#"; }
         else { context += "#ShowOnlyInThisProfile#"; }
+
+        if (this.Workspace.length > 0) { context += "#ShowInAnyWorkspace#"; }
+        else { context += "#ShowOnlyInThisWorkspace#"; }
 
         if (this.EnableNodeAdd) { context += "#NodeAdd#"; }
         if (this.EnableNodeRemove) { context += "#NodeRemove#"; }

@@ -4,6 +4,7 @@ import { TreeProvider } from "./TreeProvider";
 import { Session } from "../common/Session";
 import { ServiceHub } from "./ServiceHub";
 import { TreeState } from "./TreeState";
+import * as ui from "../common/UI";
 
 export class TreeView {
 
@@ -76,6 +77,14 @@ export class TreeView {
 
         vscode.commands.registerCommand('AwsWorkbench.ShowInAnyProfile', (node: NodeBase) => {
             this.ShowInAnyProfile(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.ShowOnlyInThisWorkspace', (node: NodeBase) => {
+            this.ShowOnlyInThisWorkspace(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.ShowInAnyWorkspace', (node: NodeBase) => {
+            this.ShowInAnyWorkspace(node);
         });
 
         vscode.commands.registerCommand('AwsWorkbench.NodeAdd', (node: NodeBase) => {
@@ -285,6 +294,21 @@ export class TreeView {
 
     public ShowInAnyProfile(node: NodeBase): void {
         node.AwsProfile = "";
+        TreeState.save();
+    }
+
+    public ShowOnlyInThisWorkspace(node: NodeBase): void {
+        if(!vscode.workspace.name){ 
+            ui.showInfoMessage("Please open a workspace first.");
+            return; 
+        }
+
+        node.Workspace =  vscode.workspace.name;
+        TreeState.save();
+    }
+
+    public ShowInAnyWorkspace(node: NodeBase): void {
+        node.Workspace = "";
         TreeState.save();
     }
 

@@ -86,6 +86,14 @@
         "title": "Show In Any Profile"
       },
       {
+        "command": "AwsWorkbench.ShowOnlyInThisWorkspace",
+        "title": "Show Only In This Workspace"
+      },
+      {
+        "command": "AwsWorkbench.ShowInAnyWorkspace",
+        "title": "Show In Any Workspace"
+      },
+      {
         "command": "AwsWorkbench.NodeAdd",
         "title": "Add",
         "icon": "$(add)"
@@ -242,6 +250,21 @@
         {
           "command": "AwsWorkbench.ShowOnlyInThisProfile",
           "when": "view == AwsWorkbenchView && viewItem =~ /#ShowOnlyInThisProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.ShowInAnyProfile",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#ShowInAnyProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.ShowOnlyInThisWorkspace",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#ShowOnlyInThisWorkspace#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.ShowInAnyWorkspace",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#ShowInAnyWorkspace#/",
           "group": "Filter"
         },
         {

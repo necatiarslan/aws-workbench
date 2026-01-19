@@ -7,6 +7,7 @@ const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
 const ServiceHub_1 = require("./ServiceHub");
 const TreeState_1 = require("./TreeState");
+const ui = require("../common/UI");
 class TreeView {
     static Current;
     view;
@@ -62,6 +63,12 @@ class TreeView {
         });
         vscode.commands.registerCommand('AwsWorkbench.ShowInAnyProfile', (node) => {
             this.ShowInAnyProfile(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.ShowOnlyInThisWorkspace', (node) => {
+            this.ShowOnlyInThisWorkspace(node);
+        });
+        vscode.commands.registerCommand('AwsWorkbench.ShowInAnyWorkspace', (node) => {
+            this.ShowInAnyWorkspace(node);
         });
         vscode.commands.registerCommand('AwsWorkbench.NodeAdd', (node) => {
             this.NodeAdd(node);
@@ -244,6 +251,18 @@ class TreeView {
     }
     ShowInAnyProfile(node) {
         node.AwsProfile = "";
+        TreeState_1.TreeState.save();
+    }
+    ShowOnlyInThisWorkspace(node) {
+        if (!vscode.workspace.name) {
+            ui.showInfoMessage("Please open a workspace first.");
+            return;
+        }
+        node.Workspace = vscode.workspace.name;
+        TreeState_1.TreeState.save();
+    }
+    ShowInAnyWorkspace(node) {
+        node.Workspace = "";
         TreeState_1.TreeState.save();
     }
     NodeAdd(node) {
