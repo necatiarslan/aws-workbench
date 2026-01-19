@@ -234,6 +234,7 @@ class NodeBase extends vscode.TreeItem {
             this.iconPath = new vscode.ThemeIcon(this._icon);
         }
         this.SetContextValue();
+        this.SetVisible();
         // Recursively finalize children
         for (const child of this.Children) {
             child.finalizeDeserialization();
