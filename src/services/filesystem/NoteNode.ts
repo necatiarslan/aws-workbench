@@ -17,6 +17,7 @@ export class NoteNode extends NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
         this.EnableNodeEdit = true;
+        this.SetContextValue();
     }
 
     @Serialize()

@@ -60,4 +60,4 @@ __decorate([
 ], FileNode.prototype, "FilePath", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('FileNode', FileNode);
-//# sourceMappingURL=FileNode.js.map
+//# sourceMappingURL=FileNode%20copy.js.map

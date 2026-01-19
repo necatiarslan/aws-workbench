@@ -5,6 +5,8 @@ import { FolderNode } from "./FolderNode";
 import { NoteNode } from "./NoteNode";
 import { FileNode } from "./FileNode";
 import * as ui from "../../common/UI";
+import { BashScriptNode } from "./BashScriptNode";
+import { BashFileNode } from "./BashFileNode";
 
 export class FileSystemService extends ServiceBase {   
 
@@ -28,17 +30,44 @@ export class FileSystemService extends ServiceBase {
 
             const newNote = new NoteNode(noteTitle, node);
         } else if(type === "File"){
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+
             let param = {
                 canSelectFolders:false,
                 canSelectFiles:true,
                 openLabel:"Select File",
                 title:"Select File",
                 canSelectMany: false,
+                defaultUri: workspaceFolder?.uri,
             }
             let selectedFileList = await vscode.window.showOpenDialog(param);
             if(!selectedFileList || selectedFileList.length == 0){ return; }
 
             const newFile = new FileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), selectedFileList[0].fsPath, node);
+        } else if(type === "Bash Script"){
+            let title = await vscode.window.showInputBox({placeHolder: 'Enter Title'});
+            if(!title){ return; }
+
+            let script = await vscode.window.showInputBox({placeHolder: 'Enter Script'});
+            if(!script){ return; }
+
+            const newNode = new BashScriptNode(title, node);
+            newNode.Script = script;
+            
+        } else if(type === "Bash File"){
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            let param = {
+                canSelectFolders:false,
+                canSelectFiles:true,
+                openLabel:"Select File",
+                title:"Select File",
+                canSelectMany: false,
+                defaultUri: workspaceFolder?.uri,
+            }
+            let selectedFileList = await vscode.window.showOpenDialog(param);
+            if(!selectedFileList || selectedFileList.length == 0){ return; }
+
+            const newFile = new BashFileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), selectedFileList[0].fsPath, node);
         }
     }
 

@@ -9,25 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileNode = void 0;
-const serialization_1 = require("../../common/serialization");
+exports.BashScriptNode = void 0;
 const NodeBase_1 = require("../../tree/NodeBase");
-const TreeState_1 = require("../../tree/TreeState");
-const ui = require("../../common/UI");
+const Serialize_1 = require("../../common/serialization/Serialize");
 const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
-class FileNode extends NodeBase_1.NodeBase {
-    FileName = "";
-    FilePath = "";
-    constructor(label, filePath, parent) {
-        super(label, parent);
-        this.Icon = "file";
-        this.FileName = label;
-        this.FilePath = filePath;
+const vscode = require("vscode");
+const TreeState_1 = require("../../tree/TreeState");
+class BashScriptNode extends NodeBase_1.NodeBase {
+    constructor(Title, parent) {
+        super(Title, parent);
+        this.Icon = "debug-console";
+        this.Title = Title;
         this.EnableNodeRemove = true;
-        this.EnableNodeOpen = true;
+        this.EnableNodeView = true;
+        this.EnableNodeEdit = true;
+        this.EnableNodeRun = true;
         this.SetContextValue();
     }
-    NodeAdd() {
+    Title = "";
+    Script = "";
+    async NodeAdd() {
     }
     NodeRemove() {
         this.Remove();
@@ -36,28 +37,36 @@ class FileNode extends NodeBase_1.NodeBase {
     NodeRefresh() {
     }
     NodeView() {
+        vscode.window.showInformationMessage(`${this.Title}`, { modal: true, detail: this.Script });
     }
-    NodeEdit() {
+    async NodeEdit() {
+        let scriptContent = await vscode.window.showInputBox({ placeHolder: 'Script', value: this.Script });
+        if (!scriptContent) {
+            return;
+        }
+        this.Script = scriptContent;
+        TreeState_1.TreeState.save();
     }
     NodeRun() {
+        //run the bash script in a new terminal
+        vscode.window.createTerminal(this.Title).sendText(this.Script);
     }
     NodeStop() {
     }
     NodeOpen() {
-        ui.openFile(this.FilePath);
     }
     NodeInfo() {
     }
 }
-exports.FileNode = FileNode;
+exports.BashScriptNode = BashScriptNode;
 __decorate([
-    (0, serialization_1.Serialize)(),
+    (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
-], FileNode.prototype, "FileName", void 0);
+], BashScriptNode.prototype, "Title", void 0);
 __decorate([
-    (0, serialization_1.Serialize)(),
+    (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
-], FileNode.prototype, "FilePath", void 0);
+], BashScriptNode.prototype, "Script", void 0);
 // Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('FileNode', FileNode);
-//# sourceMappingURL=FileNode.js.map
+NodeRegistry_1.NodeRegistry.register('BashScriptNode', BashScriptNode);
+//# sourceMappingURL=BashScriptNode.js.map

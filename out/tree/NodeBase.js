@@ -23,7 +23,7 @@ class NodeBase extends vscode.TreeItem {
     static IsDeserializing = false;
     constructor(label, parent) {
         super(label);
-        this.id = Date.now().toString() + "_" + Math.floor(Math.random() * 1000).toString();
+        this.id = Date.now().toString();
         // Skip tree manipulation during deserialization
         if (NodeBase.IsDeserializing) {
             this.Parent = parent || undefined;
@@ -38,7 +38,7 @@ class NodeBase extends vscode.TreeItem {
         else {
             NodeBase.RootNodes.push(this);
         }
-        this.SetContextValue();
+        // this.SetContextValue();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
     EnableNodeAdd = false;

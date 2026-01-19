@@ -9,22 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileNode = void 0;
+exports.BashFileNode = void 0;
 const serialization_1 = require("../../common/serialization");
 const NodeBase_1 = require("../../tree/NodeBase");
 const TreeState_1 = require("../../tree/TreeState");
 const ui = require("../../common/UI");
 const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
-class FileNode extends NodeBase_1.NodeBase {
+const vscode = require("vscode");
+class BashFileNode extends NodeBase_1.NodeBase {
     FileName = "";
     FilePath = "";
     constructor(label, filePath, parent) {
         super(label, parent);
-        this.Icon = "file";
+        this.Icon = "debug-alt";
         this.FileName = label;
         this.FilePath = filePath;
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
+        this.EnableNodeRun = true;
         this.SetContextValue();
     }
     NodeAdd() {
@@ -40,6 +42,8 @@ class FileNode extends NodeBase_1.NodeBase {
     NodeEdit() {
     }
     NodeRun() {
+        //run the bash file in a new terminal
+        vscode.window.createTerminal(this.FileName).sendText(this.FilePath);
     }
     NodeStop() {
     }
@@ -49,15 +53,15 @@ class FileNode extends NodeBase_1.NodeBase {
     NodeInfo() {
     }
 }
-exports.FileNode = FileNode;
+exports.BashFileNode = BashFileNode;
 __decorate([
     (0, serialization_1.Serialize)(),
     __metadata("design:type", String)
-], FileNode.prototype, "FileName", void 0);
+], BashFileNode.prototype, "FileName", void 0);
 __decorate([
     (0, serialization_1.Serialize)(),
     __metadata("design:type", String)
-], FileNode.prototype, "FilePath", void 0);
+], BashFileNode.prototype, "FilePath", void 0);
 // Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('FileNode', FileNode);
-//# sourceMappingURL=FileNode.js.map
+NodeRegistry_1.NodeRegistry.register('BashFileNode', BashFileNode);
+//# sourceMappingURL=BashFileNode.js.map

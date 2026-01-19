@@ -15,6 +15,7 @@ export class FolderNode extends NodeBase {
 
         this.EnableNodeAdd = true;
         this.EnableNodeRemove = true;
+        this.SetContextValue();
     }
 
     @Serialize()
@@ -25,6 +26,8 @@ export class FolderNode extends NodeBase {
         result.push("Folder");
         result.push("Note");
         result.push("File");
+        result.push("Bash Script");
+        result.push("Bash File");
         result.push("S3 Bucket");
         result.push("CloudWatch Log Group");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
@@ -40,6 +43,12 @@ export class FolderNode extends NodeBase {
                 break;
             case "File":
                 await ServiceHub.Current.FileSystemService.Add(this, "File");
+                break;
+            case "Bash Script":
+                await ServiceHub.Current.FileSystemService.Add(this, "Bash Script");
+                break;
+            case "Bash File":
+                await ServiceHub.Current.FileSystemService.Add(this, "Bash File");
                 break;
             case "S3 Bucket":
                 await ServiceHub.Current.FileSystemService.Add(this, "S3 Bucket");

@@ -9,30 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FolderNode = void 0;
+exports.NoteNode = void 0;
 const NodeBase_1 = require("../../tree/NodeBase");
 const Serialize_1 = require("../../common/serialization/Serialize");
 const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const ServiceHub_1 = require("../../tree/ServiceHub");
 const TreeState_1 = require("../../tree/TreeState");
-class FolderNode extends NodeBase_1.NodeBase {
-    constructor(FolderName, parent) {
-        super(FolderName, parent);
-        this.Icon = "folder";
-        this.FolderName = FolderName;
+class NoteNode extends NodeBase_1.NodeBase {
+    constructor(NoteTitle, parent) {
+        super(NoteTitle, parent);
+        this.Icon = "note";
+        this.NoteTitle = NoteTitle;
         this.EnableNodeAdd = true;
         this.EnableNodeRemove = true;
-        this.SetContextValue();
+        this.EnableNodeView = true;
+        this.EnableNodeEdit = true;
     }
-    FolderName = "";
+    NoteTitle = "";
+    NoteContent = "";
     async NodeAdd() {
         const result = [];
         result.push("Folder");
         result.push("Note");
         result.push("File");
-        result.push("Bash Script");
-        result.push("Bash File");
         result.push("S3 Bucket");
         result.push("CloudWatch Log Group");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
@@ -48,12 +48,6 @@ class FolderNode extends NodeBase_1.NodeBase {
                 break;
             case "File":
                 await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "File");
-                break;
-            case "Bash Script":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Bash Script");
-                break;
-            case "Bash File":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Bash File");
                 break;
             case "S3 Bucket":
                 await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "S3 Bucket");
@@ -71,8 +65,15 @@ class FolderNode extends NodeBase_1.NodeBase {
     NodeRefresh() {
     }
     NodeView() {
+        vscode.window.showInformationMessage(`${this.NoteTitle}`, { modal: true, detail: this.NoteContent });
     }
-    NodeEdit() {
+    async NodeEdit() {
+        let noteContent = await vscode.window.showInputBox({ placeHolder: 'Note Content', value: this.NoteContent });
+        if (!noteContent) {
+            return;
+        }
+        this.NoteContent = noteContent;
+        TreeState_1.TreeState.save();
     }
     NodeRun() {
     }
@@ -83,11 +84,15 @@ class FolderNode extends NodeBase_1.NodeBase {
     NodeInfo() {
     }
 }
-exports.FolderNode = FolderNode;
+exports.NoteNode = NoteNode;
 __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
-], FolderNode.prototype, "FolderName", void 0);
+], NoteNode.prototype, "NoteTitle", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], NoteNode.prototype, "NoteContent", void 0);
 // Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('FolderNode', FolderNode);
-//# sourceMappingURL=FolderNode.js.map
+NodeRegistry_1.NodeRegistry.register('NoteNode', NoteNode);
+//# sourceMappingURL=NoteNode%20copy.js.map

@@ -3,8 +3,9 @@ import { NodeBase } from '../../tree/NodeBase';
 import { TreeState } from '../../tree/TreeState';
 import * as ui from '../../common/UI'
 import { NodeRegistry } from '../../common/serialization/NodeRegistry';
+import * as vscode from 'vscode';
 
-export class FileNode extends NodeBase {
+export class BashFileNode extends NodeBase {
 
 
     @Serialize()
@@ -16,12 +17,13 @@ export class FileNode extends NodeBase {
     constructor(label: string, filePath: string, parent?: NodeBase) 
     {
         super(label, parent);
-        this.Icon = "file";
+        this.Icon = "debug-alt";
         this.FileName = label;
         this.FilePath = filePath;
 
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
+        this.EnableNodeRun = true;
         this.SetContextValue();
     }
 
@@ -44,6 +46,8 @@ export class FileNode extends NodeBase {
     }
 
     public NodeRun(): void {
+        //run the bash file in a new terminal
+        vscode.window.createTerminal(this.FileName).sendText(this.FilePath);
     }
 
     public NodeStop(): void {
@@ -59,4 +63,4 @@ export class FileNode extends NodeBase {
 }
 
 // Register with NodeRegistry for deserialization
-NodeRegistry.register('FileNode', FileNode);
+NodeRegistry.register('BashFileNode', BashFileNode);

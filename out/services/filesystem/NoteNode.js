@@ -25,6 +25,7 @@ class NoteNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
         this.EnableNodeEdit = true;
+        this.SetContextValue();
     }
     NoteTitle = "";
     NoteContent = "";
