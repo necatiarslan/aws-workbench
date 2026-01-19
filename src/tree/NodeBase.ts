@@ -192,19 +192,20 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     /**
      * Finalize node after deserialization.
-     * Sets up tree relationships and visual state.
+     * Sets up visual state and adds root nodes to RootNodes array.
+     * Children are already linked during deserializeNode.
      */
     public finalizeDeserialization(): void {
-        // Add to parent's children or root nodes
-        if (this.Parent) {
-            if (!this.Parent.Children.includes(this)) {
-                this.Parent.Children.push(this);
-            }
-            this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-        } else {
+        // Only add root nodes to RootNodes (children are already linked in deserializeNode)
+        if (!this.Parent) {
             if (!NodeBase.RootNodes.includes(this)) {
                 NodeBase.RootNodes.push(this);
             }
+        }
+        
+        // Set collapsible state if has children
+        if (this.Children.length > 0) {
+            this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
         }
 
         // Restore icon path from saved icon name

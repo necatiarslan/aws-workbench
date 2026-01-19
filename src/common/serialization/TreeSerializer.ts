@@ -88,6 +88,7 @@ export class TreeSerializer {
             // Manually add to parent's Children (since constructor skipped this)
             if (parent) {
                 parent.Children.push(node);
+                node.Parent = parent;
             }
             
             // Override the auto-generated ID with the saved one

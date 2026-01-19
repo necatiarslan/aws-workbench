@@ -127,7 +127,11 @@ class TreeView {
         TreeState_1.TreeState.save();
     }
     async Add(node) {
-        // Implementation for adding a resource to the tree view
+        if (node) {
+            node.NodeAdd();
+            return;
+        }
+        //root node
         const result = [];
         result.push("Folder");
         result.push("Note");
@@ -140,14 +144,13 @@ class TreeView {
         }
         switch (nodeType) {
             case "Folder":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Folder");
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(undefined, "Folder");
                 break;
             case "Note":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Note");
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(undefined, "Note");
                 break;
             case "File":
-                // Logic to add a file
-                vscode.window.showInformationMessage('Add File selected');
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(undefined, "File");
                 break;
             case "S3 Bucket":
                 // Logic to add an S3 Bucket
