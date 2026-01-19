@@ -9,6 +9,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label);
+        this.id = Date.now().toString();
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
         if (this.Parent) {

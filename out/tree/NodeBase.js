@@ -8,6 +8,7 @@ class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
     constructor(label, parent) {
         super(label);
+        this.id = Date.now().toString();
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
         if (this.Parent) {
