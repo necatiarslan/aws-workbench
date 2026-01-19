@@ -1,14 +1,35 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NodeBase = void 0;
 const vscode = require("vscode");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
+const Serialize_1 = require("../common/serialization/Serialize");
+require("reflect-metadata");
 class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
+    /**
+     * Flag to prevent auto-adding to parent/RootNodes during deserialization.
+     * Set to true before calling constructor, then set to false after.
+     */
+    static IsDeserializing = false;
     constructor(label, parent) {
         super(label);
         this.id = Date.now().toString();
+        // Skip tree manipulation during deserialization
+        if (NodeBase.IsDeserializing) {
+            this.Parent = parent || undefined;
+            return;
+        }
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
         if (this.Parent) {
@@ -130,6 +151,49 @@ class NodeBase extends vscode.TreeItem {
         }
         TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
     }
+    /**
+     * Finalize node after deserialization.
+     * Sets up tree relationships and visual state.
+     */
+    finalizeDeserialization() {
+        // Add to parent's children or root nodes
+        if (this.Parent) {
+            if (!this.Parent.Children.includes(this)) {
+                this.Parent.Children.push(this);
+            }
+            this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+        }
+        else {
+            if (!NodeBase.RootNodes.includes(this)) {
+                NodeBase.RootNodes.push(this);
+            }
+        }
+        // Restore icon path from saved icon name
+        if (this._icon) {
+            this.iconPath = new vscode.ThemeIcon(this._icon);
+        }
+        this.SetContextValue();
+        // Recursively finalize children
+        for (const child of this.Children) {
+            child.finalizeDeserialization();
+        }
+    }
 }
 exports.NodeBase = NodeBase;
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", Boolean)
+], NodeBase.prototype, "_isFavorite", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", Boolean)
+], NodeBase.prototype, "_isHidden", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], NodeBase.prototype, "_icon", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], NodeBase.prototype, "_awsProfile", void 0);
 //# sourceMappingURL=NodeBase.js.map

@@ -6,6 +6,7 @@ const NodeBase_1 = require("./NodeBase");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
 const ServiceHub_1 = require("./ServiceHub");
+const TreeState_1 = require("./TreeState");
 class TreeView {
     static Current;
     view;
@@ -96,7 +97,7 @@ class TreeView {
             return;
         }
         node.Remove();
-        //TODO: save state
+        TreeState_1.TreeState.save();
     }
     async Add(node) {
         // Implementation for adding a resource to the tree view
@@ -112,10 +113,10 @@ class TreeView {
         }
         switch (nodeType) {
             case "Folder":
-                ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Folder");
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Folder");
                 break;
             case "Note":
-                ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Note");
+                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(node, "Note");
                 break;
             case "File":
                 // Logic to add a file
@@ -133,6 +134,7 @@ class TreeView {
                 vscode.window.showErrorMessage('Unknown item type selected');
         }
         this.SetViewMessage();
+        TreeState_1.TreeState.save();
     }
     Refresh(node) {
         this.treeDataProvider.Refresh(node);
@@ -186,27 +188,33 @@ class TreeView {
         node.IsHidden = true;
         node.SetVisible();
         this.Refresh(node);
+        TreeState_1.TreeState.save();
     }
     UnHide(node) {
         node.IsHidden = false;
         node.SetVisible();
         this.Refresh(node);
+        TreeState_1.TreeState.save();
     }
     AddFav(node) {
         node.IsFavorite = true;
         node.SetVisible();
         this.Refresh(node);
+        TreeState_1.TreeState.save();
     }
     RemoveFav(node) {
         node.IsFavorite = false;
         node.SetVisible();
         this.Refresh(node);
+        TreeState_1.TreeState.save();
     }
     ShowOnlyInThisProfile(node) {
         node.AwsProfile = Session_1.Session.Current.AwsProfile;
+        TreeState_1.TreeState.save();
     }
     ShowInAnyProfile(node) {
         node.AwsProfile = "";
+        TreeState_1.TreeState.save();
     }
     BugAndNewFeatureRequest() {
         vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));

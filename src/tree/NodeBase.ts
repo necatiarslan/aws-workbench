@@ -1,15 +1,31 @@
 import * as vscode from 'vscode';
 import { TreeProvider } from './TreeProvider';
 import { Session } from '../common/Session';
+import { Serialize } from '../common/serialization/Serialize';
+import { NodeRegistry } from '../common/serialization/NodeRegistry';
+import 'reflect-metadata';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
     public static RootNodes: NodeBase[] = [];
 
+    /**
+     * Flag to prevent auto-adding to parent/RootNodes during deserialization.
+     * Set to true before calling constructor, then set to false after.
+     */
+    public static IsDeserializing: boolean = false;
+
     constructor(label: string, parent?: NodeBase) 
     {
         super(label);
         this.id = Date.now().toString();
+        
+        // Skip tree manipulation during deserialization
+        if (NodeBase.IsDeserializing) {
+            this.Parent = parent || undefined;
+            return;
+        }
+
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
         if (this.Parent) {
@@ -22,12 +38,21 @@ export abstract class NodeBase extends vscode.TreeItem {
         TreeProvider.Current.Refresh(this);
     }
 
+    @Serialize()
     private _isFavorite: boolean = false;
+
+    @Serialize()
     private _isHidden: boolean = false;
+
     public Parent: NodeBase | undefined = undefined;
     public Children: NodeBase[] = [];
+
+    @Serialize()
     private _icon: string = "";
+
+    @Serialize()
     private _awsProfile: string = "";
+
     public IsVisible: boolean = true;
 
     public SetVisible(): void {
@@ -133,6 +158,36 @@ export abstract class NodeBase extends vscode.TreeItem {
             }
         }
         TreeProvider.Current.Refresh(this.Parent);
+    }
+
+    /**
+     * Finalize node after deserialization.
+     * Sets up tree relationships and visual state.
+     */
+    public finalizeDeserialization(): void {
+        // Add to parent's children or root nodes
+        if (this.Parent) {
+            if (!this.Parent.Children.includes(this)) {
+                this.Parent.Children.push(this);
+            }
+            this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+        } else {
+            if (!NodeBase.RootNodes.includes(this)) {
+                NodeBase.RootNodes.push(this);
+            }
+        }
+
+        // Restore icon path from saved icon name
+        if (this._icon) {
+            this.iconPath = new vscode.ThemeIcon(this._icon);
+        }
+
+        this.SetContextValue();
+        
+        // Recursively finalize children
+        for (const child of this.Children) {
+            child.finalizeDeserialization();
+        }
     }
 
 }

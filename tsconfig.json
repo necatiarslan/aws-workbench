@@ -1,6 +1,8 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		"target": "ES2022",
 		"outDir": "out",
 		"lib": [

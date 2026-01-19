@@ -3,6 +3,7 @@ import { NodeBase } from "./NodeBase";
 import { TreeProvider } from "./TreeProvider";
 import { Session } from "../common/Session";
 import { ServiceHub } from "./ServiceHub";
+import { TreeState } from "./TreeState";
 
 export class TreeView {
 
@@ -117,7 +118,7 @@ export class TreeView {
         if(!node){ return; }
 
         node.Remove();
-        //TODO: save state
+        TreeState.save();
     }
     public async Add(node?: NodeBase): Promise<void> {
         // Implementation for adding a resource to the tree view
@@ -133,10 +134,10 @@ export class TreeView {
 
         switch (nodeType) {
             case "Folder":
-                ServiceHub.Current.FileSystemService.Add(node, "Folder");
+                await ServiceHub.Current.FileSystemService.Add(node, "Folder");
                 break;
             case "Note":
-                ServiceHub.Current.FileSystemService.Add(node, "Note");
+                await ServiceHub.Current.FileSystemService.Add(node, "Note");
                 break;
             case "File":
                 // Logic to add a file
@@ -154,6 +155,7 @@ export class TreeView {
                 vscode.window.showErrorMessage('Unknown item type selected');
         }
         this.SetViewMessage();
+        TreeState.save();
     }
 
     public Refresh(node?: NodeBase): void {
@@ -215,32 +217,38 @@ export class TreeView {
         node.IsHidden = true;
         node.SetVisible();
         this.Refresh(node);
+        TreeState.save();
     }
 
     public UnHide(node: NodeBase): void {
         node.IsHidden = false;
         node.SetVisible();
         this.Refresh(node);
+        TreeState.save();
     }
 
     public AddFav(node: NodeBase): void {
         node.IsFavorite = true;
         node.SetVisible();
         this.Refresh(node);
+        TreeState.save();
     }
 
     public RemoveFav(node: NodeBase): void {
         node.IsFavorite = false;
         node.SetVisible();
         this.Refresh(node);
+        TreeState.save();
     }
 
     public ShowOnlyInThisProfile(node: NodeBase): void {
         node.AwsProfile = Session.Current.AwsProfile;
+        TreeState.save();
     }
 
     public ShowInAnyProfile(node: NodeBase): void {
         node.AwsProfile = "";
+        TreeState.save();
     }
 
 	public BugAndNewFeatureRequest(): void {

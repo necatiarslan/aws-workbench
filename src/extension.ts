@@ -3,6 +3,8 @@ import * as ui from './common/UI';
 import { Session } from './common/Session';
 import { TreeView } from './tree/TreeView';
 import { ServiceHub } from './tree/ServiceHub';
+import { TreeState } from './tree/TreeState';
+
 
 /**
  * Activates the AWS Workbench extension.
@@ -14,9 +16,15 @@ export function activate(context: vscode.ExtensionContext): void {
     try {
         new Session(context); // Initialize session management
         new ServiceHub(context);    // Initialize service hub
+        
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         new TreeView(context);
 
+        // 2. Load saved tree state after TreeView is initialized
+        TreeState.load();
+        
+        // 3. Refresh tree to display loaded nodes
+        TreeView.Current.Refresh();
 
         ui.logToOutput('AWS Workbench activated successfully.');
     } catch (error) {
@@ -28,5 +36,6 @@ export function activate(context: vscode.ExtensionContext): void {
 
 
 export function deactivate(): void {
-    // Cleanup is handled by context.subscriptions
+    // Save tree state immediately before deactivation
+    TreeState.saveImmediate();
 }

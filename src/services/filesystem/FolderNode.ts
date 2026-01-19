@@ -1,4 +1,6 @@
 import { NodeBase } from '../../tree/NodeBase';
+import { Serialize } from '../../common/serialization/Serialize';
+import { NodeRegistry } from '../../common/serialization/NodeRegistry';
 
 export class FolderNode extends NodeBase {
 
@@ -9,9 +11,10 @@ export class FolderNode extends NodeBase {
         this.FolderName = FolderName;
     }
 
+    @Serialize()
     public FolderName: string = "";
 
-
-    
-
 }
+
+// Register with NodeRegistry for deserialization
+NodeRegistry.register('FolderNode', FolderNode);
