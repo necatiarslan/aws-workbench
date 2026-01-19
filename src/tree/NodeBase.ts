@@ -118,6 +118,13 @@ export abstract class NodeBase extends vscode.TreeItem {
     public set AwsProfile(value: string) {
         this._awsProfile = value;
         this.SetContextValue();
+        for (const child of this.Children) {
+            child.AwsProfile = value;
+        }
+        if (value === "" && this.Parent) {
+            this.Parent._awsProfile = value;
+            this.Parent.SetContextValue();
+        }
     }
 
     public get Workspace(): string {
@@ -127,6 +134,13 @@ export abstract class NodeBase extends vscode.TreeItem {
     public set Workspace(value: string) {
         this._workspace = value;
         this.SetContextValue();
+        for (const child of this.Children) {
+            child.Workspace = value;
+        }
+        if (value === "" && this.Parent) {
+            this.Parent._workspace = value;
+            this.Parent.SetContextValue();
+        }
     }
 
     public SetContextValue(): void {
@@ -169,6 +183,13 @@ export abstract class NodeBase extends vscode.TreeItem {
         this._isHidden = value;
         this.SetContextValue();
         TreeProvider.Current.Refresh(this.Parent);
+        for (const child of this.Children) {
+            child.IsHidden = value;
+        }
+        if (!value && this.Parent) {
+            this.Parent._isHidden = value;
+            this.Parent.SetContextValue();
+        }
     }
 
     public get IsFavorite(): boolean {
@@ -179,6 +200,13 @@ export abstract class NodeBase extends vscode.TreeItem {
         this._isFavorite = value;
         this.SetContextValue();
         TreeProvider.Current.Refresh(this.Parent);
+        for (const child of this.Children) {
+            child.IsFavorite = value;
+        }
+        if (value && this.Parent) {
+            this.Parent._isFavorite = value;
+            this.Parent.SetContextValue();
+        }
     }
 
     public get Icon(): string {
