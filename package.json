@@ -166,6 +166,16 @@
         "command": "AwsWorkbench.BugAndNewFeatureRequest",
         "title": "Bug and New Feature Request",
         "icon": "$(bug)"
+      },
+      {
+        "command": "AwsWorkbench.ExportConfig",
+        "title": "Export Config",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "AwsWorkbench.ImportConfig",
+        "title": "Import Config",
+        "icon": "$(arrow-up)"
       }
     ],
     "menus": {
@@ -222,6 +232,16 @@
         },
         {
           "command": "AwsWorkbench.BugAndNewFeatureRequest",
+          "when": "view == AwsWorkbenchView",
+          "group": "other"
+        },
+        {
+          "command": "AwsWorkbench.ExportConfig",
+          "when": "view == AwsWorkbenchView",
+          "group": "other"
+        },
+        {
+          "command": "AwsWorkbench.ImportConfig",
           "when": "view == AwsWorkbenchView",
           "group": "other"
         }

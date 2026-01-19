@@ -103,6 +103,12 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.Donate', () => {
             this.Donate();
         });
+        vscode.commands.registerCommand('AwsWorkbench.ExportConfig', () => {
+            this.ExportConfig();
+        });
+        vscode.commands.registerCommand('AwsWorkbench.ImportConfig', () => {
+            this.ImportConfig();
+        });
         vscode.commands.registerCommand('AwsWorkbench.Add', (node) => {
             this.Add(node);
         });
@@ -297,6 +303,30 @@ class TreeView {
     }
     Donate() {
         vscode.env.openExternal(vscode.Uri.parse('https://github.com/sponsors/necatiarslan'));
+    }
+    async ExportConfig() {
+        const filePath = await vscode.window.showSaveDialog({
+            defaultUri: vscode.Uri.file('aws-workbench.json'),
+            saveLabel: 'Save',
+            filters: { 'JSON': ['json'] },
+        });
+        if (!filePath) {
+            return;
+        }
+        TreeState_1.TreeState.save(filePath.fsPath);
+    }
+    async ImportConfig() {
+        const filePath = await vscode.window.showOpenDialog({
+            canSelectMany: false,
+            canSelectFiles: true,
+            canSelectFolders: false,
+            defaultUri: vscode.Uri.file('aws-workbench.json'),
+            filters: { 'JSON': ['json'] },
+        });
+        if (!filePath) {
+            return;
+        }
+        TreeState_1.TreeState.load(filePath[0].fsPath);
     }
 }
 exports.TreeView = TreeView;

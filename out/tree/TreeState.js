@@ -5,6 +5,7 @@ const NodeBase_1 = require("./NodeBase");
 const TreeSerializer_1 = require("../common/serialization/TreeSerializer");
 const Session_1 = require("../common/Session");
 const ui = require("../common/UI");
+const fs = require("fs");
 /**
  * Key used for storing tree data in globalState.
  */
@@ -20,21 +21,21 @@ class TreeState {
      * Saves the current tree state to globalState with debouncing.
      * Multiple calls within DEBOUNCE_MS will be collapsed into a single save.
      */
-    static save() {
+    static save(filePath) {
         // Clear any pending save
         if (this._saveTimeout) {
             clearTimeout(this._saveTimeout);
         }
         // Schedule debounced save
         this._saveTimeout = setTimeout(() => {
-            this.saveImmediate();
+            this.saveImmediate(filePath);
         }, this.DEBOUNCE_MS);
     }
     /**
      * Immediately saves the tree state without debouncing.
      * Used during extension deactivation.
      */
-    static saveImmediate() {
+    static saveImmediate(filePath) {
         if (this._saveTimeout) {
             clearTimeout(this._saveTimeout);
             this._saveTimeout = undefined;
@@ -42,9 +43,14 @@ class TreeState {
         try {
             const rootNodes = NodeBase_1.NodeBase.RootNodes;
             const json = TreeSerializer_1.TreeSerializer.serializeTree(rootNodes);
-            Session_1.Session.Current.Context.globalState.update(TREE_STATE_KEY, json);
-            //ui.logToOutput(json)
-            ui.logToOutput(`TreeState: Saved ${rootNodes.length} root nodes`);
+            if (filePath) {
+                fs.writeFileSync(filePath, json);
+                ui.logToOutput(`TreeState: Exported ${rootNodes.length} root nodes`);
+            }
+            else {
+                Session_1.Session.Current.Context.globalState.update(TREE_STATE_KEY, json);
+                ui.logToOutput(`TreeState: Saved ${rootNodes.length} root nodes`);
+            }
         }
         catch (error) {
             ui.logToOutput('TreeState: Failed to save tree:', error);
@@ -54,9 +60,15 @@ class TreeState {
      * Loads the tree state from globalState and populates NodeBase.RootNodes.
      * Should be called during extension activation, after node types are registered.
      */
-    static load() {
+    static load(filePath) {
         try {
-            const json = Session_1.Session.Current.Context.globalState.get(TREE_STATE_KEY);
+            let json = Session_1.Session.Current.Context.globalState.get(TREE_STATE_KEY);
+            if (filePath) {
+                json = fs.readFileSync(filePath, 'utf-8');
+            }
+            else {
+                json = Session_1.Session.Current.Context.globalState.get(TREE_STATE_KEY);
+            }
             if (!json) {
                 ui.logToOutput('TreeState: No saved tree state found');
                 return;
