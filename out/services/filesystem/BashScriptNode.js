@@ -48,8 +48,9 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
     }
     NodeRun() {
-        //run the bash script in a new terminal
+        this.StartWorking();
         vscode.window.createTerminal(this.Title).sendText(this.Script);
+        this.StopWorking();
     }
     NodeStop() {
     }

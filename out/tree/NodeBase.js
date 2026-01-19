@@ -57,6 +57,17 @@ class NodeBase extends vscode.TreeItem {
     _icon = "";
     _awsProfile = "";
     IsVisible = true;
+    IsWorking = false;
+    async StartWorking() {
+        this.IsWorking = true;
+        this.iconPath = new vscode.ThemeIcon("loading~spin");
+        TreeProvider_1.TreeProvider.Current.Refresh(this);
+    }
+    async StopWorking() {
+        this.IsWorking = false;
+        this.iconPath = new vscode.ThemeIcon(this._icon);
+        TreeProvider_1.TreeProvider.Current.Refresh(this);
+    }
     SetVisible() {
         let result = true;
         if (Session_1.Session.Current.IsShowOnlyFavorite && !this.IsFavorite) {
@@ -167,7 +178,6 @@ class NodeBase extends vscode.TreeItem {
         this._icon = value;
         this.iconPath = new vscode.ThemeIcon(this._icon);
     }
-    IsRunning = false;
     Remove() {
         if (this.Parent) {
             const index = this.Parent.Children.indexOf(this);

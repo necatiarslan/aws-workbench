@@ -43,7 +43,9 @@ class BashFileNode extends NodeBase_1.NodeBase {
     }
     NodeRun() {
         //run the bash file in a new terminal
+        this.StartWorking();
         vscode.window.createTerminal(this.FileName).sendText(this.FilePath);
+        this.StopWorking();
     }
     NodeStop() {
     }

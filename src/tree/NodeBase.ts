@@ -63,6 +63,20 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public IsVisible: boolean = true;
 
+    public IsWorking: boolean = false;
+
+    public async StartWorking(): Promise<void> {
+        this.IsWorking = true;  
+        this.iconPath = new vscode.ThemeIcon("loading~spin");
+        TreeProvider.Current.Refresh(this);
+    }
+
+    public async StopWorking(): Promise<void> {
+        this.IsWorking = false;
+        this.iconPath = new vscode.ThemeIcon(this._icon);
+        TreeProvider.Current.Refresh(this);
+    }
+
     public SetVisible(): void {
         let result = true;
         if (Session.Current.IsShowOnlyFavorite && !this.IsFavorite) {
@@ -157,8 +171,6 @@ export abstract class NodeBase extends vscode.TreeItem {
         this._icon = value;
         this.iconPath = new vscode.ThemeIcon(this._icon);
     }
-
-    public IsRunning: boolean = false;
 
     public Remove(): void {
         if (this.Parent) {

@@ -51,9 +51,9 @@ export class BashScriptNode extends NodeBase {
     }
 
     public NodeRun(): void {
-        //run the bash script in a new terminal
+        this.StartWorking();
         vscode.window.createTerminal(this.Title).sendText(this.Script);
-        
+        this.StopWorking();
     }
 
     public NodeStop(): void {
