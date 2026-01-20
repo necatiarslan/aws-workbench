@@ -85,6 +85,7 @@ class TreeState {
         }
         catch (error) {
             ui.logToOutput('TreeState: Failed to load tree:', error);
+            ui.showErrorMessage('Failed to load tree state', error);
         }
     }
     /**

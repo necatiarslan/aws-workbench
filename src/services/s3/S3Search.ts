@@ -1,143 +1,173 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.S3Search = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
-const vscode = require("vscode");
-const ui = require("../../common/UI");
-const api = require("./API");
-const S3BucketNode_1 = require("./S3BucketNode");
-const S3ExplorerItem_1 = require("./S3ExplorerItem");
-const s3_helper = require("./S3Helper");
-const S3Explorer_1 = require("./S3Explorer");
-const Telemetry_1 = require("../../common/Telemetry");
-class S3Search {
-    static Current;
-    _panel;
-    _disposables = [];
-    extensionUri;
-    S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem("undefined", "");
-    S3ObjectList;
-    FileName = "";
-    FileExtension = "";
-    FolderName = "";
-    SelectedNode;
-    constructor(panel, extensionUri, node) {
+import * as vscode from "vscode";
+import * as ui from '../../common/UI';
+import * as api from './API';
+import { Session } from "../../common/Session";
+import { S3BucketNode } from "./S3BucketNode";
+import { S3ExplorerItem } from "./S3ExplorerItem";
+import * as s3_helper from "./S3Helper";
+import { S3Explorer } from './S3Explorer';
+import { _Object } from "@aws-sdk/client-s3";
+import { Telemetry } from "../../common/Telemetry";
+
+export class S3Search {
+    public static Current: S3Search | undefined;
+    private _panel: vscode.WebviewPanel;
+    private _disposables: vscode.Disposable[] = [];
+    private extensionUri: vscode.Uri;
+
+    public S3ExplorerItem: S3ExplorerItem = new S3ExplorerItem("undefined", "");
+    public S3ObjectList: _Object[]| undefined;
+    public FileName:string = "";
+    public FileExtension:string = "";
+    public FolderName:string = "";
+    public SelectedNode:S3BucketNode;
+
+    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, node:S3BucketNode) {
         ui.logToOutput('S3Search.constructor Started');
+
         this.SelectedNode = node;
         this.SetS3ExplorerItem(node);
         this.extensionUri = extensionUri;
+
         this._panel = panel;
         this._panel.onDidDispose(this.dispose, null, this._disposables);
         this._setWebviewMessageListener(this._panel.webview);
         this.Load();
         ui.logToOutput('S3Search.constructor Completed');
     }
-    SetS3ExplorerItem(node) {
-        this.S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem(node.BucketName, node.Key);
+
+    public SetS3ExplorerItem(node:S3BucketNode){
+        this.S3ExplorerItem = new S3ExplorerItem(node.BucketName, node.Key);
     }
-    async RenderHtml() {
+
+    public async RenderHtml() {
         ui.logToOutput('S3Search.RenderHmtl Started');
         this._panel.webview.html = this._getWebviewContent(this._panel.webview, this.extensionUri);
+        
         ui.logToOutput('S3Search.RenderHmtl Completed');
     }
-    async Load() {
-        Telemetry_1.Telemetry.Current?.send("S3Search.Load");
+
+    public async Load(){
+        Telemetry.Current?.send("S3Search.Load");
         ui.logToOutput('S3Search.LoadLogs Started');
+
         var result = await api.SearchObject(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key, this.FileName, this.FileExtension, this.FolderName);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             this.S3ObjectList = result.result;
         }
+
         this.RenderHtml();
     }
-    ResetCurrentState() {
+
+    public ResetCurrentState(){
+
     }
-    static Render(extensionUri, node) {
+
+    public static Render(extensionUri: vscode.Uri, node:S3BucketNode) {
         ui.logToOutput('S3Search.Render Started');
-        Telemetry_1.Telemetry.Current?.send("S3Search.Render");
+        Telemetry.Current?.send("S3Search.Render");
+
         if (S3Search.Current) {
             S3Search.Current.ResetCurrentState();
             S3Search.Current.SetS3ExplorerItem(node);
             S3Search.Current.Load();
             S3Search.Current._panel.reveal(vscode.ViewColumn.One);
-        }
-        else {
+        } 
+        else 
+        {
             const panel = vscode.window.createWebviewPanel("S3Search", "S3 Search", vscode.ViewColumn.One, {
                 enableScripts: true,
             });
+            
             S3Search.Current = new S3Search(panel, extensionUri, node);
         }
     }
-    GetFileExtension(Key) {
-        if (!Key) {
-            return "";
-        }
-        if (Key.endsWith("/")) {
-            return "Folder";
-        }
+
+    public GetFileExtension(Key:string | undefined)
+    {
+        if(!Key) { return ""; }
+        if(Key.endsWith("/")) { return "Folder";}
         return s3_helper.GetFileExtension(s3_helper.GetFileNameWithExtension(Key));
     }
-    GetFolderName(Key) {
-        if (!Key) {
-            return "";
-        }
-        if (!Key.endsWith("/")) {
-            return Key;
-        }
+
+    public GetFolderName(Key:string | undefined)
+    {
+        if(!Key) { return ""; }
+        if(!Key.endsWith("/")) { return Key; }
         var path = Key.split('/');
         path.pop();
         return path.pop() || "";
     }
-    GetNavigationPath(Key) {
-        let result = [["/", ""]];
-        if (Key) {
+
+    public GetNavigationPath(Key:string | undefined):[[string, string]]
+    {
+        let result:[[string, string]] = [["/",""]];
+
+        if(Key)
+        {
             var paths = Key?.split("/");
-            let full_path = "";
-            for (var p of paths) {
-                if (!p) {
-                    continue;
-                }
-                if (Key.includes(p + "/")) {
+            let full_path:string = "";
+            for(var p of paths)
+            {
+                if(!p) { continue; }
+                if(Key.includes(p+"/"))
+                {
                     full_path += p + "/";
                     p = p + "/";
                 }
-                else {
+                else
+                {
                     full_path += p;
                 }
                 result.push([p, full_path]);
             }
         }
+
         return result;
     }
-    _getWebviewContent(webview, extensionUri) {
+
+    private _getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
         ui.logToOutput('S3Search._getWebviewContent Started');
+
         //file URIs
+
         const vscodeElementsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
+  
         const s3SearchJSUri = ui.getUri(webview, extensionUri, ["media", "s3", "s3SearchJS.js"]);
         const styleUri = ui.getUri(webview, extensionUri, ["media", "s3", "style.css"]);
         const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+
+        
         const bookmark_yesUri = ui.getUri(webview, extensionUri, ["media", "s3", "bookmark_yes.png"]);
         const bookmark_noUri = ui.getUri(webview, extensionUri, ["media", "s3", "bookmark_no.png"]);
+
         const fileUri = ui.getUri(webview, extensionUri, ["media", "s3", "file.png"]);
         const folderUri = ui.getUri(webview, extensionUri, ["media", "s3", "folder.png"]);
+
         let fileCounter = 0;
         let folderCounter = 0;
-        let S3RowHtml = "";
-        if (this.S3ObjectList) {
-            if (this.S3ObjectList) {
-                for (var file of this.S3ObjectList) {
-                    if (!file.Key) {
-                        continue;
-                    }
-                    if (file.Key === this.S3ExplorerItem.Key) {
-                        continue;
-                    } //do not list object itself
+
+        let S3RowHtml:string="";
+        if(this.S3ObjectList)
+        {
+            if(this.S3ObjectList)
+            {
+                for(var file of this.S3ObjectList)
+                {
+                    if(!file.Key) { continue; }
+                    if(file.Key === this.S3ExplorerItem.Key){ continue; } //do not list object itself
+
                     let isFile = s3_helper.IsFile(file.Key);
-                    let fileName = s3_helper.GetFileNameWithExtension(file.Key);
-                    let folderName = s3_helper.GetFolderName(file.Key);
-                    if (isFile)
+                    let fileName = s3_helper.GetFileNameWithExtension(file.Key)
+                    let folderName = s3_helper.GetFolderName(file.Key)
+
+                    if(isFile)
                         fileCounter++;
                     else
                         folderCounter++;
+
                     S3RowHtml += `
                     <tr>
                         <td style="width:20px">
@@ -146,12 +176,12 @@ class S3Search {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}"
-                                src="${this.SelectedNode.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key) ? bookmark_yesUri : bookmark_noUri}">
+                                src="${this.SelectedNode.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}">
                             </img>
                         </td>
                         <td style="white-space:nowrap;">
-                            <img src="${isFile ? fileUri : folderUri}"></img>
-                            <a id="open_${file.Key}">${isFile ? fileName : folderName}</a>
+                            <img src="${isFile?fileUri:folderUri}"></img>
+                            <a id="open_${file.Key}">${isFile?fileName:folderName}</a>
                         </td>
                         <td style="white-space:nowrap;">
                             ${s3_helper.GetParentFolderKey(file.Key)}
@@ -164,13 +194,16 @@ class S3Search {
                 }
             }
         }
-        if (fileCounter === 0) {
+
+        if(fileCounter===0)
+        {
             S3RowHtml += `
             <tr>
                 <td colspan="7" style="text-align:center;">No Files Found</td>
             </tr>
             `;
         }
+
         let result = /*html*/ `
     <!DOCTYPE html>
     <html lang="en">
@@ -284,164 +317,199 @@ class S3Search {
         ui.logToOutput('S3Search._getWebviewContent Completed');
         return result;
     }
-    _setWebviewMessageListener(webview) {
+
+    private _setWebviewMessageListener(webview: vscode.Webview) {
         ui.logToOutput('S3Search._setWebviewMessageListener Started');
-        webview.onDidReceiveMessage((message) => {
-            const command = message.command;
-            let id;
-            ui.logToOutput('S3Search._setWebviewMessageListener Message Received ' + message.command);
-            switch (command) {
-                case "refresh":
-                    this.FileName = message.file_name;
-                    this.FileExtension = message.file_extension;
-                    this.FolderName = message.folder_name;
-                    this.Load();
-                    return;
-                case "open":
-                    id = message.id;
-                    id = id.replace("open_", "");
-                    let node = new S3BucketNode_1.S3BucketNode(this.SelectedNode.BucketName, id);
-                    S3Explorer_1.S3Explorer.Render(this.extensionUri, node);
-                    return;
-                case "copy":
-                    if (!message.keys || message.keys.length == 0) {
+        webview.onDidReceiveMessage(
+            (message: any) => {
+                const command = message.command;
+                let id:string;
+
+                ui.logToOutput('S3Search._setWebviewMessageListener Message Received ' + message.command);
+                switch (command) {
+                    case "refresh":
+                        this.FileName = message.file_name;
+                        this.FileExtension = message.file_extension;
+                        this.FolderName = message.folder_name;
+                        this.Load();
                         return;
-                    }
-                    switch (message.action) {
-                        case "File Name(s) No Ext":
-                            this.CopyFileNameWithoutExtension(message.keys);
+
+                    case "open":
+                        id = message.id;
+                        id = id.replace("open_", "");
+                        let node = new S3BucketNode(this.SelectedNode.BucketName, id);
+                        S3Explorer.Render(this.extensionUri, node);
+                        return;
+
+                    case "copy":
+                        if(!message.keys || message.keys.length == 0) { return; }
+                        switch(message.action)
+                        {
+                            case "File Name(s) No Ext":
+                                this.CopyFileNameWithoutExtension(message.keys)
                             return;
-                        case "File Name(s) /w Ext":
-                            this.CopyFileNameWithExtension(message.keys);
+                            case "File Name(s) /w Ext":
+                                this.CopyFileNameWithExtension(message.keys)
                             return;
-                        case "Key(s)":
-                            this.CopyKeys(message.keys);
+                            case "Key(s)":
+                                this.CopyKeys(message.keys)
                             return;
-                        case "ARN(s)":
-                            this.CopyFileARNs(message.keys);
+                            case "ARN(s)":
+                                this.CopyFileARNs(message.keys)
                             return;
-                        case "S3 URI(s)":
-                            this.CopyS3URI(message.keys);
+                            case "S3 URI(s)":
+                                this.CopyS3URI(message.keys)
                             return;
-                        case "URL(s)":
-                            this.CopyURLs(message.keys);
+                            case "URL(s)":
+                                this.CopyURLs(message.keys)
                             return;
-                    }
-                    return;
-                case "add_shortcut":
-                    id = message.id;
-                    id = id.replace("add_shortcut_", "");
-                    this.AddShortcut(id);
-                    return;
-            }
-        }, undefined, this._disposables);
+                        }
+                        return;
+
+                    case "add_shortcut":
+                        id = message.id;
+                        id = id.replace("add_shortcut_", "");
+                        this.AddShortcut(id);
+                        return;
+
+                }
+
+            },
+            undefined,
+            this._disposables
+        );
     }
-    AddShortcut(key) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.AddShortcut");
+  
+    private AddShortcut(key: string) {
+        Telemetry.Current?.send("S3Search.AddShortcut");
         this.SelectedNode.AddShortcut(this.SelectedNode.BucketName, key);
         this.RenderHtml();
     }
-    CopyS3URI(keys) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.CopyS3URI");
-        if (!keys || keys.length === 0 || !keys.includes("|")) {
-            return;
-        }
+    
+    private CopyS3URI(keys: string) 
+    {
+        Telemetry.Current?.send("S3Search.CopyS3URI");
+        if(!keys || keys.length === 0 || !keys.includes("|")) { return; }
         var keyList = keys.split("|");
-        var listToCopy = [];
-        for (var key of keyList) {
-            if (key) {
-                listToCopy.push(s3_helper.GetURI(this.S3ExplorerItem.Bucket, key));
+        var listToCopy:string[] = [];
+        for(var key of keyList)
+        {
+            if(key)
+            {
+                listToCopy.push(s3_helper.GetURI(this.S3ExplorerItem.Bucket, key))
             }
         }
+
         let result = ui.CopyListToClipboard(listToCopy);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             ui.showInfoMessage("S3 URI(s) are copied to clipboard");
         }
     }
-    CopyURLs(keys) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.CopyURLs");
-        if (!keys || keys.length === 0 || !keys.includes("|")) {
-            return;
-        }
+    
+    private CopyURLs(keys: string) 
+    {
+        Telemetry.Current?.send("S3Search.CopyURLs");
+        if(!keys || keys.length === 0 || !keys.includes("|")) { return; }
         var keyList = keys.split("|");
-        var listToCopy = [];
-        for (var key of keyList) {
-            if (key) {
-                listToCopy.push(s3_helper.GetURL(this.S3ExplorerItem.Bucket, key));
+        var listToCopy:string[] = [];
+        for(var key of keyList)
+        {
+            if(key)
+            {
+                listToCopy.push(s3_helper.GetURL(this.S3ExplorerItem.Bucket, key))
             }
         }
+
         let result = ui.CopyListToClipboard(listToCopy);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             ui.showInfoMessage("URL(s) are copied to clipboard");
         }
     }
-    CopyFileNameWithExtension(keys) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.CopyFileNameWithExtension");
-        if (!keys || keys.length === 0 || !keys.includes("|")) {
-            return;
-        }
+    
+    private CopyFileNameWithExtension(keys: string) 
+    {
+        Telemetry.Current?.send("S3Search.CopyFileNameWithExtension");
+        if(!keys || keys.length === 0 || !keys.includes("|")) { return; }
         var keyList = keys.split("|");
-        var listToCopy = [];
-        for (var key of keyList) {
-            if (key) {
-                listToCopy.push(s3_helper.GetFileNameWithExtension(key));
+        var listToCopy:string[] = [];
+        for(var key of keyList)
+        {
+            if(key)
+            {
+                listToCopy.push(s3_helper.GetFileNameWithExtension(key))
             }
         }
+
         let result = ui.CopyListToClipboard(listToCopy);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             ui.showInfoMessage("File Name(s) /w Ext are copied to clipboard");
         }
     }
-    CopyFileNameWithoutExtension(keys) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.CopyFileNameWithoutExtension");
-        if (!keys || keys.length === 0 || !keys.includes("|")) {
-            return;
-        }
+    
+    private CopyFileNameWithoutExtension(keys: string) 
+    {
+        Telemetry.Current?.send("S3Search.CopyFileNameWithoutExtension");
+        if(!keys || keys.length === 0 || !keys.includes("|")) { return; }
         var keyList = keys.split("|");
-        var listToCopy = [];
-        for (var key of keyList) {
-            if (key) {
-                listToCopy.push(s3_helper.GetFileNameWithoutExtension(key));
+        var listToCopy:string[] = [];
+        for(var key of keyList)
+        {
+            if(key)
+            {
+                listToCopy.push(s3_helper.GetFileNameWithoutExtension(key))
             }
         }
+
         let result = ui.CopyListToClipboard(listToCopy);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             ui.showInfoMessage("File Name(s) No Ext are copied to clipboard");
         }
     }
-    CopyKeys(keys) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.CopyKeys");
-        if (!keys || keys.length === 0 || !keys.includes("|")) {
-            return;
-        }
+    
+    private CopyKeys(keys: string) 
+    {
+        Telemetry.Current?.send("S3Search.CopyKeys");
+        if(!keys || keys.length === 0 || !keys.includes("|")) { return; }
         var keyList = keys.split("|");
         let result = ui.CopyListToClipboard(keyList);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             ui.showInfoMessage("Key(s) are copied to clipboard");
         }
     }
-    CopyFileARNs(keys) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.CopyFileARNs");
-        if (!keys || keys.length === 0 || !keys.includes("|")) {
-            return;
-        }
+    
+    private CopyFileARNs(keys: string) 
+    {
+        Telemetry.Current?.send("S3Search.CopyFileARNs");
+        if(!keys || keys.length === 0 || !keys.includes("|")) { return; }
         var keyList = keys.split("|");
-        var listToCopy = [];
-        for (var key of keyList) {
-            if (key) {
-                listToCopy.push(s3_helper.GetARN(this.S3ExplorerItem.Bucket, key));
+        var listToCopy:string[] = [];
+        for(var key of keyList)
+        {
+            if(key)
+            {
+                listToCopy.push(s3_helper.GetARN(this.S3ExplorerItem.Bucket, key))
             }
         }
+
         let result = ui.CopyListToClipboard(listToCopy);
-        if (result.isSuccessful) {
+        if(result.isSuccessful)
+        {
             ui.showInfoMessage("ARN(s) are copied to clipboard");
         }
     }
-    dispose() {
+  
+    public dispose() {
         ui.logToOutput('S3Search.dispose Started');
         S3Search.Current = undefined;
-        if (this._panel)
+
+        if(this._panel)
             this._panel.dispose();
+
         if (this._disposables) {
             while (this._disposables.length) {
                 const disposable = this._disposables.pop();
@@ -451,6 +519,5 @@ class S3Search {
             }
         }
     }
+
 }
-exports.S3Search = S3Search;
-//# sourceMappingURL=S3Search.js.map

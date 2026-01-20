@@ -51,7 +51,7 @@ export class FolderNode extends NodeBase {
                 await ServiceHub.Current.FileSystemService.Add(this, "Bash File");
                 break;
             case "S3 Bucket":
-                await ServiceHub.Current.FileSystemService.Add(this, "S3 Bucket");
+                await ServiceHub.Current.S3Service.Add(this);
                 break;
             case "CloudWatch Log Group":
                 await ServiceHub.Current.FileSystemService.Add(this, "CloudWatch Log Group");

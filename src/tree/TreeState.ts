@@ -95,6 +95,7 @@ export class TreeState {
             ui.logToOutput(`TreeState: Loaded ${nodes.length} root nodes from saved state`);
         } catch (error) {
             ui.logToOutput('TreeState: Failed to load tree:', error as Error);
+            ui.showErrorMessage('Failed to load tree state', error as Error);
         }
     }
 

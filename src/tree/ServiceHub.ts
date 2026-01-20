@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { FileSystemService } from "../services/filesystem/FileSystemService";
-import { NodeBase } from './NodeBase';
+import { S3Service } from "../services/s3/S3Service";
 
 export class ServiceHub {
     public static Current: ServiceHub;
     public Context: vscode.ExtensionContext;
     public FileSystemService: FileSystemService = new FileSystemService();
+    public S3Service: S3Service = new S3Service();
 
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;

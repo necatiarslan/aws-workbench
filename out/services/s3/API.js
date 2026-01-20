@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getConfigFilepath = exports.getCredentialsFilepath = exports.getHomeDir = exports.ENV_CREDENTIALS_PATH = void 0;
-exports.GetCredentials = GetCredentials;
 exports.StartConnection = StartConnection;
 exports.StopConnection = StopConnection;
 exports.GetS3Client = GetS3Client;
@@ -43,33 +42,12 @@ const parseKnownFiles_1 = require("../../aws-sdk/parseKnownFiles");
 const s3_helper = require("./S3Helper");
 const fs = require("fs");
 const Session_1 = require("../../common/Session");
-async function GetCredentials() {
-    let credentials;
-    if (CurrentCredentials !== undefined) {
-        ui.logToOutput("Aws credentials From Pool AccessKeyId=" + CurrentCredentials.accessKeyId);
-        return CurrentCredentials;
-    }
-    try {
-        credentials = await Session_1.Session.Current?.GetCredentials();
-        if (!credentials) {
-            throw new Error("Aws credentials not found !!!");
-        }
-        ui.logToOutput("Aws credentials AccessKeyId=" + credentials.accessKeyId);
-        CurrentCredentials = credentials;
-        return credentials;
-    }
-    catch (error) {
-        ui.showErrorMessage("Aws Credentials Not Found !!!", error);
-        ui.logToOutput("GetCredentials Error !!!", error);
-        return credentials;
-    }
-}
 const client_s3_1 = require("@aws-sdk/client-s3");
 let CurrentS3Client;
 let CurrentCredentials;
 async function StartConnection() {
     ui.logToOutput("Starting Connection");
-    CurrentCredentials = await GetCredentials();
+    CurrentCredentials = await Session_1.Session.Current.GetCredentials();
     CurrentS3Client = await GetS3Client();
     ui.logToOutput("Connection Started");
 }
@@ -80,20 +58,20 @@ async function StopConnection() {
     ui.logToOutput("Connection Stopped");
 }
 async function GetS3Client() {
-    let credentials = await GetCredentials();
+    let credentials = await Session_1.Session.Current.GetCredentials();
     if (CurrentS3Client !== undefined) {
         return CurrentS3Client;
     }
     return new client_s3_1.S3Client({
         credentials: credentials,
-        endpoint: Session_1.Session.Current?.AwsEndPoint,
+        endpoint: Session_1.Session.Current.AwsEndPoint,
         forcePathStyle: true,
-        region: Session_1.Session.Current?.AwsRegion,
+        region: Session_1.Session.Current.AwsRegion,
     });
 }
 const client_iam_1 = require("@aws-sdk/client-iam");
 async function GetIAMClient() {
-    let credentials = await GetCredentials();
+    let credentials = await Session_1.Session.Current.GetCredentials();
     return new client_iam_1.IAMClient({ credentials: credentials });
 }
 const client_s3_2 = require("@aws-sdk/client-s3");
@@ -706,18 +684,18 @@ async function GetBucketList(BucketName) {
 }
 const client_sts_1 = require("@aws-sdk/client-sts");
 async function GetSTSClient(region) {
-    const credentials = await GetCredentials();
+    const credentials = await Session_1.Session.Current.GetCredentials();
     const iamClient = new client_sts_1.STSClient({
         region,
         credentials,
-        endpoint: Session_1.Session.Current?.AwsEndPoint,
+        endpoint: Session_1.Session.Current.AwsEndPoint,
     });
     return iamClient;
 }
 async function TestAwsCredentials() {
     let result = new MethodResult_1.MethodResult();
     try {
-        const credentials = await GetCredentials();
+        const credentials = await Session_1.Session.Current.GetCredentials();
         result.isSuccessful = true;
         result.result = true;
         return result;

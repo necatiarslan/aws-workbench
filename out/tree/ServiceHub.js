@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceHub = void 0;
 const FileSystemService_1 = require("../services/filesystem/FileSystemService");
+const S3Service_1 = require("../services/s3/S3Service");
 class ServiceHub {
     static Current;
     Context;
     FileSystemService = new FileSystemService_1.FileSystemService();
+    S3Service = new S3Service_1.S3Service();
     constructor(context) {
         this.Context = context;
         ServiceHub.Current = this;
