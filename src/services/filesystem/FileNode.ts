@@ -13,12 +13,11 @@ export class FileNode extends NodeBase {
     @Serialize()
     public FilePath: string = "";
     
-    constructor(label: string, filePath: string, parent?: NodeBase) 
+    constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
         this.Icon = "file";
         this.FileName = label;
-        this.FilePath = filePath;
 
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;

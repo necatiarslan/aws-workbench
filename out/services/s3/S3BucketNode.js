@@ -17,11 +17,13 @@ const TreeState_1 = require("../../tree/TreeState");
 const S3Explorer_1 = require("./S3Explorer");
 const Session_1 = require("../../common/Session");
 class S3BucketNode extends NodeBase_1.NodeBase {
-    constructor(BucketName, Key, parent) {
+    constructor(BucketName, parent) {
         super(BucketName, parent);
-        this.Icon = "aws-s3-bucket";
         this.BucketName = BucketName;
-        this.Key = Key ?? "";
+        this.Icon = "aws-s3-bucket";
+        // if(Key) {this.label = Key}
+        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "aws-s3-bucket";
+        // this.Key = Key ?? "";
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
         this.SetContextValue();
@@ -34,13 +36,13 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    DoesShortcutExists(bucket, key) {
+    IsShortcutExists(bucket, key) {
         key = key ?? "";
         return this.Children.some(x => x.BucketName === bucket && x.Key === key) ?? false;
     }
     AddShortcut(bucket, key) {
-        key = key ?? "";
-        new S3BucketNode(bucket, key, this);
+        new S3BucketNode(bucket, this).Key = key;
+        TreeState_1.TreeState.save();
     }
     RemoveShortcut(bucket, key) {
         key = key ?? "";
@@ -49,6 +51,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
                 x.Remove();
             }
         });
+        TreeState_1.TreeState.save();
     }
     NodeRefresh() {
     }

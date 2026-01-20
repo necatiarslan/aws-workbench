@@ -8,13 +8,16 @@ import { Session } from '../../common/Session';
 
 export class S3BucketNode extends NodeBase {
 
-    constructor(BucketName: string, Key?:string, parent?: NodeBase) 
+    constructor(BucketName: string, parent?: NodeBase) 
     {
         super(BucketName, parent);
 
-        this.Icon = "aws-s3-bucket";
         this.BucketName = BucketName;
-        this.Key = Key ?? "";
+        this.Icon = "aws-s3-bucket";
+        // if(Key) {this.label = Key}
+
+        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "aws-s3-bucket";
+        // this.Key = Key ?? "";
 
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
@@ -36,16 +39,16 @@ export class S3BucketNode extends NodeBase {
         TreeState.save();
     }
 
-    public DoesShortcutExists(bucket:string, key:string | undefined):boolean
+    public IsShortcutExists(bucket:string, key:string):boolean
     {
         key = key ?? "";
         return this.Children.some(x => (x as S3BucketNode).BucketName === bucket && (x as S3BucketNode).Key === key) ?? false;
     }
 
-    public AddShortcut(bucket:string, key:string | undefined):void
+    public AddShortcut(bucket:string, key:string):void
     {
-        key = key ?? "";
-        new S3BucketNode(bucket, key, this);
+        new S3BucketNode(bucket, this).Key = key;
+        TreeState.save();
     }
 
     public RemoveShortcut(bucket:string, key:string | undefined):void
@@ -57,6 +60,7 @@ export class S3BucketNode extends NodeBase {
                 x.Remove();
             }
         });
+        TreeState.save();
     }
 
     public NodeRefresh(): void {

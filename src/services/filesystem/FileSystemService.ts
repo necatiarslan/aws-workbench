@@ -43,7 +43,8 @@ export class FileSystemService extends ServiceBase {
             let selectedFileList = await vscode.window.showOpenDialog(param);
             if(!selectedFileList || selectedFileList.length == 0){ return; }
 
-            const newFile = new FileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), selectedFileList[0].fsPath, node);
+            const newFile = new FileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), node);
+            newFile.FilePath = selectedFileList[0].fsPath;
         } else if(type === "Bash Script"){
             let title = await vscode.window.showInputBox({placeHolder: 'Enter Title'});
             if(!title){ return; }
@@ -67,7 +68,8 @@ export class FileSystemService extends ServiceBase {
             let selectedFileList = await vscode.window.showOpenDialog(param);
             if(!selectedFileList || selectedFileList.length == 0){ return; }
 
-            const newFile = new BashFileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), selectedFileList[0].fsPath, node);
+            const newFile = new BashFileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), node);
+            newFile.FilePath = selectedFileList[0].fsPath;
         }
     }
 

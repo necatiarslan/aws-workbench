@@ -30,7 +30,7 @@ class S3Service extends ServiceBase_1.ServiceBase {
             return;
         }
         for (var selectedBucket of selectedBucketList) {
-            let bucketNode = new S3BucketNode_1.S3BucketNode(selectedBucket, "", node);
+            let bucketNode = new S3BucketNode_1.S3BucketNode(selectedBucket, node);
         }
         TreeState_1.TreeState.save();
     }

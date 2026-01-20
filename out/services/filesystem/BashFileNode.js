@@ -19,11 +19,10 @@ const vscode = require("vscode");
 class BashFileNode extends NodeBase_1.NodeBase {
     FileName = "";
     FilePath = "";
-    constructor(label, filePath, parent) {
+    constructor(label, parent) {
         super(label, parent);
         this.Icon = "debug-alt";
         this.FileName = label;
-        this.FilePath = filePath;
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
         this.EnableNodeRun = true;

@@ -18,11 +18,10 @@ const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
 class FileNode extends NodeBase_1.NodeBase {
     FileName = "";
     FilePath = "";
-    constructor(label, filePath, parent) {
+    constructor(label, parent) {
         super(label, parent);
         this.Icon = "file";
         this.FileName = label;
-        this.FilePath = filePath;
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
         this.SetContextValue();

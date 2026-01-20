@@ -14,12 +14,11 @@ export class BashFileNode extends NodeBase {
     @Serialize()
     public FilePath: string = "";
     
-    constructor(label: string, filePath: string, parent?: NodeBase) 
+    constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
         this.Icon = "debug-alt";
         this.FileName = label;
-        this.FilePath = filePath;
 
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;

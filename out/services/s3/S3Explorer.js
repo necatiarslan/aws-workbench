@@ -198,7 +198,7 @@ class S3Explorer {
             <td style="width:20px">
                 <img 
                     id="add_shortcut_${this.S3ExplorerItem.Key}" 
-                    src="${this.SelectedNode?.DoesShortcutExists(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key) ? bookmark_yesUri : bookmark_noUri}"
+                    src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key) ? bookmark_yesUri : bookmark_noUri}"
                     style="cursor: pointer;">
                 </img>
             </td>
@@ -227,7 +227,7 @@ class S3Explorer {
                         <td style="width:20px">
                             <img  
                                 id="add_shortcut_${folder.Prefix}" 
-                                src="${this.SelectedNode?.DoesShortcutExists(this.S3ExplorerItem.Bucket, folder.Prefix) ? bookmark_yesUri : bookmark_noUri}"
+                                src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Bucket, folder.Prefix || "") ? bookmark_yesUri : bookmark_noUri}"
                                 style="cursor: pointer;">
                             </img>
                         </td>
@@ -261,7 +261,7 @@ class S3Explorer {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}" 
-                                src="${this.SelectedNode?.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key) ? bookmark_yesUri : bookmark_noUri}"
+                                src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Bucket, file.Key || "") ? bookmark_yesUri : bookmark_noUri}"
                                 style="cursor: pointer;">
                             </img>
                         </td>

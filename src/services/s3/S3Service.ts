@@ -31,7 +31,7 @@ export class S3Service extends ServiceBase {
 
 		for(var selectedBucket of selectedBucketList)
 		{
-            let bucketNode = new S3BucketNode(selectedBucket, "", node);
+            let bucketNode = new S3BucketNode(selectedBucket, node);
 		}
 
         TreeState.save();

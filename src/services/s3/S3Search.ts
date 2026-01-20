@@ -176,7 +176,7 @@ export class S3Search {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}"
-                                src="${this.SelectedNode.DoesShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}">
+                                src="${this.SelectedNode.IsShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}">
                             </img>
                         </td>
                         <td style="white-space:nowrap;">
@@ -337,7 +337,8 @@ export class S3Search {
                     case "open":
                         id = message.id;
                         id = id.replace("open_", "");
-                        let node = new S3BucketNode(this.SelectedNode.BucketName, id);
+                        let node = new S3BucketNode(this.SelectedNode.BucketName);
+                        node.Key = id;
                         S3Explorer.Render(this.extensionUri, node);
                         return;
 
