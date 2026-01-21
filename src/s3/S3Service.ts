@@ -1,11 +1,11 @@
-import { NodeBase } from "../../tree/NodeBase";
-import { ServiceBase } from "../../tree/ServiceBase";
+import { NodeBase } from "../tree/NodeBase";
+import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { S3BucketNode } from "./S3BucketNode";
-import { TreeState } from "../../tree/TreeState";
-import { Telemetry } from "../../common/Telemetry";
+import { TreeState } from "../tree/TreeState";
+import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
-import * as ui from "../../common/UI";
+import * as ui from "../common/UI";
 
 export class S3Service extends ServiceBase {   
 

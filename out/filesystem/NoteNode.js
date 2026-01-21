@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NoteNode = void 0;
-const NodeBase_1 = require("../../tree/NodeBase");
-const Serialize_1 = require("../../common/serialization/Serialize");
-const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
+const NodeBase_1 = require("../tree/NodeBase");
+const Serialize_1 = require("../common/serialization/Serialize");
+const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
-const ServiceHub_1 = require("../../tree/ServiceHub");
-const TreeState_1 = require("../../tree/TreeState");
+const ServiceHub_1 = require("../tree/ServiceHub");
+const TreeState_1 = require("../tree/TreeState");
 class NoteNode extends NodeBase_1.NodeBase {
     constructor(NoteTitle, parent) {
         super(NoteTitle, parent);

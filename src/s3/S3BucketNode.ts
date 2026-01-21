@@ -1,10 +1,10 @@
-import { NodeBase } from '../../tree/NodeBase';
-import { Serialize } from '../../common/serialization/Serialize';
-import { NodeRegistry } from '../../common/serialization/NodeRegistry';
+import { NodeBase } from '../tree/NodeBase';
+import { Serialize } from '../common/serialization/Serialize';
+import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
-import { TreeState } from '../../tree/TreeState';
+import { TreeState } from '../tree/TreeState';
 import { S3Explorer } from './S3Explorer';
-import { Session } from '../../common/Session';
+import { Session } from '../common/Session';
 
 export class S3BucketNode extends NodeBase {
 
@@ -13,10 +13,10 @@ export class S3BucketNode extends NodeBase {
         super(BucketName, parent);
 
         this.BucketName = BucketName;
-        this.Icon = "aws-s3-bucket";
+        this.Icon = "s3-bucket";
         // if(Key) {this.label = Key}
 
-        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "aws-s3-bucket";
+        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "s3-bucket";
         // this.Key = Key ?? "";
 
         this.EnableNodeRemove = true;

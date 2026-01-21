@@ -364,11 +364,25 @@
       }
     ],
     "icons": {
-      "aws-s3-bucket": {
+      "s3-bucket": {
           "description": "AWS Contributed Icon",
           "default": {
               "fontPath": "./media/fonts/aws-toolkit-icons.woff",
               "fontCharacter": "\\f1db"
+          }
+      },
+      "cloudwatch-loggroup": {
+          "description": "AWS Contributed Icon",
+          "default": {
+              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+              "fontCharacter": "\\f1c4"
+          }
+      },
+      "cloudwatch-logstream": {
+          "description": "AWS Contributed Icon",
+          "default": {
+              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+              "fontCharacter": "\\eb85"
           }
       }
     }

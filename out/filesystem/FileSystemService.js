@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileSystemService = void 0;
 const vscode = require("vscode");
-const ServiceBase_1 = require("../../tree/ServiceBase");
+const ServiceBase_1 = require("../tree/ServiceBase");
 const FolderNode_1 = require("./FolderNode");
 const NoteNode_1 = require("./NoteNode");
 const FileNode_1 = require("./FileNode");
-const ui = require("../../common/UI");
+const ui = require("../common/UI");
 const BashScriptNode_1 = require("./BashScriptNode");
 const BashFileNode_1 = require("./BashFileNode");
 class FileSystemService extends ServiceBase_1.ServiceBase {

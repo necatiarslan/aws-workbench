@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Service = void 0;
-const ServiceBase_1 = require("../../tree/ServiceBase");
+const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const S3BucketNode_1 = require("./S3BucketNode");
-const TreeState_1 = require("../../tree/TreeState");
-const Telemetry_1 = require("../../common/Telemetry");
+const TreeState_1 = require("../tree/TreeState");
+const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
-const ui = require("../../common/UI");
+const ui = require("../common/UI");
 class S3Service extends ServiceBase_1.ServiceBase {
     static Current;
     constructor() {

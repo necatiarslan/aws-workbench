@@ -10,19 +10,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3BucketNode = void 0;
-const NodeBase_1 = require("../tree/NodeBase");
-const Serialize_1 = require("../common/serialization/Serialize");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
-const TreeState_1 = require("../tree/TreeState");
+const NodeBase_1 = require("../../tree/NodeBase");
+const Serialize_1 = require("../../common/serialization/Serialize");
+const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
+const TreeState_1 = require("../../tree/TreeState");
 const S3Explorer_1 = require("./S3Explorer");
-const Session_1 = require("../common/Session");
+const Session_1 = require("../../common/Session");
 class S3BucketNode extends NodeBase_1.NodeBase {
     constructor(BucketName, parent) {
         super(BucketName, parent);
         this.BucketName = BucketName;
-        this.Icon = "s3-bucket";
+        this.Icon = "aws-s3-bucket";
         // if(Key) {this.label = Key}
-        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "s3-bucket";
+        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "aws-s3-bucket";
         // this.Key = Key ?? "";
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
@@ -80,4 +80,4 @@ __decorate([
 ], S3BucketNode.prototype, "Key", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('S3BucketNode', S3BucketNode);
-//# sourceMappingURL=S3BucketNode.js.map
+//# sourceMappingURL=CloudWatchLogNode.js.map

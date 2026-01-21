@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import * as ui from '../../common/UI';
+import * as ui from '../common/UI';
 import * as api from './API';
-import { Session } from "../../common/Session";
+import { Session } from "../common/Session";
 import { S3BucketNode } from "./S3BucketNode";
 import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
 import { S3Explorer } from './S3Explorer';
 import { _Object } from "@aws-sdk/client-s3";
-import { Telemetry } from "../../common/Telemetry";
+import { Telemetry } from "../common/Telemetry";
 
 export class S3Search {
     public static Current: S3Search | undefined;

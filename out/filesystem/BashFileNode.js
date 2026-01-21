@@ -10,11 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BashFileNode = void 0;
-const serialization_1 = require("../../common/serialization");
-const NodeBase_1 = require("../../tree/NodeBase");
-const TreeState_1 = require("../../tree/TreeState");
-const ui = require("../../common/UI");
-const NodeRegistry_1 = require("../../common/serialization/NodeRegistry");
+const serialization_1 = require("../common/serialization");
+const NodeBase_1 = require("../tree/NodeBase");
+const TreeState_1 = require("../tree/TreeState");
+const ui = require("../common/UI");
+const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 class BashFileNode extends NodeBase_1.NodeBase {
     FileName = "";

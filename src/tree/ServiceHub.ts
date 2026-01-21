@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { FileSystemService } from "../services/filesystem/FileSystemService";
-import { S3Service } from "../services/s3/S3Service";
+import { FileSystemService } from "../filesystem/FileSystemService";
+import { S3Service } from "../s3/S3Service";
 
 export class ServiceHub {
     public static Current: ServiceHub;

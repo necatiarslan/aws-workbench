@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
-import { ServiceBase } from "../../tree/ServiceBase";
-import { NodeBase } from "../../tree/NodeBase";
+import { ServiceBase } from "../tree/ServiceBase";
+import { NodeBase } from "../tree/NodeBase";
 import { FolderNode } from "./FolderNode";
 import { NoteNode } from "./NoteNode";
 import { FileNode } from "./FileNode";
-import * as ui from "../../common/UI";
+import * as ui from "../common/UI";
 import { BashScriptNode } from "./BashScriptNode";
 import { BashFileNode } from "./BashFileNode";
 

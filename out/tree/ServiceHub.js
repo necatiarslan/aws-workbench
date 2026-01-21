@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceHub = void 0;
-const FileSystemService_1 = require("../services/filesystem/FileSystemService");
-const S3Service_1 = require("../services/s3/S3Service");
+const FileSystemService_1 = require("../filesystem/FileSystemService");
+const S3Service_1 = require("../s3/S3Service");
 class ServiceHub {
     static Current;
     Context;

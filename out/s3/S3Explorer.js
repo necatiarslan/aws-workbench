@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Explorer = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-const ui = require("../../common/UI");
+const ui = require("../common/UI");
 const api = require("./API");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
-const Telemetry_1 = require("../../common/Telemetry");
+const Telemetry_1 = require("../common/Telemetry");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");

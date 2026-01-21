@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import * as ui from "../../common/UI";
-import { MethodResult } from '../../common/MethodResult';
+import * as ui from "../common/UI";
+import { MethodResult } from '../common/MethodResult';
 import { homedir } from "os";
 import { sep } from "path";
 import { join } from "path";
-import { parseKnownFiles, SourceProfileInit } from "../../aws-sdk/parseKnownFiles";
+import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
 import { ParsedIniData } from "@aws-sdk/types";
 import * as s3_helper from './S3Helper'
 import * as fs from 'fs';
-import { Session } from "../../common/Session";
+import { Session } from "../common/Session";
 
 import { S3Client } from "@aws-sdk/client-s3";
 import { AwsCredentialIdentity } from "@aws-sdk/types";

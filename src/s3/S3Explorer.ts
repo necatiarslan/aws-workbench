@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import * as ui from '../../common/UI';
+import * as ui from '../common/UI';
 import * as api from './API';
 import { S3BucketNode } from "./S3BucketNode";
 import { S3ExplorerItem } from "./S3ExplorerItem";
 import * as s3_helper from "./S3Helper";
 import { S3Search } from "./S3Search";
 import { ListObjectsV2CommandOutput } from "@aws-sdk/client-s3";
-import { MethodResult } from '../../common/MethodResult';
-import { Telemetry } from "../../common/Telemetry";
+import { MethodResult } from '../common/MethodResult';
+import { Telemetry } from "../common/Telemetry";
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';

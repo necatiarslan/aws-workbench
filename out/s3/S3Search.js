@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Search = void 0;
 /* eslint-disable @typescript-eslint/naming-convention */
 const vscode = require("vscode");
-const ui = require("../../common/UI");
+const ui = require("../common/UI");
 const api = require("./API");
 const S3BucketNode_1 = require("./S3BucketNode");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
 const S3Explorer_1 = require("./S3Explorer");
-const Telemetry_1 = require("../../common/Telemetry");
+const Telemetry_1 = require("../common/Telemetry");
 class S3Search {
     static Current;
     _panel;
