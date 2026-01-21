@@ -367,7 +367,7 @@
       "aws-s3-bucket": {
           "description": "AWS Contributed Icon",
           "default": {
-              "fontPath": "./media/icons/fonts/aws-toolkit-icons.woff",
+              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
               "fontCharacter": "\\f1db"
           }
       }
