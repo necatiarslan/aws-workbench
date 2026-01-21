@@ -14,6 +14,8 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const TreeState_1 = require("../tree/TreeState");
+const Session_1 = require("../common/Session");
+const CloudWatchLogView_1 = require("./CloudWatchLogView");
 class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     constructor(LogGroup, parent) {
         super(LogGroup, parent);
@@ -24,6 +26,7 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         this.SetContextValue();
     }
     LogGroup = "";
+    Region = "";
     async NodeAdd() {
     }
     NodeRemove() {
@@ -33,7 +36,7 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     NodeRefresh() {
     }
     NodeView() {
-        //CloudWatchLogView.Render(Session.Current.ExtensionUri, this);
+        CloudWatchLogView_1.CloudWatchLogView.Render(Session_1.Session.Current.ExtensionUri, this.Region, this.LogGroup);
     }
     async NodeEdit() {
     }
@@ -51,6 +54,10 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], CloudWatchLogGroupNode.prototype, "LogGroup", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], CloudWatchLogGroupNode.prototype, "Region", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('CloudWatchLogGroupNode', CloudWatchLogGroupNode);
 //# sourceMappingURL=CloudWatchLogGroupNode.js.map

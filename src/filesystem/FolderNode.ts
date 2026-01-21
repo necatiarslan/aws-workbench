@@ -54,7 +54,7 @@ export class FolderNode extends NodeBase {
                 await ServiceHub.Current.S3Service.Add(this);
                 break;
             case "CloudWatch Log Group":
-                await ServiceHub.Current.FileSystemService.Add(this, "CloudWatch Log Group");
+                await ServiceHub.Current.CloudWatchLogService.Add(this);
                 break;
         }
         TreeState.save();

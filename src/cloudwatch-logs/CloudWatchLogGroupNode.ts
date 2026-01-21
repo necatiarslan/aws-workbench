@@ -23,6 +23,9 @@ export class CloudWatchLogGroupNode extends NodeBase {
     @Serialize()
     public LogGroup: string = "";
 
+    @Serialize()
+    public Region: string = "";
+
     public async NodeAdd(): Promise<void> {
 
     }
@@ -36,7 +39,7 @@ export class CloudWatchLogGroupNode extends NodeBase {
     }
 
     public NodeView(): void {
-        //CloudWatchLogView.Render(Session.Current.ExtensionUri, this);
+        CloudWatchLogView.Render(Session.Current.ExtensionUri, this.Region, this.LogGroup);
     }
 
     public async NodeEdit(): Promise<void> {

@@ -14,7 +14,7 @@ export class CloudWatchLogView {
 
     public Region: string;
     public LogGroup:string;
-    public LogStream:string;
+    public LogStream?:string;
 
     public StartTime:number = 0;
     public LogEvents:OutputLogEvent[] = [];
@@ -55,6 +55,7 @@ export class CloudWatchLogView {
 
     public async LoadLogs(){
         ui.logToOutput('CloudWatchLogView.LoadLogs Started');
+        if(!this.LogStream){ return; }
 
         var result = await api.GetLogEvents(this.Region, this.LogGroup, this.LogStream, this.StartTime);
         if(result.isSuccessful)
@@ -126,8 +127,23 @@ export class CloudWatchLogView {
         return '00';
     }
 
-    public static Render(extensionUri: vscode.Uri, Region: string, LogGroup:string, LogStream:string) {
+    public static async Render(extensionUri: vscode.Uri, Region: string, LogGroup:string, LogStream?:string) {
         ui.logToOutput('CloudWatchLogView.Render Started');
+        
+        if(!LogStream || LogStream.length===0)
+        {
+            const latestLogStream = await api.GetLogStreamList(Region, LogGroup, true);
+            if(latestLogStream.isSuccessful && latestLogStream.result.length > 0)
+            {
+                LogStream = latestLogStream.result[0];
+            }
+        }
+
+        if (!LogStream) {
+            ui.showInfoMessage('No log stream available');
+            return;
+        }
+
         if (CloudWatchLogView.Current) {
             CloudWatchLogView.Current.ResetCurrentState();
             CloudWatchLogView.Current.Region = Region;
@@ -194,8 +210,9 @@ export class CloudWatchLogView {
 
         //file URIs
         const vscodeElementsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
-        const mainUri = ui.getUri(webview, extensionUri, ["media", "main.js"]);
-        const styleUri = ui.getUri(webview, extensionUri, ["media", "style.css"]);
+        
+        const mainUri = ui.getUri(webview, extensionUri, ["media", "cloudwatch-logs", "main.js"]);
+        const styleUri = ui.getUri(webview, extensionUri, ["media", "cloudwatch-logs", "style.css"]);
         const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
 
 
@@ -249,8 +266,7 @@ export class CloudWatchLogView {
                 <td style="text-align:left"  width="300px">
                     <vscode-button appearance="primary" id="pause_timer" >${this.IsTimerTicking()?"Pause":"Resume"}</vscode-button>
                     <vscode-button appearance="primary" id="refresh" >Refresh</vscode-button>
-                    <vscode-button appearance="primary" id="export_logs" >Export Logs</vscode-button>
-                    <vscode-button appearance="secondary" id="ask_ai" >Ask AI</vscode-button>
+                    <vscode-button appearance="primary" id="export_logs" >Export</vscode-button>
                 </td>
                 <td style="text-align:left" width="20px">
                     <div style="visibility: ${this.IsTimerTicking() ? "visible" : "hidden"}; display: flex; align-items: center;">
@@ -520,7 +536,7 @@ export class CloudWatchLogView {
 
         try 
         {
-            const fileName = this.LogStream.replace(/[^a-zA-Z0-9]/g, "_");
+            const fileName = this.LogStream?.replace(/[^a-zA-Z0-9]/g, "_");
             const tmpFile = tmp.fileSync({ mode: 0o644, prefix: fileName, postfix: '.log' });
             fs.appendFileSync(tmpFile.name, this.Region + "/" + this.LogGroup + "/" + this.LogStream);
             for(const message of this.LogEvents)

@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
 import { FileSystemService } from "../filesystem/FileSystemService";
 import { S3Service } from "../s3/S3Service";
+import { CloudWatchLogService } from '../cloudwatch-logs/CloudWatchLogService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
     public Context: vscode.ExtensionContext;
     public FileSystemService: FileSystemService = new FileSystemService();
     public S3Service: S3Service = new S3Service();
-
+    public CloudWatchLogService: CloudWatchLogService = new CloudWatchLogService();
+    
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;
         ServiceHub.Current = this;
