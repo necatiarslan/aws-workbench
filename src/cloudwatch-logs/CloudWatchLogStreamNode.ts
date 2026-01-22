@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
-import * as vscode from 'vscode';
 import { TreeState } from '../tree/TreeState';
 import { Session } from '../common/Session';
 import  { CloudWatchLogView } from './CloudWatchLogView';
@@ -23,6 +22,12 @@ export class CloudWatchLogStreamNode extends NodeBase {
     @Serialize()
     public LogStream: string = "";
 
+    @Serialize()
+    public LogGroup: string = "";
+
+    @Serialize()
+    public Region: string = "";
+
     public async NodeAdd(): Promise<void> {
 
     }
@@ -36,7 +41,7 @@ export class CloudWatchLogStreamNode extends NodeBase {
     }
 
     public NodeView(): void {
-        //CloudWatchLogView.Render(Session.Current.ExtensionUri, this);
+        CloudWatchLogView.Render(Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
     }
 
     public async NodeEdit(): Promise<void> {

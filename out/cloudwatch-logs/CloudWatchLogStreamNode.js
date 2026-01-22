@@ -14,6 +14,8 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const TreeState_1 = require("../tree/TreeState");
+const Session_1 = require("../common/Session");
+const CloudWatchLogView_1 = require("./CloudWatchLogView");
 class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     constructor(LogStream, parent) {
         super(LogStream, parent);
@@ -24,6 +26,8 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         this.SetContextValue();
     }
     LogStream = "";
+    LogGroup = "";
+    Region = "";
     async NodeAdd() {
     }
     NodeRemove() {
@@ -33,7 +37,7 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     NodeRefresh() {
     }
     NodeView() {
-        //CloudWatchLogView.Render(Session.Current.ExtensionUri, this);
+        CloudWatchLogView_1.CloudWatchLogView.Render(Session_1.Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
     }
     async NodeEdit() {
     }
@@ -51,6 +55,14 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], CloudWatchLogStreamNode.prototype, "LogStream", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], CloudWatchLogStreamNode.prototype, "LogGroup", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], CloudWatchLogStreamNode.prototype, "Region", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('CloudWatchLogStreamNode', CloudWatchLogStreamNode);
 //# sourceMappingURL=CloudWatchLogStreamNode.js.map
