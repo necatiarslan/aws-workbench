@@ -4,6 +4,12 @@ import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import { ServiceHub } from '../tree/ServiceHub';
 import { TreeState } from '../tree/TreeState';
+import { LambdaCodeGroupNode } from './LambdaCodeGroupNode';
+import { LambdaEnvGroupNode } from './LambdaEnvGroupNode';
+import { LambdaInfoGroupNode } from './LambdaInfoGroupNode';
+import { LambdaLogGroupNode } from './LambdaLogGroupNode';
+import { LambdaTagGroupNode } from './LambdaTagGroupNode';
+import { LambdaTriggerGroupNode } from './LambdaTriggerGroupNode';
 
 export class LambdaFunctionNode extends NodeBase {
 
@@ -20,6 +26,7 @@ export class LambdaFunctionNode extends NodeBase {
         this.EnableNodeAlias = true;
         this.EnableNodeInfo = true;
         this.SetContextValue();
+        this.LoadDefaultChildren();
     }
 
     @Serialize()
@@ -27,6 +34,15 @@ export class LambdaFunctionNode extends NodeBase {
 
     @Serialize()
     public Region: string = "";
+
+    public async LoadDefaultChildren(): Promise<void> {
+        new LambdaCodeGroupNode("Code", this);
+        new LambdaEnvGroupNode("Environment Variables", this);
+        new LambdaInfoGroupNode("Info", this);
+        new LambdaLogGroupNode("Logs", this);
+        new LambdaTagGroupNode("Tags", this);
+        new LambdaTriggerGroupNode("Triggers", this);
+    }
 
     public async NodeAdd(): Promise<void> {
 

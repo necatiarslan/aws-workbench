@@ -19,7 +19,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label);
-        this.id = Date.now().toString();
+        this.id = Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         
         // Skip tree manipulation during deserialization
         if (NodeBase.IsDeserializing) {
@@ -49,6 +49,8 @@ export abstract class NodeBase extends vscode.TreeItem {
     public EnableNodeOpen: boolean = false;
     public EnableNodeInfo: boolean = false;
     public EnableNodeAlias: boolean = false;
+
+    public ShouldBeSaved: boolean = true;
     
 
     @Serialize()
