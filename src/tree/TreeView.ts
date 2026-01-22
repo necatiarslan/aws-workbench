@@ -123,6 +123,10 @@ export class TreeView {
             this.NodeInfo(node);
         });
 
+        vscode.commands.registerCommand('AwsWorkbench.NodeAlias', (node: NodeBase) => {
+            this.NodeAlias(node);
+        });
+
         vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
             this.BugAndNewFeatureRequest();
         });
@@ -354,6 +358,10 @@ export class TreeView {
 
     public NodeInfo(node: NodeBase): void {
         node.NodeInfo();
+    }
+
+    public NodeAlias(node: NodeBase): void {
+        node.NodeAlias();
     }
 
 	public BugAndNewFeatureRequest(): void {

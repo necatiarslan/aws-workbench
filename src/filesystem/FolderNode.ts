@@ -15,6 +15,7 @@ export class FolderNode extends NodeBase {
 
         this.EnableNodeAdd = true;
         this.EnableNodeRemove = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
 

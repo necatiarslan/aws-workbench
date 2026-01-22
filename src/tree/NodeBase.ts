@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import { TreeProvider } from './TreeProvider';
 import { Session } from '../common/Session';
 import { Serialize } from '../common/serialization/Serialize';
+import { Telemetry } from '../common/Telemetry';
+import * as ui from '../common/UI';
+import { TreeState } from './TreeState';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
@@ -45,6 +48,8 @@ export abstract class NodeBase extends vscode.TreeItem {
     public EnableNodeStop: boolean = false;
     public EnableNodeOpen: boolean = false;
     public EnableNodeInfo: boolean = false;
+    public EnableNodeAlias: boolean = false;
+    
 
     @Serialize()
     private _isFavorite: boolean = false;
@@ -63,6 +68,9 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     @Serialize()
     private _workspace: string = "";
+
+    @Serialize()
+    private _alias?: string;
 
     public IsVisible: boolean = true;
 
@@ -143,6 +151,17 @@ export abstract class NodeBase extends vscode.TreeItem {
         }
     }
 
+    public get Alias(): string | undefined {
+        return this._alias;
+    }
+
+    public set Alias(value: string | undefined) {
+        this._alias = value;
+        if (value) {
+            this.label = value;
+        }
+    }
+
     public SetContextValue(): void {
         let context = "node";
         context += "#AddToNode#Remove#"; 
@@ -167,6 +186,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (this.EnableNodeStop) { context += "#NodeStop#"; }
         if (this.EnableNodeOpen) { context += "#NodeOpen#"; }
         if (this.EnableNodeInfo) { context += "#NodeInfo#"; }
+        if (this.EnableNodeAlias) { context += "#NodeAlias#"; }
 
         this.contextValue = context;
     }
@@ -266,6 +286,21 @@ export abstract class NodeBase extends vscode.TreeItem {
         for (const child of this.Children) {
             child.finalizeDeserialization();
         }
+    }
+
+    public async NodeAlias(): Promise<void> {
+        Telemetry.Current?.send("NodeBase.NodeAlias");
+        ui.logToOutput('NodeBase.NodeAlias Started');
+
+        let alias = await vscode.window.showInputBox({ placeHolder: 'Alias' });
+        if(alias===undefined){ return; }
+
+        alias = alias.trim();
+        this.Alias = alias;
+
+        TreeProvider.Current.Refresh(this);
+        TreeState.save();
+
     }
 
     public abstract NodeAdd(): void;

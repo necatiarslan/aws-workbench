@@ -26,6 +26,7 @@ class BashFileNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
         this.EnableNodeRun = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
     NodeAdd() {

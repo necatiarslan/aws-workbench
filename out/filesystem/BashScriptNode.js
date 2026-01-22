@@ -24,6 +24,7 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         this.EnableNodeView = true;
         this.EnableNodeEdit = true;
         this.EnableNodeRun = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
     Title = "";

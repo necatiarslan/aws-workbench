@@ -23,6 +23,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         this.FolderName = FolderName;
         this.EnableNodeAdd = true;
         this.EnableNodeRemove = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
     FolderName = "";

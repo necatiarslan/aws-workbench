@@ -23,6 +23,7 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         this.Icon = "cloudwatch-logstream";
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
     LogStream = "";

@@ -139,6 +139,11 @@
         "icon": "$(info)"
       },
       {
+        "command": "AwsWorkbench.NodeAlias",
+        "title": "Alias",
+        "icon": "$(case-sensitive)"
+      },
+      {
         "command": "AwsWorkbench.SelectAwsProfile",
         "title": "Select AWS Profile",
         "icon": "$(account)"
@@ -290,6 +295,11 @@
         {
           "command": "AwsWorkbench.ShowInAnyProfile",
           "when": "view == AwsWorkbenchView && viewItem =~ /#ShowInAnyProfile#/",
+          "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.NodeAlias",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeAlias#/",
           "group": "Filter"
         },
         {

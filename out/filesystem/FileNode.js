@@ -24,6 +24,7 @@ class FileNode extends NodeBase_1.NodeBase {
         this.FileName = label;
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
     NodeAdd() {

@@ -23,6 +23,7 @@ export class BashFileNode extends NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
         this.EnableNodeRun = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
 

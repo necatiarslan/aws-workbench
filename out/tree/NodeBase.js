@@ -14,6 +14,9 @@ const vscode = require("vscode");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
 const Serialize_1 = require("../common/serialization/Serialize");
+const Telemetry_1 = require("../common/Telemetry");
+const ui = require("../common/UI");
+const TreeState_1 = require("./TreeState");
 class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
     /**
@@ -50,6 +53,7 @@ class NodeBase extends vscode.TreeItem {
     EnableNodeStop = false;
     EnableNodeOpen = false;
     EnableNodeInfo = false;
+    EnableNodeAlias = false;
     _isFavorite = false;
     _isHidden = false;
     Parent = undefined;
@@ -57,6 +61,7 @@ class NodeBase extends vscode.TreeItem {
     _icon = "";
     _awsProfile = "";
     _workspace = "";
+    _alias;
     IsVisible = true;
     IsWorking = false;
     async StartWorking() {
@@ -127,6 +132,15 @@ class NodeBase extends vscode.TreeItem {
             this.Parent.SetContextValue();
         }
     }
+    get Alias() {
+        return this._alias;
+    }
+    set Alias(value) {
+        this._alias = value;
+        if (value) {
+            this.label = value;
+        }
+    }
     SetContextValue() {
         let context = "node";
         context += "#AddToNode#Remove#";
@@ -180,6 +194,9 @@ class NodeBase extends vscode.TreeItem {
         }
         if (this.EnableNodeInfo) {
             context += "#NodeInfo#";
+        }
+        if (this.EnableNodeAlias) {
+            context += "#NodeAlias#";
         }
         this.contextValue = context;
     }
@@ -268,6 +285,18 @@ class NodeBase extends vscode.TreeItem {
             child.finalizeDeserialization();
         }
     }
+    async NodeAlias() {
+        Telemetry_1.Telemetry.Current?.send("NodeBase.NodeAlias");
+        ui.logToOutput('NodeBase.NodeAlias Started');
+        let alias = await vscode.window.showInputBox({ placeHolder: 'Alias' });
+        if (alias === undefined) {
+            return;
+        }
+        alias = alias.trim();
+        this.Alias = alias;
+        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        TreeState_1.TreeState.save();
+    }
 }
 exports.NodeBase = NodeBase;
 __decorate([
@@ -290,4 +319,8 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], NodeBase.prototype, "_workspace", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], NodeBase.prototype, "_alias", void 0);
 //# sourceMappingURL=NodeBase.js.map

@@ -97,6 +97,9 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.NodeInfo', (node) => {
             this.NodeInfo(node);
         });
+        vscode.commands.registerCommand('AwsWorkbench.NodeAlias', (node) => {
+            this.NodeAlias(node);
+        });
         vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
             this.BugAndNewFeatureRequest();
         });
@@ -297,6 +300,9 @@ class TreeView {
     }
     NodeInfo(node) {
         node.NodeInfo();
+    }
+    NodeAlias(node) {
+        node.NodeAlias();
     }
     BugAndNewFeatureRequest() {
         vscode.env.openExternal(vscode.Uri.parse('https://github.com/necatiarslan/aws-workbench/issues/new'));

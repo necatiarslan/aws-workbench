@@ -21,6 +21,7 @@ export class FileNode extends NodeBase {
 
         this.EnableNodeRemove = true;
         this.EnableNodeOpen = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
 

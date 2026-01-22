@@ -16,6 +16,7 @@ export class CloudWatchLogStreamNode extends NodeBase {
 
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
 

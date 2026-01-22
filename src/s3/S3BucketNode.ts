@@ -21,6 +21,7 @@ export class S3BucketNode extends NodeBase {
 
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
+        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
 
