@@ -31,6 +31,7 @@ export class FolderNode extends NodeBase {
         result.push("Bash File");
         result.push("S3 Bucket");
         result.push("CloudWatch Log Group");
+        result.push("Lambda Function");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
         if(!nodeType){ return; }
@@ -56,6 +57,9 @@ export class FolderNode extends NodeBase {
                 break;
             case "CloudWatch Log Group":
                 await ServiceHub.Current.CloudWatchLogService.Add(this);
+                break;
+            case "Lambda Function":
+                await ServiceHub.Current.LambdaService.Add(this);
                 break;
         }
         TreeState.save();

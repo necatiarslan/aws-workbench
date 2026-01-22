@@ -394,6 +394,13 @@
               "fontPath": "./media/fonts/aws-toolkit-icons.woff",
               "fontCharacter": "\\eb85"
           }
+      },
+      "lambda-function": {
+          "description": "AWS Contributed Icon",
+          "default": {
+              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+              "fontCharacter": "\\f1d1"
+          }
       }
     }
   },
