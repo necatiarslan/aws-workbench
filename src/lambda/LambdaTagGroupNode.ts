@@ -2,8 +2,11 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
-import { ServiceHub } from '../tree/ServiceHub';
-import { TreeState } from '../tree/TreeState';
+import * as api from './API';
+import * as ui from '../common/UI';
+import { TreeProvider } from '../tree/TreeProvider';
+import { LambdaFunctionNode } from './LambdaFunctionNode';
+import { LambdaTagNode } from './LambdaTagNode';
 
 export class LambdaTagGroupNode extends NodeBase {
 
@@ -14,6 +17,8 @@ export class LambdaTagGroupNode extends NodeBase {
         this.Label = Label;
 
         this.ShouldBeSaved = false;
+        this.EnableNodeRefresh = true;
+        this.EnableNodeAdd = true;
         this.SetContextValue();
     }
 
@@ -21,12 +26,118 @@ export class LambdaTagGroupNode extends NodeBase {
     public Label: string = "";
 
     public async NodeAdd(): Promise<void> {
+        ui.logToOutput('LambdaTagGroupNode.NodeAdd Started');
+
+        // Get the parent Lambda function node
+        const lambdaNode = this.Parent as LambdaFunctionNode;
+        if (!lambdaNode || !lambdaNode.FunctionName) {
+            ui.logToOutput('LambdaTagGroupNode.NodeAdd - Parent Lambda node not found');
+            return;
+        }
+
+        // Prompt for tag key
+        const tagKey = await vscode.window.showInputBox({
+            placeHolder: 'Enter Tag Key (e.g., Environment)'
+        });
+        if (!tagKey) { return; }
+
+        // Prompt for tag value (allow empty string, but not undefined/cancel)
+        const tagValue = await vscode.window.showInputBox({
+            placeHolder: 'Enter Tag Value (e.g., Production)'
+        });
+        if (tagValue === undefined) { return; }
+
+        if (this.IsWorking) { return; }
+        this.StartWorking();
+
+        // First get the Lambda ARN
+        const lambdaResult = await api.GetLambda(lambdaNode.Region, lambdaNode.FunctionName);
+        if (!lambdaResult.isSuccessful || !lambdaResult.result.Configuration?.FunctionArn) {
+            ui.logToOutput('api.GetLambda Error !!!', lambdaResult.error);
+            ui.showErrorMessage('Get Lambda Error !!!', lambdaResult.error);
+            this.StopWorking();
+            return;
+        }
+
+        const lambdaArn = lambdaResult.result.Configuration.FunctionArn;
+
+        // Add the tag
+        const addResult = await api.AddLambdaTag(lambdaNode.Region, lambdaArn, tagKey, tagValue);
+        if (!addResult.isSuccessful) {
+            ui.logToOutput('api.AddLambdaTag Error !!!', addResult.error);
+            ui.showErrorMessage('Add Tag Error !!!', addResult.error);
+            this.StopWorking();
+            return;
+        }
+
+        ui.showInfoMessage('Tag Added Successfully');
+
+        // Reset working state before refresh
+        this.StopWorking();
+        await this.NodeRefresh();
     }
 
     public NodeRemove(): void {
     }
 
-    public NodeRefresh(): void {
+    public async NodeRefresh(): Promise<void> {
+        ui.logToOutput('LambdaTagGroupNode.NodeRefresh Started');
+
+        // Get the parent Lambda function node
+        const lambdaNode = this.Parent as LambdaFunctionNode;
+        if (!lambdaNode || !lambdaNode.FunctionName) {
+            ui.logToOutput('LambdaTagGroupNode.NodeRefresh - Parent Lambda node not found');
+            return;
+        }
+
+        if (this.IsWorking) {
+            return;
+        }
+
+        this.StartWorking();
+
+        // First get the Lambda ARN
+        const lambdaResult = await api.GetLambda(lambdaNode.Region, lambdaNode.FunctionName);
+        if (!lambdaResult.isSuccessful || !lambdaResult.result.Configuration?.FunctionArn) {
+            ui.logToOutput('api.GetLambda Error !!!', lambdaResult.error);
+            ui.showErrorMessage('Get Lambda Error !!!', lambdaResult.error);
+            this.StopWorking();
+            return;
+        }
+
+        const lambdaArn = lambdaResult.result.Configuration.FunctionArn;
+
+        // Get tags
+        const tagsResult = await api.GetLambdaTags(lambdaNode.Region, lambdaArn);
+        if (!tagsResult.isSuccessful) {
+            ui.logToOutput('api.GetLambdaTags Error !!!', tagsResult.error);
+            ui.showErrorMessage('Get Lambda Tags Error !!!', tagsResult.error);
+            this.StopWorking();
+            return;
+        }
+
+        // Clear existing children
+        this.Children = [];
+
+        // Add tags as children
+        if (tagsResult.result) {
+            for (const key in tagsResult.result) {
+                const value = tagsResult.result[key];
+                const tagNode = new LambdaTagNode(`${key} = ${value}`, this);
+                tagNode.Key = key;
+                tagNode.Value = value || '';
+            }
+        }
+
+        // Optionally control collapsible state
+        // if (this.Children.length > 0) {
+        //     this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+        // } else {
+        //     this.collapsibleState = vscode.TreeItemCollapsibleState.None;
+        // }
+
+        this.StopWorking();
+        TreeProvider.Current.Refresh(this);
     }
 
     public NodeView(): void {
