@@ -11,14 +11,10 @@ export class LambdaTriggerGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "run-all";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.SetContextValue();
     }
-
-    @Serialize()
-    public Label: string = "";
 
     public async NodeAdd(): Promise<void> {
     }

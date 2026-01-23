@@ -13,7 +13,6 @@ export class LambdaEnvNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "circle-filled";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
@@ -22,13 +21,8 @@ export class LambdaEnvNode extends NodeBase {
         this.SetContextValue();
     }
 
-    @Serialize()
-    public Label: string = "";
-
-    @Serialize()
     public Key: string = "";
 
-    @Serialize()
     public Value: string = "";
 
     public async NodeAdd(): Promise<void> {
@@ -87,7 +81,7 @@ export class LambdaEnvNode extends NodeBase {
 
         // Update local state and UI
         this.Value = newValue;
-        this.Label = `${this.Key} = ${newValue}`;
+        this.label = `${this.Key} = ${newValue}`;
         ui.showInfoMessage('Environment Variable Updated Successfully');
 
         // Refresh parent group to reload variables

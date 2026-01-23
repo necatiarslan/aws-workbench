@@ -14,16 +14,12 @@ export class LambdaEnvGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "symbol-property";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
         this.EnableNodeAdd = true;
         this.SetContextValue();
     }
-
-    @Serialize()
-    public Label: string = "";
 
     public async NodeAdd(): Promise<void> {
         //TODO: Implement adding new environment variable logic here

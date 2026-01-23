@@ -13,7 +13,7 @@ export class LambdaCodeFileNode extends NodeBase {
         this.Icon = "file-code";
         this.Label = Label;
 
-        this.ShouldBeSaved = false;
+        //this.ShouldBeSaved = false;
         this.EnableNodeAdd = true;
         this.EnableNodeRemove = true;
         this.EnableNodeEdit = true;

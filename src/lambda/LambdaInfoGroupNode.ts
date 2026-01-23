@@ -14,15 +14,11 @@ export class LambdaInfoGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "info";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
         this.SetContextValue();
     }
-
-    @Serialize()
-    public Label: string = "";
 
     public async NodeAdd(): Promise<void> {
     }

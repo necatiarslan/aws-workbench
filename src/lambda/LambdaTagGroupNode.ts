@@ -14,16 +14,12 @@ export class LambdaTagGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "tag";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
         this.EnableNodeAdd = true;
         this.SetContextValue();
     }
-
-    @Serialize()
-    public Label: string = "";
 
     public async NodeAdd(): Promise<void> {
         ui.logToOutput('LambdaTagGroupNode.NodeAdd Started');

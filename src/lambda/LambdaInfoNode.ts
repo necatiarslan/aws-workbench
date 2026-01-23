@@ -11,19 +11,13 @@ export class LambdaInfoNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "info";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.SetContextValue();
     }
 
-    @Serialize()
-    public Label: string = "";
-
-    @Serialize()
     public Key: string = "";
 
-    @Serialize()
     public Value: string = "";
 
     public async NodeAdd(): Promise<void> {

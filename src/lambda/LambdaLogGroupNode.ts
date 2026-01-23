@@ -11,14 +11,10 @@ export class LambdaLogGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "list-unordered";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.SetContextValue();
     }
-
-    @Serialize()
-    public Label: string = "";
 
     public async NodeAdd(): Promise<void> {
     }

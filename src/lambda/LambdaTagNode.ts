@@ -12,7 +12,6 @@ export class LambdaTagNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "circle-filled";
-        this.Label = Label;
 
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
@@ -21,13 +20,8 @@ export class LambdaTagNode extends NodeBase {
         this.SetContextValue();
     }
 
-    @Serialize()
-    public Label: string = "";
-
-    @Serialize()
     public Key: string = "";
 
-    @Serialize()
     public Value: string = "";
 
     public async NodeAdd(): Promise<void> {
