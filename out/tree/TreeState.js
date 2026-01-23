@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreeState = void 0;
+const vscode = require("vscode");
 const NodeBase_1 = require("./NodeBase");
 const TreeSerializer_1 = require("../common/serialization/TreeSerializer");
 const Session_1 = require("../common/Session");
@@ -80,6 +81,12 @@ class TreeState {
             // Finalize each root node (adds to RootNodes, rebuilds tree relationships)
             for (const node of nodes) {
                 node.finalizeDeserialization();
+            }
+            // Optionally expand root nodes with children
+            for (const rootNode of NodeBase_1.NodeBase.RootNodes) {
+                if (rootNode.HasChildren) {
+                    rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+                }
             }
             ui.logToOutput(`TreeState: Loaded ${nodes.length} root nodes from saved state`);
         }

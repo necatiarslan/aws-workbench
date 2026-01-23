@@ -2,6 +2,9 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
+import * as api from './API';
+import * as ui from '../common/UI';
+import { TextDecoder } from 'util';
 import { ServiceHub } from '../tree/ServiceHub';
 import { TreeState } from '../tree/TreeState';
 import { LambdaCodeGroupNode } from './LambdaCodeGroupNode';
@@ -20,11 +23,8 @@ export class LambdaFunctionNode extends NodeBase {
         this.FunctionName = FunctionName;
 
         this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
         this.EnableNodeRun = true;
-        this.EnableNodeStop = true;
         this.EnableNodeAlias = true;
-        this.EnableNodeInfo = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
         this.LoadDefaultChildren();
@@ -65,10 +65,74 @@ export class LambdaFunctionNode extends NodeBase {
          
     }
 
-    public NodeRun(): void {
+    public async NodeRun(): Promise<void> {
+       ui.logToOutput('LambdaFunctionNode.NodeRun Started');
+
+        if (!this.FunctionName || !this.Region) {
+            ui.showWarningMessage('Lambda function or region is not set.');
+            return;
+        }
+
+        if (this.IsWorking) {
+            return;
+        }
+
+        // Prompt for payload JSON (optional)
+        const payloadInput = await vscode.window.showInputBox({
+            value: '',
+            placeHolder: 'Enter Payload JSON or leave empty'
+        });
+
+        if (payloadInput === undefined) { return; }
+
+        let payloadObj: any = {};
+        if (payloadInput.trim().length > 0) {
+            if (!ui.isJsonString(payloadInput)) {
+                ui.showInfoMessage('Payload should be a valid JSON');
+                return;
+            }
+
+            payloadObj = JSON.parse(payloadInput);
+        }
+
         this.StartWorking();
-        //TODO: Implement Lambda invocation logic here
-        this.StopWorking();
+
+        try {
+            const result = await api.TriggerLambda(this.Region, this.FunctionName, payloadObj);
+
+            if (!result.isSuccessful) {
+                ui.logToOutput('api.TriggerLambda Error !!!', result.error);
+                ui.showErrorMessage('Trigger Lambda Error !!!', result.error);
+                return;
+            }
+
+            ui.logToOutput('api.TriggerLambda Success !!!');
+
+            if (result.result?.$metadata?.requestId) {
+                ui.logToOutput('RequestId: ' + result.result.$metadata.requestId);
+            }
+
+            const payloadBuffer = result.result?.Payload;
+            if (payloadBuffer) {
+                const payloadString = new TextDecoder('utf-8').decode(payloadBuffer);
+                let prettyPayload = payloadString;
+
+                try {
+                    prettyPayload = JSON.stringify(JSON.parse(payloadString), null, 2);
+                } catch {
+                    // If not valid JSON, keep raw string
+                }
+
+                ui.logToOutput('api.TriggerLambda PayLoad \n' + prettyPayload);
+            }
+
+            ui.showInfoMessage('Lambda Triggered Successfully');
+        } catch (error: any) {
+            ui.logToOutput('LambdaFunctionNode.NodeRun Error !!!', error);
+            ui.showErrorMessage('Trigger Lambda Error !!!', error);
+        } finally {
+            this.StopWorking();
+        }
     }
 
     public NodeStop(): void {

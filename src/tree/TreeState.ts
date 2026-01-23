@@ -92,6 +92,13 @@ export class TreeState {
                 node.finalizeDeserialization();
             }
             
+            // Optionally expand root nodes with children
+            for (const rootNode of NodeBase.RootNodes) {
+                if(rootNode.HasChildren){
+                    rootNode.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+                }
+            }
+
             ui.logToOutput(`TreeState: Loaded ${nodes.length} root nodes from saved state`);
         } catch (error) {
             ui.logToOutput('TreeState: Failed to load tree:', error as Error);
