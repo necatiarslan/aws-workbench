@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaEnvGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
+const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const LambdaEnvNode_1 = require("./LambdaEnvNode");
@@ -15,6 +16,7 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         this.EnableNodeRefresh = true;
         this.EnableNodeAdd = true;
         this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
     async NodeAdd() {
         //TODO: Implement adding new environment variable logic here

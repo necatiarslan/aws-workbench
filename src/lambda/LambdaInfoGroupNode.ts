@@ -18,6 +18,7 @@ export class LambdaInfoGroupNode extends NodeBase {
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
         this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async NodeAdd(): Promise<void> {

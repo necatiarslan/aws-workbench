@@ -14,6 +14,7 @@ export class LambdaCodeGroupNode extends NodeBase {
 
         this.ShouldBeSaved = false;
         this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async NodeAdd(): Promise<void> {
