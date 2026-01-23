@@ -13,7 +13,6 @@ exports.LambdaEnvGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
-const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const LambdaEnvNode_1 = require("./LambdaEnvNode");
@@ -64,12 +63,11 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
                 envVarNode.Value = envVars[key] || "";
             }
         }
-        if (this.Children.length > 0) {
-            this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-        }
-        else {
-            this.collapsibleState = vscode.TreeItemCollapsibleState.None;
-        }
+        // if (this.Children.length > 0) {
+        //     this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+        // } else {
+        //     this.collapsibleState = vscode.TreeItemCollapsibleState.None;
+        // }
         this.StopWorking();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }

@@ -52,7 +52,7 @@ export class TreeSerializer {
         }
 
         // Recursively serialize children
-        const children = node.Children.map(child => this.serializeNode(child));
+        const children = node.Children.filter(child => child.ShouldBeSaved).map(child => this.serializeNode(child));
 
         return {
             _type: typeName,
@@ -76,20 +76,10 @@ export class TreeSerializer {
         }
 
         try {
-            // Set deserializing flag to prevent auto-adding to tree
-            NodeBase.IsDeserializing = true;
             
             // Create node with minimal constructor args
             // Most nodes take (label, parent?) as constructor args
             const node = new Constructor(data._label, parent);
-            
-            NodeBase.IsDeserializing = false;
-            
-            // Manually add to parent's Children (since constructor skipped this)
-            if (parent) {
-                parent.Children.push(node);
-                node.Parent = parent;
-            }
             
             // Override the auto-generated ID with the saved one
             if (data._id) {
@@ -110,7 +100,6 @@ export class TreeSerializer {
 
             return node;
         } catch (error) {
-            NodeBase.IsDeserializing = false;
             ui.logToOutput(`TreeSerializer: Failed to deserialize node "${data._type}":`, error as Error);
             return undefined;
         }

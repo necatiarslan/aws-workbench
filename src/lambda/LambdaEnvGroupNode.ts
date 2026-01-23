@@ -69,11 +69,11 @@ export class LambdaEnvGroupNode extends NodeBase {
             }
         }
 
-        if (this.Children.length > 0) {
-            this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-        } else {
-            this.collapsibleState = vscode.TreeItemCollapsibleState.None;
-        }
+        // if (this.Children.length > 0) {
+        //     this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+        // } else {
+        //     this.collapsibleState = vscode.TreeItemCollapsibleState.None;
+        // }
 
         this.StopWorking();
         TreeProvider.Current.Refresh(this);

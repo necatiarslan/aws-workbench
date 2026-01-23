@@ -10,32 +10,20 @@ export abstract class NodeBase extends vscode.TreeItem {
    
     public static RootNodes: NodeBase[] = [];
 
-    /**
-     * Flag to prevent auto-adding to parent/RootNodes during deserialization.
-     * Set to true before calling constructor, then set to false after.
-     */
-    public static IsDeserializing: boolean = false;
-
     constructor(label: string, parent?: NodeBase) 
     {
-        super(label);
+        super(label);        
         this.id = Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-        
-        // Skip tree manipulation during deserialization
-        if (NodeBase.IsDeserializing) {
-            this.Parent = parent || undefined;
-            return;
-        }
 
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
         if (this.Parent) {
             this.Parent.Children.push(this);
-            this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+            this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         } else {
             NodeBase.RootNodes.push(this);
         }
-        // this.SetContextValue();
+
         TreeProvider.Current.Refresh(this);
     }
 
@@ -273,7 +261,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         
         // Set collapsible state if has children
         if (this.Children.length > 0) {
-            this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+            this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         }
 
         // Restore icon path from saved icon name

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreeSerializer = void 0;
-const NodeBase_1 = require("../../tree/NodeBase");
 const NodeRegistry_1 = require("./NodeRegistry");
 const Serialize_1 = require("./Serialize");
 const ui = require("../UI");
@@ -30,7 +29,7 @@ class TreeSerializer {
             }
         }
         // Recursively serialize children
-        const children = node.Children.map(child => this.serializeNode(child));
+        const children = node.Children.filter(child => child.ShouldBeSaved).map(child => this.serializeNode(child));
         return {
             _type: typeName,
             _id: node.id || '',
@@ -50,17 +49,9 @@ class TreeSerializer {
             return undefined;
         }
         try {
-            // Set deserializing flag to prevent auto-adding to tree
-            NodeBase_1.NodeBase.IsDeserializing = true;
             // Create node with minimal constructor args
             // Most nodes take (label, parent?) as constructor args
             const node = new Constructor(data._label, parent);
-            NodeBase_1.NodeBase.IsDeserializing = false;
-            // Manually add to parent's Children (since constructor skipped this)
-            if (parent) {
-                parent.Children.push(node);
-                node.Parent = parent;
-            }
             // Override the auto-generated ID with the saved one
             if (data._id) {
                 node.id = data._id;
@@ -78,7 +69,6 @@ class TreeSerializer {
             return node;
         }
         catch (error) {
-            NodeBase_1.NodeBase.IsDeserializing = false;
             ui.logToOutput(`TreeSerializer: Failed to deserialize node "${data._type}":`, error);
             return undefined;
         }
