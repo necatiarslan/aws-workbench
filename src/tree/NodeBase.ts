@@ -78,13 +78,13 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public IsWorking: boolean = false;
 
-    public async StartWorking(): Promise<void> {
+    public StartWorking(): void {
         this.IsWorking = true;  
         this.iconPath = new vscode.ThemeIcon("loading~spin");
         TreeProvider.Current.Refresh(this);
     }
 
-    public async StopWorking(): Promise<void> {
+    public StopWorking(): void {
         this.IsWorking = false;
         this.iconPath = new vscode.ThemeIcon(this._icon);
         TreeProvider.Current.Refresh(this);

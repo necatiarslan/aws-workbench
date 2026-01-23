@@ -38,7 +38,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     Region = "";
     async LoadDefaultChildren() {
         new LambdaCodeGroupNode_1.LambdaCodeGroupNode("Code", this);
-        new LambdaEnvGroupNode_1.LambdaEnvGroupNode("Environment Variables", this);
+        new LambdaEnvGroupNode_1.LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode_1.LambdaInfoGroupNode("Info", this);
         new LambdaLogGroupNode_1.LambdaLogGroupNode("Logs", this);
         new LambdaTagGroupNode_1.LambdaTagGroupNode("Tags", this);

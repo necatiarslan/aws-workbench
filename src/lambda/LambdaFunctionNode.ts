@@ -37,7 +37,7 @@ export class LambdaFunctionNode extends NodeBase {
 
     public async LoadDefaultChildren(): Promise<void> {
         new LambdaCodeGroupNode("Code", this);
-        new LambdaEnvGroupNode("Environment Variables", this);
+        new LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode("Info", this);
         new LambdaLogGroupNode("Logs", this);
         new LambdaTagGroupNode("Tags", this);

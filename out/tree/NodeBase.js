@@ -65,12 +65,12 @@ class NodeBase extends vscode.TreeItem {
     _alias;
     IsVisible = true;
     IsWorking = false;
-    async StartWorking() {
+    StartWorking() {
         this.IsWorking = true;
         this.iconPath = new vscode.ThemeIcon("loading~spin");
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    async StopWorking() {
+    StopWorking() {
         this.IsWorking = false;
         this.iconPath = new vscode.ThemeIcon(this._icon);
         TreeProvider_1.TreeProvider.Current.Refresh(this);
