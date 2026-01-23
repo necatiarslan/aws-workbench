@@ -27,6 +27,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
         this.EnableNodeAlias = true;
+        this.IsAwsResourceNode = true;
         this.SetContextValue();
     }
     BucketName = "";

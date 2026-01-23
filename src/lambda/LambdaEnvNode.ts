@@ -49,7 +49,7 @@ export class LambdaEnvNode extends NodeBase {
         ui.logToOutput('LambdaEnvNode.NodeEdit Started');
 
         // Resolve the parent Lambda function node to get region/name
-        const lambdaNode = this.Parent?.Parent as LambdaFunctionNode;
+        const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         if (!lambdaNode || !lambdaNode.FunctionName) {
             ui.logToOutput('LambdaEnvNode.NodeEdit - Parent Lambda node not found');
             return;

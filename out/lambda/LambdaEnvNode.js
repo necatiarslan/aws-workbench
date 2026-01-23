@@ -44,7 +44,7 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
     async NodeEdit() {
         ui.logToOutput('LambdaEnvNode.NodeEdit Started');
         // Resolve the parent Lambda function node to get region/name
-        const lambdaNode = this.Parent?.Parent;
+        const lambdaNode = this.GetAwsResourceNode();
         if (!lambdaNode || !lambdaNode.FunctionName) {
             ui.logToOutput('LambdaEnvNode.NodeEdit - Parent Lambda node not found');
             return;

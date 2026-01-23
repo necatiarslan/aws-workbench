@@ -54,6 +54,18 @@ class NodeBase extends vscode.TreeItem {
     _alias;
     IsVisible = true;
     IsWorking = false;
+    IsAwsResourceNode = false;
+    GetAwsResourceNode() {
+        if (this.IsAwsResourceNode) {
+            return this;
+        }
+        else if (this.Parent) {
+            return this.Parent.GetAwsResourceNode();
+        }
+        else {
+            return undefined;
+        }
+    }
     StartWorking() {
         this.IsWorking = true;
         this.iconPath = new vscode.ThemeIcon("loading~spin");

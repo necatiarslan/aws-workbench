@@ -22,6 +22,7 @@ export class CloudWatchLogGroupNode extends NodeBase {
         this.EnableNodeView = true;
         this.EnableNodeAdd = true;
         this.EnableNodeAlias = true;
+        this.IsAwsResourceNode = true;
         this.SetContextValue();
     }
 

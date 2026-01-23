@@ -24,6 +24,7 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeView = true;
         this.EnableNodeAlias = true;
+        this.IsAwsResourceNode = true;
         this.SetContextValue();
     }
     LogStream = "";

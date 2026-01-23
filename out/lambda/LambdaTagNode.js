@@ -42,7 +42,7 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
             return;
         }
         // Resolve the parent Lambda function node
-        const lambdaNode = this.Parent?.Parent;
+        const lambdaNode = this.GetAwsResourceNode();
         if (!lambdaNode || !lambdaNode.FunctionName) {
             ui.logToOutput('LambdaTagNode.NodeRemove - Parent Lambda node not found');
             return;
@@ -92,7 +92,7 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
             return;
         }
         // Resolve the parent Lambda function node
-        const lambdaNode = this.Parent?.Parent;
+        const lambdaNode = this.GetAwsResourceNode();
         if (!lambdaNode || !lambdaNode.FunctionName) {
             ui.logToOutput('LambdaTagNode.NodeEdit - Parent Lambda node not found');
             return;

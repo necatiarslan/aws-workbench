@@ -31,6 +31,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         this.EnableNodeStop = true;
         this.EnableNodeAlias = true;
         this.EnableNodeInfo = true;
+        this.IsAwsResourceNode = true;
         this.SetContextValue();
         this.LoadDefaultChildren();
     }
