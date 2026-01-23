@@ -13,6 +13,9 @@ import { LambdaInfoGroupNode } from './LambdaInfoGroupNode';
 import { LambdaLogGroupNode } from './LambdaLogGroupNode';
 import { LambdaTagGroupNode } from './LambdaTagGroupNode';
 import { LambdaTriggerGroupNode } from './LambdaTriggerGroupNode';
+import { LambdaCodeFileNode } from './LambdaCodeFileNode';
+import { LambdaCodeUploadNode } from './LambdaCodeUploadNode';
+import { LambdaCodeDownloadNode } from './LambdaCodeDownloadNode';
 
 export class LambdaFunctionNode extends NodeBase {
 
@@ -37,7 +40,11 @@ export class LambdaFunctionNode extends NodeBase {
     public Region: string = "";
 
     public async LoadDefaultChildren(): Promise<void> {
-        new LambdaCodeGroupNode("Code", this);
+        const code = new LambdaCodeGroupNode("Code", this);
+        new LambdaCodeFileNode("Select File", code);
+        new LambdaCodeDownloadNode("Download", code);
+        new LambdaCodeUploadNode("Upload", code);
+
         new LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode("Info", this);
         new LambdaLogGroupNode("Logs", this);
