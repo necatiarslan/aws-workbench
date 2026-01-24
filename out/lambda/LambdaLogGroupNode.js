@@ -4,6 +4,8 @@ exports.LambdaLogGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
+const ui = require("../common/UI");
+const CloudWatchLogGroupNode_1 = require("../cloudwatch-logs/CloudWatchLogGroupNode");
 class LambdaLogGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -15,8 +17,28 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
     }
     async NodeAdd() { }
     NodeRemove() { }
-    NodeRefresh() {
-        //
+    async NodeRefresh() {
+        ui.logToOutput('LambdaLogGroupNode.NodeRefresh Started');
+        // Get the parent Lambda function node
+        const lambdaNode = this.Parent;
+        if (!lambdaNode || !lambdaNode.FunctionName) {
+            ui.logToOutput('LambdaLogGroupNode.NodeRefresh - Parent Lambda node not found');
+            return;
+        }
+        //  "LoggingConfig": {
+        // "LogFormat": "Text",
+        // "LogGroup": "/aws/lambda/my-lambda"
+        const LoggingConfig = (await lambdaNode.Configuration)?.["LoggingConfig"];
+        if (!LoggingConfig) {
+            ui.logToOutput('LambdaLogGroupNode.NodeRefresh - No logging configuration found');
+            return;
+        }
+        let logGroupName = LoggingConfig["LogGroup"];
+        if (!logGroupName) {
+            ui.logToOutput('LambdaLogGroupNode.NodeRefresh - No log group name found in logging configuration');
+            return;
+        }
+        new CloudWatchLogGroupNode_1.CloudWatchLogGroupNode(logGroupName, this).Region = lambdaNode.Region;
     }
     NodeView() { }
     async NodeEdit() { }
