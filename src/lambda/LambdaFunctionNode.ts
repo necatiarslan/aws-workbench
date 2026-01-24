@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { TextDecoder } from 'util';
-import { ServiceHub } from '../tree/ServiceHub';
 import { TreeState } from '../tree/TreeState';
 import { LambdaCodeGroupNode } from './LambdaCodeGroupNode';
 import { LambdaEnvGroupNode } from './LambdaEnvGroupNode';
@@ -16,8 +15,6 @@ import { LambdaTriggerGroupNode } from './LambdaTriggerGroupNode';
 import { LambdaCodeFileNode } from './LambdaCodeFileNode';
 import { LambdaCodeUploadNode } from './LambdaCodeUploadNode';
 import { LambdaCodeDownloadNode } from './LambdaCodeDownloadNode';
-import { Lambda } from '@aws-sdk/client-lambda';
-import { LambdaCodeCompareNode } from './LambdaCodeCompareNode';
 
 export class LambdaFunctionNode extends NodeBase {
 
@@ -49,7 +46,6 @@ export class LambdaFunctionNode extends NodeBase {
         new LambdaCodeFileNode("Select File", code);
         new LambdaCodeDownloadNode("Download", code);
         new LambdaCodeUploadNode("Upload", code);
-        new LambdaCodeCompareNode("Compare", code);
 
         new LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode("Info", this);
