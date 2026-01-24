@@ -35,7 +35,7 @@ class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
         const lambdaNode = this.GetAwsResourceNode();
         if (lambdaNode && this.FilePath) {
             // Store the trigger file path and invoke the parent node's run
-            await lambdaNode.NodeRun();
+            await lambdaNode.TriggerLambda(this.FilePath);
         }
     }
 }

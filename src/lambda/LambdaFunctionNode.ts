@@ -94,7 +94,11 @@ export class LambdaFunctionNode extends NodeBase {
     }
 
     private async handleNodeRun(): Promise<void> {
-        ui.logToOutput('LambdaFunctionNode.NodeRun Started');
+        this.TriggerLambda();
+    }
+
+    public async TriggerLambda(filePath?: string): Promise<void> {
+       ui.logToOutput('LambdaFunctionNode.TriggerLambda Started');
 
         if (!this.FunctionName || !this.Region) {
             ui.showWarningMessage('Lambda function or region is not set.');
@@ -108,13 +112,27 @@ export class LambdaFunctionNode extends NodeBase {
         let payloadInput: string | undefined;
         let payloadObj: any = {};
 
-        // Prompt for payload JSON (optional)
-        payloadInput = await vscode.window.showInputBox({
-            value: '',
-            placeHolder: 'Enter Payload JSON or leave empty'
-        });
+        if(filePath){
+            // If filePath is provided open file, read content and use as payload
+            try {
+                const fileUri = vscode.Uri.file(filePath);
+                const document = await vscode.workspace.openTextDocument(fileUri);
+                payloadInput = document.getText();
+            } catch (error: any) {
+                ui.logToOutput('LambdaFunctionNode.TriggerLambda Error reading payload file!!!', error);
+                ui.showErrorMessage('Failed to read payload file', error);
+                return;
+            }
+        }
+        else {
+            // Prompt for payload JSON (optional)
+            payloadInput = await vscode.window.showInputBox({
+                value: '',
+                placeHolder: 'Enter Payload JSON or leave empty'
+            });
 
-        if (payloadInput === undefined) { return; }
+            if (payloadInput === undefined) { return; }
+        }
 
         if (payloadInput.trim().length > 0) {
             if (!ui.isJsonString(payloadInput)) {
@@ -158,7 +176,7 @@ export class LambdaFunctionNode extends NodeBase {
 
             ui.showInfoMessage('Lambda Triggered Successfully');
         } catch (error: any) {
-            ui.logToOutput('LambdaFunctionNode.NodeRun Error !!!', error);
+            ui.logToOutput('LambdaFunctionNode.TriggerLambda Error !!!', error);
             ui.showErrorMessage('Trigger Lambda Error !!!', error);
         } finally {
             this.StopWorking();
