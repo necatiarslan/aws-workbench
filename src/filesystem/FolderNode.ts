@@ -7,6 +7,9 @@ import { TreeState } from '../tree/TreeState';
 
 export class FolderNode extends NodeBase {
 
+    @Serialize()
+    public FolderName: string = "";
+
     constructor(FolderName: string, parent?: NodeBase) 
     {
         super(FolderName, parent);
@@ -17,12 +20,12 @@ export class FolderNode extends NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
     }
 
-    @Serialize()
-    public FolderName: string = "";
-
-    public async NodeAdd(): Promise<void> {
+    private async handleNodeAdd(): Promise<void> {
         const result:string[] = [];
         result.push("Folder");
         result.push("Note");
@@ -65,26 +68,10 @@ export class FolderNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRemove(): void {
+    private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
-
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {}
-
-    public NodeEdit(): void {}
-
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

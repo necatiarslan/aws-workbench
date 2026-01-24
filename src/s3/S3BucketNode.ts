@@ -24,6 +24,10 @@ export class S3BucketNode extends NodeBase {
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
+
+        // Event subscriptions
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
     }
 
     @Serialize()
@@ -36,7 +40,7 @@ export class S3BucketNode extends NodeBase {
 
     }
 
-    public NodeRemove(): void {
+    private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
@@ -65,27 +69,9 @@ export class S3BucketNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {
+    private handleNodeView(): void {
         S3Explorer.Render(Session.Current.ExtensionUri, this);
     }
-
-    public async NodeEdit(): Promise<void> {
-          
-    }
-
-    public NodeRun(): void {
-        
-    }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

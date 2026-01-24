@@ -16,18 +16,11 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
         this.EnableNodeEdit = true;
         this.EnableNodeRemove = true;
         this.SetContextValue();
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
     }
     Key = "";
     Value = "";
-    async NodeAdd() { }
-    NodeRemove() {
-        //TODO: Implement environment variable removal logic here
-    }
-    NodeRefresh() {
-        this.Parent?.NodeRefresh();
-    }
-    NodeView() { }
-    async NodeEdit() {
+    async handleNodeEdit() {
         ui.logToOutput('LambdaEnvNode.NodeEdit Started');
         // Resolve the parent Lambda function node to get region/name
         const lambdaNode = this.GetAwsResourceNode();
@@ -71,11 +64,6 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
         }
         this.StopWorking();
     }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaEnvNode = LambdaEnvNode;
 // Register with NodeRegistry for deserialization

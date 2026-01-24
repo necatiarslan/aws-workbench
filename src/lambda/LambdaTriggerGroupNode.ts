@@ -19,9 +19,13 @@ export class LambdaTriggerGroupNode extends NodeBase {
         this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
 
-    public async NodeAdd(): Promise<void> {
+    public async handleNodeAdd(): Promise<void> {
         ui.logToOutput('LambdaTriggerGroupNode.NodeAdd Started');
 
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
@@ -42,9 +46,7 @@ export class LambdaTriggerGroupNode extends NodeBase {
         }
     }
 
-    public NodeRemove(): void {}
-
-    public NodeRefresh(): void {
+    public handleNodeRefresh(): void {
         ui.logToOutput('LambdaTriggerGroupNode.NodeRefresh Started');
         
         // Refresh children based on parent LambdaFunctionNode's TriggerFiles
@@ -57,21 +59,9 @@ export class LambdaTriggerGroupNode extends NodeBase {
         }
     }
 
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {}
-
-    public NodeRun(): void {
+    public handleNodeRun(): void {
         this.GetAwsResourceNode()?.NodeRun();
     }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

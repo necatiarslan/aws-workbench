@@ -16,8 +16,11 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeEdit = true;
         this.SetContextValue();
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
     }
-    async NodeAdd() {
+    async handleNodeAdd() {
         ui.logToOutput('LambdaCodeFileNode.NodeAdd Started');
         const selectedPath = await vscode.window.showOpenDialog({
             canSelectMany: false,
@@ -43,8 +46,8 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         ui.showInfoMessage('Code Path Set Successfully');
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeRemove() {
-        ui.logToOutput('LambdaCodeFileNode.NodeRemove Started');
+    async handleNodeRemove() {
+        ui.logToOutput('LambdaCodeFileNode.handleNodeRemove Started');
         const lambdaNode = this.GetAwsResourceNode();
         lambdaNode.CodePath = '';
         this.label = 'Select File';
@@ -53,9 +56,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         ui.showInfoMessage('Code Path Removed Successfully');
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeRefresh() { }
-    NodeView() { }
-    async NodeEdit() {
+    async handleNodeEdit() {
         ui.logToOutput('LambdaCodeFileNode.NodeEdit Started');
         const lambdaNode = this.GetAwsResourceNode();
         if (!lambdaNode.CodePath || lambdaNode.CodePath.trim().length === 0) {
@@ -73,11 +74,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
             ui.showErrorMessage('Failed to open file for editing', error);
         }
     }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() {
+    async NodeLoaded() {
         const lambdaNode = this.GetAwsResourceNode();
         if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {
             this.label = `Code Path: ${lambdaNode.CodePath}`;

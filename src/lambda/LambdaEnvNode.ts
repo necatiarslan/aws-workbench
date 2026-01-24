@@ -19,25 +19,15 @@ export class LambdaEnvNode extends NodeBase {
         this.EnableNodeEdit = true;
         this.EnableNodeRemove = true;
         this.SetContextValue();
+        
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
     }
 
     public Key: string = "";
 
     public Value: string = "";
 
-    public async NodeAdd(): Promise<void> {}
-
-    public NodeRemove(): void {
-        //TODO: Implement environment variable removal logic here
-    }
-
-    public NodeRefresh(): void {
-        this.Parent?.NodeRefresh();
-    }
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {
+    public async handleNodeEdit(): Promise<void> {
         ui.logToOutput('LambdaEnvNode.NodeEdit Started');
 
         // Resolve the parent Lambda function node to get region/name
@@ -91,16 +81,6 @@ export class LambdaEnvNode extends NodeBase {
 
         this.StopWorking();
     }
-
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

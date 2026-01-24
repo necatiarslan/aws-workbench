@@ -17,8 +17,11 @@ class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
         this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
-    async NodeAdd() {
+    async handleNodeAdd() {
         ui.logToOutput('LambdaTriggerGroupNode.NodeAdd Started');
         const lambdaNode = this.GetAwsResourceNode();
         const files = await vscode.window.showOpenDialog({
@@ -36,8 +39,7 @@ class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
             TreeState_1.TreeState.save();
         }
     }
-    NodeRemove() { }
-    NodeRefresh() {
+    handleNodeRefresh() {
         ui.logToOutput('LambdaTriggerGroupNode.NodeRefresh Started');
         // Refresh children based on parent LambdaFunctionNode's TriggerFiles
         const lambdaNode = this.GetAwsResourceNode();
@@ -48,15 +50,9 @@ class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
             node.FilePath = triggerFile.path;
         }
     }
-    NodeView() { }
-    async NodeEdit() { }
-    NodeRun() {
+    handleNodeRun() {
         this.GetAwsResourceNode()?.NodeRun();
     }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaTriggerGroupNode = LambdaTriggerGroupNode;
 // Register with NodeRegistry for deserialization

@@ -16,6 +16,8 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const TreeState_1 = require("../tree/TreeState");
 class BashScriptNode extends NodeBase_1.NodeBase {
+    Title = "";
+    Script = "";
     constructor(Title, parent) {
         super(Title, parent);
         this.Icon = "debug-console";
@@ -26,20 +28,19 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
-    Title = "";
-    Script = "";
-    async NodeAdd() {
-    }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
+    handleNodeView() {
         vscode.window.showInformationMessage(`${this.Title}`, { modal: true, detail: this.Script });
     }
-    async NodeEdit() {
+    async handleNodeEdit() {
         let scriptContent = await vscode.window.showInputBox({ placeHolder: 'Script', value: this.Script });
         if (!scriptContent) {
             return;
@@ -47,15 +48,11 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         this.Script = scriptContent;
         TreeState_1.TreeState.save();
     }
-    NodeRun() {
+    handleNodeRun() {
         this.StartWorking();
         vscode.window.createTerminal(this.Title).sendText(this.Script);
         this.StopWorking();
     }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.BashScriptNode = BashScriptNode;
 __decorate([

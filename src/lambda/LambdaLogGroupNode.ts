@@ -16,13 +16,11 @@ export class LambdaLogGroupNode extends NodeBase {
         this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
     }
 
-    public async NodeAdd(): Promise<void> {}
-
-    public NodeRemove(): void {}
-
-    public async NodeRefresh(): Promise<void> {
+    public async handleNodeRefresh(): Promise<void> {
         ui.logToOutput('LambdaLogGroupNode.NodeRefresh Started');
 
         // Get the parent Lambda function node
@@ -48,22 +46,7 @@ export class LambdaLogGroupNode extends NodeBase {
         }
 
         new CloudWatchLogGroupNode(logGroupName, this).Region = lambdaNode.Region;
-
     }
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {}
-
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

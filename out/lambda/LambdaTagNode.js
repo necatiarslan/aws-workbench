@@ -60,10 +60,10 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
         this.Parent?.NodeRefresh();
         this.StopWorking();
     }
-    NodeRefresh() {
+    async NodeRefresh() {
         this.Parent?.NodeRefresh();
     }
-    NodeView() { }
+    async NodeView() { }
     async NodeEdit() {
         ui.logToOutput('LambdaTagNode.NodeEdit Started');
         // Prompt for new value (allow empty string, but not undefined/cancel)
@@ -109,11 +109,11 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
         this.Parent?.NodeRefresh();
         this.StopWorking();
     }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
+    async NodeRun() { }
+    async NodeStop() { }
+    async NodeOpen() { }
+    async NodeInfo() { }
+    async NodeLoaded() { }
 }
 exports.LambdaTagNode = LambdaTagNode;
 // Register with NodeRegistry for deserialization

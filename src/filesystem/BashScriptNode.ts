@@ -7,6 +7,12 @@ import { TreeState } from '../tree/TreeState';
 
 export class BashScriptNode extends NodeBase {
 
+    @Serialize()
+    public Title: string = "";
+
+    @Serialize()
+    public Script: string = "";
+
     constructor(Title: string, parent?: NodeBase) 
     {
         super(Title, parent);
@@ -19,50 +25,34 @@ export class BashScriptNode extends NodeBase {
         this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
 
-    @Serialize()
-    public Title: string = "";
-
-    @Serialize()
-    public Script: string = "";
-
-    public async NodeAdd(): Promise<void> {
-
-    }
-
-    public NodeRemove(): void {
+    private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {
+    private handleNodeView(): void {
         vscode.window.showInformationMessage(`${this.Title}`, { modal: true, detail: this.Script });
-
     }
 
-    public async NodeEdit(): Promise<void> {
+    private async handleNodeEdit(): Promise<void> {
         let scriptContent = await vscode.window.showInputBox({ placeHolder: 'Script', value: this.Script });
         if(!scriptContent){ return; }
         this.Script = scriptContent;
         TreeState.save();   
     }
 
-    public NodeRun(): void {
+    private handleNodeRun(): void {
         this.StartWorking();
         vscode.window.createTerminal(this.Title).sendText(this.Script);
         this.StopWorking();
     }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

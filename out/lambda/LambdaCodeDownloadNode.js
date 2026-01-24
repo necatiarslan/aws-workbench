@@ -14,13 +14,9 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
         this.ShouldBeSaved = false;
         this.EnableNodeRun = true;
         this.SetContextValue();
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
-    async NodeAdd() { }
-    NodeRemove() { }
-    NodeRefresh() { }
-    NodeView() { }
-    async NodeEdit() { }
-    async NodeRun() {
+    async handleNodeRun() {
         ui.logToOutput('LambdaCodeDownloadNode.NodeRun Started');
         // Get parent Lambda function node
         const lambdaNode = this.GetAwsResourceNode();
@@ -203,10 +199,6 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
             ui.showErrorMessage('Failed to unzip file', error);
         }
     }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaCodeDownloadNode = LambdaCodeDownloadNode;
 // Register with NodeRegistry for deserialization

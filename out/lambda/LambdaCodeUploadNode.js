@@ -13,13 +13,9 @@ class LambdaCodeUploadNode extends NodeBase_1.NodeBase {
         this.ShouldBeSaved = false;
         this.EnableNodeRun = true;
         this.SetContextValue();
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
-    async NodeAdd() { }
-    NodeRemove() { }
-    NodeRefresh() { }
-    NodeView() { }
-    async NodeEdit() { }
-    async NodeRun() {
+    async handleNodeRun() {
         ui.logToOutput('LambdaCodeUploadNode.NodeRun Started');
         // Get parent Lambda function node
         const lambdaNode = this.GetAwsResourceNode();
@@ -73,10 +69,6 @@ class LambdaCodeUploadNode extends NodeBase_1.NodeBase {
             this.StopWorking();
         }
     }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaCodeUploadNode = LambdaCodeUploadNode;
 // Register with NodeRegistry for deserialization

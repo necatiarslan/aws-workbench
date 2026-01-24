@@ -16,19 +16,11 @@ export class LambdaCodeUploadNode extends NodeBase {
         this.ShouldBeSaved = false;
         this.EnableNodeRun = true;
         this.SetContextValue();
+        
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
 
-    public async NodeAdd(): Promise<void> {}
-
-    public NodeRemove(): void {}
-
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {}
-
-    public async NodeRun(): Promise<void> {
+    public async handleNodeRun(): Promise<void> {
         ui.logToOutput('LambdaCodeUploadNode.NodeRun Started');
 
         // Get parent Lambda function node
@@ -87,14 +79,6 @@ export class LambdaCodeUploadNode extends NodeBase {
             this.StopWorking();
         }
     }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

@@ -19,6 +19,10 @@ export class CloudWatchLogStreamNode extends NodeBase {
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
+
+        // Attach event handlers
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
     }
 
     @Serialize()
@@ -30,36 +34,14 @@ export class CloudWatchLogStreamNode extends NodeBase {
     @Serialize()
     public Region: string = "";
 
-    public async NodeAdd(): Promise<void> {
-
-    }
-
-    public NodeRemove(): void {
+    public handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {
+    public handleNodeView(): void {
         CloudWatchLogView.Render(Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
     }
-
-    public async NodeEdit(): Promise<void> {
-          
-    }
-
-    public NodeRun(): void {
-        
-    }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

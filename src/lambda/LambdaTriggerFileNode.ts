@@ -16,44 +16,35 @@ export class LambdaTriggerFileNode extends NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeEdit = true;
         this.SetContextValue();
+        
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
 
     public FilePath: string = "";
 
-    public async NodeAdd(): Promise<void> {}
-
-    public NodeRemove(): void {
+    private async handleNodeRemove(): Promise<void> {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         lambdaNode.TriggerFiles = lambdaNode.TriggerFiles.filter(tf => tf.id !== this.id);
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {
+    private async handleNodeEdit(): Promise<void> {
         if (this.FilePath) {
             const document = await vscode.workspace.openTextDocument(this.FilePath);
             await vscode.window.showTextDocument(document);
         }
     }
 
-    public NodeRun(): void {
+    private async handleNodeRun(): Promise<void> {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         if (lambdaNode && this.FilePath) {
-            lambdaNode.NodeRun(this.FilePath);
+            // Store the trigger file path and invoke the parent node's run
+            await lambdaNode.NodeRun();
         }
     }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

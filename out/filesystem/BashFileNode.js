@@ -28,28 +28,23 @@ class BashFileNode extends NodeBase_1.NodeBase {
         this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
     }
-    NodeAdd() { }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
-    }
-    NodeEdit() { }
-    NodeRun() {
+    handleNodeRun() {
         //run the bash file in a new terminal
         this.StartWorking();
         vscode.window.createTerminal(this.FileName).sendText(this.FilePath);
         this.StopWorking();
     }
-    NodeStop() { }
-    NodeOpen() {
+    handleNodeOpen() {
         ui.openFile(this.FilePath);
     }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.BashFileNode = BashFileNode;
 __decorate([

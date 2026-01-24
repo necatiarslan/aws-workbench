@@ -17,8 +17,20 @@ const Serialize_1 = require("../common/serialization/Serialize");
 const Telemetry_1 = require("../common/Telemetry");
 const ui = require("../common/UI");
 const TreeState_1 = require("./TreeState");
+const EventEmitter_1 = require("../common/EventEmitter");
 class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
+    // Event emitters for node operations
+    OnNodeAdd = new EventEmitter_1.EventEmitter();
+    OnNodeRemove = new EventEmitter_1.EventEmitter();
+    OnNodeRefresh = new EventEmitter_1.EventEmitter();
+    OnNodeView = new EventEmitter_1.EventEmitter();
+    OnNodeEdit = new EventEmitter_1.EventEmitter();
+    OnNodeRun = new EventEmitter_1.EventEmitter();
+    OnNodeStop = new EventEmitter_1.EventEmitter();
+    OnNodeOpen = new EventEmitter_1.EventEmitter();
+    OnNodeInfo = new EventEmitter_1.EventEmitter();
+    OnNodeLoaded = new EventEmitter_1.EventEmitter();
     constructor(label, parent) {
         super(label);
         this.id = Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
@@ -299,6 +311,37 @@ class NodeBase extends vscode.TreeItem {
         this.Alias = alias;
         TreeProvider_1.TreeProvider.Current.Refresh(this);
         TreeState_1.TreeState.save();
+    }
+    // Event-based node operation methods - fire events that handlers are subscribed to
+    async NodeAdd() {
+        await this.OnNodeAdd.fire(undefined);
+    }
+    async NodeRemove() {
+        await this.OnNodeRemove.fire(undefined);
+    }
+    async NodeRefresh() {
+        await this.OnNodeRefresh.fire(undefined);
+    }
+    async NodeView() {
+        await this.OnNodeView.fire(undefined);
+    }
+    async NodeEdit() {
+        await this.OnNodeEdit.fire(undefined);
+    }
+    async NodeRun() {
+        await this.OnNodeRun.fire(undefined);
+    }
+    async NodeStop() {
+        await this.OnNodeStop.fire(undefined);
+    }
+    async NodeOpen() {
+        await this.OnNodeOpen.fire(undefined);
+    }
+    async NodeInfo() {
+        await this.OnNodeInfo.fire(undefined);
+    }
+    async NodeLoaded() {
+        await this.OnNodeLoaded.fire(undefined);
     }
 }
 exports.NodeBase = NodeBase;

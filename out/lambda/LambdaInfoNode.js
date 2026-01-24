@@ -12,18 +12,6 @@ class LambdaInfoNode extends NodeBase_1.NodeBase {
     }
     Key = "";
     Value = "";
-    async NodeAdd() { }
-    NodeRemove() { }
-    NodeRefresh() {
-        this.Parent?.NodeRefresh();
-    }
-    NodeView() { }
-    async NodeEdit() { }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaInfoNode = LambdaInfoNode;
 // Register with NodeRegistry for deserialization

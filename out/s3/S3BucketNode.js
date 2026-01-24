@@ -29,12 +29,15 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
+        // Event subscriptions
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
     }
     BucketName = "";
     Key = "";
     async NodeAdd() {
     }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
@@ -55,18 +58,9 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         });
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
+    handleNodeView() {
         S3Explorer_1.S3Explorer.Render(Session_1.Session.Current.ExtensionUri, this);
     }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.S3BucketNode = S3BucketNode;
 __decorate([

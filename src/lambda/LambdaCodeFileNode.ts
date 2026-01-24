@@ -19,9 +19,13 @@ export class LambdaCodeFileNode extends NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeEdit = true;
         this.SetContextValue();
+        
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
     }
 
-    public async NodeAdd(): Promise<void> {
+    private async handleNodeAdd(): Promise<void> {
         ui.logToOutput('LambdaCodeFileNode.NodeAdd Started');
 
         const selectedPath = await vscode.window.showOpenDialog({
@@ -49,8 +53,8 @@ export class LambdaCodeFileNode extends NodeBase {
         TreeProvider.Current.Refresh(this);
     }
 
-    public NodeRemove(): void {
-        ui.logToOutput('LambdaCodeFileNode.NodeRemove Started');
+    private async handleNodeRemove(): Promise<void> {
+        ui.logToOutput('LambdaCodeFileNode.handleNodeRemove Started');
 
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         lambdaNode.CodePath = '';
@@ -61,11 +65,7 @@ export class LambdaCodeFileNode extends NodeBase {
         TreeProvider.Current.Refresh(this);
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {
+    private async handleNodeEdit(): Promise<void> {
         ui.logToOutput('LambdaCodeFileNode.NodeEdit Started');
 
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
@@ -85,15 +85,7 @@ export class LambdaCodeFileNode extends NodeBase {
         }
     }
 
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {
+    public async NodeLoaded(): Promise<void> {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {
             this.label = `Code Path: ${lambdaNode.CodePath}`;

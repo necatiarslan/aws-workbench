@@ -17,12 +17,13 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         this.EnableNodeAdd = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
     }
-    async NodeAdd() {
+    async handleNodeAdd() {
         //TODO: Implement adding new environment variable logic here
     }
-    NodeRemove() { }
-    async NodeRefresh() {
+    async handleNodeRefresh() {
         ui.logToOutput('LambdaEnvGroupNode.NodeRefresh Started');
         // Get the parent Lambda function node
         let lambdaNode = this.Parent;
@@ -60,13 +61,6 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         this.StopWorking();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeView() { }
-    async NodeEdit() { }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaEnvGroupNode = LambdaEnvGroupNode;
 // Register with NodeRegistry for deserialization

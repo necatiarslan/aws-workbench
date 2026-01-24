@@ -5,10 +5,23 @@ import { Serialize } from '../common/serialization/Serialize';
 import { Telemetry } from '../common/Telemetry';
 import * as ui from '../common/UI';
 import { TreeState } from './TreeState';
+import { EventEmitter } from '../common/EventEmitter';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
     public static RootNodes: NodeBase[] = [];
+
+    // Event emitters for node operations
+    protected OnNodeAdd: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeRemove: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeRefresh: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeView: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeEdit: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeRun: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeStop: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeOpen: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeInfo: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeLoaded: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(label: string, parent?: NodeBase) 
     {
@@ -306,15 +319,45 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     }
 
-    public abstract NodeAdd(): void;
-    public abstract NodeRemove(): void;
-    public abstract NodeRefresh(): void;
-    public abstract NodeView(): void;
-    public abstract NodeEdit(): void;
-    public abstract NodeRun(): void;
-    public abstract NodeStop(): void;
-    public abstract NodeOpen(): void;
-    public abstract NodeInfo(): void;
-    public abstract NodeLoaded(): void;
+    // Event-based node operation methods - fire events that handlers are subscribed to
+    public async NodeAdd(): Promise<void> {
+        await this.OnNodeAdd.fire(undefined);
+    }
+
+    public async NodeRemove(): Promise<void> {
+        await this.OnNodeRemove.fire(undefined);
+    }
+
+    public async NodeRefresh(): Promise<void> {
+        await this.OnNodeRefresh.fire(undefined);
+    }
+
+    public async NodeView(): Promise<void> {
+        await this.OnNodeView.fire(undefined);
+    }
+
+    public async NodeEdit(): Promise<void> {
+        await this.OnNodeEdit.fire(undefined);
+    }
+
+    public async NodeRun(): Promise<void> {
+        await this.OnNodeRun.fire(undefined);
+    }
+
+    public async NodeStop(): Promise<void> {
+        await this.OnNodeStop.fire(undefined);
+    }
+
+    public async NodeOpen(): Promise<void> {
+        await this.OnNodeOpen.fire(undefined);
+    }
+
+    public async NodeInfo(): Promise<void> {
+        await this.OnNodeInfo.fire(undefined);
+    }
+
+    public async NodeLoaded(): Promise<void> {
+        await this.OnNodeLoaded.fire(undefined);
+    }
     
 }

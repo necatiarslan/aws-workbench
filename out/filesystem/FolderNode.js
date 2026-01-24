@@ -17,6 +17,7 @@ const vscode = require("vscode");
 const ServiceHub_1 = require("../tree/ServiceHub");
 const TreeState_1 = require("../tree/TreeState");
 class FolderNode extends NodeBase_1.NodeBase {
+    FolderName = "";
     constructor(FolderName, parent) {
         super(FolderName, parent);
         this.Icon = "folder";
@@ -25,9 +26,10 @@ class FolderNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
     }
-    FolderName = "";
-    async NodeAdd() {
+    async handleNodeAdd() {
         const result = [];
         result.push("Folder");
         result.push("Note");
@@ -69,18 +71,10 @@ class FolderNode extends NodeBase_1.NodeBase {
         }
         TreeState_1.TreeState.save();
     }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() { }
-    NodeEdit() { }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.FolderNode = FolderNode;
 __decorate([

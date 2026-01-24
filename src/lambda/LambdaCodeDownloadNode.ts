@@ -17,19 +17,11 @@ export class LambdaCodeDownloadNode extends NodeBase {
         this.ShouldBeSaved = false;
         this.EnableNodeRun = true;
         this.SetContextValue();
+        
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
 
-    public async NodeAdd(): Promise<void> {}
-
-    public NodeRemove(): void {}
-
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {}
-
-    public async NodeRun(): Promise<void> {
+    public async handleNodeRun(): Promise<void> {
         ui.logToOutput('LambdaCodeDownloadNode.NodeRun Started');
 
         // Get parent Lambda function node
@@ -254,14 +246,6 @@ export class LambdaCodeDownloadNode extends NodeBase {
             ui.showErrorMessage('Failed to unzip file', error);
         }
     }
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

@@ -17,6 +17,8 @@ const vscode = require("vscode");
 const ServiceHub_1 = require("../tree/ServiceHub");
 const TreeState_1 = require("../tree/TreeState");
 class NoteNode extends NodeBase_1.NodeBase {
+    NoteTitle = "";
+    NoteContent = "";
     constructor(NoteTitle, parent) {
         super(NoteTitle, parent);
         this.Icon = "note";
@@ -26,10 +28,12 @@ class NoteNode extends NodeBase_1.NodeBase {
         this.EnableNodeView = true;
         this.EnableNodeEdit = true;
         this.SetContextValue();
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
     }
-    NoteTitle = "";
-    NoteContent = "";
-    async NodeAdd() {
+    async handleNodeAdd() {
         const result = [];
         result.push("Folder");
         result.push("Note");
@@ -59,15 +63,14 @@ class NoteNode extends NodeBase_1.NodeBase {
         }
         TreeState_1.TreeState.save();
     }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
+    handleNodeView() {
         vscode.window.showInformationMessage(`${this.NoteTitle}`, { modal: true, detail: this.NoteContent });
     }
-    async NodeEdit() {
+    async handleNodeEdit() {
         let noteContent = await vscode.window.showInputBox({ placeHolder: 'Note Content', value: this.NoteContent });
         if (!noteContent) {
             return;
@@ -75,11 +78,6 @@ class NoteNode extends NodeBase_1.NodeBase {
         this.NoteContent = noteContent;
         TreeState_1.TreeState.save();
     }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.NoteNode = NoteNode;
 __decorate([

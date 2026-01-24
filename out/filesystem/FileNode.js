@@ -26,23 +26,16 @@ class FileNode extends NodeBase_1.NodeBase {
         this.EnableNodeOpen = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
     }
-    NodeAdd() { }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
-    }
-    NodeEdit() { }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() {
+    handleNodeOpen() {
         ui.openFile(this.FilePath);
     }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.FileNode = FileNode;
 __decorate([

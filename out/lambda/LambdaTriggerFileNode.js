@@ -14,33 +14,30 @@ class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeEdit = true;
         this.SetContextValue();
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
     }
     FilePath = "";
-    async NodeAdd() { }
-    NodeRemove() {
+    async handleNodeRemove() {
         const lambdaNode = this.GetAwsResourceNode();
         lambdaNode.TriggerFiles = lambdaNode.TriggerFiles.filter(tf => tf.id !== this.id);
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() { }
-    async NodeEdit() {
+    async handleNodeEdit() {
         if (this.FilePath) {
             const document = await vscode.workspace.openTextDocument(this.FilePath);
             await vscode.window.showTextDocument(document);
         }
     }
-    NodeRun() {
+    async handleNodeRun() {
         const lambdaNode = this.GetAwsResourceNode();
         if (lambdaNode && this.FilePath) {
-            lambdaNode.NodeRun(this.FilePath);
+            // Store the trigger file path and invoke the parent node's run
+            await lambdaNode.NodeRun();
         }
     }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaTriggerFileNode = LambdaTriggerFileNode;
 // Register with NodeRegistry for deserialization

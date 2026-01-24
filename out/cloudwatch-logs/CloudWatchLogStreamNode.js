@@ -26,28 +26,20 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
+        // Attach event handlers
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
     }
     LogStream = "";
     LogGroup = "";
     Region = "";
-    async NodeAdd() {
-    }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
+    handleNodeView() {
         CloudWatchLogView_1.CloudWatchLogView.Render(Session_1.Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
     }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.CloudWatchLogStreamNode = CloudWatchLogStreamNode;
 __decorate([

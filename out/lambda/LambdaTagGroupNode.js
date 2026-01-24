@@ -17,8 +17,10 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
         this.EnableNodeAdd = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
     }
-    async NodeAdd() {
+    async handleNodeAdd() {
         ui.logToOutput('LambdaTagGroupNode.NodeAdd Started');
         // Get the parent Lambda function node
         const lambdaNode = this.Parent;
@@ -64,10 +66,9 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
         ui.showInfoMessage('Tag Added Successfully');
         // Reset working state before refresh
         this.StopWorking();
-        await this.NodeRefresh();
+        await this.handleNodeRefresh();
     }
-    NodeRemove() { }
-    async NodeRefresh() {
+    async handleNodeRefresh() {
         ui.logToOutput('LambdaTagGroupNode.NodeRefresh Started');
         // Get the parent Lambda function node
         const lambdaNode = this.Parent;
@@ -116,14 +117,6 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
         this.StopWorking();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeView() { }
-    async NodeEdit() {
-    }
-    NodeRun() { }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.LambdaTagGroupNode = LambdaTagGroupNode;
 // Register with NodeRegistry for deserialization

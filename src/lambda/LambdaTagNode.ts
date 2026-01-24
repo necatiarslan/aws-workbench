@@ -78,11 +78,11 @@ export class LambdaTagNode extends NodeBase {
         this.StopWorking();
     }
 
-    public NodeRefresh(): void {
+    public async NodeRefresh(): Promise<void> {
         this.Parent?.NodeRefresh();
     }
 
-    public NodeView(): void {}
+    public async NodeView(): Promise<void> {}
 
     public async NodeEdit(): Promise<void> {
         ui.logToOutput('LambdaTagNode.NodeEdit Started');
@@ -134,15 +134,15 @@ export class LambdaTagNode extends NodeBase {
         this.StopWorking();
     }
 
-    public NodeRun(): void {}
+    public async NodeRun(): Promise<void> {}
 
-    public NodeStop(): void {}
+    public async NodeStop(): Promise<void> {}
 
-    public NodeOpen(): void {}
+    public async NodeOpen(): Promise<void> {}
 
-    public NodeInfo(): void {}
+    public async NodeInfo(): Promise<void> {}
 
-    public NodeLoaded(): void {}
+    public async NodeLoaded(): Promise<void> {}
 
 }
 

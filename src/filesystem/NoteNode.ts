@@ -7,6 +7,12 @@ import { TreeState } from '../tree/TreeState';
 
 export class NoteNode extends NodeBase {
 
+    @Serialize()
+    public NoteTitle: string = "";
+
+    @Serialize()
+    public NoteContent: string = "";
+
     constructor(NoteTitle: string, parent?: NodeBase) 
     {
         super(NoteTitle, parent);
@@ -18,15 +24,14 @@ export class NoteNode extends NodeBase {
         this.EnableNodeView = true;
         this.EnableNodeEdit = true;
         this.SetContextValue();
+
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
     }
 
-    @Serialize()
-    public NoteTitle: string = "";
-
-    @Serialize()
-    public NoteContent: string = "";
-
-    public async NodeAdd(): Promise<void> {
+    private async handleNodeAdd(): Promise<void> {
         const result:string[] = [];
         result.push("Folder");
         result.push("Note");
@@ -57,34 +62,21 @@ export class NoteNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRemove(): void {
+    private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {
+    private handleNodeView(): void {
         vscode.window.showInformationMessage(`${this.NoteTitle}`, { modal: true, detail: this.NoteContent });
-
     }
 
-    public async NodeEdit(): Promise<void> {
+    private async handleNodeEdit(): Promise<void> {
         let noteContent = await vscode.window.showInputBox({ placeHolder: 'Note Content', value: this.NoteContent });
         if(!noteContent){ return; }
         this.NoteContent = noteContent;
         TreeState.save();   
     }
-
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

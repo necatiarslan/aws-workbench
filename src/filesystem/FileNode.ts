@@ -23,34 +23,19 @@ export class FileNode extends NodeBase {
         this.EnableNodeOpen = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
+
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
     }
 
-    public NodeAdd(): void {}
-
-    public NodeRemove(): void {
+    private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {
-        
-    }
-
-    public NodeEdit(): void {}
-
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {
+    private handleNodeOpen(): void {
         ui.openFile(this.FilePath);
     }
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 

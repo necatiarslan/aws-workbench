@@ -31,10 +31,14 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
+        // Attach event handlers
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeView.subscribe(() => this.handleNodeView());
     }
     LogGroup = "";
     Region = "";
-    async NodeAdd() {
+    async handleNodeAdd() {
         let filterStringTemp = await vscode.window.showInputBox({ placeHolder: 'Log Stream Name (Optional)' });
         if (filterStringTemp === undefined) {
             return;
@@ -74,22 +78,13 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         }
         TreeState_1.TreeState.save();
     }
-    NodeRemove() {
+    handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() { }
-    NodeView() {
+    handleNodeView() {
         CloudWatchLogView_1.CloudWatchLogView.Render(Session_1.Session.Current.ExtensionUri, this.Region, this.LogGroup);
     }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() { }
-    NodeOpen() { }
-    NodeInfo() { }
-    NodeLoaded() { }
 }
 exports.CloudWatchLogGroupNode = CloudWatchLogGroupNode;
 __decorate([

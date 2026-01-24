@@ -31,6 +31,12 @@ export class LambdaFunctionNode extends NodeBase {
         this.EnableNodeInfo = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
+        
+        // Attach event handlers
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeRun.subscribe((arg) => this.handleNodeRun());
+        this.OnNodeInfo.subscribe((arg) => this.handleNodeInfo());
+        
         this.LoadDefaultChildren();
     }
 
@@ -82,27 +88,13 @@ export class LambdaFunctionNode extends NodeBase {
         new LambdaTriggerGroupNode("Triggers", this);
     }
 
-    public async NodeAdd(): Promise<void> {
-
-    }
-
-    public NodeRemove(): void {
+    private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {}
-
-    public NodeView(): void {
-        //TODO: Implement Lambda function details viewing logic here
-    }
-
-    public async NodeEdit(): Promise<void> {
-         
-    }
-
-    public async NodeRun(filePath?:string): Promise<void> {
-       ui.logToOutput('LambdaFunctionNode.NodeRun Started');
+    private async handleNodeRun(): Promise<void> {
+        ui.logToOutput('LambdaFunctionNode.NodeRun Started');
 
         if (!this.FunctionName || !this.Region) {
             ui.showWarningMessage('Lambda function or region is not set.');
@@ -116,27 +108,13 @@ export class LambdaFunctionNode extends NodeBase {
         let payloadInput: string | undefined;
         let payloadObj: any = {};
 
-        if(filePath){
-            // If filePath is provided open file, read content and use as payload
-            try {
-                const fileUri = vscode.Uri.file(filePath);
-                const document = await vscode.workspace.openTextDocument(fileUri);
-                payloadInput = document.getText();
-            } catch (error: any) {
-                ui.logToOutput('LambdaFunctionNode.NodeRun Error reading payload file!!!', error);
-                ui.showErrorMessage('Failed to read payload file', error);
-                return;
-            }
-        }
-        else {
-            // Prompt for payload JSON (optional)
-            payloadInput = await vscode.window.showInputBox({
-                value: '',
-                placeHolder: 'Enter Payload JSON or leave empty'
-            });
+        // Prompt for payload JSON (optional)
+        payloadInput = await vscode.window.showInputBox({
+            value: '',
+            placeHolder: 'Enter Payload JSON or leave empty'
+        });
 
-            if (payloadInput === undefined) { return; }
-        }
+        if (payloadInput === undefined) { return; }
 
         if (payloadInput.trim().length > 0) {
             if (!ui.isJsonString(payloadInput)) {
@@ -187,13 +165,7 @@ export class LambdaFunctionNode extends NodeBase {
         }
     }
 
-    public NodeStop(): void {
-        //TODO: Implement Lambda function stop logic here
-    }
-
-    public NodeOpen(): void {}
-
-    public async NodeInfo(): Promise<void> {
+    private async handleNodeInfo(): Promise<void> {
         ui.logToOutput('LambdaFunctionNode.NodeInfo Started');
 
         if (!this.FunctionName || !this.Region) {
@@ -225,8 +197,6 @@ export class LambdaFunctionNode extends NodeBase {
         }
         this.StopWorking();
     }
-
-    public NodeLoaded(): void {}
 
 }
 

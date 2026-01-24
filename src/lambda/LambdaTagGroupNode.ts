@@ -20,9 +20,12 @@ export class LambdaTagGroupNode extends NodeBase {
         this.EnableNodeAdd = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
     }
 
-    public async NodeAdd(): Promise<void> {
+    public async handleNodeAdd(): Promise<void> {
         ui.logToOutput('LambdaTagGroupNode.NodeAdd Started');
 
         // Get the parent Lambda function node
@@ -71,12 +74,10 @@ export class LambdaTagGroupNode extends NodeBase {
 
         // Reset working state before refresh
         this.StopWorking();
-        await this.NodeRefresh();
+        await this.handleNodeRefresh();
     }
 
-    public NodeRemove(): void {}
-
-    public async NodeRefresh(): Promise<void> {
+    public async handleNodeRefresh(): Promise<void> {
         ui.logToOutput('LambdaTagGroupNode.NodeRefresh Started');
 
         // Get the parent Lambda function node
@@ -135,22 +136,6 @@ export class LambdaTagGroupNode extends NodeBase {
         this.StopWorking();
         TreeProvider.Current.Refresh(this);
     }
-
-    public NodeView(): void {}
-
-    public async NodeEdit(): Promise<void> {
-         
-    }
-
-    public NodeRun(): void {}
-
-    public NodeStop(): void {}
-
-    public NodeOpen(): void {}
-
-    public NodeInfo(): void {}
-
-    public NodeLoaded(): void {}
 
 }
 
