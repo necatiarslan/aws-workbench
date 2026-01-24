@@ -10,9 +10,6 @@ class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
         super(Label, parent);
         this.Icon = "run";
         this.ShouldBeSaved = false;
-        this.EnableNodeRun = true;
-        this.EnableNodeRemove = true;
-        this.EnableNodeEdit = true;
         this.SetContextValue();
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());

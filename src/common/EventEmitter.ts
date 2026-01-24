@@ -21,6 +21,14 @@ export class EventEmitter<T> {
     }
 
     /**
+     * Check if this event has any subscribers
+     * @returns True if there are any handlers subscribed to this event
+     */
+    public hasListeners(): boolean {
+        return this.handlers.length > 0;
+    }
+
+    /**
      * Fire the event and invoke all handlers
      * Catches exceptions per-handler to prevent one handler failure from blocking others
      * @param arg Argument to pass to each handler

@@ -46,15 +46,6 @@ class NodeBase extends vscode.TreeItem {
         }
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    EnableNodeAdd = false;
-    EnableNodeRemove = false;
-    EnableNodeRefresh = false;
-    EnableNodeView = false;
-    EnableNodeEdit = false;
-    EnableNodeRun = false;
-    EnableNodeStop = false;
-    EnableNodeOpen = false;
-    EnableNodeInfo = false;
     EnableNodeAlias = false;
     ShouldBeSaved = true;
     IsOnNodeLoadChildrenCalled = false;
@@ -184,31 +175,31 @@ class NodeBase extends vscode.TreeItem {
         else {
             context += "#ShowOnlyInThisWorkspace#";
         }
-        if (this.EnableNodeAdd) {
+        if (this.OnNodeAdd.hasListeners()) {
             context += "#NodeAdd#";
         }
-        if (this.EnableNodeRemove) {
+        if (this.OnNodeRemove.hasListeners()) {
             context += "#NodeRemove#";
         }
-        if (this.EnableNodeRefresh) {
+        if (this.OnNodeRefresh.hasListeners()) {
             context += "#NodeRefresh#";
         }
-        if (this.EnableNodeView) {
+        if (this.OnNodeView.hasListeners()) {
             context += "#NodeView#";
         }
-        if (this.EnableNodeEdit) {
+        if (this.OnNodeEdit.hasListeners()) {
             context += "#NodeEdit#";
         }
-        if (this.EnableNodeRun) {
+        if (this.OnNodeRun.hasListeners()) {
             context += "#NodeRun#";
         }
-        if (this.EnableNodeStop) {
+        if (this.OnNodeStop.hasListeners()) {
             context += "#NodeStop#";
         }
-        if (this.EnableNodeOpen) {
+        if (this.OnNodeOpen.hasListeners()) {
             context += "#NodeOpen#";
         }
-        if (this.EnableNodeInfo) {
+        if (this.OnNodeInfo.hasListeners()) {
             context += "#NodeInfo#";
         }
         if (this.EnableNodeAlias) {

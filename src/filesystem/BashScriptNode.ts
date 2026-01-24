@@ -19,10 +19,6 @@ export class BashScriptNode extends NodeBase {
         this.Icon = "debug-console";
         this.Title = Title;
 
-        this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
-        this.EnableNodeEdit = true;
-        this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
 

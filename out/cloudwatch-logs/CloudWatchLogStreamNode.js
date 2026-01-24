@@ -21,8 +21,6 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         super(LogStream, parent);
         this.LogStream = LogStream;
         this.Icon = "cloudwatch-logstream";
-        this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();

@@ -16,7 +16,6 @@ export class LambdaInfoGroupNode extends NodeBase {
         this.Icon = "info";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         

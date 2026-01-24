@@ -19,8 +19,6 @@ export class FileNode extends NodeBase {
         this.Icon = "file";
         this.FileName = label;
 
-        this.EnableNodeRemove = true;
-        this.EnableNodeOpen = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
 

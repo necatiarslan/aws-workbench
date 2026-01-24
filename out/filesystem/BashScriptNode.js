@@ -22,10 +22,6 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         super(Title, parent);
         this.Icon = "debug-console";
         this.Title = Title;
-        this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
-        this.EnableNodeEdit = true;
-        this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

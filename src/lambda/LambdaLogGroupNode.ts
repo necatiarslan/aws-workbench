@@ -13,7 +13,6 @@ export class LambdaLogGroupNode extends NodeBase {
         this.Icon = "cloudwatch-loggroup";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         

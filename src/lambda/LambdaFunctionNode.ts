@@ -25,10 +25,7 @@ export class LambdaFunctionNode extends NodeBase {
         this.Icon = "lambda-function";
         this.FunctionName = FunctionName;
 
-        this.EnableNodeRemove = true;
-        this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
-        this.EnableNodeInfo = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
         

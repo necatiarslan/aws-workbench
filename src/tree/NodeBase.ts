@@ -41,16 +41,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         TreeProvider.Current.Refresh(this);
     }
-
-    public EnableNodeAdd: boolean = false;
-    public EnableNodeRemove: boolean = false;
-    public EnableNodeRefresh: boolean = false;
-    public EnableNodeView: boolean = false;
-    public EnableNodeEdit: boolean = false;
-    public EnableNodeRun: boolean = false;
-    public EnableNodeStop: boolean = false;
-    public EnableNodeOpen: boolean = false;
-    public EnableNodeInfo: boolean = false;
+    
     public EnableNodeAlias: boolean = false;
 
     public ShouldBeSaved: boolean = true;
@@ -194,15 +185,15 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (this.Workspace.length > 0) { context += "#ShowInAnyWorkspace#"; }
         else { context += "#ShowOnlyInThisWorkspace#"; }
 
-        if (this.EnableNodeAdd) { context += "#NodeAdd#"; }
-        if (this.EnableNodeRemove) { context += "#NodeRemove#"; }
-        if (this.EnableNodeRefresh) { context += "#NodeRefresh#"; }
-        if (this.EnableNodeView) { context += "#NodeView#"; }
-        if (this.EnableNodeEdit) { context += "#NodeEdit#"; }
-        if (this.EnableNodeRun) { context += "#NodeRun#"; }
-        if (this.EnableNodeStop) { context += "#NodeStop#"; }
-        if (this.EnableNodeOpen) { context += "#NodeOpen#"; }
-        if (this.EnableNodeInfo) { context += "#NodeInfo#"; }
+        if (this.OnNodeAdd.hasListeners()) { context += "#NodeAdd#"; }
+        if (this.OnNodeRemove.hasListeners()) { context += "#NodeRemove#"; }
+        if (this.OnNodeRefresh.hasListeners()) { context += "#NodeRefresh#"; }
+        if (this.OnNodeView.hasListeners()) { context += "#NodeView#"; }
+        if (this.OnNodeEdit.hasListeners()) { context += "#NodeEdit#"; }
+        if (this.OnNodeRun.hasListeners()) { context += "#NodeRun#"; }
+        if (this.OnNodeStop.hasListeners()) { context += "#NodeStop#"; }
+        if (this.OnNodeOpen.hasListeners()) { context += "#NodeOpen#"; }
+        if (this.OnNodeInfo.hasListeners()) { context += "#NodeInfo#"; }
         if (this.EnableNodeAlias) { context += "#NodeAlias#"; }
 
         this.contextValue = context;

@@ -14,9 +14,6 @@ export class LambdaTagNode extends NodeBase {
         this.Icon = "circle-filled";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
-        this.EnableNodeEdit = true;
-        this.EnableNodeRemove = true;
         this.SetContextValue();
     }
 

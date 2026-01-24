@@ -16,8 +16,6 @@ export class LambdaTagGroupNode extends NodeBase {
         this.Icon = "tag";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
-        this.EnableNodeAdd = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         

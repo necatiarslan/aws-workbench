@@ -25,9 +25,6 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         super(LogGroup, parent);
         this.LogGroup = LogGroup;
         this.Icon = "cloudwatch-loggroup";
-        this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
-        this.EnableNodeAdd = true;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();

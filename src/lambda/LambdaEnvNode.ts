@@ -15,9 +15,6 @@ export class LambdaEnvNode extends NodeBase {
         this.Icon = "circle-filled";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
-        this.EnableNodeEdit = true;
-        this.EnableNodeRemove = true;
         this.SetContextValue();
         
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());

@@ -13,8 +13,6 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         super(Label, parent);
         this.Icon = "symbol-property";
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
-        this.EnableNodeAdd = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());

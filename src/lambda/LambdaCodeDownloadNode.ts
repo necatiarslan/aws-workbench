@@ -15,7 +15,6 @@ export class LambdaCodeDownloadNode extends NodeBase {
         this.Icon = "cloud-download";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRun = true;
         this.SetContextValue();
         
         this.OnNodeRun.subscribe(() => this.handleNodeRun());

@@ -16,8 +16,6 @@ export class FolderNode extends NodeBase {
         this.Icon = "folder";
         this.FolderName = FolderName;
 
-        this.EnableNodeAdd = true;
-        this.EnableNodeRemove = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
 

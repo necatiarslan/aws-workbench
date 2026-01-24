@@ -20,9 +20,6 @@ export class BashFileNode extends NodeBase {
         this.Icon = "debug-alt";
         this.FileName = label;
 
-        this.EnableNodeRemove = true;
-        this.EnableNodeOpen = true;
-        this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
 

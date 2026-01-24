@@ -24,8 +24,6 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         // if(Key) {this.label = Key}
         // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "s3-bucket";
         // this.Key = Key ?? "";
-        this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();

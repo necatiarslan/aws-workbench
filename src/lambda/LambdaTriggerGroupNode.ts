@@ -14,9 +14,6 @@ export class LambdaTriggerGroupNode extends NodeBase {
         this.Icon = "run-all";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeAdd = true;
-        this.EnableNodeRun = true;
-        this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         

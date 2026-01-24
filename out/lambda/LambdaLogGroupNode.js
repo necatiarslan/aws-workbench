@@ -11,7 +11,6 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
         super(Label, parent);
         this.Icon = "cloudwatch-loggroup";
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());

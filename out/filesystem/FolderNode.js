@@ -22,8 +22,6 @@ class FolderNode extends NodeBase_1.NodeBase {
         super(FolderName, parent);
         this.Icon = "folder";
         this.FolderName = FolderName;
-        this.EnableNodeAdd = true;
-        this.EnableNodeRemove = true;
         this.EnableNodeAlias = true;
         this.SetContextValue();
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());

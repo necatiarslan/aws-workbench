@@ -15,9 +15,6 @@ export class LambdaCodeFileNode extends NodeBase {
         this.Icon = "file-code";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeAdd = true;
-        this.EnableNodeRemove = true;
-        this.EnableNodeEdit = true;
         this.SetContextValue();
         
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());

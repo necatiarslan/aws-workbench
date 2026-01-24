@@ -19,10 +19,6 @@ export class NoteNode extends NodeBase {
         this.Icon = "note";
         this.NoteTitle = NoteTitle;
 
-        this.EnableNodeAdd = true;
-        this.EnableNodeRemove = true;
-        this.EnableNodeView = true;
-        this.EnableNodeEdit = true;
         this.SetContextValue();
 
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());

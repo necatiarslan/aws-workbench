@@ -11,9 +11,6 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
         super(Label, parent);
         this.Icon = "circle-filled";
         this.ShouldBeSaved = false;
-        this.EnableNodeRefresh = true;
-        this.EnableNodeEdit = true;
-        this.EnableNodeRemove = true;
         this.SetContextValue();
     }
     Key = "";

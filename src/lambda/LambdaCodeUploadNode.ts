@@ -14,7 +14,6 @@ export class LambdaCodeUploadNode extends NodeBase {
         this.Icon = "cloud-upload";
 
         this.ShouldBeSaved = false;
-        this.EnableNodeRun = true;
         this.SetContextValue();
         
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
