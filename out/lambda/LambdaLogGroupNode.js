@@ -9,12 +9,15 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
         super(Label, parent);
         this.Icon = "list-unordered";
         this.ShouldBeSaved = false;
+        this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
     async NodeAdd() { }
     NodeRemove() { }
-    NodeRefresh() { }
+    NodeRefresh() {
+        //
+    }
     NodeView() { }
     async NodeEdit() { }
     NodeRun() { }

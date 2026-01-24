@@ -35,6 +35,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
+        this.EnableNodeInfo = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
         this.LoadDefaultChildren();
@@ -42,6 +43,26 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     FunctionName = "";
     Region = "";
     CodePath = "";
+    _configuration = undefined;
+    get Configuration() {
+        return this.getConfiguration();
+    }
+    async getConfiguration() {
+        if (!this._configuration) {
+            const response = await api.GetLambdaConfiguration(this.Region, this.FunctionName);
+            if (response.isSuccessful) {
+                this._configuration = response.result;
+            }
+            else {
+                ui.logToOutput('api.GetLambdaConfiguration Error !!!', response.error);
+                ui.showErrorMessage('Get Lambda Configuration Error !!!', response.error);
+            }
+        }
+        return this._configuration;
+    }
+    set Configuration(value) {
+        this._configuration = value;
+    }
     async LoadDefaultChildren() {
         const code = new LambdaCodeGroupNode_1.LambdaCodeGroupNode("Code", this);
         new LambdaCodeFileNode_1.LambdaCodeFileNode("Select File", code);
@@ -128,8 +149,35 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         //TODO: Implement Lambda function stop logic here
     }
     NodeOpen() { }
-    NodeInfo() {
-        //TODO: Implement Lambda function info display logic here
+    async NodeInfo() {
+        ui.logToOutput('LambdaFunctionNode.NodeInfo Started');
+        if (!this.FunctionName || !this.Region) {
+            ui.showWarningMessage('Lambda function or region is not set.');
+            return;
+        }
+        if (this.IsWorking) {
+            return;
+        }
+        this.StartWorking();
+        try {
+            const config = await this.Configuration;
+            if (config) {
+                const jsonContent = JSON.stringify(config, null, 2);
+                const document = await vscode.workspace.openTextDocument({
+                    content: jsonContent,
+                    language: 'json'
+                });
+                await vscode.window.showTextDocument(document);
+            }
+            else {
+                ui.showWarningMessage('Failed to load Lambda configuration');
+            }
+        }
+        catch (error) {
+            ui.logToOutput('LambdaFunctionNode.NodeInfo Error !!!', error);
+            ui.showErrorMessage('Failed to open configuration', error);
+        }
+        this.StopWorking();
     }
     NodeLoaded() { }
 }

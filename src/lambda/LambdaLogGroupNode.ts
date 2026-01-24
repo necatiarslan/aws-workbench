@@ -13,6 +13,7 @@ export class LambdaLogGroupNode extends NodeBase {
         this.Icon = "list-unordered";
 
         this.ShouldBeSaved = false;
+        this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
@@ -21,7 +22,9 @@ export class LambdaLogGroupNode extends NodeBase {
 
     public NodeRemove(): void {}
 
-    public NodeRefresh(): void {}
+    public NodeRefresh(): void {
+        //
+    }
 
     public NodeView(): void {}
 

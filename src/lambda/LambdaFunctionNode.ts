@@ -15,6 +15,7 @@ import { LambdaTriggerGroupNode } from './LambdaTriggerGroupNode';
 import { LambdaCodeFileNode } from './LambdaCodeFileNode';
 import { LambdaCodeUploadNode } from './LambdaCodeUploadNode';
 import { LambdaCodeDownloadNode } from './LambdaCodeDownloadNode';
+import { FunctionConfiguration } from '@aws-sdk/client-lambda';
 
 export class LambdaFunctionNode extends NodeBase {
 
@@ -27,6 +28,7 @@ export class LambdaFunctionNode extends NodeBase {
         this.EnableNodeRemove = true;
         this.EnableNodeRun = true;
         this.EnableNodeAlias = true;
+        this.EnableNodeInfo = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
         this.LoadDefaultChildren();
@@ -40,6 +42,29 @@ export class LambdaFunctionNode extends NodeBase {
 
     @Serialize()
     public CodePath: string = "";
+
+    public _configuration: FunctionConfiguration | undefined = undefined;
+
+    public get Configuration(): Promise<FunctionConfiguration | undefined> {
+        return this.getConfiguration();
+    }
+
+    private async getConfiguration(): Promise<FunctionConfiguration | undefined> {
+        if(!this._configuration) {
+            const response = await api.GetLambdaConfiguration(this.Region, this.FunctionName);
+            if (response.isSuccessful) {
+                this._configuration = response.result;
+            } else {
+                ui.logToOutput('api.GetLambdaConfiguration Error !!!', response.error);
+                ui.showErrorMessage('Get Lambda Configuration Error !!!', response.error);
+            }
+        }
+        return this._configuration;
+    }
+
+    public set Configuration(value: FunctionConfiguration | undefined) {
+        this._configuration = value;
+    }
 
     public async LoadDefaultChildren(): Promise<void> {
         const code = new LambdaCodeGroupNode("Code", this);
@@ -149,8 +174,37 @@ export class LambdaFunctionNode extends NodeBase {
 
     public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-        //TODO: Implement Lambda function info display logic here
+    public async NodeInfo(): Promise<void> {
+        ui.logToOutput('LambdaFunctionNode.NodeInfo Started');
+
+        if (!this.FunctionName || !this.Region) {
+            ui.showWarningMessage('Lambda function or region is not set.');
+            return;
+        }
+
+        if (this.IsWorking) {
+            return;
+        }
+
+        this.StartWorking();
+
+        try {
+            const config = await this.Configuration;
+            if (config) {
+            const jsonContent = JSON.stringify(config, null, 2);
+            const document = await vscode.workspace.openTextDocument({
+                content: jsonContent,
+                language: 'json'
+            });
+            await vscode.window.showTextDocument(document);
+            } else {
+            ui.showWarningMessage('Failed to load Lambda configuration');
+            }
+        } catch (error: any) {
+            ui.logToOutput('LambdaFunctionNode.NodeInfo Error !!!', error);
+            ui.showErrorMessage('Failed to open configuration', error);
+        }
+        this.StopWorking();
     }
 
     public NodeLoaded(): void {}
