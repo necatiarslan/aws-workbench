@@ -70,6 +70,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.S3BucketNode = S3BucketNode;
 __decorate([

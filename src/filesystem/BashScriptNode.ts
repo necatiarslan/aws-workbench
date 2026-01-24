@@ -66,6 +66,8 @@ export class BashScriptNode extends NodeBase {
     public NodeInfo(): void {
     }
 
+    public NodeLoaded(): void {}
+
 }
 
 // Register with NodeRegistry for deserialization

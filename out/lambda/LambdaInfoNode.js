@@ -29,8 +29,8 @@ class LambdaInfoNode extends NodeBase_1.NodeBase {
     }
     NodeOpen() {
     }
-    NodeInfo() {
-    }
+    NodeInfo() { }
+    NodeLoaded() { }
 }
 exports.LambdaInfoNode = LambdaInfoNode;
 // Register with NodeRegistry for deserialization

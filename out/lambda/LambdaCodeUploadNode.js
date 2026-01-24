@@ -84,6 +84,7 @@ class LambdaCodeUploadNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaCodeUploadNode = LambdaCodeUploadNode;
 // Register with NodeRegistry for deserialization

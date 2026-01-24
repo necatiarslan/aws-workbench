@@ -89,6 +89,8 @@ export class NoteNode extends NodeBase {
     public NodeInfo(): void {
     }
 
+    public NodeLoaded(): void {}
+
 }
 
 // Register with NodeRegistry for deserialization

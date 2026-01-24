@@ -214,6 +214,7 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaCodeDownloadNode = LambdaCodeDownloadNode;
 // Register with NodeRegistry for deserialization

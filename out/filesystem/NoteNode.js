@@ -84,6 +84,7 @@ class NoteNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.NoteNode = NoteNode;
 __decorate([

@@ -93,6 +93,7 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.CloudWatchLogGroupNode = CloudWatchLogGroupNode;
 __decorate([

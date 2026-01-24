@@ -30,6 +30,7 @@ class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaTriggerGroupNode = LambdaTriggerGroupNode;
 // Register with NodeRegistry for deserialization

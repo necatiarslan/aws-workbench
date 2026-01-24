@@ -129,6 +129,7 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaTagGroupNode = LambdaTagGroupNode;
 // Register with NodeRegistry for deserialization

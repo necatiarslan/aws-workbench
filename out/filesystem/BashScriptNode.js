@@ -59,6 +59,7 @@ class BashScriptNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.BashScriptNode = BashScriptNode;
 __decorate([

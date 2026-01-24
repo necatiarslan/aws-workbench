@@ -81,6 +81,7 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaEnvNode = LambdaEnvNode;
 // Register with NodeRegistry for deserialization

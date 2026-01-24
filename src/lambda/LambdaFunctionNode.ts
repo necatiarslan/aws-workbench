@@ -155,6 +155,8 @@ export class LambdaFunctionNode extends NodeBase {
         //TODO: Implement Lambda function info display logic here
     }
 
+    public NodeLoaded(): void {}
+
 }
 
 // Register with NodeRegistry for deserialization

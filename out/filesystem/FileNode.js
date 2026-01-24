@@ -48,6 +48,7 @@ class FileNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.FileNode = FileNode;
 __decorate([

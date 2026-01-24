@@ -51,6 +51,7 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.CloudWatchLogStreamNode = CloudWatchLogStreamNode;
 __decorate([

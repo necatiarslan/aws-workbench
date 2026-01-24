@@ -87,6 +87,7 @@ class FolderNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.FolderNode = FolderNode;
 __decorate([

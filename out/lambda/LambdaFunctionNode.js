@@ -133,6 +133,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     NodeInfo() {
         //TODO: Implement Lambda function info display logic here
     }
+    NodeLoaded() { }
 }
 exports.LambdaFunctionNode = LambdaFunctionNode;
 __decorate([

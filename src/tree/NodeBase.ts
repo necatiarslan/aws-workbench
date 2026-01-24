@@ -283,6 +283,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         this.SetContextValue();
         this.SetVisible();
+        this.NodeLoaded();
         
         // Recursively finalize children
         for (const child of this.Children) {
@@ -314,5 +315,6 @@ export abstract class NodeBase extends vscode.TreeItem {
     public abstract NodeStop(): void;
     public abstract NodeOpen(): void;
     public abstract NodeInfo(): void;
+    public abstract NodeLoaded(): void;
     
 }

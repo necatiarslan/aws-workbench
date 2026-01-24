@@ -282,6 +282,7 @@ class NodeBase extends vscode.TreeItem {
         }
         this.SetContextValue();
         this.SetVisible();
+        this.NodeLoaded();
         // Recursively finalize children
         for (const child of this.Children) {
             child.finalizeDeserialization();

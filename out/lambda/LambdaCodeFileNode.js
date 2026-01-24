@@ -83,6 +83,15 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() {
+        const lambdaNode = this.GetAwsResourceNode();
+        if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {
+            this.label = `Code Path: ${lambdaNode.CodePath}`;
+        }
+        else {
+            this.label = 'Select File';
+        }
+    }
 }
 exports.LambdaCodeFileNode = LambdaCodeFileNode;
 // Register with NodeRegistry for deserialization

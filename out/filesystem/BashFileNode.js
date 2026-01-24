@@ -54,6 +54,7 @@ class BashFileNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.BashFileNode = BashFileNode;
 __decorate([

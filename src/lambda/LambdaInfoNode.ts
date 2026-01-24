@@ -45,8 +45,9 @@ export class LambdaInfoNode extends NodeBase {
     public NodeOpen(): void {
     }
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
+
+    public NodeLoaded(): void {}
 
 }
 

@@ -81,6 +81,7 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaInfoGroupNode = LambdaInfoGroupNode;
 // Register with NodeRegistry for deserialization

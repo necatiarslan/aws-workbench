@@ -30,6 +30,7 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
     }
     NodeInfo() {
     }
+    NodeLoaded() { }
 }
 exports.LambdaLogGroupNode = LambdaLogGroupNode;
 // Register with NodeRegistry for deserialization
