@@ -19,6 +19,7 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
     async handleNodeAdd() {
         ui.logToOutput('LambdaTagGroupNode.NodeAdd Started');

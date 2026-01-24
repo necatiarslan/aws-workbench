@@ -17,6 +17,9 @@ class TreeProvider {
         return node;
     }
     async getChildren(node) {
+        if (node && !node.IsOnNodeLoadChildrenCalled) {
+            await node?.NodeLoadChildren();
+        }
         if (node && node.Children) {
             return node.Children.filter(child => child.IsVisible);
         }

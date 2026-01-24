@@ -31,6 +31,7 @@ class NodeBase extends vscode.TreeItem {
     OnNodeOpen = new EventEmitter_1.EventEmitter();
     OnNodeInfo = new EventEmitter_1.EventEmitter();
     OnNodeLoaded = new EventEmitter_1.EventEmitter();
+    OnNodeLoadChildren = new EventEmitter_1.EventEmitter();
     constructor(label, parent) {
         super(label);
         this.id = Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
@@ -56,6 +57,7 @@ class NodeBase extends vscode.TreeItem {
     EnableNodeInfo = false;
     EnableNodeAlias = false;
     ShouldBeSaved = true;
+    IsOnNodeLoadChildrenCalled = false;
     _isFavorite = false;
     _isHidden = false;
     Parent = undefined;
@@ -342,6 +344,10 @@ class NodeBase extends vscode.TreeItem {
     }
     async NodeLoaded() {
         await this.OnNodeLoaded.fire(undefined);
+    }
+    async NodeLoadChildren() {
+        await this.OnNodeLoadChildren.fire(undefined);
+        this.IsOnNodeLoadChildrenCalled = true;
     }
 }
 exports.NodeBase = NodeBase;

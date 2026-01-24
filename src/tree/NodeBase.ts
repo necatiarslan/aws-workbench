@@ -22,7 +22,9 @@ export abstract class NodeBase extends vscode.TreeItem {
     protected OnNodeOpen: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeInfo: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeLoaded: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeLoadChildren: EventEmitter<void> = new EventEmitter<void>();
 
+    
     constructor(label: string, parent?: NodeBase) 
     {
         super(label);        
@@ -52,7 +54,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     public EnableNodeAlias: boolean = false;
 
     public ShouldBeSaved: boolean = true;
-    
+    public IsOnNodeLoadChildrenCalled: boolean = false;
 
     @Serialize()
     private _isFavorite: boolean = false;
@@ -358,6 +360,11 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public async NodeLoaded(): Promise<void> {
         await this.OnNodeLoaded.fire(undefined);
+    }
+
+    public async NodeLoadChildren(): Promise<void> {
+        await this.OnNodeLoadChildren.fire(undefined);
+        this.IsOnNodeLoadChildrenCalled = true;
     }
     
 }

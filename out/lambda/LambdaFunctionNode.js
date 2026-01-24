@@ -84,7 +84,10 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
     }
     async handleNodeRun() {
-        ui.logToOutput('LambdaFunctionNode.NodeRun Started');
+        this.TriggerLambda();
+    }
+    async TriggerLambda(filePath) {
+        ui.logToOutput('LambdaFunctionNode.TriggerLambda Started');
         if (!this.FunctionName || !this.Region) {
             ui.showWarningMessage('Lambda function or region is not set.');
             return;
@@ -94,13 +97,28 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         }
         let payloadInput;
         let payloadObj = {};
-        // Prompt for payload JSON (optional)
-        payloadInput = await vscode.window.showInputBox({
-            value: '',
-            placeHolder: 'Enter Payload JSON or leave empty'
-        });
-        if (payloadInput === undefined) {
-            return;
+        if (filePath) {
+            // If filePath is provided open file, read content and use as payload
+            try {
+                const fileUri = vscode.Uri.file(filePath);
+                const document = await vscode.workspace.openTextDocument(fileUri);
+                payloadInput = document.getText();
+            }
+            catch (error) {
+                ui.logToOutput('LambdaFunctionNode.TriggerLambda Error reading payload file!!!', error);
+                ui.showErrorMessage('Failed to read payload file', error);
+                return;
+            }
+        }
+        else {
+            // Prompt for payload JSON (optional)
+            payloadInput = await vscode.window.showInputBox({
+                value: '',
+                placeHolder: 'Enter Payload JSON or leave empty'
+            });
+            if (payloadInput === undefined) {
+                return;
+            }
         }
         if (payloadInput.trim().length > 0) {
             if (!ui.isJsonString(payloadInput)) {
@@ -136,7 +154,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
             ui.showInfoMessage('Lambda Triggered Successfully');
         }
         catch (error) {
-            ui.logToOutput('LambdaFunctionNode.NodeRun Error !!!', error);
+            ui.logToOutput('LambdaFunctionNode.TriggerLambda Error !!!', error);
             ui.showErrorMessage('Trigger Lambda Error !!!', error);
         }
         finally {

@@ -21,6 +21,7 @@ export class LambdaInfoGroupNode extends NodeBase {
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
 
     public async handleNodeRefresh(): Promise<void> {

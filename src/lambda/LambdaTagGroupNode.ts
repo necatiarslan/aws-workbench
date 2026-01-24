@@ -23,6 +23,7 @@ export class LambdaTagGroupNode extends NodeBase {
         
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
 
     public async handleNodeAdd(): Promise<void> {

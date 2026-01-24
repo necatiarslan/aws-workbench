@@ -19,6 +19,7 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
     async handleNodeAdd() {
         //TODO: Implement adding new environment variable logic here

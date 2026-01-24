@@ -10,7 +10,7 @@ export class LambdaLogGroupNode extends NodeBase {
     constructor(Label: string, parent?: NodeBase) 
     {
         super(Label, parent);
-        this.Icon = "list-unordered";
+        this.Icon = "cloudwatch-loggroup";
 
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
@@ -18,6 +18,7 @@ export class LambdaLogGroupNode extends NodeBase {
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
 
     public async handleNodeRefresh(): Promise<void> {

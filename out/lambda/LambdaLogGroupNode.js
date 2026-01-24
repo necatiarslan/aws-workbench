@@ -9,12 +9,13 @@ const CloudWatchLogGroupNode_1 = require("../cloudwatch-logs/CloudWatchLogGroupN
 class LambdaLogGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
-        this.Icon = "list-unordered";
+        this.Icon = "cloudwatch-loggroup";
         this.ShouldBeSaved = false;
         this.EnableNodeRefresh = true;
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
     async handleNodeRefresh() {
         ui.logToOutput('LambdaLogGroupNode.NodeRefresh Started');

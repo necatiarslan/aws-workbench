@@ -23,6 +23,8 @@ export class LambdaEnvGroupNode extends NodeBase {
         
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+
     }
 
     public async handleNodeAdd(): Promise<void> {

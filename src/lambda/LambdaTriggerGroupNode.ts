@@ -23,6 +23,7 @@ export class LambdaTriggerGroupNode extends NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
 
     public async handleNodeAdd(): Promise<void> {

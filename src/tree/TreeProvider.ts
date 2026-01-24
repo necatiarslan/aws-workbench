@@ -20,6 +20,9 @@ export class TreeProvider implements vscode.TreeDataProvider<NodeBase> {
     }
 
     public async getChildren(node?: NodeBase): Promise<NodeBase[]> {
+        if (node && !node.IsOnNodeLoadChildrenCalled) {
+            await node?.NodeLoadChildren();
+        }
         if (node && node.Children) {
             return node.Children.filter(child => child.IsVisible);
         }

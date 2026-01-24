@@ -20,6 +20,7 @@ class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
     async handleNodeAdd() {
         ui.logToOutput('LambdaTriggerGroupNode.NodeAdd Started');

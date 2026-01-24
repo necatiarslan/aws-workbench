@@ -17,6 +17,7 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
     }
     async handleNodeRefresh() {
         ui.logToOutput('LambdaInfoGroupNode.NodeRefresh Started');
