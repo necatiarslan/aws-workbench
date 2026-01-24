@@ -16,6 +16,8 @@ import { LambdaTriggerGroupNode } from './LambdaTriggerGroupNode';
 import { LambdaCodeFileNode } from './LambdaCodeFileNode';
 import { LambdaCodeUploadNode } from './LambdaCodeUploadNode';
 import { LambdaCodeDownloadNode } from './LambdaCodeDownloadNode';
+import { Lambda } from '@aws-sdk/client-lambda';
+import { LambdaCodeCompareNode } from './LambdaCodeCompareNode';
 
 export class LambdaFunctionNode extends NodeBase {
 
@@ -39,11 +41,15 @@ export class LambdaFunctionNode extends NodeBase {
     @Serialize()
     public Region: string = "";
 
+    @Serialize()
+    public CodePath: string = "";
+
     public async LoadDefaultChildren(): Promise<void> {
         const code = new LambdaCodeGroupNode("Code", this);
         new LambdaCodeFileNode("Select File", code);
         new LambdaCodeDownloadNode("Download", code);
         new LambdaCodeUploadNode("Upload", code);
+        new LambdaCodeCompareNode("Compare", code);
 
         new LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode("Info", this);
