@@ -55,8 +55,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         });
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
         S3Explorer_1.S3Explorer.Render(Session_1.Session.Current.ExtensionUri, this);
     }
@@ -64,12 +63,9 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     }
     NodeRun() {
     }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.S3BucketNode = S3BucketNode;

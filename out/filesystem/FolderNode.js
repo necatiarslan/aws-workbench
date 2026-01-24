@@ -73,20 +73,13 @@ class FolderNode extends NodeBase_1.NodeBase {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
-    NodeView() {
-    }
-    NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeRefresh() { }
+    NodeView() { }
+    NodeEdit() { }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.FolderNode = FolderNode;

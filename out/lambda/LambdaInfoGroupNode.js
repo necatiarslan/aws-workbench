@@ -17,10 +17,8 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
-    async NodeAdd() {
-    }
-    NodeRemove() {
-    }
+    async NodeAdd() { }
+    NodeRemove() { }
     async NodeRefresh() {
         ui.logToOutput('LambdaInfoGroupNode.NodeRefresh Started');
         // Get the parent Lambda function node
@@ -69,18 +67,12 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
         this.StopWorking();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeView() {
-    }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeView() { }
+    async NodeEdit() { }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaInfoGroupNode = LambdaInfoGroupNode;

@@ -53,10 +53,8 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         ui.showInfoMessage('Code Path Removed Successfully');
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeRefresh() {
-    }
-    NodeView() {
-    }
+    NodeRefresh() { }
+    NodeView() { }
     async NodeEdit() {
         ui.logToOutput('LambdaCodeFileNode.NodeEdit Started');
         const lambdaNode = this.GetAwsResourceNode();
@@ -75,14 +73,10 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
             ui.showErrorMessage('Failed to open file for editing', error);
         }
     }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() {
         const lambdaNode = this.GetAwsResourceNode();
         if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {

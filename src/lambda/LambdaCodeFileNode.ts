@@ -61,11 +61,9 @@ export class LambdaCodeFileNode extends NodeBase {
         TreeProvider.Current.Refresh(this);
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
     public async NodeEdit(): Promise<void> {
         ui.logToOutput('LambdaCodeFileNode.NodeEdit Started');
@@ -87,17 +85,13 @@ export class LambdaCodeFileNode extends NodeBase {
         }
     }
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;

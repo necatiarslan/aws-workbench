@@ -27,27 +27,21 @@ class FileNode extends NodeBase_1.NodeBase {
         this.EnableNodeAlias = true;
         this.SetContextValue();
     }
-    NodeAdd() {
-    }
+    NodeAdd() { }
     NodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
     }
-    NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
+    NodeEdit() { }
+    NodeRun() { }
+    NodeStop() { }
     NodeOpen() {
         ui.openFile(this.FilePath);
     }
-    NodeInfo() {
-    }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.FileNode = FileNode;

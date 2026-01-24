@@ -65,8 +65,7 @@ export class S3BucketNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
     public NodeView(): void {
         S3Explorer.Render(Session.Current.ExtensionUri, this);
@@ -80,14 +79,11 @@ export class S3BucketNode extends NodeBase {
         
     }
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

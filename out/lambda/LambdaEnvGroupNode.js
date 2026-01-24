@@ -21,8 +21,7 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
     async NodeAdd() {
         //TODO: Implement adding new environment variable logic here
     }
-    NodeRemove() {
-    }
+    NodeRemove() { }
     async NodeRefresh() {
         ui.logToOutput('LambdaEnvGroupNode.NodeRefresh Started');
         // Get the parent Lambda function node
@@ -61,18 +60,12 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         this.StopWorking();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeView() {
-    }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeView() { }
+    async NodeEdit() { }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaEnvGroupNode = LambdaEnvGroupNode;

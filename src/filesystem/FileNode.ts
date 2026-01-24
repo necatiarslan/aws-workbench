@@ -25,36 +25,30 @@ export class FileNode extends NodeBase {
         this.SetContextValue();
     }
 
-    public NodeAdd(): void {
-    }
+    public NodeAdd(): void {}
 
     public NodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
     public NodeView(): void {
         
     }
 
-    public NodeEdit(): void {
-    }
+    public NodeEdit(): void {}
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
     public NodeOpen(): void {
         ui.openFile(this.FilePath);
     }
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

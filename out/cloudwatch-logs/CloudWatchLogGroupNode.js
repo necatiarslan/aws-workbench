@@ -78,8 +78,7 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
         CloudWatchLogView_1.CloudWatchLogView.Render(Session_1.Session.Current.ExtensionUri, this.Region, this.LogGroup);
     }
@@ -87,12 +86,9 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     }
     NodeRun() {
     }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.CloudWatchLogGroupNode = CloudWatchLogGroupNode;

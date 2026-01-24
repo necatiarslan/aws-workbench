@@ -63,8 +63,7 @@ export class LambdaFunctionNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
     public NodeView(): void {
         //TODO: Implement Lambda function details viewing logic here
@@ -148,8 +147,7 @@ export class LambdaFunctionNode extends NodeBase {
         //TODO: Implement Lambda function stop logic here
     }
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
     public NodeInfo(): void {
         //TODO: Implement Lambda function info display logic here

@@ -15,16 +15,11 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
         this.EnableNodeRun = true;
         this.SetContextValue();
     }
-    async NodeAdd() {
-    }
-    NodeRemove() {
-    }
-    NodeRefresh() {
-    }
-    NodeView() {
-    }
-    async NodeEdit() {
-    }
+    async NodeAdd() { }
+    NodeRemove() { }
+    NodeRefresh() { }
+    NodeView() { }
+    async NodeEdit() { }
     async NodeRun() {
         ui.logToOutput('LambdaCodeDownloadNode.NodeRun Started');
         // Get parent Lambda function node
@@ -208,12 +203,9 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
             ui.showErrorMessage('Failed to unzip file', error);
         }
     }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaCodeDownloadNode = LambdaCodeDownloadNode;

@@ -12,23 +12,16 @@ class LambdaInfoNode extends NodeBase_1.NodeBase {
     }
     Key = "";
     Value = "";
-    async NodeAdd() {
-    }
-    NodeRemove() {
-    }
+    async NodeAdd() { }
+    NodeRemove() { }
     NodeRefresh() {
         this.Parent?.NodeRefresh();
     }
-    NodeView() {
-    }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
+    NodeView() { }
+    async NodeEdit() { }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
     NodeInfo() { }
     NodeLoaded() { }
 }

@@ -29,31 +29,26 @@ class BashFileNode extends NodeBase_1.NodeBase {
         this.EnableNodeAlias = true;
         this.SetContextValue();
     }
-    NodeAdd() {
-    }
+    NodeAdd() { }
     NodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
     }
-    NodeEdit() {
-    }
+    NodeEdit() { }
     NodeRun() {
         //run the bash file in a new terminal
         this.StartWorking();
         vscode.window.createTerminal(this.FileName).sendText(this.FilePath);
         this.StopWorking();
     }
-    NodeStop() {
-    }
+    NodeStop() { }
     NodeOpen() {
         ui.openFile(this.FilePath);
     }
-    NodeInfo() {
-    }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.BashFileNode = BashFileNode;

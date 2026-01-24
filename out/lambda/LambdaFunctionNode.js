@@ -59,8 +59,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
         //TODO: Implement Lambda function details viewing logic here
     }
@@ -128,8 +127,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     NodeStop() {
         //TODO: Implement Lambda function stop logic here
     }
-    NodeOpen() {
-    }
+    NodeOpen() { }
     NodeInfo() {
         //TODO: Implement Lambda function info display logic here
     }

@@ -20,30 +20,23 @@ export class LambdaInfoNode extends NodeBase {
 
     public Value: string = "";
 
-    public async NodeAdd(): Promise<void> {
-    }
+    public async NodeAdd(): Promise<void> {}
 
-    public NodeRemove(): void {
-    }
+    public NodeRemove(): void {}
 
     public NodeRefresh(): void {
         this.Parent?.NodeRefresh();
     }
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
-    public async NodeEdit(): Promise<void> {
-    }
+    public async NodeEdit(): Promise<void> {}
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
     public NodeInfo(): void {}
 

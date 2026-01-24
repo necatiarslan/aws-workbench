@@ -70,26 +70,19 @@ export class FolderNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
-    public NodeEdit(): void {
-    }
+    public NodeEdit(): void {}
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

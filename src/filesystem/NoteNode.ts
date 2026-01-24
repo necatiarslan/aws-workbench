@@ -62,8 +62,7 @@ export class NoteNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
     public NodeView(): void {
         vscode.window.showInformationMessage(`${this.NoteTitle}`, { modal: true, detail: this.NoteContent });
@@ -77,17 +76,13 @@ export class NoteNode extends NodeBase {
         TreeState.save();   
     }
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

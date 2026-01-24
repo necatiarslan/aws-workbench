@@ -18,8 +18,7 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
     }
     Key = "";
     Value = "";
-    async NodeAdd() {
-    }
+    async NodeAdd() { }
     async NodeRemove() {
         ui.logToOutput('LambdaTagNode.NodeRemove Started');
         if (!this.Key) {
@@ -64,8 +63,7 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
     NodeRefresh() {
         this.Parent?.NodeRefresh();
     }
-    NodeView() {
-    }
+    NodeView() { }
     async NodeEdit() {
         ui.logToOutput('LambdaTagNode.NodeEdit Started');
         // Prompt for new value (allow empty string, but not undefined/cancel)
@@ -111,14 +109,10 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
         this.Parent?.NodeRefresh();
         this.StopWorking();
     }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaTagNode = LambdaTagNode;

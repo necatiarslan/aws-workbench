@@ -63,8 +63,7 @@ class NoteNode extends NodeBase_1.NodeBase {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
         vscode.window.showInformationMessage(`${this.NoteTitle}`, { modal: true, detail: this.NoteContent });
     }
@@ -76,14 +75,10 @@ class NoteNode extends NodeBase_1.NodeBase {
         this.NoteContent = noteContent;
         TreeState_1.TreeState.save();
     }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.NoteNode = NoteNode;

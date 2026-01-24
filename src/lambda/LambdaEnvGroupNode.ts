@@ -27,8 +27,7 @@ export class LambdaEnvGroupNode extends NodeBase {
         //TODO: Implement adding new environment variable logic here
     }
 
-    public NodeRemove(): void {
-    }
+    public NodeRemove(): void {}
 
     public async NodeRefresh(): Promise<void> {
         ui.logToOutput('LambdaEnvGroupNode.NodeRefresh Started');
@@ -77,23 +76,17 @@ export class LambdaEnvGroupNode extends NodeBase {
         TreeProvider.Current.Refresh(this);
     }
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
-    public async NodeEdit(): Promise<void> {
-    }
+    public async NodeEdit(): Promise<void> {}
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

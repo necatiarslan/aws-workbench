@@ -39,8 +39,7 @@ export class CloudWatchLogStreamNode extends NodeBase {
         TreeState.save();
     }
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
     public NodeView(): void {
         CloudWatchLogView.Render(Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
@@ -54,14 +53,11 @@ export class CloudWatchLogStreamNode extends NodeBase {
         
     }
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

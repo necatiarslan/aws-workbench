@@ -19,20 +19,15 @@ export class LambdaCodeDownloadNode extends NodeBase {
         this.SetContextValue();
     }
 
-    public async NodeAdd(): Promise<void> {
-    }
+    public async NodeAdd(): Promise<void> {}
 
-    public NodeRemove(): void {
-    }
+    public NodeRemove(): void {}
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
-    public async NodeEdit(): Promise<void> {
-    }
+    public async NodeEdit(): Promise<void> {}
 
     public async NodeRun(): Promise<void> {
         ui.logToOutput('LambdaCodeDownloadNode.NodeRun Started');
@@ -260,14 +255,11 @@ export class LambdaCodeDownloadNode extends NodeBase {
         }
     }
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

@@ -25,8 +25,7 @@ export class LambdaEnvNode extends NodeBase {
 
     public Value: string = "";
 
-    public async NodeAdd(): Promise<void> {
-    }
+    public async NodeAdd(): Promise<void> {}
 
     public NodeRemove(): void {
         //TODO: Implement environment variable removal logic here
@@ -36,8 +35,7 @@ export class LambdaEnvNode extends NodeBase {
         this.Parent?.NodeRefresh();
     }
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
     public async NodeEdit(): Promise<void> {
         ui.logToOutput('LambdaEnvNode.NodeEdit Started');
@@ -94,17 +92,13 @@ export class LambdaEnvNode extends NodeBase {
         this.StopWorking();
     }
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

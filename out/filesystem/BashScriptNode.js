@@ -35,8 +35,7 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         this.Remove();
         TreeState_1.TreeState.save();
     }
-    NodeRefresh() {
-    }
+    NodeRefresh() { }
     NodeView() {
         vscode.window.showInformationMessage(`${this.Title}`, { modal: true, detail: this.Script });
     }
@@ -53,12 +52,9 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         vscode.window.createTerminal(this.Title).sendText(this.Script);
         this.StopWorking();
     }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.BashScriptNode = BashScriptNode;

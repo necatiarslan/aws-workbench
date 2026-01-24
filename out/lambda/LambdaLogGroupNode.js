@@ -12,24 +12,15 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
-    async NodeAdd() {
-    }
-    NodeRemove() {
-    }
-    NodeRefresh() {
-    }
-    NodeView() {
-    }
-    async NodeEdit() {
-    }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    async NodeAdd() { }
+    NodeRemove() { }
+    NodeRefresh() { }
+    NodeView() { }
+    async NodeEdit() { }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaLogGroupNode = LambdaLogGroupNode;

@@ -17,32 +17,23 @@ export class LambdaCodeGroupNode extends NodeBase {
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
-    public async NodeAdd(): Promise<void> {
-    }
+    public async NodeAdd(): Promise<void> {}
 
-    public NodeRemove(): void {
-    }
+    public NodeRemove(): void {}
 
-    public NodeRefresh(): void {
-    }
+    public NodeRefresh(): void {}
 
-    public NodeView(): void {
-    }
+    public NodeView(): void {}
 
-    public async NodeEdit(): Promise<void> {
-    }
+    public async NodeEdit(): Promise<void> {}
 
-    public NodeRun(): void {
-    }
+    public NodeRun(): void {}
 
-    public NodeStop(): void {
-    }
+    public NodeStop(): void {}
 
-    public NodeOpen(): void {
-    }
+    public NodeOpen(): void {}
 
-    public NodeInfo(): void {
-    }
+    public NodeInfo(): void {}
 
     public NodeLoaded(): void {}
 

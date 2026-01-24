@@ -19,16 +19,14 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
     }
     Key = "";
     Value = "";
-    async NodeAdd() {
-    }
+    async NodeAdd() { }
     NodeRemove() {
         //TODO: Implement environment variable removal logic here
     }
     NodeRefresh() {
         this.Parent?.NodeRefresh();
     }
-    NodeView() {
-    }
+    NodeView() { }
     async NodeEdit() {
         ui.logToOutput('LambdaEnvNode.NodeEdit Started');
         // Resolve the parent Lambda function node to get region/name
@@ -73,14 +71,10 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
         }
         this.StopWorking();
     }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaEnvNode = LambdaEnvNode;

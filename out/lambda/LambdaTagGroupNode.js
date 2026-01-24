@@ -66,8 +66,7 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
         this.StopWorking();
         await this.NodeRefresh();
     }
-    NodeRemove() {
-    }
+    NodeRemove() { }
     async NodeRefresh() {
         ui.logToOutput('LambdaTagGroupNode.NodeRefresh Started');
         // Get the parent Lambda function node
@@ -117,18 +116,13 @@ class LambdaTagGroupNode extends NodeBase_1.NodeBase {
         this.StopWorking();
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
-    NodeView() {
-    }
+    NodeView() { }
     async NodeEdit() {
     }
-    NodeRun() {
-    }
-    NodeStop() {
-    }
-    NodeOpen() {
-    }
-    NodeInfo() {
-    }
+    NodeRun() { }
+    NodeStop() { }
+    NodeOpen() { }
+    NodeInfo() { }
     NodeLoaded() { }
 }
 exports.LambdaTagGroupNode = LambdaTagGroupNode;
