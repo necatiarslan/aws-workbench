@@ -43,6 +43,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     FunctionName = "";
     Region = "";
     CodePath = "";
+    TriggerFiles = [];
     _configuration = undefined;
     get Configuration() {
         return this.getConfiguration();
@@ -86,7 +87,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     }
     async NodeEdit() {
     }
-    async NodeRun() {
+    async NodeRun(filePath) {
         ui.logToOutput('LambdaFunctionNode.NodeRun Started');
         if (!this.FunctionName || !this.Region) {
             ui.showWarningMessage('Lambda function or region is not set.');
@@ -95,15 +96,31 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         if (this.IsWorking) {
             return;
         }
-        // Prompt for payload JSON (optional)
-        const payloadInput = await vscode.window.showInputBox({
-            value: '',
-            placeHolder: 'Enter Payload JSON or leave empty'
-        });
-        if (payloadInput === undefined) {
-            return;
-        }
+        let payloadInput;
         let payloadObj = {};
+        if (filePath) {
+            // If filePath is provided open file, read content and use as payload
+            try {
+                const fileUri = vscode.Uri.file(filePath);
+                const document = await vscode.workspace.openTextDocument(fileUri);
+                payloadInput = document.getText();
+            }
+            catch (error) {
+                ui.logToOutput('LambdaFunctionNode.NodeRun Error reading payload file!!!', error);
+                ui.showErrorMessage('Failed to read payload file', error);
+                return;
+            }
+        }
+        else {
+            // Prompt for payload JSON (optional)
+            payloadInput = await vscode.window.showInputBox({
+                value: '',
+                placeHolder: 'Enter Payload JSON or leave empty'
+            });
+            if (payloadInput === undefined) {
+                return;
+            }
+        }
         if (payloadInput.trim().length > 0) {
             if (!ui.isJsonString(payloadInput)) {
                 ui.showInfoMessage('Payload should be a valid JSON');
@@ -194,6 +211,10 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], LambdaFunctionNode.prototype, "CodePath", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", Array)
+], LambdaFunctionNode.prototype, "TriggerFiles", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('LambdaFunctionNode', LambdaFunctionNode);
 //# sourceMappingURL=LambdaFunctionNode.js.map

@@ -43,6 +43,9 @@ export class LambdaFunctionNode extends NodeBase {
     @Serialize()
     public CodePath: string = "";
 
+    @Serialize()
+    public TriggerFiles: { id: string; path: string }[] = [];
+
     public _configuration: FunctionConfiguration | undefined = undefined;
 
     public get Configuration(): Promise<FunctionConfiguration | undefined> {
@@ -98,7 +101,7 @@ export class LambdaFunctionNode extends NodeBase {
          
     }
 
-    public async NodeRun(): Promise<void> {
+    public async NodeRun(filePath?:string): Promise<void> {
        ui.logToOutput('LambdaFunctionNode.NodeRun Started');
 
         if (!this.FunctionName || !this.Region) {
@@ -110,15 +113,31 @@ export class LambdaFunctionNode extends NodeBase {
             return;
         }
 
-        // Prompt for payload JSON (optional)
-        const payloadInput = await vscode.window.showInputBox({
-            value: '',
-            placeHolder: 'Enter Payload JSON or leave empty'
-        });
-
-        if (payloadInput === undefined) { return; }
-
+        let payloadInput: string | undefined;
         let payloadObj: any = {};
+
+        if(filePath){
+            // If filePath is provided open file, read content and use as payload
+            try {
+                const fileUri = vscode.Uri.file(filePath);
+                const document = await vscode.workspace.openTextDocument(fileUri);
+                payloadInput = document.getText();
+            } catch (error: any) {
+                ui.logToOutput('LambdaFunctionNode.NodeRun Error reading payload file!!!', error);
+                ui.showErrorMessage('Failed to read payload file', error);
+                return;
+            }
+        }
+        else {
+            // Prompt for payload JSON (optional)
+            payloadInput = await vscode.window.showInputBox({
+                value: '',
+                placeHolder: 'Enter Payload JSON or leave empty'
+            });
+
+            if (payloadInput === undefined) { return; }
+        }
+
         if (payloadInput.trim().length > 0) {
             if (!ui.isJsonString(payloadInput)) {
                 ui.showInfoMessage('Payload should be a valid JSON');
