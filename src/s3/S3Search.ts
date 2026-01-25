@@ -38,7 +38,8 @@ export class S3Search {
     }
 
     public SetS3ExplorerItem(node:S3BucketNode){
-        this.S3ExplorerItem = new S3ExplorerItem(node.BucketName, node.Key);
+        //TODO: set key from node
+        this.S3ExplorerItem = new S3ExplorerItem(node.BucketName, "");
     }
 
     public async RenderHtml() {
@@ -65,7 +66,7 @@ export class S3Search {
 
     }
 
-    public static Render(extensionUri: vscode.Uri, node:S3BucketNode) {
+    public static Render(extensionUri: vscode.Uri, node:S3BucketNode, key:string | undefined = undefined) {
         ui.logToOutput('S3Search.Render Started');
         Telemetry.Current?.send("S3Search.Render");
 
@@ -82,6 +83,11 @@ export class S3Search {
             });
             
             S3Search.Current = new S3Search(panel, extensionUri, node);
+        }
+        if(key)
+        {
+            S3Search.Current.S3ExplorerItem.Key = key;
+            S3Search.Current.Load();
         }
     }
 
@@ -176,7 +182,7 @@ export class S3Search {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}"
-                                src="${this.SelectedNode.IsShortcutExists(this.S3ExplorerItem.Bucket, file.Key)?bookmark_yesUri:bookmark_noUri}">
+                                src="${this.SelectedNode.IsShortcutExists(file.Key)?bookmark_yesUri:bookmark_noUri}">
                             </img>
                         </td>
                         <td style="white-space:nowrap;">
@@ -338,8 +344,7 @@ export class S3Search {
                         id = message.id;
                         id = id.replace("open_", "");
                         let node = new S3BucketNode(this.SelectedNode.BucketName);
-                        node.Key = id;
-                        S3Explorer.Render(this.extensionUri, node);
+                        S3Explorer.Render(this.extensionUri, node, id);
                         return;
 
                     case "copy":
@@ -370,7 +375,7 @@ export class S3Search {
                     case "add_shortcut":
                         id = message.id;
                         id = id.replace("add_shortcut_", "");
-                        this.AddShortcut(id);
+                        this.AddOrRemoveShortcut(id);
                         return;
 
                 }
@@ -381,9 +386,9 @@ export class S3Search {
         );
     }
   
-    private AddShortcut(key: string) {
-        Telemetry.Current?.send("S3Search.AddShortcut");
-        this.SelectedNode.AddShortcut(this.SelectedNode.BucketName, key);
+    private AddOrRemoveShortcut(key: string) {
+        Telemetry.Current?.send("S3Search.AddOrRemoveShortcut");
+        this.SelectedNode.AddOrRemoveShortcut(key);
         this.RenderHtml();
     }
     

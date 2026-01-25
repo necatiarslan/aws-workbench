@@ -22,6 +22,9 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         super(BucketName, parent);
         this.BucketName = BucketName;
         this.Icon = "s3-bucket";
+        // if(Key) {this.label = Key}
+        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "s3-bucket";
+        // this.Key = Key ?? "";
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         this.SetContextValue();
@@ -32,35 +35,26 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     }
     BucketName = "";
     Shortcuts = [];
-    ShortcutGroupNode;
+    async NodeAdd() {
+    }
     handleNodeRemove() {
         this.Remove();
         TreeState_1.TreeState.save();
     }
     async LoadDefaultChildren() {
-        this.ShortcutGroupNode = new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
+        new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
     }
     IsShortcutExists(key) {
         return this.Shortcuts.includes(key);
     }
-    AddOrRemoveShortcut(key) {
-        if (this.IsShortcutExists(key)) {
-            this.RemoveShortcut(key);
-        }
-        else {
-            this.AddShortcut(key);
-        }
-    }
     AddShortcut(key) {
         if (!this.IsShortcutExists(key)) {
             this.Shortcuts.push(key);
-            this.ShortcutGroupNode?.NodeRefresh();
             TreeState_1.TreeState.save();
         }
     }
     RemoveShortcut(key) {
         this.Shortcuts = this.Shortcuts.filter(k => k !== key);
-        this.ShortcutGroupNode?.NodeRefresh();
         TreeState_1.TreeState.save();
     }
     handleNodeView() {
@@ -78,4 +72,4 @@ __decorate([
 ], S3BucketNode.prototype, "Shortcuts", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('S3BucketNode', S3BucketNode);
-//# sourceMappingURL=S3BucketNode.js.map
+//# sourceMappingURL=S3BucketNode%20copy.js.map

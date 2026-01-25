@@ -1,10 +1,10 @@
 import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
-import * as vscode from 'vscode';
 import { TreeState } from '../tree/TreeState';
 import { S3Explorer } from './S3Explorer';
 import { Session } from '../common/Session';
+import { S3BucketShortcutGroupNode } from './S3BucketShortcutGroupNode';
 
 export class S3BucketNode extends NodeBase {
 
@@ -14,10 +14,6 @@ export class S3BucketNode extends NodeBase {
 
         this.BucketName = BucketName;
         this.Icon = "s3-bucket";
-        // if(Key) {this.label = Key}
-
-        // this.Icon = Key ? Key.endsWith("/") ? "folder" : "file" : "s3-bucket";
-        // this.Key = Key ?? "";
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
@@ -26,44 +22,54 @@ export class S3BucketNode extends NodeBase {
         // Event subscriptions
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+
+        this.LoadDefaultChildren();
     }
 
     @Serialize()
     public BucketName: string = "";
 
     @Serialize()
-    public Key: string = "";
+    public Shortcuts: string[] = [];
 
-    public async NodeAdd(): Promise<void> {
-
-    }
+    private ShortcutGroupNode: S3BucketShortcutGroupNode | undefined;
 
     private handleNodeRemove(): void {
         this.Remove();
         TreeState.save();
     }
 
-    public IsShortcutExists(bucket:string, key:string):boolean
-    {
-        key = key ?? "";
-        return this.Children.some(x => (x as S3BucketNode).BucketName === bucket && (x as S3BucketNode).Key === key) ?? false;
+    public async LoadDefaultChildren(): Promise<void> {
+        this.ShortcutGroupNode = new S3BucketShortcutGroupNode("Shortcuts", this);
     }
 
-    public AddShortcut(bucket:string, key:string):void
+    public IsShortcutExists(key:string):boolean
     {
-        new S3BucketNode(bucket, this).Key = key;
-        TreeState.save();
+        return this.Shortcuts.includes(key);
     }
 
-    public RemoveShortcut(bucket:string, key:string | undefined):void
+    public AddOrRemoveShortcut(key:string):void
     {
-        key = key ?? "";
-        this.Children.forEach(x => {
-            if((x as S3BucketNode).BucketName === bucket && (x as S3BucketNode).Key === key)
-            {
-                x.Remove();
-            }
-        });
+        if (this.IsShortcutExists(key)) {
+            this.RemoveShortcut(key);
+        } else {
+            this.AddShortcut(key);
+        }
+    }
+
+    public AddShortcut(key:string):void
+    {
+        if (!this.IsShortcutExists(key)) {
+            this.Shortcuts.push(key);
+            this.ShortcutGroupNode?.NodeRefresh();
+            TreeState.save();
+        }
+    }
+
+    public RemoveShortcut(key:string):void
+    {
+        this.Shortcuts = this.Shortcuts.filter(k => k !== key);
+        this.ShortcutGroupNode?.NodeRefresh();
         TreeState.save();
     }
 

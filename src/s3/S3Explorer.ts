@@ -26,7 +26,7 @@ export class S3Explorer {
     public SearchText:string = "";
     public SortColumn: string = "Name";
     public SortDirection: string = "asc";
-    public SelectedNode: S3BucketNode | undefined;
+    public SelectedNode: S3BucketNode;
 
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, node:S3BucketNode) {
         ui.logToOutput('S3Explorer.constructor Started');
@@ -43,7 +43,7 @@ export class S3Explorer {
     }
 
     public SetS3ExplorerItem(node:S3BucketNode){
-        this.S3ExplorerItem = new S3ExplorerItem(node.BucketName, node.Key);
+        this.S3ExplorerItem = new S3ExplorerItem(node.BucketName, "");
     }
 
     public async RenderHtml() {
@@ -70,7 +70,7 @@ export class S3Explorer {
 
     }
 
-    public static Render(extensionUri: vscode.Uri, node:S3BucketNode, changeKey:string|undefined=undefined) {
+    public static Render(extensionUri: vscode.Uri, node:S3BucketNode, key:string|undefined=undefined) {
         ui.logToOutput('S3Explorer.Render Started');
         Telemetry.Current?.send("S3Explorer.Render");
 
@@ -88,9 +88,9 @@ export class S3Explorer {
 
             S3Explorer.Current = new S3Explorer(panel, extensionUri, node);
         }
-        if(changeKey)
+        if(key)
         {
-            S3Explorer.Current.S3ExplorerItem.Key = changeKey;
+            S3Explorer.Current.S3ExplorerItem.Key = key;
             S3Explorer.Current.Load();
         }
     }
@@ -232,7 +232,7 @@ export class S3Explorer {
             <td style="width:20px">
                 <img 
                     id="add_shortcut_${this.S3ExplorerItem.Key}" 
-                    src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Bucket, this.S3ExplorerItem.Key)?bookmark_yesUri:bookmark_noUri}"
+                    src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Key)?bookmark_yesUri:bookmark_noUri}"
                     style="cursor: pointer;">
                 </img>
             </td>
@@ -263,7 +263,7 @@ export class S3Explorer {
                         <td style="width:20px">
                             <img  
                                 id="add_shortcut_${folder.Prefix}" 
-                                src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Bucket, folder.Prefix || "")?bookmark_yesUri:bookmark_noUri}"
+                                src="${this.SelectedNode?.IsShortcutExists(folder.Prefix || "")?bookmark_yesUri:bookmark_noUri}"
                                 style="cursor: pointer;">
                             </img>
                         </td>
@@ -297,7 +297,7 @@ export class S3Explorer {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}" 
-                                src="${this.SelectedNode?.IsShortcutExists(this.S3ExplorerItem.Bucket, file.Key || "")?bookmark_yesUri:bookmark_noUri}"
+                                src="${this.SelectedNode?.IsShortcutExists(file.Key || "")?bookmark_yesUri:bookmark_noUri}"
                                 style="cursor: pointer;">
                             </img>
                         </td>
@@ -614,25 +614,13 @@ export class S3Explorer {
                         return;
                     
                     case "ask_ai":
-                        
+                        ui.showInfoMessage("This feature is coming soon!");
 
                         return;
 
                     case "search":
-                        // let node:S3TreeItem;
-                        // if(this.S3ExplorerItem.IsRoot())
-                        // {
-                        //     node = new S3TreeItem("", TreeItemType.Bucket);
-                        //     node.Bucket = this.S3ExplorerItem.Bucket;
-                        // }
-                        // else
-                        // {
-                        //     node = new S3TreeItem("", TreeItemType.Shortcut);
-                        //     node.Bucket = this.S3ExplorerItem.Bucket;
-                        //     node.Shortcut = this.S3ExplorerItem.Key;
-                        // }
 
-                        // S3Search.Render(this.extensionUri, node);
+                        S3Search.Render(this.extensionUri, this.SelectedNode, this.S3ExplorerItem.Key);
                         return;
                     
                     case "create_folder":
@@ -733,7 +721,7 @@ export class S3Explorer {
                     case "add_shortcut":
                         id = message.id;
                         id = id.replace("add_shortcut_", "");
-                        this.AddShortcut(id);
+                        this.AddOrRemoveShortcut(id);
                         return;
 
                     case "go_up":
@@ -777,9 +765,9 @@ export class S3Explorer {
         );
     }
   
-    AddShortcut(key: string) {
-        Telemetry.Current?.send("S3Explorer.AddShortcut");
-        this.SelectedNode?.AddShortcut(this.S3ExplorerItem.Bucket, key);
+    AddOrRemoveShortcut(key: string) {
+        Telemetry.Current?.send("S3Explorer.AddOrRemoveShortcut");
+        this.SelectedNode?.AddOrRemoveShortcut(key);
         this.RenderHtml();
     }
     
@@ -1004,7 +992,7 @@ export class S3Explorer {
                     //ui.showInfoMessage(key + " is deleted " + fileCountDeleted.toString() + " object(s)");
                     progress.report({ increment: 100 / keyList.length, message: `Deleted ${key}` });
                     deleteCounter++;
-                    this.SelectedNode?.RemoveShortcut(this.S3ExplorerItem.Bucket, key);
+                    this.SelectedNode?.RemoveShortcut(key);
                     if(this.S3ExplorerItem.Key === key)
                     {
                         goto_parent_folder = true;

@@ -33,7 +33,8 @@ class S3Search {
         ui.logToOutput('S3Search.constructor Completed');
     }
     SetS3ExplorerItem(node) {
-        this.S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem(node.BucketName, node.Key);
+        //TODO: set key from node
+        this.S3ExplorerItem = new S3ExplorerItem_1.S3ExplorerItem(node.BucketName, "");
     }
     async RenderHtml() {
         ui.logToOutput('S3Search.RenderHmtl Started');
@@ -51,7 +52,7 @@ class S3Search {
     }
     ResetCurrentState() {
     }
-    static Render(extensionUri, node) {
+    static Render(extensionUri, node, key = undefined) {
         ui.logToOutput('S3Search.Render Started');
         Telemetry_1.Telemetry.Current?.send("S3Search.Render");
         if (S3Search.Current) {
@@ -65,6 +66,10 @@ class S3Search {
                 enableScripts: true,
             });
             S3Search.Current = new S3Search(panel, extensionUri, node);
+        }
+        if (key) {
+            S3Search.Current.S3ExplorerItem.Key = key;
+            S3Search.Current.Load();
         }
     }
     GetFileExtension(Key) {
@@ -146,7 +151,7 @@ class S3Search {
                         <td style="width:20px">
                             <img 
                                 id="add_shortcut_${file.Key}"
-                                src="${this.SelectedNode.IsShortcutExists(this.S3ExplorerItem.Bucket, file.Key) ? bookmark_yesUri : bookmark_noUri}">
+                                src="${this.SelectedNode.IsShortcutExists(file.Key) ? bookmark_yesUri : bookmark_noUri}">
                             </img>
                         </td>
                         <td style="white-space:nowrap;">
@@ -301,8 +306,7 @@ class S3Search {
                     id = message.id;
                     id = id.replace("open_", "");
                     let node = new S3BucketNode_1.S3BucketNode(this.SelectedNode.BucketName);
-                    node.Key = id;
-                    S3Explorer_1.S3Explorer.Render(this.extensionUri, node);
+                    S3Explorer_1.S3Explorer.Render(this.extensionUri, node, id);
                     return;
                 case "copy":
                     if (!message.keys || message.keys.length == 0) {
@@ -332,14 +336,14 @@ class S3Search {
                 case "add_shortcut":
                     id = message.id;
                     id = id.replace("add_shortcut_", "");
-                    this.AddShortcut(id);
+                    this.AddOrRemoveShortcut(id);
                     return;
             }
         }, undefined, this._disposables);
     }
-    AddShortcut(key) {
-        Telemetry_1.Telemetry.Current?.send("S3Search.AddShortcut");
-        this.SelectedNode.AddShortcut(this.SelectedNode.BucketName, key);
+    AddOrRemoveShortcut(key) {
+        Telemetry_1.Telemetry.Current?.send("S3Search.AddOrRemoveShortcut");
+        this.SelectedNode.AddOrRemoveShortcut(key);
         this.RenderHtml();
     }
     CopyS3URI(keys) {

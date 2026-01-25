@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaCodeGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
+const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 class LambdaCodeGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -13,4 +14,6 @@ class LambdaCodeGroupNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaCodeGroupNode = LambdaCodeGroupNode;
+// Register with NodeRegistry for deserialization
+NodeRegistry_1.NodeRegistry.register('LambdaCodeGroupNode', LambdaCodeGroupNode);
 //# sourceMappingURL=LambdaCodeGroupNode.js.map
