@@ -3,6 +3,7 @@ import { FileSystemService } from "../filesystem/FileSystemService";
 import { S3Service } from "../s3/S3Service";
 import { CloudWatchLogService } from '../cloudwatch-logs/CloudWatchLogService';
 import { LambdaService } from '../lambda/LambdaService';
+import { VscodeService } from '../vscode/VscodeService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
@@ -11,6 +12,7 @@ export class ServiceHub {
     public S3Service: S3Service = new S3Service();
     public CloudWatchLogService: CloudWatchLogService = new CloudWatchLogService();
     public LambdaService: LambdaService = new LambdaService();
+    public VscodeService: VscodeService = new VscodeService();
     
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;

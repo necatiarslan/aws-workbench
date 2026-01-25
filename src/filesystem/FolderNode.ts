@@ -19,7 +19,6 @@ export class FolderNode extends NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
 
-        this.EnableNodeAlias = true;
         this.SetContextValue();
     }
 
@@ -33,6 +32,7 @@ export class FolderNode extends NodeBase {
         result.push("S3 Bucket");
         result.push("CloudWatch Log Group");
         result.push("Lambda Function");
+        result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
         if(!nodeType){ return; }
@@ -61,6 +61,9 @@ export class FolderNode extends NodeBase {
                 break;
             case "Lambda Function":
                 await ServiceHub.Current.LambdaService.Add(this);
+                break;
+            case "Vscode Command":
+                await ServiceHub.Current.VscodeService.Add(this, "Command");
                 break;
         }
         TreeState.save();
