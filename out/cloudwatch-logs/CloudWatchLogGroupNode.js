@@ -27,11 +27,11 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         this.Icon = "cloudwatch-loggroup";
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
         // Attach event handlers
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.SetContextValue();
     }
     LogGroup = "";
     Region = "";

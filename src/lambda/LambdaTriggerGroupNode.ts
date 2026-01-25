@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import { LambdaTriggerFileNode } from './LambdaTriggerFileNode';
 import * as ui from '../common/UI';
@@ -12,15 +11,14 @@ export class LambdaTriggerGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "run-all";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async handleNodeAdd(): Promise<void> {
@@ -62,6 +60,3 @@ export class LambdaTriggerGroupNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaTriggerGroupNode', LambdaTriggerGroupNode);

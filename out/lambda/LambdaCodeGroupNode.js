@@ -7,9 +7,8 @@ class LambdaCodeGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "code";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        this.SetContextValue();
     }
 }
 exports.LambdaCodeGroupNode = LambdaCodeGroupNode;

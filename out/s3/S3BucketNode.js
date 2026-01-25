@@ -24,11 +24,11 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         this.Icon = "s3-bucket";
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
         // Event subscriptions
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
         this.LoadDefaultChildren();
+        this.SetContextValue();
     }
     BucketName = "";
     Shortcuts = [];

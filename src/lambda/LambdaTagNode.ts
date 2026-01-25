@@ -1,6 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -13,7 +11,6 @@ export class LambdaTagNode extends NodeBase {
         super(Label, parent);
         this.Icon = "circle-filled";
 
-        this.ShouldBeSaved = false;
         this.SetContextValue();
     }
 
@@ -142,6 +139,3 @@ export class LambdaTagNode extends NodeBase {
     public async NodeLoaded(): Promise<void> {}
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaTagNode', LambdaTagNode);

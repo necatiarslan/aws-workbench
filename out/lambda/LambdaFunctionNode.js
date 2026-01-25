@@ -34,12 +34,12 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         this.FunctionName = FunctionName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
         // Attach event handlers
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeRun.subscribe((arg) => this.handleNodeRun());
         this.OnNodeInfo.subscribe((arg) => this.handleNodeInfo());
         this.LoadDefaultChildren();
+        this.SetContextValue();
     }
     FunctionName = "";
     Region = "";

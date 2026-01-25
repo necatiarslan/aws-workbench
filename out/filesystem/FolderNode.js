@@ -22,10 +22,10 @@ class FolderNode extends NodeBase_1.NodeBase {
         super(FolderName, parent);
         this.Icon = "folder";
         this.FolderName = FolderName;
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
     async handleNodeAdd() {
         const result = [];

@@ -1,6 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -14,15 +12,13 @@ export class LambdaEnvGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "symbol-property";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
 
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async handleNodeAdd(): Promise<void> {
@@ -77,6 +73,3 @@ export class LambdaEnvGroupNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaEnvGroupNode', LambdaEnvGroupNode);

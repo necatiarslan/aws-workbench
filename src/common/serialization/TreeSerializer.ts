@@ -52,7 +52,7 @@ export class TreeSerializer {
         }
 
         // Recursively serialize children
-        const children = node.Children.filter(child => child.ShouldBeSaved).map(child => this.serializeNode(child));
+        const children = node.Children.filter(child => NodeRegistry.has(child.constructor.name)).map(child => this.serializeNode(child));
 
         return {
             _type: typeName,

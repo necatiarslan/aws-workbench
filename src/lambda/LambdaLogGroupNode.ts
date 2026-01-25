@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
 import * as ui from '../common/UI';
@@ -11,13 +10,12 @@ export class LambdaLogGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "cloudwatch-loggroup";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async handleNodeRefresh(): Promise<void> {
@@ -49,6 +47,3 @@ export class LambdaLogGroupNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaLogGroupNode', LambdaLogGroupNode);

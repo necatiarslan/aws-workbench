@@ -43,8 +43,6 @@ export abstract class NodeBase extends vscode.TreeItem {
     }
     
     public EnableNodeAlias: boolean = false;
-
-    public ShouldBeSaved: boolean = true;
     public IsOnNodeLoadChildrenCalled: boolean = false;
 
     @Serialize()

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaLogGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const CloudWatchLogGroupNode_1 = require("../cloudwatch-logs/CloudWatchLogGroupNode");
@@ -10,11 +9,10 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "cloudwatch-loggroup";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
     async handleNodeRefresh() {
         ui.logToOutput('LambdaLogGroupNode.NodeRefresh Started');
@@ -41,6 +39,4 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaLogGroupNode = LambdaLogGroupNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaLogGroupNode', LambdaLogGroupNode);
 //# sourceMappingURL=LambdaLogGroupNode.js.map

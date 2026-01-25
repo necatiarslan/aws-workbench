@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaEnvGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -12,12 +11,11 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "symbol-property";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
     async handleNodeAdd() {
         //TODO: Implement adding new environment variable logic here
@@ -62,6 +60,4 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaEnvGroupNode = LambdaEnvGroupNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaEnvGroupNode', LambdaEnvGroupNode);
 //# sourceMappingURL=LambdaEnvGroupNode.js.map

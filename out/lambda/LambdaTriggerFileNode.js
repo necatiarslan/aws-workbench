@@ -2,18 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaTriggerFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const TreeState_1 = require("../tree/TreeState");
 class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "run";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.SetContextValue();
     }
     FilePath = "";
     async handleNodeRemove() {
@@ -37,6 +35,4 @@ class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaTriggerFileNode = LambdaTriggerFileNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaTriggerFileNode', LambdaTriggerFileNode);
 //# sourceMappingURL=LambdaTriggerFileNode.js.map

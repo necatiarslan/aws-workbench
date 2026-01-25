@@ -47,7 +47,6 @@ class NodeBase extends vscode.TreeItem {
         TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
     EnableNodeAlias = false;
-    ShouldBeSaved = true;
     IsOnNodeLoadChildrenCalled = false;
     _isFavorite = false;
     _isHidden = false;

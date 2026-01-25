@@ -20,12 +20,12 @@ export class BashFileNode extends NodeBase {
         this.Icon = "debug-alt";
         this.FileName = label;
 
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
-
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
 
     private handleNodeRemove(): void {

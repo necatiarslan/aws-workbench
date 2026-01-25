@@ -1,6 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -14,10 +12,9 @@ export class LambdaCodeDownloadNode extends NodeBase {
         super(Label, parent);
         this.Icon = "cloud-download";
 
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        
+        this.SetContextValue();
     }
 
     public async handleNodeRun(): Promise<void> {
@@ -247,6 +244,3 @@ export class LambdaCodeDownloadNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaCodeDownloadNode', LambdaCodeDownloadNode);

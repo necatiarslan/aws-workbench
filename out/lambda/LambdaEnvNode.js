@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaEnvNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("./API");
@@ -11,9 +10,8 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "circle-filled";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.SetContextValue();
     }
     Key = "";
     Value = "";
@@ -63,6 +61,4 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaEnvNode = LambdaEnvNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaEnvNode', LambdaEnvNode);
 //# sourceMappingURL=LambdaEnvNode.js.map

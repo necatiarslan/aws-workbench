@@ -1,6 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -14,14 +12,13 @@ export class LambdaTagGroupNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "tag";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async handleNodeAdd(): Promise<void> {
@@ -137,6 +134,3 @@ export class LambdaTagGroupNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaTagGroupNode', LambdaTagGroupNode);

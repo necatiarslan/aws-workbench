@@ -19,11 +19,11 @@ export class FileNode extends NodeBase {
         this.Icon = "file";
         this.FileName = label;
 
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
-
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
 
     private handleNodeRemove(): void {

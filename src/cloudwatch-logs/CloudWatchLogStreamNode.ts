@@ -16,11 +16,12 @@ export class CloudWatchLogStreamNode extends NodeBase {
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
 
         // Attach event handlers
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+
+        this.SetContextValue();
     }
 
     @Serialize()

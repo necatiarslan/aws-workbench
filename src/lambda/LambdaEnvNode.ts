@@ -1,6 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import * as api from './API';
@@ -13,11 +11,10 @@ export class LambdaEnvNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "circle-filled";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+
+        this.SetContextValue();
     }
 
     public Key: string = "";
@@ -80,6 +77,3 @@ export class LambdaEnvNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaEnvNode', LambdaEnvNode);

@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
 import { TreeState } from '../tree/TreeState';
@@ -10,13 +9,12 @@ export class LambdaTriggerFileNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "run";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+
+        this.SetContextValue();
     }
 
     public FilePath: string = "";
@@ -44,6 +42,3 @@ export class LambdaTriggerFileNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaTriggerFileNode', LambdaTriggerFileNode);

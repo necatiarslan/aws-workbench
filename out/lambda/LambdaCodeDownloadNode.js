@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaCodeDownloadNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -11,9 +10,8 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "cloud-download";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.SetContextValue();
     }
     async handleNodeRun() {
         ui.logToOutput('LambdaCodeDownloadNode.NodeRun Started');
@@ -200,6 +198,4 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaCodeDownloadNode = LambdaCodeDownloadNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaCodeDownloadNode', LambdaCodeDownloadNode);
 //# sourceMappingURL=LambdaCodeDownloadNode.js.map

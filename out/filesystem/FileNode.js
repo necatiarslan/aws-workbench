@@ -22,10 +22,10 @@ class FileNode extends NodeBase_1.NodeBase {
         super(label, parent);
         this.Icon = "file";
         this.FileName = label;
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
     handleNodeRemove() {
         this.Remove();

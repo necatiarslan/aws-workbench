@@ -17,13 +17,14 @@ export class S3BucketNode extends NodeBase {
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
 
         // Event subscriptions
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
 
         this.LoadDefaultChildren();
+        this.SetContextValue();
+
     }
 
     @Serialize()

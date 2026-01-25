@@ -8,12 +8,11 @@ class S3BucketShortcutGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "file-symlink-directory";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
     async handleNodeAdd() {
         const s3BucketNode = this.GetAwsResourceNode();

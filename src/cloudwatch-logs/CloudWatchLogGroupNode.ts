@@ -20,12 +20,13 @@ export class CloudWatchLogGroupNode extends NodeBase {
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
 
         // Attach event handlers
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+
+        this.SetContextValue();
     }
 
     @Serialize()

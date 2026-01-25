@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaCodeFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const TreeProvider_1 = require("../tree/TreeProvider");
@@ -11,11 +10,10 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "file-code";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.SetContextValue();
     }
     async handleNodeAdd() {
         ui.logToOutput('LambdaCodeFileNode.NodeAdd Started');
@@ -82,6 +80,4 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaCodeFileNode = LambdaCodeFileNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaCodeFileNode', LambdaCodeFileNode);
 //# sourceMappingURL=LambdaCodeFileNode.js.map

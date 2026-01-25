@@ -19,13 +19,14 @@ export class BashScriptNode extends NodeBase {
         this.Icon = "debug-console";
         this.Title = Title;
 
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
-
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+
+
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
 
     private handleNodeRemove(): void {

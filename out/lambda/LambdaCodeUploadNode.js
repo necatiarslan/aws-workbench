@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaCodeUploadNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -10,9 +9,8 @@ class LambdaCodeUploadNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "cloud-upload";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.SetContextValue();
     }
     async handleNodeRun() {
         ui.logToOutput('LambdaCodeUploadNode.NodeRun Started');
@@ -70,6 +68,4 @@ class LambdaCodeUploadNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaCodeUploadNode = LambdaCodeUploadNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaCodeUploadNode', LambdaCodeUploadNode);
 //# sourceMappingURL=LambdaCodeUploadNode.js.map

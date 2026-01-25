@@ -8,9 +8,8 @@ export class LambdaCodeGroupNode extends NodeBase {
         super(Label, parent);
         this.Icon = "code";
 
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        this.SetContextValue();
     }
 
 }

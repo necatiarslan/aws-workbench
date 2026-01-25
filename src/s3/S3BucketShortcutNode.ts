@@ -12,8 +12,6 @@ export class S3BucketShortcutNode extends NodeBase {
         this.Key = Key;
         this.Icon = "star";
 
-        this.ShouldBeSaved = false;
-
         // Event subscriptions
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());

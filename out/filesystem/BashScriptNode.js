@@ -22,12 +22,12 @@ class BashScriptNode extends NodeBase_1.NodeBase {
         super(Title, parent);
         this.Icon = "debug-console";
         this.Title = Title;
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
     handleNodeRemove() {
         this.Remove();

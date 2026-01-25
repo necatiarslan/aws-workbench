@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaTagNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -10,7 +9,6 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "circle-filled";
-        this.ShouldBeSaved = false;
         this.SetContextValue();
     }
     Key = "";
@@ -113,6 +111,4 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
     async NodeLoaded() { }
 }
 exports.LambdaTagNode = LambdaTagNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaTagNode', LambdaTagNode);
 //# sourceMappingURL=LambdaTagNode.js.map

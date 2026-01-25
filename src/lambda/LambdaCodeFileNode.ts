@@ -1,6 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import { TreeProvider } from '../tree/TreeProvider';
@@ -13,13 +11,12 @@ export class LambdaCodeFileNode extends NodeBase {
     {
         super(Label, parent);
         this.Icon = "file-code";
-
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
         
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+
+        this.SetContextValue();
     }
 
     private async handleNodeAdd(): Promise<void> {
@@ -92,6 +89,3 @@ export class LambdaCodeFileNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('LambdaCodeFileNode', LambdaCodeFileNode);

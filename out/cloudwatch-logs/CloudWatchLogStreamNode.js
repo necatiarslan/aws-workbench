@@ -23,10 +23,10 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         this.Icon = "cloudwatch-logstream";
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
-        this.SetContextValue();
         // Attach event handlers
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.SetContextValue();
     }
     LogStream = "";
     LogGroup = "";

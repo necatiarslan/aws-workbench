@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaInfoGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -12,11 +11,10 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "info";
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
     async handleNodeRefresh() {
         ui.logToOutput('LambdaInfoGroupNode.NodeRefresh Started');
@@ -68,6 +66,4 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
     }
 }
 exports.LambdaInfoGroupNode = LambdaInfoGroupNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('LambdaInfoGroupNode', LambdaInfoGroupNode);
 //# sourceMappingURL=LambdaInfoGroupNode.js.map

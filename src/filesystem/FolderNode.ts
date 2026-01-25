@@ -16,11 +16,11 @@ export class FolderNode extends NodeBase {
         this.Icon = "folder";
         this.FolderName = FolderName;
 
-        this.EnableNodeAlias = true;
-        this.SetContextValue();
-
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+
+        this.EnableNodeAlias = true;
+        this.SetContextValue();
     }
 
     private async handleNodeAdd(): Promise<void> {

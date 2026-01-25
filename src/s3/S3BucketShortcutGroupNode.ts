@@ -1,4 +1,3 @@
-import { S3 } from '@aws-sdk/client-s3';
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import { S3BucketNode } from './S3BucketNode';
@@ -11,13 +10,12 @@ export class S3BucketShortcutGroupNode extends NodeBase {
         super(Label, parent);
         this.Icon = "file-symlink-directory";
 
-        this.ShouldBeSaved = false;
-        this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+
+        this.SetContextValue();
+        this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     }
 
     public async handleNodeAdd(): Promise<void> {

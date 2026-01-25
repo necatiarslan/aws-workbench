@@ -19,12 +19,12 @@ export class NoteNode extends NodeBase {
         this.Icon = "note";
         this.NoteTitle = NoteTitle;
 
-        this.SetContextValue();
-
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+
+        this.SetContextValue();
     }
 
     private async handleNodeAdd(): Promise<void> {
