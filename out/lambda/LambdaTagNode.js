@@ -9,12 +9,14 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "circle-filled";
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.SetContextValue();
     }
     Key = "";
     Value = "";
-    async NodeAdd() { }
-    async NodeRemove() {
+    async handleNodeRemove() {
         ui.logToOutput('LambdaTagNode.NodeRemove Started');
         if (!this.Key) {
             return;
@@ -55,11 +57,10 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
         this.Parent?.NodeRefresh();
         this.StopWorking();
     }
-    async NodeRefresh() {
+    async handleNodeRefresh() {
         this.Parent?.NodeRefresh();
     }
-    async NodeView() { }
-    async NodeEdit() {
+    async handleNodeEdit() {
         ui.logToOutput('LambdaTagNode.NodeEdit Started');
         // Prompt for new value (allow empty string, but not undefined/cancel)
         const newValue = await vscode.window.showInputBox({
@@ -104,11 +105,6 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
         this.Parent?.NodeRefresh();
         this.StopWorking();
     }
-    async NodeRun() { }
-    async NodeStop() { }
-    async NodeOpen() { }
-    async NodeInfo() { }
-    async handleNodeLoaded() { }
 }
 exports.LambdaTagNode = LambdaTagNode;
 //# sourceMappingURL=LambdaTagNode.js.map

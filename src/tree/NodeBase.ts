@@ -21,8 +21,9 @@ export abstract class NodeBase extends vscode.TreeItem {
     protected OnNodeStop: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeOpen: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeInfo: EventEmitter<void> = new EventEmitter<void>();
-    protected OnNodeLoaded: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeDeserialized: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeLoadChildren: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeLoaded: EventEmitter<void> = new EventEmitter<void>();
 
     
     constructor(label: string, parent?: NodeBase) 
@@ -44,6 +45,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     
     public EnableNodeAlias: boolean = false;
     public IsOnNodeLoadChildrenCalled: boolean = false;
+    public IsOnNodeLoadedCalled: boolean = false;
 
     @Serialize()
     private _isFavorite: boolean = false;
@@ -287,7 +289,7 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         this.SetContextValue();
         this.SetVisible();
-        this.NodeLoaded();
+        this.NodeDeserialized();
         
         // Recursively finalize children
         for (const child of this.Children) {
@@ -347,13 +349,18 @@ export abstract class NodeBase extends vscode.TreeItem {
         await this.OnNodeInfo.fire(undefined);
     }
 
-    public async NodeLoaded(): Promise<void> {
-        await this.OnNodeLoaded.fire(undefined);
+    public async NodeDeserialized(): Promise<void> {
+        await this.OnNodeDeserialized.fire(undefined);
     }
 
     public async NodeLoadChildren(): Promise<void> {
         await this.OnNodeLoadChildren.fire(undefined);
         this.IsOnNodeLoadChildrenCalled = true;
+    }
+
+    public async NodeLoaded(): Promise<void> {
+        await this.OnNodeLoaded.fire(undefined);
+        this.IsOnNodeLoadedCalled = true;
     }
     
 }

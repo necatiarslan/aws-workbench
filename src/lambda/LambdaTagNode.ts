@@ -11,6 +11,10 @@ export class LambdaTagNode extends NodeBase {
         super(Label, parent);
         this.Icon = "circle-filled";
 
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+
         this.SetContextValue();
     }
 
@@ -18,9 +22,7 @@ export class LambdaTagNode extends NodeBase {
 
     public Value: string = "";
 
-    public async NodeAdd(): Promise<void> {}
-
-    public async NodeRemove(): Promise<void> {
+    public async handleNodeRemove(): Promise<void> {
         ui.logToOutput('LambdaTagNode.NodeRemove Started');
 
         if (!this.Key) { return; }
@@ -72,13 +74,11 @@ export class LambdaTagNode extends NodeBase {
         this.StopWorking();
     }
 
-    public async NodeRefresh(): Promise<void> {
+    public async handleNodeRefresh(): Promise<void> {
         this.Parent?.NodeRefresh();
     }
 
-    public async NodeView(): Promise<void> {}
-
-    public async NodeEdit(): Promise<void> {
+    public async handleNodeEdit(): Promise<void> {
         ui.logToOutput('LambdaTagNode.NodeEdit Started');
 
         // Prompt for new value (allow empty string, but not undefined/cancel)
@@ -127,15 +127,5 @@ export class LambdaTagNode extends NodeBase {
 
         this.StopWorking();
     }
-
-    public async NodeRun(): Promise<void> {}
-
-    public async NodeStop(): Promise<void> {}
-
-    public async NodeOpen(): Promise<void> {}
-
-    public async NodeInfo(): Promise<void> {}
-
-    public async handleNodeLoaded(): Promise<void> {}
 
 }

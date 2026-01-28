@@ -28,9 +28,9 @@ export class StateMachineDefinitionFileNode extends NodeBase {
         //TODO: do not work
         const stateMachineNode = this.GetAwsResourceNode() as StateMachineNode;
         if (stateMachineNode.CodePath && stateMachineNode.CodePath.trim().length > 0) {
-            this.label = `File: ${stateMachineNode.CodePath}`;
+            this.label = stateMachineNode.CodePath;
         } else {
-            this.label = 'Select Definition File';
+            this.label = 'Select File';
         }
     }
 
@@ -53,7 +53,7 @@ export class StateMachineDefinitionFileNode extends NodeBase {
         //ask user to select a json file and update stateMachineNode.CodePath
         const uri = await vscode.window.showOpenDialog({
             canSelectMany: false,
-            openLabel: 'Select Definition File',
+            openLabel: 'Select File',
             filters: { 'JSON': ['json'] }
         });
 
@@ -96,7 +96,7 @@ export class StateMachineDefinitionFileNode extends NodeBase {
         if(!stateMachineNode) return;
 
         stateMachineNode.CodePath = '';
-        this.label = 'Select Definition File';
+        this.label = 'Select File';
         TreeState.save();
         ui.logToOutput('Definition file removed: ' + stateMachineNode.CodePath);
         ui.showInfoMessage('Definition file removed successfully');

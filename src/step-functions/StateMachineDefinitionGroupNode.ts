@@ -20,7 +20,7 @@ export class StateMachineDefinitionGroupNode extends NodeBase {
 
     private handleLoadChildren(): void {
         if(this.Children.length === 0) {
-            new StateMachineDefinitionFileNode("Select Definition File", this);
+            new StateMachineDefinitionFileNode("Select File", this);
             new StateMachineDefinitionDownloadNode("Download", this);
             new StateMachineDefinitionCompareNode("Compare", this);
             new StateMachineDefinitionUpdateNode("Update", this);

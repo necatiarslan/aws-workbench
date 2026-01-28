@@ -16,6 +16,9 @@ export class TreeProvider implements vscode.TreeDataProvider<NodeBase> {
 	}
 
     public getTreeItem(node: NodeBase): NodeBase {
+        if (!node.IsOnNodeLoadedCalled) {
+            node.NodeLoaded();
+        }
         return node;
     }
 

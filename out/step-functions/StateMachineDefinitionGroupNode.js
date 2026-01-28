@@ -17,7 +17,7 @@ class StateMachineDefinitionGroupNode extends NodeBase_1.NodeBase {
     }
     handleLoadChildren() {
         if (this.Children.length === 0) {
-            new StateMachineDefinitionFileNode_1.StateMachineDefinitionFileNode("Select Definition File", this);
+            new StateMachineDefinitionFileNode_1.StateMachineDefinitionFileNode("Select File", this);
             new StateMachineDefinitionDownloadNode_1.StateMachineDefinitionDownloadNode("Download", this);
             new StateMachineDefinitionCompareNode_1.StateMachineDefinitionCompareNode("Compare", this);
             new StateMachineDefinitionUpdateNode_1.StateMachineDefinitionUpdateNode("Update", this);

@@ -14,6 +14,9 @@ class TreeProvider {
         this._onDidChangeTreeData.fire(node?.Parent || undefined);
     }
     getTreeItem(node) {
+        if (!node.IsOnNodeLoadedCalled) {
+            node.NodeLoaded();
+        }
         return node;
     }
     async getChildren(node) {

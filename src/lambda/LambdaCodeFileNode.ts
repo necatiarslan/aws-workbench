@@ -83,7 +83,7 @@ export class LambdaCodeFileNode extends NodeBase {
     public async handleNodeLoaded(): Promise<void> {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {
-            this.label = `Code Path: ${lambdaNode.CodePath}`;
+            this.label = lambdaNode.CodePath;
         } else {
             this.label = 'Select File';
         }
