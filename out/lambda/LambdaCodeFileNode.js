@@ -13,6 +13,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeLoaded.subscribe(() => this.handleNodeLoaded());
         this.SetContextValue();
     }
     async handleNodeAdd() {
@@ -69,7 +70,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
             ui.showErrorMessage('Failed to open file for editing', error);
         }
     }
-    async NodeLoaded() {
+    async handleNodeLoaded() {
         const lambdaNode = this.GetAwsResourceNode();
         if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {
             this.label = `Code Path: ${lambdaNode.CodePath}`;

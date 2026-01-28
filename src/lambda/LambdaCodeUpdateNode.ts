@@ -4,7 +4,7 @@ import * as api from './API';
 import * as ui from '../common/UI';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
 
-export class LambdaCodeUploadNode extends NodeBase {
+export class LambdaCodeUpdateNode extends NodeBase {
 
     constructor(Label: string, parent?: NodeBase) 
     {
@@ -17,12 +17,12 @@ export class LambdaCodeUploadNode extends NodeBase {
     }
 
     public async handleNodeRun(): Promise<void> {
-        ui.logToOutput('LambdaCodeUploadNode.NodeRun Started');
+        ui.logToOutput('LambdaCodeUpdateNode.NodeRun Started');
 
         // Get parent Lambda function node
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         if (!lambdaNode || !lambdaNode.FunctionName || !lambdaNode.Region) {
-            ui.logToOutput('LambdaCodeUploadNode.NodeRun - Parent Lambda node not found');
+            ui.logToOutput('LambdaCodeUpdateNode.NodeRun - Parent Lambda node not found');
             return;
         }
 
@@ -69,7 +69,7 @@ export class LambdaCodeUploadNode extends NodeBase {
             ui.logToOutput('api.UpdateLambdaCode Success !!!');
             ui.showInfoMessage('Lambda Code Updated Successfully');
         } catch (error: any) {
-            ui.logToOutput('LambdaCodeUploadNode.NodeRun Error !!!', error);
+            ui.logToOutput('LambdaCodeUpdateNode.NodeRun Error !!!', error);
             ui.showErrorMessage('Update Lambda Code Error !!!', error);
         } finally {
             this.StopWorking();

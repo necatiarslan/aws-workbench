@@ -108,7 +108,7 @@ class LambdaTagNode extends NodeBase_1.NodeBase {
     async NodeStop() { }
     async NodeOpen() { }
     async NodeInfo() { }
-    async NodeLoaded() { }
+    async handleNodeLoaded() { }
 }
 exports.LambdaTagNode = LambdaTagNode;
 //# sourceMappingURL=LambdaTagNode.js.map

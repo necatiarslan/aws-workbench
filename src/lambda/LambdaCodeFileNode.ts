@@ -15,6 +15,7 @@ export class LambdaCodeFileNode extends NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
+        this.OnNodeLoaded.subscribe(() => this.handleNodeLoaded());
 
         this.SetContextValue();
     }
@@ -79,7 +80,7 @@ export class LambdaCodeFileNode extends NodeBase {
         }
     }
 
-    public async NodeLoaded(): Promise<void> {
+    public async handleNodeLoaded(): Promise<void> {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         if (lambdaNode.CodePath && lambdaNode.CodePath.trim().length > 0) {
             this.label = `Code Path: ${lambdaNode.CodePath}`;

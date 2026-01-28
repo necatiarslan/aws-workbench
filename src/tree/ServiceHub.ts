@@ -4,6 +4,7 @@ import { S3Service } from "../s3/S3Service";
 import { CloudWatchLogService } from '../cloudwatch-logs/CloudWatchLogService';
 import { LambdaService } from '../lambda/LambdaService';
 import { VscodeService } from '../vscode/VscodeService';
+import { StepFunctionsService } from '../step-functions/StepFunctionsService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
@@ -13,22 +14,11 @@ export class ServiceHub {
     public CloudWatchLogService: CloudWatchLogService = new CloudWatchLogService();
     public LambdaService: LambdaService = new LambdaService();
     public VscodeService: VscodeService = new VscodeService();
+    public StepFunctionsService: StepFunctionsService = new StepFunctionsService();
     
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;
         ServiceHub.Current = this;
-        this.LoadNodesState();
-    }
-
-    public async SaveNodesState() {
-        // this.Context.globalState.update('Nodes', NodeBase.RootNodes);
-    }
-
-    public LoadNodesState() {
-        // const nodes: NodeBase[] | undefined = this.Context.globalState.get('Nodes');
-        // // if (nodes) {
-        // //     NodeBase.RootNodes = nodes;
-        // // }
     }
 
 }

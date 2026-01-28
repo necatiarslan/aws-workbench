@@ -136,6 +136,6 @@ export class LambdaTagNode extends NodeBase {
 
     public async NodeInfo(): Promise<void> {}
 
-    public async NodeLoaded(): Promise<void> {}
+    public async handleNodeLoaded(): Promise<void> {}
 
 }

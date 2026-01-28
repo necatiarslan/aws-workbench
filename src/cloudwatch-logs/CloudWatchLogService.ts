@@ -18,7 +18,7 @@ export class CloudWatchLogService extends ServiceBase {
         CloudWatchLogService.Current = this;
     }
 
-    public async Add(node: NodeBase): Promise<void> {
+    public async Add(node?: NodeBase): Promise<void> {
 		Telemetry.Current?.send("CloudWatchLogService.Add");
 		ui.logToOutput('CloudWatchLogService..Add Started');
 

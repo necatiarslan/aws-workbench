@@ -13,7 +13,7 @@ import { LambdaLogGroupNode } from './LambdaLogGroupNode';
 import { LambdaTagGroupNode } from './LambdaTagGroupNode';
 import { LambdaTriggerGroupNode } from './LambdaTriggerGroupNode';
 import { LambdaCodeFileNode } from './LambdaCodeFileNode';
-import { LambdaCodeUploadNode } from './LambdaCodeUploadNode';
+import { LambdaCodeUpdateNode } from './LambdaCodeUpdateNode';
 import { LambdaCodeDownloadNode } from './LambdaCodeDownloadNode';
 import { FunctionConfiguration } from '@aws-sdk/client-lambda';
 
@@ -77,7 +77,7 @@ export class LambdaFunctionNode extends NodeBase {
         const code = new LambdaCodeGroupNode("Code", this);
         new LambdaCodeFileNode("Select File", code);
         new LambdaCodeDownloadNode("Download", code);
-        new LambdaCodeUploadNode("Upload", code);
+        new LambdaCodeUpdateNode("Update", code);
 
         new LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode("Info", this);

@@ -153,6 +153,8 @@ class TreeView {
         result.push("Note");
         result.push("File");
         result.push("S3 Bucket");
+        result.push("Lambda Function");
+        result.push("Step Function");
         result.push("CloudWatch Log Group");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
@@ -169,12 +171,16 @@ class TreeView {
                 await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(undefined, "File");
                 break;
             case "S3 Bucket":
-                // Logic to add an S3 Bucket
-                vscode.window.showInformationMessage('Add S3 Bucket selected');
+                await ServiceHub_1.ServiceHub.Current.S3Service.Add(undefined);
+                break;
+            case "Lambda Function":
+                await ServiceHub_1.ServiceHub.Current.LambdaService.Add(undefined);
+                break;
+            case "Step Functions":
+                await ServiceHub_1.ServiceHub.Current.StepFunctionsService.Add(undefined);
                 break;
             case "CloudWatch Log Group":
-                // Logic to add a CloudWatch Log Group
-                vscode.window.showInformationMessage('Add CloudWatch Log Group selected');
+                await ServiceHub_1.ServiceHub.Current.CloudWatchLogService.Add(undefined);
                 break;
             default:
                 vscode.window.showErrorMessage('Unknown item type selected');

@@ -25,7 +25,7 @@ const LambdaLogGroupNode_1 = require("./LambdaLogGroupNode");
 const LambdaTagGroupNode_1 = require("./LambdaTagGroupNode");
 const LambdaTriggerGroupNode_1 = require("./LambdaTriggerGroupNode");
 const LambdaCodeFileNode_1 = require("./LambdaCodeFileNode");
-const LambdaCodeUploadNode_1 = require("./LambdaCodeUploadNode");
+const LambdaCodeUpdateNode_1 = require("./LambdaCodeUpdateNode");
 const LambdaCodeDownloadNode_1 = require("./LambdaCodeDownloadNode");
 class LambdaFunctionNode extends NodeBase_1.NodeBase {
     constructor(FunctionName, parent) {
@@ -69,7 +69,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         const code = new LambdaCodeGroupNode_1.LambdaCodeGroupNode("Code", this);
         new LambdaCodeFileNode_1.LambdaCodeFileNode("Select File", code);
         new LambdaCodeDownloadNode_1.LambdaCodeDownloadNode("Download", code);
-        new LambdaCodeUploadNode_1.LambdaCodeUploadNode("Upload", code);
+        new LambdaCodeUpdateNode_1.LambdaCodeUpdateNode("Update", code);
         new LambdaEnvGroupNode_1.LambdaEnvGroupNode("Env", this);
         new LambdaInfoGroupNode_1.LambdaInfoGroupNode("Info", this);
         new LambdaLogGroupNode_1.LambdaLogGroupNode("Logs", this);

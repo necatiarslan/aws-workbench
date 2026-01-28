@@ -19,6 +19,7 @@
     "AWS",
     "S3",
     "Lambda",
+    "Step Functions",
     "DynamoDB",
     "IAM",
     "CloudWatch",
@@ -400,6 +401,13 @@
           "default": {
               "fontPath": "./media/fonts/aws-toolkit-icons.woff",
               "fontCharacter": "\\f1d1"
+          }
+      },
+      "step-functions": {
+          "description": "AWS Contributed Icon",
+          "default": {
+              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+              "fontCharacter": "\\f1e1"
           }
       }
     }

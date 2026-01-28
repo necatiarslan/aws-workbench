@@ -17,7 +17,7 @@ export class LambdaService extends ServiceBase {
         LambdaService.Current = this;
     }
 
-    public async Add(node: NodeBase): Promise<void> {
+    public async Add(node?: NodeBase): Promise<void> {
         Telemetry.Current?.send("LambdaService.Add");
         ui.logToOutput('LambdaService..Add Started');
 

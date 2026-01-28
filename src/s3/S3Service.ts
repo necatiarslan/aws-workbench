@@ -16,7 +16,7 @@ export class S3Service extends ServiceBase {
         S3Service.Current = this;
     }
 
-    public async Add(node: NodeBase): Promise<void> {
+    public async Add(node?: NodeBase): Promise<void> {
 		Telemetry.Current?.send("S3TreeView.AddBucket");
 		ui.logToOutput('S3TreeView.AddBucket Started');
 
