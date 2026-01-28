@@ -10,7 +10,7 @@
   },
   "icon": "media/aws-workbench-logo-extension.png",
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.104.0"
   },
   "categories": [
     "Other"
@@ -376,39 +376,39 @@
     ],
     "icons": {
       "s3-bucket": {
-          "description": "AWS Contributed Icon",
-          "default": {
-              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-              "fontCharacter": "\\f1db"
-          }
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1db"
+        }
       },
       "cloudwatch-loggroup": {
-          "description": "AWS Contributed Icon",
-          "default": {
-              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-              "fontCharacter": "\\f1c4"
-          }
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1c4"
+        }
       },
       "cloudwatch-logstream": {
-          "description": "AWS Contributed Icon",
-          "default": {
-              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-              "fontCharacter": "\\eb85"
-          }
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\eb85"
+        }
       },
       "lambda-function": {
-          "description": "AWS Contributed Icon",
-          "default": {
-              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-              "fontCharacter": "\\f1d1"
-          }
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1d1"
+        }
       },
       "step-functions": {
-          "description": "AWS Contributed Icon",
-          "default": {
-              "fontPath": "./media/fonts/aws-toolkit-icons.woff",
-              "fontCharacter": "\\f1e1"
-          }
+        "description": "AWS Contributed Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1e1"
+        }
       }
     }
   },
@@ -425,37 +425,37 @@
     "@types/glob": "^9.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.0.10",
     "@types/tmp": "^0.2.6",
-    "@types/vscode": "^1.106.1",
-    "@typescript-eslint/eslint-plugin": "^8.42.0",
-    "@typescript-eslint/parser": "^8.42.0",
+    "@types/vscode": "^1.104.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
     "@vscode/test-electron": "^2.5.2",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "glob": "^13.0.0",
-    "mocha": "^11.7.5",
+    "mocha": "^11.3.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@aws-sdk/client-cloudwatch-logs": "^3.965.0",
-    "@aws-sdk/client-dynamodb": "^3.948.0",
-    "@aws-sdk/client-glue": "^3.964.0",
-    "@aws-sdk/client-iam": "^3.939.0",
-    "@aws-sdk/client-lambda": "^3.948.0",
-    "@aws-sdk/client-s3": "^3.939.0",
-    "@aws-sdk/client-sfn": "^3.948.0",
-    "@aws-sdk/client-sns": "^3.750.0",
-    "@aws-sdk/client-sqs": "^3.864.0",
-    "@aws-sdk/client-sts": "^3.939.0",
-    "@aws-sdk/credential-provider-ini": "^3.964.0",
-    "@aws-sdk/credential-provider-node": "^3.883.0",
-    "@aws-sdk/credential-providers": "^3.939.0",
-    "@aws-sdk/types": "^3.862.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.975.0",
+    "@aws-sdk/client-dynamodb": "^3.975.0",
+    "@aws-sdk/client-glue": "^3.975.0",
+    "@aws-sdk/client-iam": "^3.975.0",
+    "@aws-sdk/client-lambda": "^3.975.0",
+    "@aws-sdk/client-s3": "^3.975.0",
+    "@aws-sdk/client-sfn": "^3.975.0",
+    "@aws-sdk/client-sns": "^3.975.0",
+    "@aws-sdk/client-sqs": "^3.975.0",
+    "@aws-sdk/client-sts": "^3.975.0",
+    "@aws-sdk/credential-provider-ini": "^3.972.2",
+    "@aws-sdk/credential-provider-node": "^3.972.2",
+    "@aws-sdk/credential-providers": "^3.975.0",
+    "@aws-sdk/types": "^3.973.1",
     "@tshepomgaga/aws-sfn-graph": "^0.0.6",
-    "@types/uuid": "^10.0.0",
-    "@vscode-elements/elements": "^2.3.1",
-    "@vscode/codicons": "^0.0.43",
-    "@vscode/extension-telemetry": "^1.2.0",
+    "@types/uuid": "^11.0.0",
+    "@vscode-elements/elements": "^2.4.0",
+    "@vscode/codicons": "^0.0.44",
+    "@vscode/extension-telemetry": "^1.4.0",
     "archiver": "^7.0.1",
     "js-tiktoken": "^1.0.21",
     "js-yaml": "^4.1.1",

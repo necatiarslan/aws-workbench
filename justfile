@@ -8,6 +8,14 @@ build:
 publish:
     vsce publish
 
+unzip_vsix:
+    rm -rf ./unpacked_vsix
+    mkdir -p ./unpacked_vsix
+    latest=$(ls -t ./vsix/*.vsix 2>/dev/null | head -n1) && \
+    if [ -z "$latest" ]; then echo "No .vsix files found in ./vsix"; exit 1; fi && \
+    echo "Unzipping $latest into ./unpacked_vsix/" && \
+    unzip "$latest" -d ./unpacked_vsix/
+
 npm_outdated:
     npm outdated
     npx npm-check-updates
