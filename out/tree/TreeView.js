@@ -158,6 +158,7 @@ class TreeView {
         result.push("Glue Job");
         result.push("DynamoDB Table");
         result.push("CloudWatch Log Group");
+        result.push("SNS Topic");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
             return;
@@ -189,6 +190,9 @@ class TreeView {
                 break;
             case "CloudWatch Log Group":
                 await ServiceHub_1.ServiceHub.Current.CloudWatchLogService.Add(undefined);
+                break;
+            case "SNS Topic":
+                await ServiceHub_1.ServiceHub.Current.SNSService.Add(undefined);
                 break;
             default:
                 vscode.window.showErrorMessage('Unknown item type selected');

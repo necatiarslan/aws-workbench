@@ -9,6 +9,7 @@ const VscodeService_1 = require("../vscode/VscodeService");
 const StepFunctionsService_1 = require("../step-functions/StepFunctionsService");
 const GlueService_1 = require("../glue/GlueService");
 const DynamoDBService_1 = require("../dynamodb/DynamoDBService");
+const SNSService_1 = require("../sns/SNSService");
 class ServiceHub {
     static Current;
     Context;
@@ -20,6 +21,7 @@ class ServiceHub {
     StepFunctionsService = new StepFunctionsService_1.StepFunctionsService();
     GlueService = new GlueService_1.GlueService();
     DynamoDBService = new DynamoDBService_1.DynamoDBService();
+    SNSService = new SNSService_1.SNSService();
     constructor(context) {
         this.Context = context;
         ServiceHub.Current = this;
