@@ -2,7 +2,7 @@
 
 ![AWS Workbench Main Screen](media/readme/main-screen.png)
 
-A powerful VS Code extension that brings your AWS resources directly into your editor's sidebar. Explore, manage, and interact with S3, Lambda, Step Functions, CloudWatch Logs, and more—all from one unified tree view.
+A powerful VS Code extension that brings your AWS resources directly into your editor's sidebar. Explore, manage, and interact with S3, Lambda, Step Functions, DynamoDB, Glue, SQS, SNS, IAM, CloudWatch Logs, and more—all from one unified tree view.
 
 ## Features
 
@@ -31,6 +31,45 @@ A powerful VS Code extension that brings your AWS resources directly into your e
 - Monitor execution status (running, succeeded, failed, etc.)
 - View execution history and logs
 - Compare and update definitions
+
+### 🗄️ DynamoDB
+- Browse tables and indexes
+- View table keys, capacity, and configuration
+- Query and scan tables with filters
+- Add, edit, and delete items
+- Batch operations support
+- View and manage tags
+
+### 🔧 AWS Glue
+- Manage Glue ETL jobs
+- View and download job code
+- Compare and update job scripts
+- Trigger jobs with custom parameters
+- Monitor job runs and status
+- View job run logs and history
+- Generate job run reports
+
+### 📬 SQS (Simple Queue Service)
+- Browse and manage queues
+- Send messages (ad-hoc or from file)
+- Receive and view messages
+- View queue details and policies
+- Dead-letter queue support
+- Purge queues
+
+### 📢 SNS (Simple Notification Service)
+- Manage topics and subscriptions
+- Publish messages (ad-hoc or from file)
+- View subscription details
+- Create and delete subscriptions
+
+### 🔐 IAM (Identity and Access Management)
+- Browse IAM roles and policies
+- View role trust relationships
+- Inspect policy documents and versions
+- View policy attachments
+- Manage role inline policies
+- View and manage tags
 
 ### 📊 CloudWatch Logs
 - Explore log groups and streams
@@ -64,6 +103,11 @@ A powerful VS Code extension that brings your AWS resources directly into your e
    - Add S3 buckets
    - Add Lambda functions
    - Add Step Functions state machines
+   - Add DynamoDB tables
+   - Add Glue jobs
+   - Add SQS queues
+   - Add SNS topics
+   - Add IAM roles and policies
    - Add CloudWatch Log Groups
 
 ### Authentication
@@ -108,6 +152,44 @@ Right-click on any resource for options like:
 - **Update Definition**: Modify and deploy new versions
 - **Monitor**: Track execution status and history
 - **View Logs**: Access execution logs
+
+#### DynamoDB
+- **Query**: Query tables with key conditions and filters
+- **Scan**: Full table scans with filters
+- **Add Item**: Create new items in tables
+- **Edit Item**: Modify existing items
+- **Delete Item**: Remove items from tables
+- **Batch Operations**: Bulk import/export data
+- **View Indexes**: Inspect global and local secondary indexes
+
+#### Glue
+- **Run Job**: Execute ETL jobs with parameters
+- **View Code**: Inspect job scripts
+- **Download Code**: Export job code locally
+- **Compare Code**: Diff local vs deployed code
+- **Update Code**: Deploy code changes
+- **View Runs**: Monitor job run history
+- **Run Reports**: Generate execution reports
+- **View Logs**: Access job run logs
+
+#### SQS
+- **Send Message**: Send messages to queues
+- **Receive Messages**: Poll and view messages
+- **View Details**: Inspect queue configuration
+- **View Policy**: Check queue access policy
+- **DLQ Support**: Navigate to dead-letter queues
+
+#### SNS
+- **Publish**: Send messages to topics
+- **View Subscriptions**: List topic subscribers
+- **Manage Subscriptions**: Add/remove subscriptions
+
+#### IAM
+- **View Roles**: Browse IAM roles
+- **View Policies**: Inspect policy documents
+- **Trust Relationships**: View role trust policies
+- **Policy Versions**: Compare policy versions
+- **Attachments**: See policy attachments
 
 #### CloudWatch Logs
 - **View Events**: Stream log entries
@@ -164,7 +246,7 @@ npm run vscode:prepublish  # Prepare for publication
 ### Architecture
 The extension follows a modular architecture:
 - **Tree View**: Central UI component managing the resource tree
-- **Services**: Domain-specific services (S3Service, LambdaService, etc.)
+- **Services**: Domain-specific services (S3Service, LambdaService, DynamoDBService, GlueService, SQSService, SNSService, IamService, etc.)
 - **API Wrappers**: AWS SDK abstractions with caching and error handling
 - **Node System**: Extensible node base class for tree items
 - **Persistence**: Automatic state saving and restoration
