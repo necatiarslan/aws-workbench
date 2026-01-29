@@ -4,6 +4,7 @@ import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import { ServiceHub } from '../tree/ServiceHub';
 import { TreeState } from '../tree/TreeState';
+import { TreeProvider } from '../tree/TreeProvider';
 
 export class FolderNode extends NodeBase {
 
@@ -38,6 +39,8 @@ export class FolderNode extends NodeBase {
         result.push("DynamoDB Table");
         result.push("Sns Topic");
         result.push("Sqs Queue");
+        result.push("IAM Role");
+        result.push("IAM Policy");
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
@@ -86,6 +89,12 @@ export class FolderNode extends NodeBase {
             case "Vscode Command":
                 await ServiceHub.Current.VscodeService.Add(this, "Command");
                 break;
+            case "IAM Role":
+                await ServiceHub.Current.IamService.AddRole(this);
+                break;
+            case "IAM Policy":
+                await ServiceHub.Current.IamService.AddPolicy(this);
+                break;
         }
         TreeState.save();
     }
@@ -99,7 +108,7 @@ export class FolderNode extends NodeBase {
 
         this.FolderName = newName;
         this.label = newName;
-        this.SetContextValue();
+        TreeProvider.Current.Refresh(this);
         TreeState.save();
     }
 

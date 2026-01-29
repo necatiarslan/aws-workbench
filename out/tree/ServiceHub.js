@@ -11,6 +11,7 @@ const GlueService_1 = require("../glue/GlueService");
 const DynamoDBService_1 = require("../dynamodb/DynamoDBService");
 const SNSService_1 = require("../sns/SNSService");
 const SQSService_1 = require("../sqs/SQSService");
+const IamService_1 = require("../iam/IamService");
 class ServiceHub {
     static Current;
     Context;
@@ -24,6 +25,7 @@ class ServiceHub {
     DynamoDBService = new DynamoDBService_1.DynamoDBService();
     SNSService = new SNSService_1.SNSService();
     SQSService = new SQSService_1.SQSService();
+    IamService = new IamService_1.IamService();
     constructor(context) {
         this.Context = context;
         ServiceHub.Current = this;

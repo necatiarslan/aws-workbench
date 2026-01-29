@@ -9,6 +9,7 @@ import { GlueService } from '../glue/GlueService';
 import { DynamoDBService } from '../dynamodb/DynamoDBService';
 import { SNSService } from '../sns/SNSService';
 import { SQSService } from '../sqs/SQSService';
+import { IamService } from '../iam/IamService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
@@ -23,6 +24,7 @@ export class ServiceHub {
     public DynamoDBService: DynamoDBService = new DynamoDBService();
     public SNSService: SNSService = new SNSService();
     public SQSService: SQSService = new SQSService();
+    public IamService: IamService = new IamService();
     
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;

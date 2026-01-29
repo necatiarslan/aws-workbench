@@ -16,6 +16,7 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const ServiceHub_1 = require("../tree/ServiceHub");
 const TreeState_1 = require("../tree/TreeState");
+const TreeProvider_1 = require("../tree/TreeProvider");
 class FolderNode extends NodeBase_1.NodeBase {
     FolderName = "";
     constructor(FolderName, parent) {
@@ -42,6 +43,8 @@ class FolderNode extends NodeBase_1.NodeBase {
         result.push("DynamoDB Table");
         result.push("Sns Topic");
         result.push("Sqs Queue");
+        result.push("IAM Role");
+        result.push("IAM Policy");
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
@@ -90,6 +93,12 @@ class FolderNode extends NodeBase_1.NodeBase {
             case "Vscode Command":
                 await ServiceHub_1.ServiceHub.Current.VscodeService.Add(this, "Command");
                 break;
+            case "IAM Role":
+                await ServiceHub_1.ServiceHub.Current.IamService.AddRole(this);
+                break;
+            case "IAM Policy":
+                await ServiceHub_1.ServiceHub.Current.IamService.AddPolicy(this);
+                break;
         }
         TreeState_1.TreeState.save();
     }
@@ -103,7 +112,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         }
         this.FolderName = newName;
         this.label = newName;
-        this.SetContextValue();
+        TreeProvider_1.TreeProvider.Current.Refresh(this);
         TreeState_1.TreeState.save();
     }
     handleNodeRemove() {

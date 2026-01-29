@@ -160,6 +160,8 @@ class TreeView {
         result.push("CloudWatch Log Group");
         result.push("SNS Topic");
         result.push("SQS Queue");
+        result.push("IAM Role");
+        result.push("IAM Policy");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
             return;
@@ -197,6 +199,12 @@ class TreeView {
                 break;
             case "SQS Queue":
                 await ServiceHub_1.ServiceHub.Current.SQSService.Add(undefined);
+                break;
+            case "IAM Role":
+                await ServiceHub_1.ServiceHub.Current.IamService.AddRole(undefined);
+                break;
+            case "IAM Policy":
+                await ServiceHub_1.ServiceHub.Current.IamService.AddPolicy(undefined);
                 break;
             default:
                 vscode.window.showErrorMessage('Unknown item type selected');
