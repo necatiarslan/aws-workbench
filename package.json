@@ -416,6 +416,13 @@
           "fontPath": "./node_modules/@vscode/codicons/dist/codicon.ttf",
           "fontCharacter": "\\eb8e"
         }
+      },
+      "dynamodb-table": {
+        "description": "AWS DynamoDB Table Icon",
+        "default": {
+          "fontPath": "./media/fonts/aws-toolkit-icons.woff",
+          "fontCharacter": "\\f1cc"
+        }
       }
     }
   },

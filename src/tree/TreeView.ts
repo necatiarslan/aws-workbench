@@ -189,6 +189,7 @@ export class TreeView {
         result.push("Lambda Function");
         result.push("Step Function");
         result.push("Glue Job");
+        result.push("DynamoDB Table");
         result.push("CloudWatch Log Group");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
@@ -215,6 +216,9 @@ export class TreeView {
                 break;
             case "Glue Job":
                 await ServiceHub.Current.GlueService.Add(undefined);
+                break;
+            case "DynamoDB Table":
+                await ServiceHub.Current.DynamoDBService.Add(undefined);
                 break;
             case "CloudWatch Log Group":
                 await ServiceHub.Current.CloudWatchLogService.Add(undefined);
