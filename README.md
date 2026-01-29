@@ -214,59 +214,18 @@ Right-click on any resource for options like:
 ### Telemetry
 Anonymous usage telemetry helps improve the extension (can be disabled in VS Code settings)
 
-## Troubleshooting
+## Contributing
+### Comming Soon
+- File linking
+- move aws services accross folders
+- Telemetry logging
+- Multi-line notes
+- Bucket with a default key prefix
+- add order the resources are shown in the tree view
+- set a tooltip for resources in the tree view
+- add notes to resources
+- colorful resource icons
 
-### Unable to Connect to AWS
-- Verify AWS credentials are configured: `aws sts get-caller-identity`
-- Check that your credentials have appropriate permissions
-- Ensure the correct profile is selected in the extension
-
-### Slow Performance
-- Large S3 buckets may take time to load initially
-- Use text filters to narrow results
-- Consider splitting large buckets across multiple sessions
-
-### Missing Resources
-- Verify your IAM role has permissions for the services you're accessing
-- Check that you've selected the correct AWS profile and region
-- Some resources may be hidden—use the visibility filter to show all
-
-## Development
-
-### Building from Source
-```bash
-npm install
-npm run compile        # Single compilation
-npm run watch         # Live rebuild on file changes
-npm run lint          # Run linter
-npm test              # Run test suite
-npm run vscode:prepublish  # Prepare for publication
-```
-
-### Architecture
-The extension follows a modular architecture:
-- **Tree View**: Central UI component managing the resource tree
-- **Services**: Domain-specific services (S3Service, LambdaService, DynamoDBService, GlueService, SQSService, SNSService, IamService, etc.)
-- **API Wrappers**: AWS SDK abstractions with caching and error handling
-- **Node System**: Extensible node base class for tree items
-- **Persistence**: Automatic state saving and restoration
-
-### Contributing
-We welcome contributions! Please ensure:
-- Code follows the existing style (use `npm run lint`)
-- Tests pass (`npm test`)
-- Tree state is properly managed via `TreeState.save`
-- New nodes extend `NodeBase` and use event emitters
-
-## Known Limitations
-
-- Very large S3 buckets (100k+ objects) may have performance impact
-- Real-time sync requires manual refresh in some cases
-- Some advanced AWS features are not yet supported
-
-## License
-
-AWS Workbench is licensed under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for details.
 
 ## Support
 

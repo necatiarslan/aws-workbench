@@ -40,6 +40,9 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.TestAwsConnection', () => {
             this.TestAwsConnection();
         });
+        vscode.commands.registerCommand('AwsWorkbench.RefreshCredentials', () => {
+            this.RefreshCredentials();
+        });
         vscode.commands.registerCommand('AwsWorkbench.SetAwsRegion', () => {
             this.SetAwsRegion();
         });
@@ -254,6 +257,10 @@ class TreeView {
     TestAwsConnection() {
         Session_1.Session.Current.TestAwsConnection();
     }
+    RefreshCredentials() {
+        Session_1.Session.Current.RefreshCredentials();
+        ui.showInfoMessage("AWS credentials refreshed.");
+    }
     SetAwsRegion() {
         Session_1.Session.Current.SetAwsRegion();
     }
@@ -286,10 +293,14 @@ class TreeView {
     }
     ShowOnlyInThisProfile(node) {
         node.AwsProfile = Session_1.Session.Current.AwsProfile;
+        node.SetContextValue();
+        this.treeDataProvider.Refresh(node);
         TreeState_1.TreeState.save();
     }
     ShowInAnyProfile(node) {
         node.AwsProfile = "";
+        node.SetContextValue();
+        this.treeDataProvider.Refresh(node);
         TreeState_1.TreeState.save();
     }
     ShowOnlyInThisWorkspace(node) {
@@ -298,10 +309,14 @@ class TreeView {
             return;
         }
         node.Workspace = vscode.workspace.name;
+        node.SetContextValue();
+        this.treeDataProvider.Refresh(node);
         TreeState_1.TreeState.save();
     }
     ShowInAnyWorkspace(node) {
         node.Workspace = "";
+        node.SetContextValue();
+        this.treeDataProvider.Refresh(node);
         TreeState_1.TreeState.save();
     }
     NodeAdd(node) {

@@ -91,6 +91,7 @@ export class Session implements vscode.Disposable {
 		if(!selectedAwsProfile){ return; }
 
 		this.AwsProfile = selectedAwsProfile;
+        this.ClearCredentials();
 		this.SaveState();
     }
 
@@ -136,8 +137,12 @@ export class Session implements vscode.Disposable {
 
     public async GetCredentials(): Promise<AwsCredentialIdentity | undefined> {
         if (this.CurrentCredentials !== undefined) {
-            ui.logToOutput(`Using cached credentials (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
-            return this.CurrentCredentials;
+            if(this.CurrentCredentials.expiration && this.CurrentCredentials.expiration < new Date()){
+                ui.logToOutput('Cached credentials expired, refreshing...');
+            } else {
+                ui.logToOutput(`Using cached credentials (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
+                return this.CurrentCredentials;
+            }
         }
 
         try {

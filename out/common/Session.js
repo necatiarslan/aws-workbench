@@ -90,6 +90,7 @@ class Session {
             return;
         }
         this.AwsProfile = selectedAwsProfile;
+        this.ClearCredentials();
         this.SaveState();
     }
     async SetAwsEndpoint() {
@@ -132,8 +133,13 @@ class Session {
     }
     async GetCredentials() {
         if (this.CurrentCredentials !== undefined) {
-            ui.logToOutput(`Using cached credentials (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
-            return this.CurrentCredentials;
+            if (this.CurrentCredentials.expiration && this.CurrentCredentials.expiration < new Date()) {
+                ui.logToOutput('Cached credentials expired, refreshing...');
+            }
+            else {
+                ui.logToOutput(`Using cached credentials (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
+                return this.CurrentCredentials;
+            }
         }
         try {
             process.env.AWS_PROFILE = this.AwsProfile;

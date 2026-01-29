@@ -22,7 +22,11 @@ class LambdaService extends ServiceBase_1.ServiceBase {
         if (!selectedRegion) {
             return;
         }
-        var resultLambda = await api.GetLambdaList(selectedRegion);
+        const lambdaName = await vscode.window.showInputBox({ placeHolder: 'Lambda Function Name Filter (Optional)' });
+        if (lambdaName === undefined) {
+            return;
+        }
+        var resultLambda = await api.GetLambdaList(selectedRegion, lambdaName);
         if (!resultLambda.isSuccessful) {
             return;
         }

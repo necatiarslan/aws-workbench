@@ -41,6 +41,11 @@ class NodeBase extends vscode.TreeItem {
         if (this.Parent) {
             this.Parent.Children.push(this);
             this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+            //inherit properties from parent
+            this.AwsProfile = this.Parent.AwsProfile;
+            this.Workspace = this.Parent.Workspace;
+            this.IsHidden = this.Parent.IsHidden;
+            this.IsFavorite = this.Parent.IsFavorite;
         }
         else {
             NodeBase.RootNodes.push(this);

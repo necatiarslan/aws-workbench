@@ -24,7 +24,10 @@ export class LambdaService extends ServiceBase {
         let selectedRegion = await vscode.window.showInputBox({value: Session.Current.AwsRegion, placeHolder: 'Region Name Exp: us-east-1'});
         if(!selectedRegion){ return; }
 
-        var resultLambda = await api.GetLambdaList(selectedRegion);
+        const lambdaName = await vscode.window.showInputBox({placeHolder: 'Lambda Function Name Filter (Optional)'});
+        if(lambdaName===undefined){ return; }
+
+        var resultLambda = await api.GetLambdaList(selectedRegion, lambdaName);
         if(!resultLambda.isSuccessful){ return; }
 
         let selectedLambdaList = await vscode.window.showQuickPick(resultLambda.result, {canPickMany:true, placeHolder: 'Select Lambda Function'});
