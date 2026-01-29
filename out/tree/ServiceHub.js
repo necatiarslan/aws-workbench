@@ -7,6 +7,7 @@ const CloudWatchLogService_1 = require("../cloudwatch-logs/CloudWatchLogService"
 const LambdaService_1 = require("../lambda/LambdaService");
 const VscodeService_1 = require("../vscode/VscodeService");
 const StepFunctionsService_1 = require("../step-functions/StepFunctionsService");
+const GlueService_1 = require("../glue/GlueService");
 class ServiceHub {
     static Current;
     Context;
@@ -16,6 +17,7 @@ class ServiceHub {
     LambdaService = new LambdaService_1.LambdaService();
     VscodeService = new VscodeService_1.VscodeService();
     StepFunctionsService = new StepFunctionsService_1.StepFunctionsService();
+    GlueService = new GlueService_1.GlueService();
     constructor(context) {
         this.Context = context;
         ServiceHub.Current = this;

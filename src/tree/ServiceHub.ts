@@ -5,6 +5,7 @@ import { CloudWatchLogService } from '../cloudwatch-logs/CloudWatchLogService';
 import { LambdaService } from '../lambda/LambdaService';
 import { VscodeService } from '../vscode/VscodeService';
 import { StepFunctionsService } from '../step-functions/StepFunctionsService';
+import { GlueService } from '../glue/GlueService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
@@ -15,6 +16,7 @@ export class ServiceHub {
     public LambdaService: LambdaService = new LambdaService();
     public VscodeService: VscodeService = new VscodeService();
     public StepFunctionsService: StepFunctionsService = new StepFunctionsService();
+    public GlueService: GlueService = new GlueService();
     
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;

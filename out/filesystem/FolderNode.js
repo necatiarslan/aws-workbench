@@ -37,6 +37,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         result.push("CloudWatch Log Group");
         result.push("Lambda Function");
         result.push("Step Function");
+        result.push("Glue Job");
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
@@ -69,6 +70,9 @@ class FolderNode extends NodeBase_1.NodeBase {
                 break;
             case "Step Function":
                 await ServiceHub_1.ServiceHub.Current.StepFunctionsService.Add(this);
+                break;
+            case "Glue Job":
+                await ServiceHub_1.ServiceHub.Current.GlueService.Add(this);
                 break;
             case "Vscode Command":
                 await ServiceHub_1.ServiceHub.Current.VscodeService.Add(this, "Command");

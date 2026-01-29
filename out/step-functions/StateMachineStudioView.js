@@ -1,5 +1,4 @@
 "use strict";
-/* eslint-disable @typescript-eslint/naming-convention */
 /**
  * AWS Workflow Studio View for visualizing and editing Step Functions
  * Based on AWS Toolkit for VS Code implementation

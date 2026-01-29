@@ -155,6 +155,7 @@ class TreeView {
         result.push("S3 Bucket");
         result.push("Lambda Function");
         result.push("Step Function");
+        result.push("Glue Job");
         result.push("CloudWatch Log Group");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
@@ -178,6 +179,9 @@ class TreeView {
                 break;
             case "Step Functions":
                 await ServiceHub_1.ServiceHub.Current.StepFunctionsService.Add(undefined);
+                break;
+            case "Glue Job":
+                await ServiceHub_1.ServiceHub.Current.GlueService.Add(undefined);
                 break;
             case "CloudWatch Log Group":
                 await ServiceHub_1.ServiceHub.Current.CloudWatchLogService.Add(undefined);

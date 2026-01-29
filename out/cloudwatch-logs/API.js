@@ -9,7 +9,6 @@ exports.GetLogStreamList = GetLogStreamList;
 exports.GetLogEvents = GetLogEvents;
 exports.GetAwsProfileList = GetAwsProfileList;
 exports.getIniProfileData = getIniProfileData;
-/* eslint-disable @typescript-eslint/naming-convention */
 const ui = require("../common/UI");
 const MethodResult_1 = require("../common/MethodResult");
 const os_1 = require("os");

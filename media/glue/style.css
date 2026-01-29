@@ -1,0 +1,197 @@
+/* Glue webview styles */
+
+/* Common layout */
+.layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Headers and badges */
+.headline {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.headline-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--vscode-editor-inactiveSelectionBackground);
+}
+
+/* Spinner animation */
+.spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.spinner .codicon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Section headers */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+/* Argument list */
+.arg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.arg-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 110px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 4px;
+    background: var(--vscode-editor-background);
+}
+
+.arg-row[data-default="true"] {
+    opacity: 0.85;
+}
+
+.arg-row .default-label {
+    color: var(--vscode-descriptionForeground);
+    font-size: 11px;
+}
+
+.arg-value {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Button row */
+.btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Report view header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.controls-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+th, td {
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+th {
+    color: var(--vscode-foreground);
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background: var(--vscode-editor-inactiveSelectionBackground);
+}
+
+/* Muted text */
+.muted {
+    color: var(--vscode-descriptionForeground);
+}
+
+.no-data {
+    padding: 12px 0;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* Ellipsis for long text */
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 320px;
+    display: block;
+}
+
+/* Action buttons in table */
+.actions {
+    display: flex;
+    gap: 6px;
+}
+
+/* Status colors */
+.status-succeeded {
+    color: var(--vscode-testing-iconPassed);
+}
+
+.status-failed {
+    color: var(--vscode-testing-iconFailed);
+}
+
+.status-running {
+    color: var(--vscode-progressBar-background);
+}
+
+.status-stopped {
+    color: var(--vscode-descriptionForeground);
+}

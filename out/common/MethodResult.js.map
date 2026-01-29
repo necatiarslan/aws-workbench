@@ -1,1 +1,1 @@
-{"version":3,"file":"MethodResult.js","sourceRoot":"","sources":["../../src/common/MethodResult.ts"],"names":[],"mappings":";AAAA,yDAAyD;;;AAEzD,MAAa,YAAY;IACd,MAAM,CAAK;IACX,YAAY,CAAW;IACvB,KAAK,CAAS;CACxB;AAJD,oCAIC"}
+{"version":3,"file":"MethodResult.js","sourceRoot":"","sources":["../../src/common/MethodResult.ts"],"names":[],"mappings":";;;AACA,MAAa,YAAY;IACd,MAAM,CAAK;IACX,YAAY,CAAW;IACvB,KAAK,CAAS;CACxB;AAJD,oCAIC"}

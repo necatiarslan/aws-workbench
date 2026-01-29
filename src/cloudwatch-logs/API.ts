@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import * as ui from "../common/UI";
 import { MethodResult } from '../common/MethodResult';
 import { homedir } from "os";

@@ -409,6 +409,13 @@
           "fontPath": "./media/fonts/aws-toolkit-icons.woff",
           "fontCharacter": "\\f1e1"
         }
+      },
+      "glue-job": {
+        "description": "AWS Glue Job Icon",
+        "default": {
+          "fontPath": "./node_modules/@vscode/codicons/dist/codicon.ttf",
+          "fontCharacter": "\\eb8e"
+        }
       }
     }
   },
