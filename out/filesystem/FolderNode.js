@@ -24,6 +24,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         this.FolderName = FolderName;
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.SetContextValue();
     }
     async handleNodeAdd() {
@@ -40,6 +41,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         result.push("Glue Job");
         result.push("DynamoDB Table");
         result.push("Sns Topic");
+        result.push("Sqs Queue");
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
@@ -82,10 +84,26 @@ class FolderNode extends NodeBase_1.NodeBase {
             case "Sns Topic":
                 await ServiceHub_1.ServiceHub.Current.SNSService.Add(this);
                 break;
+            case "Sqs Queue":
+                await ServiceHub_1.ServiceHub.Current.SQSService.Add(this);
+                break;
             case "Vscode Command":
                 await ServiceHub_1.ServiceHub.Current.VscodeService.Add(this, "Command");
                 break;
         }
+        TreeState_1.TreeState.save();
+    }
+    async handleNodeEdit() {
+        const newName = await vscode.window.showInputBox({
+            value: this.FolderName,
+            placeHolder: 'Folder Name'
+        });
+        if (!newName) {
+            return;
+        }
+        this.FolderName = newName;
+        this.label = newName;
+        this.SetContextValue();
         TreeState_1.TreeState.save();
     }
     handleNodeRemove() {

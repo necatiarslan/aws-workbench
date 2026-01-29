@@ -1,0 +1,200 @@
+/* SQS Webview Styles */
+/* Uses VS Code CSS variables for theme compatibility */
+
+body {
+    padding: 20px;
+    color: var(--vscode-foreground);
+    background-color: var(--vscode-editor-background);
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--vscode-foreground);
+}
+
+.subtitle {
+    color: var(--vscode-descriptionForeground);
+    font-size: 13px;
+    word-break: break-all;
+}
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.toolbar-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: none;
+    border-radius: 2px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.toolbar-button:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.toolbar-button i {
+    font-size: 14px;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 4px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--vscode-foreground);
+}
+
+/* Message Body */
+.message-body {
+    padding: 12px;
+    background-color: var(--vscode-textCodeBlock-background);
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 4px;
+    font-family: var(--vscode-editor-font-family);
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 0;
+}
+
+.message-body.json {
+    color: var(--vscode-symbolIcon-stringForeground);
+}
+
+/* Attributes Table */
+.attributes-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attributes-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--vscode-panel-border);
+    font-size: 13px;
+}
+
+.attributes-table tr:last-child td {
+    border-bottom: none;
+}
+
+.attr-key {
+    font-weight: 600;
+    width: 200px;
+    color: var(--vscode-foreground);
+}
+
+.attr-value {
+    color: var(--vscode-descriptionForeground);
+    word-break: break-all;
+}
+
+/* Receipt Handle */
+.receipt-handle {
+    padding: 12px;
+    background-color: var(--vscode-textCodeBlock-background);
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 4px;
+    font-family: var(--vscode-editor-font-family);
+    font-size: 11px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-x: auto;
+    max-height: 100px;
+    overflow-y: auto;
+    margin: 0;
+    color: var(--vscode-descriptionForeground);
+}
+
+/* Error Messages */
+.error-message {
+    padding: 12px;
+    margin-bottom: 16px;
+    background-color: var(--vscode-inputValidation-errorBackground);
+    border: 1px solid var(--vscode-inputValidation-errorBorder);
+    color: var(--vscode-errorForeground);
+    border-radius: 4px;
+    font-size: 13px;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* Info Badge */
+.info-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    background-color: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+}
+
+/* Queue Type Badges */
+.queue-type-standard {
+    background-color: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+}
+
+.queue-type-fifo {
+    background-color: var(--vscode-inputValidation-warningBackground);
+    color: var(--vscode-foreground);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--vscode-scrollbarSlider-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--vscode-scrollbarSlider-hoverBackground);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--vscode-scrollbarSlider-activeBackground);
+}

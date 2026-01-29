@@ -8,6 +8,7 @@ import { StepFunctionsService } from '../step-functions/StepFunctionsService';
 import { GlueService } from '../glue/GlueService';
 import { DynamoDBService } from '../dynamodb/DynamoDBService';
 import { SNSService } from '../sns/SNSService';
+import { SQSService } from '../sqs/SQSService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
@@ -21,6 +22,7 @@ export class ServiceHub {
     public GlueService: GlueService = new GlueService();
     public DynamoDBService: DynamoDBService = new DynamoDBService();
     public SNSService: SNSService = new SNSService();
+    public SQSService: SQSService = new SQSService();
     
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;

@@ -192,6 +192,7 @@ export class TreeView {
         result.push("DynamoDB Table");
         result.push("CloudWatch Log Group");
         result.push("SNS Topic");
+        result.push("SQS Queue");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
         if(!nodeType){ return; }
@@ -226,6 +227,9 @@ export class TreeView {
                 break;
             case "SNS Topic":
                 await ServiceHub.Current.SNSService.Add(undefined);
+                break;
+            case "SQS Queue":
+                await ServiceHub.Current.SQSService.Add(undefined);
                 break;
             default:
                 vscode.window.showErrorMessage('Unknown item type selected');

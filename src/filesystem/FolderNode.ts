@@ -18,6 +18,7 @@ export class FolderNode extends NodeBase {
 
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
+        this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
 
         this.SetContextValue();
     }
@@ -36,6 +37,7 @@ export class FolderNode extends NodeBase {
         result.push("Glue Job");
         result.push("DynamoDB Table");
         result.push("Sns Topic");
+        result.push("Sqs Queue");
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
@@ -78,10 +80,26 @@ export class FolderNode extends NodeBase {
             case "Sns Topic":
                 await ServiceHub.Current.SNSService.Add(this);
                 break;
+            case "Sqs Queue":
+                await ServiceHub.Current.SQSService.Add(this);
+                break;
             case "Vscode Command":
                 await ServiceHub.Current.VscodeService.Add(this, "Command");
                 break;
         }
+        TreeState.save();
+    }
+
+    private async handleNodeEdit(): Promise<void> {
+        const newName = await vscode.window.showInputBox({
+            value: this.FolderName,
+            placeHolder: 'Folder Name'
+        });
+        if(!newName){ return; }
+
+        this.FolderName = newName;
+        this.label = newName;
+        this.SetContextValue();
         TreeState.save();
     }
 
