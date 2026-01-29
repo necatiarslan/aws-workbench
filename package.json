@@ -2,7 +2,7 @@
   "name": "aws-workbench",
   "displayName": "Aws Workbench",
   "description": "Your complete AWS toolkit, right in VS Code",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "NecatiARSLAN",
   "repository": {
     "type": "git",
@@ -143,6 +143,26 @@
         "command": "AwsWorkbench.NodeAlias",
         "title": "Alias",
         "icon": "$(case-sensitive)"
+      },
+      {
+        "command": "AwsWorkbench.SetTooltip",
+        "title": "Set Tooltip",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "AwsWorkbench.MoveUp",
+        "title": "Move Up",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "AwsWorkbench.MoveDown",
+        "title": "Move Down",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "AwsWorkbench.MoveToFolder",
+        "title": "Move to Folder",
+        "icon": "$(folder)"
       },
       {
         "command": "AwsWorkbench.SelectAwsProfile",
@@ -312,6 +332,26 @@
           "command": "AwsWorkbench.NodeAlias",
           "when": "view == AwsWorkbenchView && viewItem =~ /#NodeAlias#/",
           "group": "Filter"
+        },
+        {
+          "command": "AwsWorkbench.SetTooltip",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#SetTooltip#/",
+          "group": "Customize"
+        },
+        {
+          "command": "AwsWorkbench.MoveUp",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#MoveUp#/",
+          "group": "Order"
+        },
+        {
+          "command": "AwsWorkbench.MoveDown",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#MoveDown#/",
+          "group": "Order"
+        },
+        {
+          "command": "AwsWorkbench.MoveToFolder",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeMove#/",
+          "group": "Order"
         },
         {
           "command": "AwsWorkbench.NodeAdd",

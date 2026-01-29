@@ -1,0 +1,129 @@
+/* NoteView Styles */
+
+/* Dark theme adjustments for Quill */
+.vscode-dark .ql-snow .ql-stroke {
+    stroke: #cccccc;
+}
+
+.vscode-dark .ql-snow .ql-fill {
+    fill: #cccccc;
+}
+
+.vscode-dark .ql-snow .ql-picker {
+    color: #cccccc;
+}
+
+.vscode-dark .ql-snow .ql-picker-label::before {
+    color: #cccccc;
+}
+
+.vscode-dark .ql-snow .ql-picker-options {
+    background-color: #252526;
+    border-color: #3c3c3c;
+}
+
+.vscode-dark .ql-snow .ql-picker-item {
+    color: #cccccc;
+}
+
+.vscode-dark .ql-snow .ql-picker-item:hover {
+    background-color: #094771;
+}
+
+.vscode-dark .ql-toolbar.ql-snow {
+    border-color: #3c3c3c;
+    background-color: #1e1e1e;
+}
+
+.vscode-dark .ql-container.ql-snow {
+    border-color: #3c3c3c;
+}
+
+.vscode-dark .ql-editor {
+    background-color: #1e1e1e;
+    color: #cccccc;
+}
+
+.vscode-dark .ql-editor.ql-blank::before {
+    color: #6e6e6e;
+}
+
+.vscode-dark .ql-snow a {
+    color: #3794ff;
+}
+
+.vscode-dark .ql-snow .ql-tooltip {
+    background-color: #252526;
+    border-color: #3c3c3c;
+    color: #cccccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.vscode-dark .ql-snow .ql-tooltip input[type=text] {
+    background-color: #3c3c3c;
+    border-color: #3c3c3c;
+    color: #cccccc;
+}
+
+/* Light theme adjustments */
+.vscode-light .ql-toolbar.ql-snow {
+    border-color: #c8c8c8;
+    background-color: #f3f3f3;
+}
+
+.vscode-light .ql-container.ql-snow {
+    border-color: #c8c8c8;
+}
+
+.vscode-light .ql-editor {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+/* High contrast theme */
+.vscode-high-contrast .ql-snow .ql-stroke {
+    stroke: #ffffff;
+}
+
+.vscode-high-contrast .ql-snow .ql-fill {
+    fill: #ffffff;
+}
+
+.vscode-high-contrast .ql-toolbar.ql-snow {
+    border-color: #6fc3df;
+    background-color: #000000;
+}
+
+.vscode-high-contrast .ql-container.ql-snow {
+    border-color: #6fc3df;
+}
+
+.vscode-high-contrast .ql-editor {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Code block styling */
+.ql-snow .ql-editor pre.ql-syntax {
+    background-color: var(--vscode-textCodeBlock-background);
+    color: var(--vscode-editor-foreground);
+    border-radius: 4px;
+    padding: 10px;
+    font-family: var(--vscode-editor-font-family);
+}
+
+/* Blockquote styling */
+.ql-snow .ql-editor blockquote {
+    border-left: 4px solid var(--vscode-textBlockQuote-border);
+    padding-left: 16px;
+    margin: 10px 0;
+}
+
+/* Link styling */
+.ql-snow .ql-editor a {
+    color: var(--vscode-textLink-foreground);
+}
+
+.ql-snow .ql-editor a:hover {
+    color: var(--vscode-textLink-activeForeground);
+}

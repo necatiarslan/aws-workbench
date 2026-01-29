@@ -20,7 +20,7 @@ class FileNode extends NodeBase_1.NodeBase {
     FilePath = "";
     constructor(label, parent) {
         super(label, parent);
-        this.Icon = "file";
+        this.Icon = "file-symlink-file";
         this.FileName = label;
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());

@@ -14,9 +14,9 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
-const ServiceHub_1 = require("../tree/ServiceHub");
 const TreeState_1 = require("../tree/TreeState");
 const TreeProvider_1 = require("../tree/TreeProvider");
+const TreeView_1 = require("../tree/TreeView");
 class FolderNode extends NodeBase_1.NodeBase {
     FolderName = "";
     constructor(FolderName, parent) {
@@ -29,78 +29,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         this.SetContextValue();
     }
     async handleNodeAdd() {
-        const result = [];
-        result.push("Folder");
-        result.push("Note");
-        result.push("File");
-        result.push("Bash Script");
-        result.push("Bash File");
-        result.push("S3 Bucket");
-        result.push("CloudWatch Log Group");
-        result.push("Lambda Function");
-        result.push("Step Function");
-        result.push("Glue Job");
-        result.push("DynamoDB Table");
-        result.push("Sns Topic");
-        result.push("Sqs Queue");
-        result.push("IAM Role");
-        result.push("IAM Policy");
-        result.push("Vscode Command");
-        let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
-        if (!nodeType) {
-            return;
-        }
-        switch (nodeType) {
-            case "Folder":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Folder");
-                break;
-            case "Note":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Note");
-                break;
-            case "File":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "File");
-                break;
-            case "Bash Script":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Bash Script");
-                break;
-            case "Bash File":
-                await ServiceHub_1.ServiceHub.Current.FileSystemService.Add(this, "Bash File");
-                break;
-            case "S3 Bucket":
-                await ServiceHub_1.ServiceHub.Current.S3Service.Add(this);
-                break;
-            case "CloudWatch Log Group":
-                await ServiceHub_1.ServiceHub.Current.CloudWatchLogService.Add(this);
-                break;
-            case "Lambda Function":
-                await ServiceHub_1.ServiceHub.Current.LambdaService.Add(this);
-                break;
-            case "Step Function":
-                await ServiceHub_1.ServiceHub.Current.StepFunctionsService.Add(this);
-                break;
-            case "Glue Job":
-                await ServiceHub_1.ServiceHub.Current.GlueService.Add(this);
-                break;
-            case "DynamoDB Table":
-                await ServiceHub_1.ServiceHub.Current.DynamoDBService.Add(this);
-                break;
-            case "Sns Topic":
-                await ServiceHub_1.ServiceHub.Current.SNSService.Add(this);
-                break;
-            case "Sqs Queue":
-                await ServiceHub_1.ServiceHub.Current.SQSService.Add(this);
-                break;
-            case "Vscode Command":
-                await ServiceHub_1.ServiceHub.Current.VscodeService.Add(this, "Command");
-                break;
-            case "IAM Role":
-                await ServiceHub_1.ServiceHub.Current.IamService.AddRole(this);
-                break;
-            case "IAM Policy":
-                await ServiceHub_1.ServiceHub.Current.IamService.AddPolicy(this);
-                break;
-        }
-        TreeState_1.TreeState.save();
+        TreeView_1.TreeView.Current.Add(this);
     }
     async handleNodeEdit() {
         const newName = await vscode.window.showInputBox({

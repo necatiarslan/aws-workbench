@@ -216,16 +216,11 @@ Anonymous usage telemetry helps improve the extension (can be disabled in VS Cod
 
 ## Contributing
 ### Comming Soon
-- File linking
-- move aws services accross folders
-- Telemetry logging
-- Multi-line notes
-- Bucket with a default key prefix
-- add order the resources are shown in the tree view
-- set a tooltip for resources in the tree view
-- add notes to resources
-- colorful resource icons
+- Bucket with a default key prefix: set a default key prefix when adding a bucket to the tree view to open the bucket with the specified prefix
+- add notes to resources: add notes subnode to aws resources to add custom notes
 
+- colorful resource icons
+- Telemetry logging
 
 ## Support
 

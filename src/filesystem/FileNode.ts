@@ -16,7 +16,7 @@ export class FileNode extends NodeBase {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
-        this.Icon = "file";
+        this.Icon = "file-symlink-file";
         this.FileName = label;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

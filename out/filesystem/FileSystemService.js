@@ -31,7 +31,7 @@ class FileSystemService extends ServiceBase_1.ServiceBase {
             }
             const newNote = new NoteNode_1.NoteNode(noteTitle, node);
         }
-        else if (type === "File") {
+        else if (type === "File Link") {
             const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
             let param = {
                 canSelectFolders: false,
@@ -47,6 +47,7 @@ class FileSystemService extends ServiceBase_1.ServiceBase {
             }
             const newFile = new FileNode_1.FileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), node);
             newFile.FilePath = selectedFileList[0].fsPath;
+            newFile.CustomTooltip = selectedFileList[0].fsPath;
         }
         else if (type === "Bash Script") {
             let title = await vscode.window.showInputBox({ placeHolder: 'Enter Title' });
@@ -76,6 +77,7 @@ class FileSystemService extends ServiceBase_1.ServiceBase {
             }
             const newFile = new BashFileNode_1.BashFileNode(ui.getFileNameWithExtension(selectedFileList[0].fsPath), node);
             newFile.FilePath = selectedFileList[0].fsPath;
+            newFile.CustomTooltip = selectedFileList[0].fsPath;
         }
     }
 }

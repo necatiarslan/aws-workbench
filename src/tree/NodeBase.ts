@@ -6,6 +6,7 @@ import { Telemetry } from '../common/Telemetry';
 import * as ui from '../common/UI';
 import { TreeState } from './TreeState';
 import { EventEmitter } from '../common/EventEmitter';
+import { NodeRegistry } from '../common/serialization/NodeRegistry';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
@@ -73,6 +74,9 @@ export abstract class NodeBase extends vscode.TreeItem {
     @Serialize()
     private _alias?: string;
 
+    @Serialize()
+    private _customTooltip?: string;
+
     public IsVisible: boolean = true;
 
     public IsWorking: boolean = false;
@@ -99,6 +103,10 @@ export abstract class NodeBase extends vscode.TreeItem {
         this.IsWorking = false;
         this.iconPath = new vscode.ThemeIcon(this._icon);
         TreeProvider.Current.Refresh(this);
+    }
+
+    public get IsSerializable(): boolean {
+        return NodeRegistry.has(this.constructor.name);
     }
 
     public SetVisible(): void {
@@ -175,20 +183,17 @@ export abstract class NodeBase extends vscode.TreeItem {
         }
     }
 
+    public get CustomTooltip(): string | undefined {
+        return this._customTooltip;
+    }
+
+    public set CustomTooltip(value: string | undefined) {
+        this._customTooltip = value;
+        this.tooltip = value || (this.label as string);
+    }
+
     public SetContextValue(): void {
         let context = "node";
-        context += "#AddToNode#Remove#"; 
-        if (this.IsFavorite) { context += "#RemoveFav#"; }
-        else { context += "#AddFav#"; }
-        
-        if (this.IsHidden) { context += "#UnHide#"; }
-        else { context += "#Hide#"; }
-
-        if (this.AwsProfile.length > 0) { context += "#ShowInAnyProfile#"; }
-        else { context += "#ShowOnlyInThisProfile#"; }
-
-        if (this.Workspace.length > 0) { context += "#ShowInAnyWorkspace#"; }
-        else { context += "#ShowOnlyInThisWorkspace#"; }
 
         if (this.OnNodeAdd.hasListeners()) { context += "#NodeAdd#"; }
         if (this.OnNodeRemove.hasListeners()) { context += "#NodeRemove#"; }
@@ -200,6 +205,25 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (this.OnNodeOpen.hasListeners()) { context += "#NodeOpen#"; }
         if (this.OnNodeInfo.hasListeners()) { context += "#NodeInfo#"; }
         if (this.EnableNodeAlias) { context += "#NodeAlias#"; }
+
+        if(this.IsSerializable){
+            if (this.IsFavorite) { context += "#RemoveFav#"; }
+            else { context += "#AddFav#"; }
+            
+            if (this.IsHidden) { context += "#UnHide#"; }
+            else { context += "#Hide#"; }
+
+            if (this.AwsProfile.length > 0) { context += "#ShowInAnyProfile#"; }
+            else { context += "#ShowOnlyInThisProfile#"; }
+
+            if (this.Workspace.length > 0) { context += "#ShowInAnyWorkspace#"; }
+            else { context += "#ShowOnlyInThisWorkspace#"; }
+
+            context += "#SetTooltip#";
+            context += "#MoveUp#";
+            context += "#MoveDown#";
+            context += "#NodeMove#";
+        }
 
         this.contextValue = context;
     }
@@ -267,6 +291,67 @@ export abstract class NodeBase extends vscode.TreeItem {
             }
         }
         TreeProvider.Current.Refresh(this.Parent);
+    }
+
+    public MoveUp(): void {
+        const siblings = this.Parent ? this.Parent.Children : NodeBase.RootNodes;
+        const index = siblings.indexOf(this);
+        if (index > 0) {
+            // Swap with previous sibling
+            [siblings[index - 1], siblings[index]] = [siblings[index], siblings[index - 1]];
+            TreeProvider.Current.Refresh(this.Parent);
+            TreeState.save();
+        }
+    }
+
+    public MoveDown(): void {
+        const siblings = this.Parent ? this.Parent.Children : NodeBase.RootNodes;
+        const index = siblings.indexOf(this);
+        if (index >= 0 && index < siblings.length - 1) {
+            // Swap with next sibling
+            [siblings[index], siblings[index + 1]] = [siblings[index + 1], siblings[index]];
+            TreeProvider.Current.Refresh(this.Parent);
+            TreeState.save();
+        }
+    }
+
+    public MoveToFolder(targetFolder: NodeBase): void {
+        // Remove from current parent
+        if (this.Parent) {
+            const index = this.Parent.Children.indexOf(this);
+            if (index > -1) {
+                this.Parent.Children.splice(index, 1);
+                if (!this.Parent.HasChildren) {
+                    this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.None;
+                }
+            }
+            TreeProvider.Current.Refresh(this.Parent);
+        } else {
+            const index = NodeBase.RootNodes.indexOf(this);
+            if (index > -1) {
+                NodeBase.RootNodes.splice(index, 1);
+            }
+        }
+
+        // Add to target folder
+        this.Parent = targetFolder;
+        targetFolder.Children.push(this);
+        targetFolder.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        
+        TreeProvider.Current.Refresh(targetFolder);
+        TreeState.save();
+    }
+
+    public async SetCustomTooltip(): Promise<void> {
+        const tooltip = await vscode.window.showInputBox({ 
+            placeHolder: 'Enter custom tooltip (leave empty to reset)',
+            value: this._customTooltip || ''
+        });
+        if (tooltip === undefined) { return; }
+        
+        this.CustomTooltip = tooltip.trim() || undefined;
+        TreeProvider.Current.Refresh(this);
+        TreeState.save();
     }
 
     /**

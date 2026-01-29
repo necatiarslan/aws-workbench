@@ -131,6 +131,22 @@ export class TreeView {
             this.NodeAlias(node);
         });
 
+        vscode.commands.registerCommand('AwsWorkbench.SetTooltip', (node: NodeBase) => {
+            this.SetTooltip(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.MoveUp', (node: NodeBase) => {
+            this.MoveUp(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.MoveDown', (node: NodeBase) => {
+            this.MoveDown(node);
+        });
+
+        vscode.commands.registerCommand('AwsWorkbench.MoveToFolder', (node: NodeBase) => {
+            this.MoveToFolder(node);
+        });
+
         vscode.commands.registerCommand('AwsWorkbench.BugAndNewFeatureRequest', () => {
             this.BugAndNewFeatureRequest();
         });
@@ -148,7 +164,7 @@ export class TreeView {
         }); 
 
         vscode.commands.registerCommand('AwsWorkbench.Add', (node: NodeBase) => {
-            this.Add(node);
+            this.Add(undefined);
         });
 
         vscode.commands.registerCommand('AwsWorkbench.Remove', (node: NodeBase) => {
@@ -182,71 +198,78 @@ export class TreeView {
         TreeState.save();
     }
     public async Add(node?: NodeBase): Promise<void> {
-        if(node) { node.NodeAdd(); return; }
         
-        //root node
         const result:string[] = [];
         result.push("Folder");
         result.push("Note");
-        result.push("File");
+        result.push("File Link");
+        result.push("Bash Script");
+        result.push("Bash File");
         result.push("S3 Bucket");
+        result.push("CloudWatch Log Group");
         result.push("Lambda Function");
         result.push("Step Function");
         result.push("Glue Job");
         result.push("DynamoDB Table");
-        result.push("CloudWatch Log Group");
-        result.push("SNS Topic");
-        result.push("SQS Queue");
+        result.push("Sns Topic");
+        result.push("Sqs Queue");
         result.push("IAM Role");
         result.push("IAM Policy");
+        result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
         if(!nodeType){ return; }
 
         switch (nodeType) {
             case "Folder":
-                await ServiceHub.Current.FileSystemService.Add(undefined, "Folder");
+                await ServiceHub.Current.FileSystemService.Add(node, "Folder");
                 break;
             case "Note":
-                await ServiceHub.Current.FileSystemService.Add(undefined, "Note");
+                await ServiceHub.Current.FileSystemService.Add(node, "Note");
                 break;
-            case "File":
-                await ServiceHub.Current.FileSystemService.Add(undefined, "File");
+            case "File Link":
+                await ServiceHub.Current.FileSystemService.Add(node, "File Link");
+                break;
+            case "Bash Script":
+                await ServiceHub.Current.FileSystemService.Add(node, "Bash Script");
+                break;
+            case "Bash File":
+                await ServiceHub.Current.FileSystemService.Add(node, "Bash File");
                 break;
             case "S3 Bucket":
-                await ServiceHub.Current.S3Service.Add(undefined);
-                break;
-            case "Lambda Function":
-                await ServiceHub.Current.LambdaService.Add(undefined);
-                break;
-            case "Step Functions":
-                await ServiceHub.Current.StepFunctionsService.Add(undefined);
-                break;
-            case "Glue Job":
-                await ServiceHub.Current.GlueService.Add(undefined);
-                break;
-            case "DynamoDB Table":
-                await ServiceHub.Current.DynamoDBService.Add(undefined);
+                await ServiceHub.Current.S3Service.Add(node);
                 break;
             case "CloudWatch Log Group":
-                await ServiceHub.Current.CloudWatchLogService.Add(undefined);
+                await ServiceHub.Current.CloudWatchLogService.Add(node);
                 break;
-            case "SNS Topic":
-                await ServiceHub.Current.SNSService.Add(undefined);
+            case "Lambda Function":
+                await ServiceHub.Current.LambdaService.Add(node);
                 break;
-            case "SQS Queue":
-                await ServiceHub.Current.SQSService.Add(undefined);
+            case "Step Function":
+                await ServiceHub.Current.StepFunctionsService.Add(node);
+                break;
+            case "Glue Job":
+                await ServiceHub.Current.GlueService.Add(node);
+                break;
+            case "DynamoDB Table":
+                await ServiceHub.Current.DynamoDBService.Add(node);
+                break;
+            case "Sns Topic":
+                await ServiceHub.Current.SNSService.Add(node);
+                break;
+            case "Sqs Queue":
+                await ServiceHub.Current.SQSService.Add(node);
+                break;
+            case "Vscode Command":
+                await ServiceHub.Current.VscodeService.Add(node, "Command");
                 break;
             case "IAM Role":
-                await ServiceHub.Current.IamService.AddRole(undefined);
+                await ServiceHub.Current.IamService.AddRole(node);
                 break;
             case "IAM Policy":
-                await ServiceHub.Current.IamService.AddPolicy(undefined);
+                await ServiceHub.Current.IamService.AddPolicy(node);
                 break;
-            default:
-                vscode.window.showErrorMessage('Unknown item type selected');
         }
-        this.SetViewMessage();
         TreeState.save();
     }
 
@@ -409,6 +432,57 @@ export class TreeView {
 
     public NodeAlias(node: NodeBase): void {
         node.NodeAlias();
+    }
+
+    public SetTooltip(node: NodeBase): void {
+        node.SetCustomTooltip();
+    }
+
+    public MoveUp(node: NodeBase): void {
+        node.MoveUp();
+    }
+
+    public MoveDown(node: NodeBase): void {
+        node.MoveDown();
+    }
+
+    public async MoveToFolder(node: NodeBase): Promise<void> {
+        // Collect all FolderNode instances recursively
+        const folders: { label: string; node: NodeBase }[] = [];
+        
+        const collectFolders = (nodes: NodeBase[], path: string = "") => {
+            for (const n of nodes) {
+                if (n.constructor.name === 'FolderNode') {
+                    const fullPath = path ? `${path}/${n.label}` : n.label as string;
+                    folders.push({ label: fullPath, node: n });
+                }
+                if (n.Children.length > 0) {
+                    const newPath = n.constructor.name === 'FolderNode' 
+                        ? (path ? `${path}/${n.label}` : n.label as string) 
+                        : path;
+                    collectFolders(n.Children, newPath);
+                }
+            }
+        };
+        
+        collectFolders(NodeBase.RootNodes);
+        
+        if (folders.length === 0) {
+            vscode.window.showInformationMessage('No folders available. Create a folder first.');
+            return;
+        }
+        
+        const selected = await vscode.window.showQuickPick(
+            folders.map(f => f.label),
+            { placeHolder: 'Select destination folder' }
+        );
+        
+        if (!selected) { return; }
+        
+        const targetFolder = folders.find(f => f.label === selected)?.node;
+        if (targetFolder && targetFolder !== node && targetFolder !== node.Parent) {
+            node.MoveToFolder(targetFolder);
+        }
     }
 
 	public BugAndNewFeatureRequest(): void {
