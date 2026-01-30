@@ -7,7 +7,6 @@ const GlueJobNode_1 = require("./GlueJobNode");
 const GlueTriggerFileNode_1 = require("./GlueTriggerFileNode");
 const TreeState_1 = require("../tree/TreeState");
 const ui = require("../common/UI");
-const ServiceHub_1 = require("../tree/ServiceHub");
 const GlueJobRunView_1 = require("./GlueJobRunView");
 class GlueTriggerGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -35,7 +34,7 @@ class GlueTriggerGroupNode extends NodeBase_1.NodeBase {
             ui.showWarningMessage('Parent job node not found');
             return;
         }
-        GlueJobRunView_1.GlueJobRunView.Render(ServiceHub_1.ServiceHub.Current.Context.extensionUri, job.Region, job.JobName);
+        GlueJobRunView_1.GlueJobRunView.Render(job.Region, job.JobName);
     }
     async handleNodeAdd() {
         ui.logToOutput('GlueTriggerGroupNode.handleNodeAdd Started');

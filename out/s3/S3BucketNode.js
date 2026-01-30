@@ -15,7 +15,6 @@ const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const TreeState_1 = require("../tree/TreeState");
 const S3Explorer_1 = require("./S3Explorer");
-const Session_1 = require("../common/Session");
 const S3BucketShortcutGroupNode_1 = require("./S3BucketShortcutGroupNode");
 class S3BucketNode extends NodeBase_1.NodeBase {
     constructor(BucketName, parent) {
@@ -64,7 +63,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
     }
     handleNodeView() {
-        S3Explorer_1.S3Explorer.Render(Session_1.Session.Current.ExtensionUri, this);
+        S3Explorer_1.S3Explorer.Render(this);
     }
 }
 exports.S3BucketNode = S3BucketNode;

@@ -7,7 +7,6 @@ const GlueJobNode_1 = require("./GlueJobNode");
 const GlueRunNode_1 = require("./GlueRunNode");
 const api = require("./API");
 const ui = require("../common/UI");
-const ServiceHub_1 = require("../tree/ServiceHub");
 const GlueJobRunsReportView_1 = require("./GlueJobRunsReportView");
 class GlueRunsGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -35,7 +34,7 @@ class GlueRunsGroupNode extends NodeBase_1.NodeBase {
             ui.showWarningMessage('Parent job node not found');
             return;
         }
-        GlueJobRunsReportView_1.GlueJobRunsReportView.Render(ServiceHub_1.ServiceHub.Current.Context.extensionUri, job.Region, job.JobName);
+        GlueJobRunsReportView_1.GlueJobRunsReportView.Render(job.Region, job.JobName);
     }
     async handleLoadChildren() {
         ui.logToOutput('GlueRunsGroupNode.handleLoadChildren Started');

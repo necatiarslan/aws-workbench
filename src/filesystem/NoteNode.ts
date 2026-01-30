@@ -32,7 +32,7 @@ export class NoteNode extends NodeBase {
 
     private async handleNodeEdit(): Promise<void> {
         // Open in rich text editor
-        NoteView.Render(Session.Current.ExtensionUri, this);
+        NoteView.Render(this);
     }
 
 }

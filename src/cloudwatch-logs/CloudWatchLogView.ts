@@ -4,6 +4,7 @@ import * as api from './API';
 import { OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import * as tmp from 'tmp';
 import * as fs from 'fs';
+import { Session } from "../common/Session";
 
 export class CloudWatchLogView {
     public static Current: CloudWatchLogView | undefined;
@@ -28,14 +29,14 @@ export class CloudWatchLogView {
     private Timer: ReturnType<typeof setInterval> | undefined;
 
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, Region: string, LogGroup:string, LogStream:string) {
+    private constructor(panel: vscode.WebviewPanel, Region: string, LogGroup:string, LogStream:string) {
         ui.logToOutput('CloudWatchLogView.constructor Started');
 
         this.Region = Region;
         this.LogGroup = LogGroup;
         this.LogStream = LogStream;
 
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session.Current.ExtensionUri;
 
         this._panel = panel;
         this._panel.onDidDispose(this.dispose, null, this._disposables);
@@ -46,10 +47,10 @@ export class CloudWatchLogView {
     }
 
     public async RenderHtml() {
-        ui.logToOutput('CloudWatchLogView.RenderHmtl Started');
+        ui.logToOutput('CloudWatchLogView.RenderHtml Started');
         this._panel.webview.html = this._getWebviewContent(this._panel.webview, this.extensionUri);
         
-        ui.logToOutput('CloudWatchLogView.RenderHmtl Completed');
+        ui.logToOutput('CloudWatchLogView.RenderHtml Completed');
     }
 
     public async LoadLogs(){
@@ -126,7 +127,7 @@ export class CloudWatchLogView {
         return '00';
     }
 
-    public static async Render(extensionUri: vscode.Uri, Region: string, LogGroup:string, LogStream?:string) {
+    public static async Render(Region: string, LogGroup:string, LogStream?:string) {
         ui.logToOutput('CloudWatchLogView.Render Started');
         
         if(!LogStream || LogStream.length===0)
@@ -156,7 +157,7 @@ export class CloudWatchLogView {
                 enableScripts: true,
             });
 
-            CloudWatchLogView.Current = new CloudWatchLogView(panel, extensionUri, Region, LogGroup, LogStream);
+            CloudWatchLogView.Current = new CloudWatchLogView(panel, Region, LogGroup, LogStream);
         }
     }
 

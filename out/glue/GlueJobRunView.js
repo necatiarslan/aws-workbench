@@ -5,6 +5,7 @@ const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("./API");
 const CloudWatchLogView_1 = require("../cloudwatch-logs/CloudWatchLogView");
+const Session_1 = require("../common/Session");
 class GlueJobRunView {
     static Current;
     panel;
@@ -12,9 +13,9 @@ class GlueJobRunView {
     extensionUri;
     state;
     triggerFilePath;
-    constructor(panel, extensionUri, region, jobName, triggerFilePath) {
+    constructor(panel, region, jobName, triggerFilePath) {
         this.panel = panel;
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this.triggerFilePath = triggerFilePath;
         this.state = {
             region,
@@ -28,7 +29,7 @@ class GlueJobRunView {
         this.loadDefaultArgs();
         this.render();
     }
-    static Render(extensionUri, region, jobName, triggerFilePath) {
+    static Render(region, jobName, triggerFilePath) {
         ui.logToOutput(`GlueJobRunView.Render ${jobName} @ ${region}` + (triggerFilePath ? ` with file: ${triggerFilePath}` : ''));
         if (GlueJobRunView.Current) {
             GlueJobRunView.Current.state.region = region;
@@ -44,7 +45,7 @@ class GlueJobRunView {
         const panel = vscode.window.createWebviewPanel("GlueJobRunView", `Glue Job: ${jobName}`, vscode.ViewColumn.One, {
             enableScripts: true,
         });
-        GlueJobRunView.Current = new GlueJobRunView(panel, extensionUri, region, jobName, triggerFilePath);
+        GlueJobRunView.Current = new GlueJobRunView(panel, region, jobName, triggerFilePath);
     }
     async loadDefaultArgs() {
         try {
@@ -99,7 +100,7 @@ class GlueJobRunView {
         return undefined;
     }
     render() {
-        this.panel.webview.html = this.getHtml(this.panel.webview, this.extensionUri);
+        this.panel.webview.html = this.getHtml(this.panel.webview);
     }
     sendState() {
         this.state.triggerFilePath = this.triggerFilePath;
@@ -196,12 +197,12 @@ class GlueJobRunView {
             ui.showInfoMessage("Run id not set yet.");
             return;
         }
-        CloudWatchLogView_1.CloudWatchLogView.Render(this.extensionUri, this.state.region, group, stream);
+        CloudWatchLogView_1.CloudWatchLogView.Render(this.state.region, group, stream);
     }
-    getHtml(webview, extensionUri) {
-        const codiconsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);
-        const vscodeElementsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
-        const styleUri = ui.getUri(webview, extensionUri, ["media", "glue", "style.css"]);
+    getHtml(webview) {
+        const codiconsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);
+        const vscodeElementsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
+        const styleUri = ui.getUri(webview, this.extensionUri, ["media", "glue", "style.css"]);
         const nonce = this.getNonce();
         return `<!DOCTYPE html>
 <html lang="en">

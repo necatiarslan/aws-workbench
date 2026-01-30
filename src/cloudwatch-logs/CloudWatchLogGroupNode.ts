@@ -83,7 +83,7 @@ export class CloudWatchLogGroupNode extends NodeBase {
     }
 
     public handleNodeView(): void {
-        CloudWatchLogView.Render(Session.Current.ExtensionUri, this.Region, this.LogGroup);
+        CloudWatchLogView.Render(this.Region, this.LogGroup);
     }
 
 }

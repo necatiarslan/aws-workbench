@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as ui from "../common/UI";
 import { TreeState } from "../tree/TreeState";
+import { Session } from "../common/Session";
 
 interface NoteViewState {
     noteTitle: string;
@@ -22,11 +23,10 @@ export class NoteView {
 
     private constructor(
         panel: vscode.WebviewPanel,
-        extensionUri: vscode.Uri,
         noteNode: INoteNode
     ) {
         this.panel = panel;
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session.Current.ExtensionUri;
         this.noteNode = noteNode;
         this.state = { 
             noteTitle: noteNode.NoteTitle, 
@@ -38,7 +38,7 @@ export class NoteView {
         this.render();
     }
 
-    public static Render(extensionUri: vscode.Uri, noteNode: INoteNode) {
+    public static Render(noteNode: INoteNode) {
         ui.logToOutput(`NoteView.Render ${noteNode.NoteTitle}`);
         
         if (NoteView.Current) {
@@ -60,7 +60,7 @@ export class NoteView {
             { enableScripts: true, retainContextWhenHidden: true }
         );
 
-        NoteView.Current = new NoteView(panel, extensionUri, noteNode);
+        NoteView.Current = new NoteView(panel, noteNode);
     }
 
     private dispose() {

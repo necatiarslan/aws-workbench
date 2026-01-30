@@ -40,7 +40,6 @@ export class GlueTriggerGroupNode extends NodeBase {
         }
 
         GlueJobRunView.Render(
-            ServiceHub.Current.Context.extensionUri,
             job.Region,
             job.JobName
         );

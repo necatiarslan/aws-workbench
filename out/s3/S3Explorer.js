@@ -11,6 +11,7 @@ const Telemetry_1 = require("../common/Telemetry");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const Session_1 = require("../common/Session");
 class S3Explorer {
     static Current;
     _panel;
@@ -24,10 +25,10 @@ class S3Explorer {
     SortColumn = "Name";
     SortDirection = "asc";
     SelectedNode;
-    constructor(panel, extensionUri, node) {
+    constructor(panel, node) {
         ui.logToOutput('S3Explorer.constructor Started');
         this.SetS3ExplorerItem(node);
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this.SelectedNode = node;
         this._panel = panel;
         this._panel.onDidDispose(this.dispose, null, this._disposables);
@@ -54,7 +55,7 @@ class S3Explorer {
     }
     ResetCurrentState() {
     }
-    static Render(extensionUri, node, key = undefined) {
+    static Render(node, key = undefined) {
         ui.logToOutput('S3Explorer.Render Started');
         Telemetry_1.Telemetry.Current?.send("S3Explorer.Render");
         if (S3Explorer.Current) {
@@ -67,7 +68,7 @@ class S3Explorer {
             const panel = vscode.window.createWebviewPanel("S3Explorer", "S3 Explorer", vscode.ViewColumn.One, {
                 enableScripts: true,
             });
-            S3Explorer.Current = new S3Explorer(panel, extensionUri, node);
+            S3Explorer.Current = new S3Explorer(panel, node);
         }
         if (key) {
             S3Explorer.Current.S3ExplorerItem.Key = key;
@@ -569,7 +570,7 @@ class S3Explorer {
                     ui.showInfoMessage("This feature is coming soon!");
                     return;
                 case "search":
-                    S3Search_1.S3Search.Render(this.extensionUri, this.SelectedNode, this.S3ExplorerItem.Key);
+                    S3Search_1.S3Search.Render(this.SelectedNode, this.S3ExplorerItem.Key);
                     return;
                 case "create_folder":
                     this.CreateFolder();

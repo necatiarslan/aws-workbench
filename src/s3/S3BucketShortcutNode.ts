@@ -32,7 +32,7 @@ export class S3BucketShortcutNode extends NodeBase {
     private handleNodeView(): void {
         const s3BucketNode = this.GetAwsResourceNode() as S3BucketNode;
 
-        S3Explorer.Render(Session.Current.ExtensionUri, s3BucketNode, this.Key);
+        S3Explorer.Render(s3BucketNode, this.Key);
     }
 
 }

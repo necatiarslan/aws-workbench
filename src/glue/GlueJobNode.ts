@@ -84,7 +84,6 @@ export class GlueJobNode extends NodeBase {
     private async handleNodeRun(): Promise<void> {
         // Open the Job Run View webview
         GlueJobRunView.Render(
-            ServiceHub.Current.Context.extensionUri,
             this.Region,
             this.JobName
         );

@@ -5,6 +5,7 @@ const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("./API");
 const CloudWatchLogView_1 = require("../cloudwatch-logs/CloudWatchLogView");
+const Session_1 = require("../common/Session");
 class StateMachineExecutionView {
     static Current;
     _panel;
@@ -17,13 +18,13 @@ class StateMachineExecutionView {
     _executionOutput = '';
     _stateHistory = [];
     _isLoading = false;
-    static Render(extensionUri, executionArn, stepFuncArn, region) {
+    static Render(executionArn, stepFuncArn, region) {
         ui.logToOutput('StateMachineExecutionView.Render Started');
-        StateMachineExecutionView.Current = new StateMachineExecutionView(extensionUri, executionArn, stepFuncArn, region);
+        StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stepFuncArn, region);
         StateMachineExecutionView.Current.Initialize();
     }
-    constructor(extensionUri, executionArn, stepFuncArn, region) {
-        this._extensionUri = extensionUri;
+    constructor(executionArn, stepFuncArn, region) {
+        this._extensionUri = Session_1.Session.Current.ExtensionUri;
         this._executionArn = executionArn;
         this._stepFuncArn = stepFuncArn;
         this._region = region;
@@ -714,7 +715,7 @@ class StateMachineExecutionView {
                 ui.showWarningMessage('Log Stream not found for this Step Function');
                 return;
             }
-            CloudWatchLogView_1.CloudWatchLogView.Render(this._extensionUri, this._region, logGroupName, logStreamResult.result);
+            CloudWatchLogView_1.CloudWatchLogView.Render(this._region, logGroupName, logStreamResult.result);
         }
         catch (error) {
             ui.showErrorMessage('Error viewing logs', error);

@@ -15,7 +15,6 @@ const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const TreeState_1 = require("../tree/TreeState");
 const NoteView_1 = require("./NoteView");
-const Session_1 = require("../common/Session");
 class NoteNode extends NodeBase_1.NodeBase {
     NoteTitle = "";
     NoteContent = "";
@@ -33,7 +32,7 @@ class NoteNode extends NodeBase_1.NodeBase {
     }
     async handleNodeEdit() {
         // Open in rich text editor
-        NoteView_1.NoteView.Render(Session_1.Session.Current.ExtensionUri, this);
+        NoteView_1.NoteView.Render(this);
     }
 }
 exports.NoteNode = NoteNode;

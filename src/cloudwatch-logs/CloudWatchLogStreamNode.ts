@@ -39,7 +39,7 @@ export class CloudWatchLogStreamNode extends NodeBase {
     }
 
     public handleNodeView(): void {
-        CloudWatchLogView.Render(Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
+        CloudWatchLogView.Render(this.Region, this.LogGroup, this.LogStream);
     }
 
 }

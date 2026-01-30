@@ -23,7 +23,6 @@ const GlueInfoGroupNode_1 = require("./GlueInfoGroupNode");
 const GlueRunsGroupNode_1 = require("./GlueRunsGroupNode");
 const GlueLogsGroupNode_1 = require("./GlueLogsGroupNode");
 const GlueJobRunView_1 = require("./GlueJobRunView");
-const ServiceHub_1 = require("../tree/ServiceHub");
 class GlueJobNode extends NodeBase_1.NodeBase {
     constructor(JobName, parent) {
         super(JobName, parent);
@@ -75,7 +74,7 @@ class GlueJobNode extends NodeBase_1.NodeBase {
     }
     async handleNodeRun() {
         // Open the Job Run View webview
-        GlueJobRunView_1.GlueJobRunView.Render(ServiceHub_1.ServiceHub.Current.Context.extensionUri, this.Region, this.JobName);
+        GlueJobRunView_1.GlueJobRunView.Render(this.Region, this.JobName);
     }
     async TriggerJob(filePath) {
         ui.logToOutput('GlueJobNode.TriggerJob Started');

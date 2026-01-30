@@ -48,7 +48,6 @@ export class GlueTriggerFileNode extends NodeBase {
 
         // Open webview with this trigger file
         GlueJobRunView.Render(
-            ServiceHub.Current.Context.extensionUri,
             job.Region,
             job.JobName,
             this.FilePath

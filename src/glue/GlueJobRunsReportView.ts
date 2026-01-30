@@ -3,6 +3,7 @@ import * as ui from "../common/UI";
 import * as api from "./API";
 import { CloudWatchLogView } from "../cloudwatch-logs/CloudWatchLogView";
 import { JobRun } from "@aws-sdk/client-glue";
+import { Session } from "../common/Session";
 
 interface JobRunsReportState {
     isLoading: boolean;
@@ -36,9 +37,9 @@ export class GlueJobRunsReportView {
 
     private state: JobRunsReportState = { isLoading: false, runs: [] };
 
-    constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, region: string, jobName: string) {
+    constructor(panel: vscode.WebviewPanel, region: string, jobName: string) {
         this.panel = panel;
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session.Current.ExtensionUri;
         this.region = region;
         this.jobName = jobName;
 
@@ -48,7 +49,7 @@ export class GlueJobRunsReportView {
         this.render();
     }
 
-    public static Render(extensionUri: vscode.Uri, region: string, jobName: string) {
+    public static Render(region: string, jobName: string) {
         ui.logToOutput(`GlueJobRunsReportView.Render ${jobName} @ ${region}`);
         if (GlueJobRunsReportView.Current) {
             GlueJobRunsReportView.Current.state = { isLoading: false, runs: [] };
@@ -69,7 +70,7 @@ export class GlueJobRunsReportView {
             }
         );
 
-        GlueJobRunsReportView.Current = new GlueJobRunsReportView(panel, extensionUri, region, jobName);
+        GlueJobRunsReportView.Current = new GlueJobRunsReportView(panel, region, jobName);
     }
 
     private async loadRuns() {
@@ -166,7 +167,7 @@ export class GlueJobRunsReportView {
     }
 
     private render() {
-        this.panel.webview.html = this.getHtml(this.panel.webview, this.extensionUri);
+        this.panel.webview.html = this.getHtml(this.panel.webview);
     }
 
     private sendState() {
@@ -217,13 +218,13 @@ export class GlueJobRunsReportView {
             return;
         }
         // Use run ID as stream filter
-        CloudWatchLogView.Render(this.extensionUri, this.region, group, run.Id || "");
+        CloudWatchLogView.Render(this.region, group, run.Id || "");
     }
 
-    private getHtml(webview: vscode.Webview, extensionUri: vscode.Uri): string {
-        const codiconsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);
-        const vscodeElementsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
-        const styleUri = ui.getUri(webview, extensionUri, ["media", "glue", "style.css"]);
+    private getHtml(webview: vscode.Webview): string {
+        const codiconsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);
+        const vscodeElementsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
+        const styleUri = ui.getUri(webview, this.extensionUri, ["media", "glue", "style.css"]);
         const nonce = this.getNonce();
         return `<!DOCTYPE html>
 <html lang="en">

@@ -7,6 +7,7 @@ import * as s3_helper from "./S3Helper";
 import { S3Explorer } from './S3Explorer';
 import { _Object } from "@aws-sdk/client-s3";
 import { Telemetry } from "../common/Telemetry";
+import { Session } from "../common/Session";
 
 export class S3Search {
     public static Current: S3Search | undefined;
@@ -21,12 +22,12 @@ export class S3Search {
     public FolderName:string = "";
     public SelectedNode:S3BucketNode;
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, node:S3BucketNode) {
+    private constructor(panel: vscode.WebviewPanel, node:S3BucketNode) {
         ui.logToOutput('S3Search.constructor Started');
 
         this.SelectedNode = node;
         this.SetS3ExplorerItem(node);
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session.Current.ExtensionUri;
 
         this._panel = panel;
         this._panel.onDidDispose(this.dispose, null, this._disposables);
@@ -64,7 +65,7 @@ export class S3Search {
 
     }
 
-    public static Render(extensionUri: vscode.Uri, node:S3BucketNode, key:string | undefined = undefined) {
+    public static Render(node:S3BucketNode, key:string | undefined = undefined) {
         ui.logToOutput('S3Search.Render Started');
         Telemetry.Current?.send("S3Search.Render");
 
@@ -80,7 +81,7 @@ export class S3Search {
                 enableScripts: true,
             });
             
-            S3Search.Current = new S3Search(panel, extensionUri, node);
+            S3Search.Current = new S3Search(panel, node);
         }
         if(key)
         {
@@ -342,7 +343,7 @@ export class S3Search {
                         id = message.id;
                         id = id.replace("open_", "");
                         let node = new S3BucketNode(this.SelectedNode.BucketName);
-                        S3Explorer.Render(this.extensionUri, node, id);
+                        S3Explorer.Render(node, id);
                         return;
 
                     case "copy":

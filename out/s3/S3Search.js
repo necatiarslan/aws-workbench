@@ -9,6 +9,7 @@ const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = require("./S3Helper");
 const S3Explorer_1 = require("./S3Explorer");
 const Telemetry_1 = require("../common/Telemetry");
+const Session_1 = require("../common/Session");
 class S3Search {
     static Current;
     _panel;
@@ -20,11 +21,11 @@ class S3Search {
     FileExtension = "";
     FolderName = "";
     SelectedNode;
-    constructor(panel, extensionUri, node) {
+    constructor(panel, node) {
         ui.logToOutput('S3Search.constructor Started');
         this.SelectedNode = node;
         this.SetS3ExplorerItem(node);
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this._panel = panel;
         this._panel.onDidDispose(this.dispose, null, this._disposables);
         this._setWebviewMessageListener(this._panel.webview);
@@ -51,7 +52,7 @@ class S3Search {
     }
     ResetCurrentState() {
     }
-    static Render(extensionUri, node, key = undefined) {
+    static Render(node, key = undefined) {
         ui.logToOutput('S3Search.Render Started');
         Telemetry_1.Telemetry.Current?.send("S3Search.Render");
         if (S3Search.Current) {
@@ -64,7 +65,7 @@ class S3Search {
             const panel = vscode.window.createWebviewPanel("S3Search", "S3 Search", vscode.ViewColumn.One, {
                 enableScripts: true,
             });
-            S3Search.Current = new S3Search(panel, extensionUri, node);
+            S3Search.Current = new S3Search(panel, node);
         }
         if (key) {
             S3Search.Current.S3ExplorerItem.Key = key;
@@ -305,7 +306,7 @@ class S3Search {
                     id = message.id;
                     id = id.replace("open_", "");
                     let node = new S3BucketNode_1.S3BucketNode(this.SelectedNode.BucketName);
-                    S3Explorer_1.S3Explorer.Render(this.extensionUri, node, id);
+                    S3Explorer_1.S3Explorer.Render(node, id);
                     return;
                 case "copy":
                     if (!message.keys || message.keys.length == 0) {

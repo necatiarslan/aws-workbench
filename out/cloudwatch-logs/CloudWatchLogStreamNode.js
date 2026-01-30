@@ -14,7 +14,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const TreeState_1 = require("../tree/TreeState");
-const Session_1 = require("../common/Session");
 const CloudWatchLogView_1 = require("./CloudWatchLogView");
 class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     constructor(LogStream, parent) {
@@ -36,7 +35,7 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
     }
     handleNodeView() {
-        CloudWatchLogView_1.CloudWatchLogView.Render(Session_1.Session.Current.ExtensionUri, this.Region, this.LogGroup, this.LogStream);
+        CloudWatchLogView_1.CloudWatchLogView.Render(this.Region, this.LogGroup, this.LogStream);
     }
 }
 exports.CloudWatchLogStreamNode = CloudWatchLogStreamNode;

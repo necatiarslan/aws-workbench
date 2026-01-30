@@ -7,7 +7,6 @@ const TreeState_1 = require("../tree/TreeState");
 const ui = require("../common/UI");
 const vscode = require("vscode");
 const path = require("path");
-const ServiceHub_1 = require("../tree/ServiceHub");
 const GlueJobRunView_1 = require("./GlueJobRunView");
 class GlueTriggerFileNode extends NodeBase_1.NodeBase {
     FileId;
@@ -41,7 +40,7 @@ class GlueTriggerFileNode extends NodeBase_1.NodeBase {
             return;
         }
         // Open webview with this trigger file
-        GlueJobRunView_1.GlueJobRunView.Render(ServiceHub_1.ServiceHub.Current.Context.extensionUri, job.Region, job.JobName, this.FilePath);
+        GlueJobRunView_1.GlueJobRunView.Render(job.Region, job.JobName, this.FilePath);
     }
     async handleNodeOpen() {
         // Open the file in editor

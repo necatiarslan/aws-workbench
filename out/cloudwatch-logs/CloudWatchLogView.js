@@ -6,6 +6,7 @@ const ui = require("../common/UI");
 const api = require("./API");
 const tmp = require("tmp");
 const fs = require("fs");
+const Session_1 = require("../common/Session");
 class CloudWatchLogView {
     static Current;
     _panel;
@@ -24,12 +25,12 @@ class CloudWatchLogView {
     FilterStartDate = ""; // YYYY-MM-DD format
     FilterStartTime = "00"; // HH format (0-23)
     Timer;
-    constructor(panel, extensionUri, Region, LogGroup, LogStream) {
+    constructor(panel, Region, LogGroup, LogStream) {
         ui.logToOutput('CloudWatchLogView.constructor Started');
         this.Region = Region;
         this.LogGroup = LogGroup;
         this.LogStream = LogStream;
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this._panel = panel;
         this._panel.onDidDispose(this.dispose, null, this._disposables);
         this._setWebviewMessageListener(this._panel.webview);
@@ -38,9 +39,9 @@ class CloudWatchLogView {
         ui.logToOutput('CloudWatchLogView.constructor Completed');
     }
     async RenderHtml() {
-        ui.logToOutput('CloudWatchLogView.RenderHmtl Started');
+        ui.logToOutput('CloudWatchLogView.RenderHtml Started');
         this._panel.webview.html = this._getWebviewContent(this._panel.webview, this.extensionUri);
-        ui.logToOutput('CloudWatchLogView.RenderHmtl Completed');
+        ui.logToOutput('CloudWatchLogView.RenderHtml Completed');
     }
     async LoadLogs() {
         ui.logToOutput('CloudWatchLogView.LoadLogs Started');
@@ -107,7 +108,7 @@ class CloudWatchLogView {
         }
         return '00';
     }
-    static async Render(extensionUri, Region, LogGroup, LogStream) {
+    static async Render(Region, LogGroup, LogStream) {
         ui.logToOutput('CloudWatchLogView.Render Started');
         if (!LogStream || LogStream.length === 0) {
             const latestLogStream = await api.GetLogStreamList(Region, LogGroup, true);
@@ -130,7 +131,7 @@ class CloudWatchLogView {
             const panel = vscode.window.createWebviewPanel("CloudWatchLogView", "CloudWatch Logs", vscode.ViewColumn.One, {
                 enableScripts: true,
             });
-            CloudWatchLogView.Current = new CloudWatchLogView(panel, extensionUri, Region, LogGroup, LogStream);
+            CloudWatchLogView.Current = new CloudWatchLogView(panel, Region, LogGroup, LogStream);
         }
     }
     SetCustomColorCoding(message) {

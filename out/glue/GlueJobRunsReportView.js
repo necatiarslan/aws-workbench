@@ -5,6 +5,7 @@ const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("./API");
 const CloudWatchLogView_1 = require("../cloudwatch-logs/CloudWatchLogView");
+const Session_1 = require("../common/Session");
 class GlueJobRunsReportView {
     static Current;
     panel;
@@ -13,9 +14,9 @@ class GlueJobRunsReportView {
     jobName;
     disposables = [];
     state = { isLoading: false, runs: [] };
-    constructor(panel, extensionUri, region, jobName) {
+    constructor(panel, region, jobName) {
         this.panel = panel;
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this.region = region;
         this.jobName = jobName;
         this.panel.onDidDispose(this.dispose, null, this.disposables);
@@ -23,7 +24,7 @@ class GlueJobRunsReportView {
         this.loadRuns();
         this.render();
     }
-    static Render(extensionUri, region, jobName) {
+    static Render(region, jobName) {
         ui.logToOutput(`GlueJobRunsReportView.Render ${jobName} @ ${region}`);
         if (GlueJobRunsReportView.Current) {
             GlueJobRunsReportView.Current.state = { isLoading: false, runs: [] };
@@ -37,7 +38,7 @@ class GlueJobRunsReportView {
         const panel = vscode.window.createWebviewPanel("GlueJobRunsReportView", `Glue Job Runs: ${jobName}`, vscode.ViewColumn.One, {
             enableScripts: true,
         });
-        GlueJobRunsReportView.Current = new GlueJobRunsReportView(panel, extensionUri, region, jobName);
+        GlueJobRunsReportView.Current = new GlueJobRunsReportView(panel, region, jobName);
     }
     async loadRuns() {
         try {
@@ -133,7 +134,7 @@ class GlueJobRunsReportView {
         });
     }
     render() {
-        this.panel.webview.html = this.getHtml(this.panel.webview, this.extensionUri);
+        this.panel.webview.html = this.getHtml(this.panel.webview);
     }
     sendState() {
         this.panel.webview.postMessage({
@@ -181,12 +182,12 @@ class GlueJobRunsReportView {
             return;
         }
         // Use run ID as stream filter
-        CloudWatchLogView_1.CloudWatchLogView.Render(this.extensionUri, this.region, group, run.Id || "");
+        CloudWatchLogView_1.CloudWatchLogView.Render(this.region, group, run.Id || "");
     }
-    getHtml(webview, extensionUri) {
-        const codiconsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);
-        const vscodeElementsUri = ui.getUri(webview, extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
-        const styleUri = ui.getUri(webview, extensionUri, ["media", "glue", "style.css"]);
+    getHtml(webview) {
+        const codiconsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);
+        const vscodeElementsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode-elements", "elements", "dist", "bundled.js"]);
+        const styleUri = ui.getUri(webview, this.extensionUri, ["media", "glue", "style.css"]);
         const nonce = this.getNonce();
         return `<!DOCTYPE html>
 <html lang="en">

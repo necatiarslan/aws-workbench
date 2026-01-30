@@ -3,6 +3,7 @@ import * as ui from '../common/UI';
 import * as api from './API';
 import { CloudWatchLogView } from '../cloudwatch-logs/CloudWatchLogView';
 import { DescribeExecutionCommandOutput } from '@aws-sdk/client-sfn';
+import { Session } from '../common/Session';
 
 interface ExecutionState {
 	name: string;
@@ -29,14 +30,14 @@ export class StateMachineExecutionView {
 	private _stateHistory: ExecutionState[] = [];
 	private _isLoading: boolean = false;
 
-	public static Render(extensionUri: vscode.Uri, executionArn: string, stepFuncArn: string, region: string) {
+	public static Render(executionArn: string, stepFuncArn: string, region: string) {
 		ui.logToOutput('StateMachineExecutionView.Render Started');
-		StateMachineExecutionView.Current = new StateMachineExecutionView(extensionUri, executionArn, stepFuncArn, region);
+		StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stepFuncArn, region);
 		StateMachineExecutionView.Current.Initialize();
 	}
 
-	constructor(extensionUri: vscode.Uri, executionArn: string, stepFuncArn: string, region: string) {
-		this._extensionUri = extensionUri;
+	constructor(executionArn: string, stepFuncArn: string, region: string) {
+		this._extensionUri = Session.Current.ExtensionUri;
 		this._executionArn = executionArn;
 		this._stepFuncArn = stepFuncArn;
 		this._region = region;
@@ -766,7 +767,7 @@ export class StateMachineExecutionView {
 				return;
 			}
 
-			CloudWatchLogView.Render(this._extensionUri, this._region, logGroupName, logStreamResult.result);
+			CloudWatchLogView.Render(this._region, logGroupName, logStreamResult.result);
 		} catch (error: any) {
 			ui.showErrorMessage('Error viewing logs', error);
 		}

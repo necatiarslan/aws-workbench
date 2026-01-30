@@ -11,6 +11,7 @@ import { Telemetry } from "../common/Telemetry";
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { Session } from "../common/Session";
 
 export class S3Explorer {
     public static Current: S3Explorer | undefined;
@@ -27,11 +28,11 @@ export class S3Explorer {
     public SortDirection: string = "asc";
     public SelectedNode: S3BucketNode;
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, node:S3BucketNode) {
+    private constructor(panel: vscode.WebviewPanel, node:S3BucketNode) {
         ui.logToOutput('S3Explorer.constructor Started');
 
         this.SetS3ExplorerItem(node);
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session.Current.ExtensionUri;
         this.SelectedNode = node;
 
         this._panel = panel;
@@ -69,7 +70,7 @@ export class S3Explorer {
 
     }
 
-    public static Render(extensionUri: vscode.Uri, node:S3BucketNode, key:string|undefined=undefined) {
+    public static Render(node:S3BucketNode, key:string|undefined=undefined) {
         ui.logToOutput('S3Explorer.Render Started');
         Telemetry.Current?.send("S3Explorer.Render");
 
@@ -85,7 +86,7 @@ export class S3Explorer {
                 enableScripts: true,
             });
 
-            S3Explorer.Current = new S3Explorer(panel, extensionUri, node);
+            S3Explorer.Current = new S3Explorer(panel, node);
         }
         if(key)
         {
@@ -619,7 +620,7 @@ export class S3Explorer {
 
                     case "search":
 
-                        S3Search.Render(this.extensionUri, this.SelectedNode, this.S3ExplorerItem.Key);
+                        S3Search.Render(this.SelectedNode, this.S3ExplorerItem.Key);
                         return;
                     
                     case "create_folder":

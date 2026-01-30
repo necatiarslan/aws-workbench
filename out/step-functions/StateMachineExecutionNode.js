@@ -7,7 +7,6 @@ const ui = require("../common/UI");
 const api = require("./API");
 const StateMachineNode_1 = require("./StateMachineNode");
 const StateMachineExecutionView_1 = require("./StateMachineExecutionView");
-const Session_1 = require("../common/Session");
 class StateMachineExecutionNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
@@ -109,7 +108,7 @@ class StateMachineExecutionNode extends NodeBase_1.NodeBase {
             ui.showWarningMessage('State machine node not found');
             return;
         }
-        StateMachineExecutionView_1.StateMachineExecutionView.Render(Session_1.Session.Current.ExtensionUri, this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '');
+        StateMachineExecutionView_1.StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '');
     }
     GetStateMachineNode() {
         let current = this.Parent;

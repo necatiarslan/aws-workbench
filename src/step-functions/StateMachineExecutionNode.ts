@@ -132,7 +132,7 @@ export class StateMachineExecutionNode extends NodeBase {
             return;
         }
 
-        StateMachineExecutionView.Render(Session.Current.ExtensionUri, this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '');
+        StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '');
     }
 
     private GetStateMachineNode(): StateMachineNode | undefined {

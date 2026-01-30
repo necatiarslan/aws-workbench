@@ -4,6 +4,7 @@ exports.NoteView = void 0;
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const TreeState_1 = require("../tree/TreeState");
+const Session_1 = require("../common/Session");
 class NoteView {
     static Current;
     panel;
@@ -11,9 +12,9 @@ class NoteView {
     extensionUri;
     state;
     noteNode;
-    constructor(panel, extensionUri, noteNode) {
+    constructor(panel, noteNode) {
         this.panel = panel;
-        this.extensionUri = extensionUri;
+        this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this.noteNode = noteNode;
         this.state = {
             noteTitle: noteNode.NoteTitle,
@@ -23,7 +24,7 @@ class NoteView {
         this.panel.webview.onDidReceiveMessage(this.handleMessage.bind(this), null, this.disposables);
         this.render();
     }
-    static Render(extensionUri, noteNode) {
+    static Render(noteNode) {
         ui.logToOutput(`NoteView.Render ${noteNode.NoteTitle}`);
         if (NoteView.Current) {
             NoteView.Current.noteNode = noteNode;
@@ -37,7 +38,7 @@ class NoteView {
             return;
         }
         const panel = vscode.window.createWebviewPanel("NoteView", `Note: ${noteNode.NoteTitle}`, vscode.ViewColumn.One, { enableScripts: true, retainContextWhenHidden: true });
-        NoteView.Current = new NoteView(panel, extensionUri, noteNode);
+        NoteView.Current = new NoteView(panel, noteNode);
     }
     dispose() {
         NoteView.Current = undefined;

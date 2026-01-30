@@ -75,7 +75,7 @@ export class S3BucketNode extends NodeBase {
     }
 
     private handleNodeView(): void {
-        S3Explorer.Render(Session.Current.ExtensionUri, this);
+        S3Explorer.Render(this);
     }
 
 }
