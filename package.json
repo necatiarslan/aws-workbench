@@ -405,7 +405,7 @@
         {
           "id": "AwsWorkbench",
           "title": "Aws Workbench",
-          "icon": "media/aws-workbench-logo-activitybar.png"
+          "icon": "media/aws-workbench-logo-activitybar.svg"
         }
       ]
     },
@@ -414,7 +414,7 @@
         {
           "id": "AwsWorkbenchView",
           "name": "Aws Workbench",
-          "icon": "media/aws-workbench-logo-activitybar.png"
+          "icon": "media/aws-workbench-logo-activitybar.svg"
         }
       ]
     },
