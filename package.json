@@ -209,6 +209,12 @@
         "icon": "$(arrow-up)"
       }
     ],
+    "submenus": [
+      {
+        "id": "AwsWorkbench.Connection",
+        "label": "Connection"
+      }
+    ],
     "menus": {
       "view/title": [
         {
@@ -242,44 +248,29 @@
           "group": "navigation"
         },
         {
-          "command": "AwsWorkbench.UpdateAwsEndPoint",
+          "submenu": "AwsWorkbench.Connection",
           "when": "view == AwsWorkbenchView",
-          "group": "other"
-        },
-        {
-          "command": "AwsWorkbench.SetAwsRegion",
-          "when": "view == AwsWorkbenchView",
-          "group": "other"
-        },
-        {
-          "command": "AwsWorkbench.TestAwsConnection",
-          "when": "view == AwsWorkbenchView",
-          "group": "other"
-        },
-        {
-          "command": "AwsWorkbench.RefreshCredentials",
-          "when": "view == AwsWorkbenchView",
-          "group": "other"
+          "group": "other_1"
         },
         {
           "command": "AwsWorkbench.Donate",
           "when": "view == AwsWorkbenchView",
-          "group": "other"
+          "group": "other_2"
         },
         {
           "command": "AwsWorkbench.BugAndNewFeatureRequest",
           "when": "view == AwsWorkbenchView",
-          "group": "other"
+          "group": "other_2"
         },
         {
           "command": "AwsWorkbench.ExportConfig",
           "when": "view == AwsWorkbenchView",
-          "group": "other"
+          "group": "other_3"
         },
         {
           "command": "AwsWorkbench.ImportConfig",
           "when": "view == AwsWorkbenchView",
-          "group": "other"
+          "group": "other_3"
         }
       ],
       "view/item/context": [
@@ -397,6 +388,24 @@
           "command": "AwsWorkbench.NodeInfo",
           "when": "view == AwsWorkbenchView && viewItem =~ /#NodeInfo#/",
           "group": "inline@9"
+        }
+      ],
+      "AwsWorkbench.Connection": [
+        {
+          "command": "AwsWorkbench.TestAwsConnection",
+          "group": "1_connection"
+        },
+        {
+          "command": "AwsWorkbench.RefreshCredentials",
+          "group": "1_connection"
+        },
+        {
+          "command": "AwsWorkbench.UpdateAwsEndPoint",
+          "group": "2_settings"
+        },
+        {
+          "command": "AwsWorkbench.SetAwsRegion",
+          "group": "2_settings"
         }
       ]
     },
