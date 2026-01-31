@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import * as fs from 'fs';
 import { StateMachineNode } from './StateMachineNode';
-import { TreeState } from '../tree/TreeState';
 import { StateMachineTriggerFileNode } from './StateMachineTriggerFileNode';
 
 export class StateMachineTriggerGroupNode extends NodeBase {

@@ -1,17 +1,29 @@
+import * as vscode from 'vscode';
+import * as ui from '../common/UI';
 import { NodeBase } from '../tree/NodeBase';
 
 export class IamInfoNode extends NodeBase {
 
-    constructor(Label: string, parent?: NodeBase) 
+    constructor(key: string, value: string, parent?: NodeBase) 
     {
-        super(Label, parent);
-        this.Icon = "symbol-property";
-
+        super(key, parent);
+        this.Icon = "circle-outline";
+        this.InfoKey = key;
+        this.InfoValue = value;
+        this.description = value;
+        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
+        
+        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        
         this.SetContextValue();
     }
 
-    public Key: string = "";
+    public InfoKey: string;
+    public InfoValue: string;
 
-    public Value: string = "";
-
+    private async handleNodeOpen(): Promise<void> {
+        // Copy value to clipboard
+        await vscode.env.clipboard.writeText(this.InfoValue);
+        ui.showInfoMessage(`Copied to clipboard: ${this.InfoValue}`);
+    }
 }

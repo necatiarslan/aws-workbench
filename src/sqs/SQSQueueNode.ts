@@ -5,10 +5,9 @@ import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { v4 as uuidv4 } from 'uuid';
-import { TreeState } from '../tree/TreeState';
 import { SQSSendGroupNode } from './SQSSendGroupNode';
 import { SQSReceiveGroupNode } from './SQSReceiveGroupNode';
-import { SQSDetailsGroupNode } from './SQSDetailsGroupNode';
+import { SQSInfoGroupNode } from './SQSInfoGroupNode';
 import { SQSPolicyNode } from './SQSPolicyNode';
 
 export class SQSQueueNode extends NodeBase {
@@ -54,7 +53,7 @@ export class SQSQueueNode extends NodeBase {
     public async LoadDefaultChildren(): Promise<void> {
         new SQSSendGroupNode("Send", this);
         new SQSReceiveGroupNode("Receive", this);
-        new SQSDetailsGroupNode("Info", this);
+        new SQSInfoGroupNode("Info", this);
         new SQSPolicyNode("Policy", this);
     }
 

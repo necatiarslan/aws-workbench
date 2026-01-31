@@ -1,9 +1,7 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import { v4 as uuidv4 } from 'uuid';
-import { TreeState } from '../tree/TreeState';
 import { SQSSendAdhocNode } from './SQSSendAdhocNode';
 import { SQSSendFileNode } from './SQSSendFileNode';
 import { SQSQueueNode } from './SQSQueueNode';

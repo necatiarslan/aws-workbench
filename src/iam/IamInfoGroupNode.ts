@@ -25,9 +25,9 @@ export class IamInfoGroupNode extends NodeBase {
 
         // Add info items as children
         for (const item of this.InfoItems) {
-            const infoNode = new IamInfoNode(`${item.key}: ${item.value}`, this);
-            infoNode.Key = item.key;
-            infoNode.Value = item.value;
+            const infoNode = new IamInfoNode(item.key, item.value, this);
+            infoNode.InfoKey = item.key;
+            infoNode.InfoValue = item.value;
         }
 
         if (this.Children.length > 0) {

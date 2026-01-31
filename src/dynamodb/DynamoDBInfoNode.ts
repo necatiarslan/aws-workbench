@@ -6,7 +6,7 @@ export class DynamoDBInfoNode extends NodeBase {
 
     constructor(Label: string, parent?: NodeBase) {
         super(Label, parent);
-        this.Icon = "info";
+        this.Icon = "circle-outline";
         
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
         

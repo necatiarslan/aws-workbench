@@ -4,7 +4,6 @@ import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import * as api from './API';
-import { TreeState } from '../tree/TreeState';
 import { StateMachineNode } from './StateMachineNode';
 import { GetLogEvents } from '../lambda/API';
 import { StateMachineExecutionView } from './StateMachineExecutionView';

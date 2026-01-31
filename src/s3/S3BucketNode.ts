@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
-import { TreeState } from '../tree/TreeState';
 import { S3Explorer } from './S3Explorer';
 import { Session } from '../common/Session';
 import { S3BucketShortcutGroupNode } from './S3BucketShortcutGroupNode';

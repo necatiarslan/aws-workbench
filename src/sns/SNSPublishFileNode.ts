@@ -2,7 +2,6 @@ import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeState } from '../tree/TreeState';
 import { SNSTopicNode } from './SNSTopicNode';
 import * as path from 'path';
 

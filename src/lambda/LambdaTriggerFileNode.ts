@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
-import { TreeState } from '../tree/TreeState';
 
 export class LambdaTriggerFileNode extends NodeBase {
 

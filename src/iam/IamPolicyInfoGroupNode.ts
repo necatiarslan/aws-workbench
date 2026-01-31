@@ -65,9 +65,9 @@ export class IamPolicyInfoGroupNode extends NodeBase {
             ];
 
             for (const item of infoItems) {
-                const infoNode = new IamInfoNode(`${item.key}: ${item.value}`, this);
-                infoNode.Key = item.key;
-                infoNode.Value = item.value;
+                const infoNode = new IamInfoNode(item.key, item.value, this);
+                infoNode.InfoKey = item.key;
+                infoNode.InfoValue = item.value;
             }
         }
 

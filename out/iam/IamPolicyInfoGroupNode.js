@@ -54,9 +54,9 @@ class IamPolicyInfoGroupNode extends NodeBase_1.NodeBase {
                 { key: 'Description', value: policy.Description || 'N/A' }
             ];
             for (const item of infoItems) {
-                const infoNode = new IamInfoNode_1.IamInfoNode(`${item.key}: ${item.value}`, this);
-                infoNode.Key = item.key;
-                infoNode.Value = item.value;
+                const infoNode = new IamInfoNode_1.IamInfoNode(item.key, item.value, this);
+                infoNode.InfoKey = item.key;
+                infoNode.InfoValue = item.value;
             }
         }
         if (this.Children.length > 0) {

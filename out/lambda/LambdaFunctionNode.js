@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const util_1 = require("util");
 const LambdaCodeGroupNode_1 = require("./LambdaCodeGroupNode");
 const LambdaEnvGroupNode_1 = require("./LambdaEnvGroupNode");
 const LambdaInfoGroupNode_1 = require("./LambdaInfoGroupNode");
@@ -137,7 +136,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
             }
             const payloadBuffer = result.result?.Payload;
             if (payloadBuffer) {
-                const payloadString = new util_1.TextDecoder('utf-8').decode(payloadBuffer);
+                const payloadString = new TextDecoder('utf-8').decode(payloadBuffer);
                 let prettyPayload = payloadString;
                 try {
                     prettyPayload = JSON.stringify(JSON.parse(payloadString), null, 2);

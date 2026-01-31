@@ -53,9 +53,9 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
             { key: 'Version', value: config.Version || 'N/A' }
         ];
         for (const item of infoItems) {
-            const infoNode = new LambdaInfoNode_1.LambdaInfoNode(`${item.key}: ${item.value}`, this);
-            infoNode.Key = item.key;
-            infoNode.Value = item.value;
+            const infoNode = new LambdaInfoNode_1.LambdaInfoNode(item.key, item.value, this);
+            infoNode.InfoKey = item.key;
+            infoNode.InfoValue = item.value;
         }
         if (this.Children.length > 0) {
             this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;

@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as ui from '../common/UI';
 import { StateMachineNode } from './StateMachineNode';
-import { TreeState } from '../tree/TreeState';
 
 export class StateMachineDefinitionDownloadNode extends NodeBase {
 

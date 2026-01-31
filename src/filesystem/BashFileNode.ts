@@ -1,6 +1,5 @@
 import { Serialize } from '../common/serialization';
 import { NodeBase } from '../tree/NodeBase';
-import { TreeState } from '../tree/TreeState';
 import * as ui from '../common/UI'
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';

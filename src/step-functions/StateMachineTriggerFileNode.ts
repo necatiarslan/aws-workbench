@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import { StateMachineNode } from './StateMachineNode';
-import { TreeState } from '../tree/TreeState';
 
 export class StateMachineTriggerFileNode extends NodeBase {
 

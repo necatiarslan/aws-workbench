@@ -4,7 +4,6 @@ import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeState } from '../tree/TreeState';
 import { ServiceHub } from '../tree/ServiceHub';
 import { DynamoDBKeysGroupNode } from './DynamoDBKeysGroupNode';
 import { DynamoDBIndexesGroupNode } from './DynamoDBIndexesGroupNode';

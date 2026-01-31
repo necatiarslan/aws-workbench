@@ -19,7 +19,7 @@ const ui = require("../common/UI");
 const uuid_1 = require("uuid");
 const SQSSendGroupNode_1 = require("./SQSSendGroupNode");
 const SQSReceiveGroupNode_1 = require("./SQSReceiveGroupNode");
-const SQSDetailsGroupNode_1 = require("./SQSDetailsGroupNode");
+const SQSInfoGroupNode_1 = require("./SQSInfoGroupNode");
 const SQSPolicyNode_1 = require("./SQSPolicyNode");
 class SQSQueueNode extends NodeBase_1.NodeBase {
     constructor(QueueName, parent) {
@@ -44,7 +44,7 @@ class SQSQueueNode extends NodeBase_1.NodeBase {
     async LoadDefaultChildren() {
         new SQSSendGroupNode_1.SQSSendGroupNode("Send", this);
         new SQSReceiveGroupNode_1.SQSReceiveGroupNode("Receive", this);
-        new SQSDetailsGroupNode_1.SQSDetailsGroupNode("Info", this);
+        new SQSInfoGroupNode_1.SQSInfoGroupNode("Info", this);
         new SQSPolicyNode_1.SQSPolicyNode("Policy", this);
     }
     handleNodeRemove() {

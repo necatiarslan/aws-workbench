@@ -3,10 +3,10 @@ import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { SQSQueueNode } from './SQSQueueNode';
-import { SQSDetailsNode } from './SQSDetailsNode';
+import { SQSInfoNode } from './SQSInfoNode';
 import { SQSDlqLinkNode } from './SQSDlqLinkNode';
 
-export class SQSDetailsGroupNode extends NodeBase {
+export class SQSInfoGroupNode extends NodeBase {
 
     constructor(label: string, parent?: NodeBase) {
         super(label, parent);
@@ -67,18 +67,18 @@ export class SQSDetailsGroupNode extends NodeBase {
             const attrs = result.result;
 
             // Create detail nodes for each attribute
-            new SQSDetailsNode('ARN', attrs.QueueArn || 'N/A', this);
-            new SQSDetailsNode('Type', attrs.IsFifo ? 'FIFO' : 'Standard', this);
-            new SQSDetailsNode('Messages', String(attrs.ApproximateNumberOfMessages ?? 0), this);
-            new SQSDetailsNode('In Flight', String(attrs.ApproximateNumberOfMessagesNotVisible ?? 0), this);
-            new SQSDetailsNode('Delayed', String(attrs.ApproximateNumberOfMessagesDelayed ?? 0), this);
-            new SQSDetailsNode('Visibility Timeout', `${attrs.VisibilityTimeout || 0} sec`, this);
-            new SQSDetailsNode('Max Message Size', `${attrs.MaximumMessageSize || 0} bytes`, this);
-            new SQSDetailsNode('Retention Period', `${attrs.MessageRetentionPeriod || 0} sec`, this);
-            new SQSDetailsNode('Delay', `${attrs.DelaySeconds || 0} sec`, this);
+            new SQSInfoNode('ARN', attrs.QueueArn || 'N/A', this);
+            new SQSInfoNode('Type', attrs.IsFifo ? 'FIFO' : 'Standard', this);
+            new SQSInfoNode('Messages', String(attrs.ApproximateNumberOfMessages ?? 0), this);
+            new SQSInfoNode('In Flight', String(attrs.ApproximateNumberOfMessagesNotVisible ?? 0), this);
+            new SQSInfoNode('Delayed', String(attrs.ApproximateNumberOfMessagesDelayed ?? 0), this);
+            new SQSInfoNode('Visibility Timeout', `${attrs.VisibilityTimeout || 0} sec`, this);
+            new SQSInfoNode('Max Message Size', `${attrs.MaximumMessageSize || 0} bytes`, this);
+            new SQSInfoNode('Retention Period', `${attrs.MessageRetentionPeriod || 0} sec`, this);
+            new SQSInfoNode('Delay', `${attrs.DelaySeconds || 0} sec`, this);
             
             if (attrs.IsFifo) {
-                new SQSDetailsNode('Content Deduplication', attrs.ContentBasedDeduplication || 'false', this);
+                new SQSInfoNode('Content Deduplication', attrs.ContentBasedDeduplication || 'false', this);
             }
 
             // Add DLQ link if configured
@@ -88,12 +88,12 @@ export class SQSDetailsGroupNode extends NodeBase {
 
             if (attrs.CreatedTimestamp) {
                 const createdDate = new Date(parseInt(attrs.CreatedTimestamp) * 1000);
-                new SQSDetailsNode('Created', createdDate.toISOString(), this);
+                new SQSInfoNode('Created', createdDate.toISOString(), this);
             }
 
             if (attrs.LastModifiedTimestamp) {
                 const modifiedDate = new Date(parseInt(attrs.LastModifiedTimestamp) * 1000);
-                new SQSDetailsNode('Last Modified', modifiedDate.toISOString(), this);
+                new SQSInfoNode('Last Modified', modifiedDate.toISOString(), this);
             }
 
         } catch (error: any) {

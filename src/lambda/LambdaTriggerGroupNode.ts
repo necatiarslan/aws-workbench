@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import { LambdaTriggerFileNode } from './LambdaTriggerFileNode';
 import * as ui from '../common/UI';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
-import { TreeState } from '../tree/TreeState';
 
 export class LambdaTriggerGroupNode extends NodeBase {
 

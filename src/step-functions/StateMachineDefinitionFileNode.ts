@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import { StateMachineNode } from './StateMachineNode';
 import * as fs from 'fs';
-import { TreeState } from '../tree/TreeState';
 import { StateMachineStudioView } from './StateMachineStudioView';
 import { Session } from '../common/Session';
 

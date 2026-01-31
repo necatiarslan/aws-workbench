@@ -2,8 +2,6 @@ import { NodeBase } from "../tree/NodeBase";
 import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { CloudWatchLogGroupNode } from "./CloudWatchLogGroupNode";
-import { CloudWatchLogStreamNode } from "./CloudWatchLogStreamNode";
-import { TreeState } from "../tree/TreeState";
 import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";

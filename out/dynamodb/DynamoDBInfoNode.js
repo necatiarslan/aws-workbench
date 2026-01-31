@@ -7,7 +7,7 @@ const ui = require("../common/UI");
 class DynamoDBInfoNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
-        this.Icon = "info";
+        this.Icon = "circle-outline";
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;

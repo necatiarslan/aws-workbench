@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
-import { TreeState } from '../tree/TreeState';
 import { SNSTopicNode } from './SNSTopicNode';
 import { SNSPublishAdhocNode } from './SNSPublishAdhocNode';
 import { SNSPublishFileNode } from './SNSPublishFileNode';
