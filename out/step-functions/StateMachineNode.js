@@ -24,6 +24,7 @@ const StateMachineStudioView_1 = require("./StateMachineStudioView");
 const Session_1 = require("../common/Session");
 const StateMachineExecutionNode_1 = require("./StateMachineExecutionNode");
 const StateMachineInfoGroupNode_1 = require("./StateMachineInfoGroupNode");
+const StateMachineTagsGroupNode_1 = require("./StateMachineTagsGroupNode");
 const fs = require("fs");
 class StateMachineNode extends NodeBase_1.NodeBase {
     constructor(stateMachineName, parent) {
@@ -94,6 +95,7 @@ class StateMachineNode extends NodeBase_1.NodeBase {
         new StateMachineExecutionsGroupNode_1.StateMachineExecutionsGroupNode("Executions", this);
         new StateMachineLogsGroupNode_1.StateMachineLogsGroupNode("Logs", this);
         new StateMachineInfoGroupNode_1.StateMachineInfoGroupNode("Info", this);
+        new StateMachineTagsGroupNode_1.StateMachineTagsGroupNode("Tags", this);
     }
     handleNodeRemove() {
         this.Remove();

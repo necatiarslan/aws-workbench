@@ -10,6 +10,9 @@ exports.GetObjectList = GetObjectList;
 exports.GetObjectProperties = GetObjectProperties;
 exports.SearchObject = SearchObject;
 exports.CreateFolder = CreateFolder;
+exports.GetBucketTags = GetBucketTags;
+exports.UpdateS3BucketTag = UpdateS3BucketTag;
+exports.RemoveS3BucketTag = RemoveS3BucketTag;
 exports.DeleteObject = DeleteObject;
 exports.DeleteFile = DeleteFile;
 exports.DeleteFolder = DeleteFolder;
@@ -212,6 +215,109 @@ async function CreateFolder(Bucket, Key, FolderName) {
     }
 }
 const client_s3_5 = require("@aws-sdk/client-s3");
+async function GetBucketTags(bucketName) {
+    const result = new MethodResult_1.MethodResult();
+    result.result = [];
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new client_s3_5.GetBucketTaggingCommand({
+            Bucket: bucketName
+        });
+        const response = await s3Client.send(command);
+        if (response.TagSet) {
+            result.result = response.TagSet.map((tag) => ({
+                key: tag.Key || '',
+                value: tag.Value || ''
+            }));
+        }
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        // No tags is not an error
+        if (error.name === 'NoSuchTagSet') {
+            result.isSuccessful = true;
+            return result;
+        }
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketTags Error !!!", error);
+        return result;
+    }
+}
+async function UpdateS3BucketTag(bucketName, key, value) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        // Get existing tags
+        const existingTagsResult = await GetBucketTags(bucketName);
+        if (!existingTagsResult.isSuccessful) {
+            return existingTagsResult;
+        }
+        // Update or add the tag
+        const tags = existingTagsResult.result || [];
+        const existingTagIndex = tags.findIndex(t => t.key === key);
+        if (existingTagIndex >= 0) {
+            tags[existingTagIndex].value = value;
+        }
+        else {
+            tags.push({ key, value });
+        }
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new client_s3_5.PutBucketTaggingCommand({
+            Bucket: bucketName,
+            Tagging: {
+                TagSet: tags.map(t => ({ Key: t.key, Value: t.value }))
+            }
+        });
+        await s3Client.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateS3BucketTag Error !!!", error);
+        return result;
+    }
+}
+async function RemoveS3BucketTag(bucketName, key) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        // Get existing tags
+        const existingTagsResult = await GetBucketTags(bucketName);
+        if (!existingTagsResult.isSuccessful) {
+            return existingTagsResult;
+        }
+        // Remove the tag
+        const tags = (existingTagsResult.result || []).filter(t => t.key !== key);
+        const s3Client = CurrentS3Client || await GetS3Client();
+        if (tags.length === 0) {
+            // Delete all tags if none remain
+            const command = new client_s3_5.DeleteBucketTaggingCommand({
+                Bucket: bucketName
+            });
+            await s3Client.send(command);
+        }
+        else {
+            // Update with remaining tags
+            const command = new client_s3_5.PutBucketTaggingCommand({
+                Bucket: bucketName,
+                Tagging: {
+                    TagSet: tags.map(t => ({ Key: t.key, Value: t.value }))
+                }
+            });
+            await s3Client.send(command);
+        }
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveS3BucketTag Error !!!", error);
+        return result;
+    }
+}
 async function DeleteObject(Bucket, Key) {
     let result = new MethodResult_1.MethodResult();
     result.result = [];

@@ -18,6 +18,7 @@ const CloudWatchLogView_1 = require("./CloudWatchLogView");
 const api = require("./API");
 const ui = require("../common/UI");
 const CloudWatchLogStreamNode_1 = require("./CloudWatchLogStreamNode");
+const CloudWatchLogTagsGroupNode_1 = require("./CloudWatchLogTagsGroupNode");
 class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     constructor(LogGroup, parent) {
         super(LogGroup, parent);
@@ -29,10 +30,16 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeLoadChildren.subscribe(() => this.LoadDefaultChildren());
         this.SetContextValue();
     }
     LogGroup = "";
     Region = "";
+    LogGroupName = "";
+    async LoadDefaultChildren() {
+        this.LogGroupName = this.LogGroup;
+        new CloudWatchLogTagsGroupNode_1.CloudWatchLogTagsGroupNode("Tags", this);
+    }
     async handleNodeAdd() {
         let filterStringTemp = await vscode.window.showInputBox({ placeHolder: 'Log Stream Name (Optional)' });
         if (filterStringTemp === undefined) {
@@ -90,6 +97,10 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], CloudWatchLogGroupNode.prototype, "Region", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", String)
+], CloudWatchLogGroupNode.prototype, "LogGroupName", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('CloudWatchLogGroupNode', CloudWatchLogGroupNode);
 //# sourceMappingURL=CloudWatchLogGroupNode.js.map

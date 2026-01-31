@@ -6,6 +6,9 @@ import {
     GetJobRunCommand, 
     GetJobRunsCommand, 
     BatchStopJobRunCommand,
+    GetTagsCommand,
+    TagResourceCommand,
+    UntagResourceCommand,
     Job,
     JobRun
 } from "@aws-sdk/client-glue";
@@ -312,4 +315,116 @@ export function GetGlueJobLogGroupName(jobName: string): string {
 
 export function GetGlueJobErrorLogGroupName(jobName: string): string {
     return `/aws-glue/jobs/error`;
+}
+
+export async function GetGlueJobTags(
+    region: string,
+    jobName: string
+): Promise<MethodResult<Array<{ key: string; value: string }>>> {
+    const result: MethodResult<Array<{ key: string; value: string }>> = new MethodResult<Array<{ key: string; value: string }>>();
+    result.result = [];
+
+    try {
+        const glueClient = await GetGlueClient(region);
+        
+        // Get the job to retrieve its ARN
+        const jobResult = await GetGlueJob(region, jobName);
+        if (!jobResult.isSuccessful || !jobResult.result) {
+            return jobResult as any;
+        }
+
+        const jobArn = `arn:aws:glue:${region}:${jobResult.result.Name}:job/${jobName}`;
+        
+        const command = new GetTagsCommand({
+            ResourceArn: jobArn
+        });
+
+        const response = await glueClient.send(command);
+        
+        if (response.Tags) {
+            result.result = Object.entries(response.Tags).map(([key, value]) => ({
+                key,
+                value: value || ''
+            }));
+        }
+
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetGlueJobTags Error !!!", error);
+        return result;
+    }
+}
+
+export async function UpdateGlueJobTag(
+    region: string,
+    jobName: string,
+    key: string,
+    value: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const glueClient = await GetGlueClient(region);
+        
+        // Get the job to retrieve its ARN
+        const jobResult = await GetGlueJob(region, jobName);
+        if (!jobResult.isSuccessful || !jobResult.result) {
+            return jobResult as any;
+        }
+
+        const jobArn = `arn:aws:glue:${region}:${jobResult.result.Name}:job/${jobName}`;
+
+        const command = new TagResourceCommand({
+            ResourceArn: jobArn,
+            TagsToAdd: {
+                [key]: value
+            }
+        });
+
+        await glueClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateGlueJobTag Error !!!", error);
+        return result;
+    }
+}
+
+export async function RemoveGlueJobTag(
+    region: string,
+    jobName: string,
+    key: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const glueClient = await GetGlueClient(region);
+        
+        // Get the job to retrieve its ARN
+        const jobResult = await GetGlueJob(region, jobName);
+        if (!jobResult.isSuccessful || !jobResult.result) {
+            return jobResult as any;
+        }
+
+        const jobArn = `arn:aws:glue:${region}:${jobResult.result.Name}:job/${jobName}`;
+
+        const command = new UntagResourceCommand({
+            ResourceArn: jobArn,
+            TagsToRemove: [key]
+        });
+
+        await glueClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveGlueJobTag Error !!!", error);
+        return result;
+    }
 }

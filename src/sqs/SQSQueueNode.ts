@@ -9,6 +9,7 @@ import { SQSSendGroupNode } from './SQSSendGroupNode';
 import { SQSReceiveGroupNode } from './SQSReceiveGroupNode';
 import { SQSInfoGroupNode } from './SQSInfoGroupNode';
 import { SQSPolicyNode } from './SQSPolicyNode';
+import { SQSTagsGroupNode } from './SQSTagsGroupNode';
 
 export class SQSQueueNode extends NodeBase {
 
@@ -55,6 +56,7 @@ export class SQSQueueNode extends NodeBase {
         new SQSReceiveGroupNode("Receive", this);
         new SQSInfoGroupNode("Info", this);
         new SQSPolicyNode("Policy", this);
+        new SQSTagsGroupNode("Tags", this);
     }
 
     private handleNodeRemove(): void {

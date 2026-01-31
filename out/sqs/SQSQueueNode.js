@@ -21,6 +21,7 @@ const SQSSendGroupNode_1 = require("./SQSSendGroupNode");
 const SQSReceiveGroupNode_1 = require("./SQSReceiveGroupNode");
 const SQSInfoGroupNode_1 = require("./SQSInfoGroupNode");
 const SQSPolicyNode_1 = require("./SQSPolicyNode");
+const SQSTagsGroupNode_1 = require("./SQSTagsGroupNode");
 class SQSQueueNode extends NodeBase_1.NodeBase {
     constructor(QueueName, parent) {
         super(QueueName, parent);
@@ -46,6 +47,7 @@ class SQSQueueNode extends NodeBase_1.NodeBase {
         new SQSReceiveGroupNode_1.SQSReceiveGroupNode("Receive", this);
         new SQSInfoGroupNode_1.SQSInfoGroupNode("Info", this);
         new SQSPolicyNode_1.SQSPolicyNode("Policy", this);
+        new SQSTagsGroupNode_1.SQSTagsGroupNode("Tags", this);
     }
     handleNodeRemove() {
         this.Remove();

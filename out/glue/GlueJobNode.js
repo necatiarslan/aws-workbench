@@ -22,6 +22,7 @@ const GlueInfoGroupNode_1 = require("./GlueInfoGroupNode");
 const GlueRunsGroupNode_1 = require("./GlueRunsGroupNode");
 const GlueLogsGroupNode_1 = require("./GlueLogsGroupNode");
 const GlueJobRunView_1 = require("./GlueJobRunView");
+const GlueTagsGroupNode_1 = require("./GlueTagsGroupNode");
 class GlueJobNode extends NodeBase_1.NodeBase {
     constructor(JobName, parent) {
         super(JobName, parent);
@@ -66,6 +67,7 @@ class GlueJobNode extends NodeBase_1.NodeBase {
         new GlueInfoGroupNode_1.GlueInfoGroupNode("Info", this);
         new GlueRunsGroupNode_1.GlueRunsGroupNode("Runs", this);
         new GlueLogsGroupNode_1.GlueLogsGroupNode("Logs", this);
+        new GlueTagsGroupNode_1.GlueTagsGroupNode("Tags", this);
     }
     handleNodeRemove() {
         this.Remove();

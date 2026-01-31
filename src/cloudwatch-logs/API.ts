@@ -8,7 +8,7 @@ import { ParsedIniData } from "@aws-sdk/types";
 import { Session } from "../common/Session";
 
 
-import { CloudWatchLogsClient } from "@aws-sdk/client-cloudwatch-logs";
+import { CloudWatchLogsClient, ListTagsForResourceCommand, TagResourceCommand, UntagResourceCommand } from "@aws-sdk/client-cloudwatch-logs";
 
 export async function GetCloudWatchLogsClient(Region:string | undefined = Session.Current?.AwsRegion): Promise<CloudWatchLogsClient> {
   let credentials = await Session.Current.GetCredentials();
@@ -277,3 +277,108 @@ export const getCredentialsFilepath = () =>
 
 export const getConfigFilepath = () =>
   process.env[ENV_CREDENTIALS_PATH] || join(getHomeDir(), ".aws", "config");
+export async function GetLogGroupTags(
+    region: string,
+    logGroupName: string
+): Promise<MethodResult<Array<{ key: string; value: string }>>> {
+    const result: MethodResult<Array<{ key: string; value: string }>> = new MethodResult<Array<{ key: string; value: string }>>();
+    result.result = [];
+
+    try {
+        const client = await GetCloudWatchLogsClient(region);
+        
+        // Build log group ARN
+        const logGroupInfo = await GetLogGroupInfo(region, logGroupName);
+        if (!logGroupInfo.isSuccessful || !logGroupInfo.result?.arn) {
+            return logGroupInfo as any;
+        }
+
+        const command = new ListTagsForResourceCommand({
+            resourceArn: logGroupInfo.result.arn
+        });
+
+        const response = await client.send(command);
+        
+        if (response.tags) {
+            result.result = Object.entries(response.tags).map(([key, value]) => ({
+                key,
+                value: value || ''
+            }));
+        }
+
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetLogGroupTags Error !!!", error);
+        return result;
+    }
+}
+
+export async function UpdateCloudWatchLogGroupTag(
+    region: string,
+    logGroupName: string,
+    key: string,
+    value: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const client = await GetCloudWatchLogsClient(region);
+        
+        // Build log group ARN
+        const logGroupInfo = await GetLogGroupInfo(region, logGroupName);
+        if (!logGroupInfo.isSuccessful || !logGroupInfo.result?.arn) {
+            return logGroupInfo as any;
+        }
+
+        const command = new TagResourceCommand({
+            resourceArn: logGroupInfo.result.arn,
+            tags: {
+                [key]: value
+            }
+        });
+
+        await client.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateCloudWatchLogGroupTag Error !!!", error);
+        return result;
+    }
+}
+
+export async function RemoveCloudWatchLogGroupTag(
+    region: string,
+    logGroupName: string,
+    key: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const client = await GetCloudWatchLogsClient(region);
+        
+        // Build log group ARN
+        const logGroupInfo = await GetLogGroupInfo(region, logGroupName);
+        if (!logGroupInfo.isSuccessful || !logGroupInfo.result?.arn) {
+            return logGroupInfo as any;
+        }
+
+        const command = new UntagResourceCommand({
+            resourceArn: logGroupInfo.result.arn,
+            tagKeys: [key]
+        });
+
+        await client.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveCloudWatchLogGroupTag Error !!!", error);
+        return result;
+    }
+}

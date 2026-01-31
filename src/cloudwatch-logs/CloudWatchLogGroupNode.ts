@@ -6,6 +6,7 @@ import  { CloudWatchLogView } from './CloudWatchLogView';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { CloudWatchLogStreamNode } from './CloudWatchLogStreamNode';
+import { CloudWatchLogTagsGroupNode } from './CloudWatchLogTagsGroupNode';
 
 export class CloudWatchLogGroupNode extends NodeBase {
 
@@ -23,6 +24,7 @@ export class CloudWatchLogGroupNode extends NodeBase {
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeLoadChildren.subscribe(() => this.LoadDefaultChildren());
 
         this.SetContextValue();
     }
@@ -32,6 +34,14 @@ export class CloudWatchLogGroupNode extends NodeBase {
 
     @Serialize()
     public Region: string = "";
+
+    @Serialize()
+    public LogGroupName: string = "";
+
+    public async LoadDefaultChildren(): Promise<void> {
+        this.LogGroupName = this.LogGroup;
+        new CloudWatchLogTagsGroupNode("Tags", this);
+    }
 
     public async handleNodeAdd(): Promise<void> {
 

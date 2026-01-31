@@ -10,6 +10,9 @@ exports.Subscribe = Subscribe;
 exports.Unsubscribe = Unsubscribe;
 exports.GetTopicNameFromArn = GetTopicNameFromArn;
 exports.IsSubscriptionPending = IsSubscriptionPending;
+exports.GetTopicTags = GetTopicTags;
+exports.UpdateSNSTopicTag = UpdateSNSTopicTag;
+exports.RemoveSNSTopicTag = RemoveSNSTopicTag;
 /* eslint-disable @typescript-eslint/naming-convention */
 const client_sns_1 = require("@aws-sdk/client-sns");
 const ui = require("../common/UI");
@@ -199,5 +202,73 @@ function GetTopicNameFromArn(topicArn) {
 }
 function IsSubscriptionPending(subscriptionArn) {
     return subscriptionArn === 'PendingConfirmation';
+}
+async function GetTopicTags(region, topicArn) {
+    const result = new MethodResult_1.MethodResult();
+    result.result = [];
+    try {
+        const snsClient = await GetSNSClient(region);
+        const command = new client_sns_1.ListTagsForResourceCommand({
+            ResourceArn: topicArn
+        });
+        const response = await snsClient.send(command);
+        if (response.Tags) {
+            result.result = response.Tags.map((tag) => ({
+                key: tag.Key || '',
+                value: tag.Value || ''
+            }));
+        }
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetTopicTags Error !!!", error);
+        return result;
+    }
+}
+async function UpdateSNSTopicTag(region, topicArn, key, value) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const snsClient = await GetSNSClient(region);
+        const command = new client_sns_1.TagResourceCommand({
+            ResourceArn: topicArn,
+            Tags: [
+                {
+                    Key: key,
+                    Value: value
+                }
+            ]
+        });
+        await snsClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateSNSTopicTag Error !!!", error);
+        return result;
+    }
+}
+async function RemoveSNSTopicTag(region, topicArn, key) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const snsClient = await GetSNSClient(region);
+        const command = new client_sns_1.UntagResourceCommand({
+            ResourceArn: topicArn,
+            TagKeys: [key]
+        });
+        await snsClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveSNSTopicTag Error !!!", error);
+        return result;
+    }
 }
 //# sourceMappingURL=API.js.map

@@ -11,7 +11,7 @@ import { GlueRunsGroupNode } from './GlueRunsGroupNode';
 import { GlueLogsGroupNode } from './GlueLogsGroupNode';
 import { GlueJobRunView } from './GlueJobRunView';
 import { Job } from '@aws-sdk/client-glue';
-import { ServiceHub } from '../tree/ServiceHub';
+import { GlueTagsGroupNode } from './GlueTagsGroupNode';
 
 export class GlueJobNode extends NodeBase {
 
@@ -73,6 +73,7 @@ export class GlueJobNode extends NodeBase {
         new GlueInfoGroupNode("Info", this);
         new GlueRunsGroupNode("Runs", this);
         new GlueLogsGroupNode("Logs", this);
+        new GlueTagsGroupNode("Tags", this);
     }
 
     private handleNodeRemove(): void {

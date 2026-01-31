@@ -15,6 +15,7 @@ const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const S3Explorer_1 = require("./S3Explorer");
 const S3BucketShortcutGroupNode_1 = require("./S3BucketShortcutGroupNode");
+const S3TagsGroupNode_1 = require("./S3TagsGroupNode");
 class S3BucketNode extends NodeBase_1.NodeBase {
     constructor(BucketName, parent) {
         super(BucketName, parent);
@@ -37,6 +38,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     }
     async LoadDefaultChildren() {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
+        new S3TagsGroupNode_1.S3TagsGroupNode("Tags", this);
     }
     IsShortcutExists(key) {
         return this.Shortcuts.includes(key);

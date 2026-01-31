@@ -66,9 +66,7 @@ class DynamoDBTagsGroupNode extends NodeBase_1.NodeBase {
             ui.logToOutput('DynamoDBTagsGroupNode.handleNodeRefresh - Parent table node not found');
             return;
         }
-        if (this.IsWorking) {
-            return;
-        }
+        // if (this.IsWorking) { return; }
         this.StartWorking();
         try {
             const details = await tableNode.TableDetails;

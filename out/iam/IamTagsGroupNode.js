@@ -63,9 +63,9 @@ class IamTagsGroupNode extends NodeBase_1.NodeBase {
             ui.logToOutput('IamTagsGroupNode.NodeRefresh - Parent IAM Role node not found');
             return;
         }
-        if (this.IsWorking) {
-            return;
-        }
+        // if (this.IsWorking) {
+        //     return;
+        // }
         this.StartWorking();
         // Get tags
         const tagsResult = await api.GetIamRoleTags(roleNode.Region, roleNode.RoleName);

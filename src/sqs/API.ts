@@ -11,6 +11,9 @@ import {
     ReceiveMessageCommandOutput,
     DeleteMessageCommandOutput,
     PurgeQueueCommandOutput,
+    ListQueueTagsCommand,
+    TagQueueCommand,
+    UntagQueueCommand,
     Message,
     QueueAttributeName
 } from "@aws-sdk/client-sqs";
@@ -329,6 +332,91 @@ export async function GetQueuePolicy(
         result.error = error;
         ui.showErrorMessage("api.GetQueuePolicy Error !!!", error);
         ui.logToOutput("api.GetQueuePolicy Error !!!", error);
+        return result;
+    }
+}
+
+export async function GetQueueTags(
+    region: string,
+    queueUrl: string
+): Promise<MethodResult<Array<{ key: string; value: string }>>> {
+    const result: MethodResult<Array<{ key: string; value: string }>> = new MethodResult<Array<{ key: string; value: string }>>();
+    result.result = [];
+
+    try {
+        const sqsClient = await GetSQSClient(region);
+        const command = new ListQueueTagsCommand({
+            QueueUrl: queueUrl
+        });
+
+        const response = await sqsClient.send(command);
+        
+        if (response.Tags) {
+            result.result = Object.entries(response.Tags).map(([key, value]) => ({
+                key,
+                value: value || ''
+            }));
+        }
+
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetQueueTags Error !!!", error);
+        return result;
+    }
+}
+
+export async function UpdateSQSQueueTag(
+    region: string,
+    queueUrl: string,
+    key: string,
+    value: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const sqsClient = await GetSQSClient(region);
+        const command = new TagQueueCommand({
+            QueueUrl: queueUrl,
+            Tags: {
+                [key]: value
+            }
+        });
+
+        await sqsClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateSQSQueueTag Error !!!", error);
+        return result;
+    }
+}
+
+export async function RemoveSQSQueueTag(
+    region: string,
+    queueUrl: string,
+    key: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const sqsClient = await GetSQSClient(region);
+        const command = new UntagQueueCommand({
+            QueueUrl: queueUrl,
+            TagKeys: [key]
+        });
+
+        await sqsClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveSQSQueueTag Error !!!", error);
         return result;
     }
 }

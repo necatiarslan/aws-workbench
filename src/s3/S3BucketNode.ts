@@ -2,8 +2,8 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import { S3Explorer } from './S3Explorer';
-import { Session } from '../common/Session';
 import { S3BucketShortcutGroupNode } from './S3BucketShortcutGroupNode';
+import { S3TagsGroupNode } from './S3TagsGroupNode';
 
 export class S3BucketNode extends NodeBase {
 
@@ -41,6 +41,7 @@ export class S3BucketNode extends NodeBase {
 
     public async LoadDefaultChildren(): Promise<void> {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode("Shortcuts", this);
+        new S3TagsGroupNode("Tags", this);
     }
 
     public IsShortcutExists(key:string):boolean

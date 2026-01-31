@@ -9,6 +9,9 @@ exports.GetLogStreamList = GetLogStreamList;
 exports.GetLogEvents = GetLogEvents;
 exports.GetAwsProfileList = GetAwsProfileList;
 exports.getIniProfileData = getIniProfileData;
+exports.GetLogGroupTags = GetLogGroupTags;
+exports.UpdateCloudWatchLogGroupTag = UpdateCloudWatchLogGroupTag;
+exports.RemoveCloudWatchLogGroupTag = RemoveCloudWatchLogGroupTag;
 const ui = require("../common/UI");
 const MethodResult_1 = require("../common/MethodResult");
 const os_1 = require("os");
@@ -235,4 +238,84 @@ const getCredentialsFilepath = () => process.env[exports.ENV_CREDENTIALS_PATH] |
 exports.getCredentialsFilepath = getCredentialsFilepath;
 const getConfigFilepath = () => process.env[exports.ENV_CREDENTIALS_PATH] || (0, path_2.join)((0, exports.getHomeDir)(), ".aws", "config");
 exports.getConfigFilepath = getConfigFilepath;
+async function GetLogGroupTags(region, logGroupName) {
+    const result = new MethodResult_1.MethodResult();
+    result.result = [];
+    try {
+        const client = await GetCloudWatchLogsClient(region);
+        // Build log group ARN
+        const logGroupInfo = await GetLogGroupInfo(region, logGroupName);
+        if (!logGroupInfo.isSuccessful || !logGroupInfo.result?.arn) {
+            return logGroupInfo;
+        }
+        const command = new client_cloudwatch_logs_1.ListTagsForResourceCommand({
+            resourceArn: logGroupInfo.result.arn
+        });
+        const response = await client.send(command);
+        if (response.tags) {
+            result.result = Object.entries(response.tags).map(([key, value]) => ({
+                key,
+                value: value || ''
+            }));
+        }
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetLogGroupTags Error !!!", error);
+        return result;
+    }
+}
+async function UpdateCloudWatchLogGroupTag(region, logGroupName, key, value) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const client = await GetCloudWatchLogsClient(region);
+        // Build log group ARN
+        const logGroupInfo = await GetLogGroupInfo(region, logGroupName);
+        if (!logGroupInfo.isSuccessful || !logGroupInfo.result?.arn) {
+            return logGroupInfo;
+        }
+        const command = new client_cloudwatch_logs_1.TagResourceCommand({
+            resourceArn: logGroupInfo.result.arn,
+            tags: {
+                [key]: value
+            }
+        });
+        await client.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateCloudWatchLogGroupTag Error !!!", error);
+        return result;
+    }
+}
+async function RemoveCloudWatchLogGroupTag(region, logGroupName, key) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const client = await GetCloudWatchLogsClient(region);
+        // Build log group ARN
+        const logGroupInfo = await GetLogGroupInfo(region, logGroupName);
+        if (!logGroupInfo.isSuccessful || !logGroupInfo.result?.arn) {
+            return logGroupInfo;
+        }
+        const command = new client_cloudwatch_logs_1.UntagResourceCommand({
+            resourceArn: logGroupInfo.result.arn,
+            tagKeys: [key]
+        });
+        await client.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveCloudWatchLogGroupTag Error !!!", error);
+        return result;
+    }
+}
 //# sourceMappingURL=API.js.map

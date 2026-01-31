@@ -13,6 +13,9 @@ import {
     SubscribeCommandOutput,
     UnsubscribeCommand,
     UnsubscribeCommandOutput,
+    ListTagsForResourceCommand,
+    TagResourceCommand,
+    UntagResourceCommand,
     Subscription
 } from "@aws-sdk/client-sns";
 import * as ui from "../common/UI";
@@ -264,4 +267,92 @@ export function GetTopicNameFromArn(topicArn: string): string {
 
 export function IsSubscriptionPending(subscriptionArn: string | undefined): boolean {
     return subscriptionArn === 'PendingConfirmation';
+}
+
+export async function GetTopicTags(
+    region: string,
+    topicArn: string
+): Promise<MethodResult<Array<{ key: string; value: string }>>> {
+    const result: MethodResult<Array<{ key: string; value: string }>> = new MethodResult<Array<{ key: string; value: string }>>();
+    result.result = [];
+
+    try {
+        const snsClient = await GetSNSClient(region);
+        const command = new ListTagsForResourceCommand({
+            ResourceArn: topicArn
+        });
+
+        const response = await snsClient.send(command);
+        
+        if (response.Tags) {
+            result.result = response.Tags.map((tag: any) => ({
+                key: tag.Key || '',
+                value: tag.Value || ''
+            }));
+        }
+
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetTopicTags Error !!!", error);
+        return result;
+    }
+}
+
+export async function UpdateSNSTopicTag(
+    region: string,
+    topicArn: string,
+    key: string,
+    value: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const snsClient = await GetSNSClient(region);
+        const command = new TagResourceCommand({
+            ResourceArn: topicArn,
+            Tags: [
+                {
+                    Key: key,
+                    Value: value
+                }
+            ]
+        });
+
+        await snsClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateSNSTopicTag Error !!!", error);
+        return result;
+    }
+}
+
+export async function RemoveSNSTopicTag(
+    region: string,
+    topicArn: string,
+    key: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const snsClient = await GetSNSClient(region);
+        const command = new UntagResourceCommand({
+            ResourceArn: topicArn,
+            TagKeys: [key]
+        });
+
+        await snsClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveSNSTopicTag Error !!!", error);
+        return result;
+    }
 }

@@ -10,6 +10,9 @@ exports.GetExecutionDetails = GetExecutionDetails;
 exports.GetExecutionHistory = GetExecutionHistory;
 exports.GetLogGroupNameFromArn = GetLogGroupNameFromArn;
 exports.GetLatestLogStreamForExecution = GetLatestLogStreamForExecution;
+exports.GetStateMachineTags = GetStateMachineTags;
+exports.UpdateStateMachineTag = UpdateStateMachineTag;
+exports.RemoveStateMachineTag = RemoveStateMachineTag;
 const client_sfn_1 = require("@aws-sdk/client-sfn");
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
 const ui = require("../common/UI");
@@ -259,6 +262,74 @@ async function GetLatestLogStreamForExecution(region, logGroupName, executionNam
         result.error = error;
         ui.showErrorMessage("api.GetLatestLogStreamForExecution Error !!!", error);
         ui.logToOutput("api.GetLatestLogStreamForExecution Error !!!", error);
+        return result;
+    }
+}
+async function GetStateMachineTags(region, stateMachineArn) {
+    const result = new MethodResult_1.MethodResult();
+    result.result = [];
+    try {
+        const sfnClient = await GetSFNClient(region);
+        const command = new client_sfn_1.ListTagsForResourceCommand({
+            resourceArn: stateMachineArn
+        });
+        const response = await sfnClient.send(command);
+        if (response.tags) {
+            result.result = response.tags.map((tag) => ({
+                key: tag.key || '',
+                value: tag.value || ''
+            }));
+        }
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetStateMachineTags Error !!!", error);
+        return result;
+    }
+}
+async function UpdateStateMachineTag(region, stateMachineArn, key, value) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const sfnClient = await GetSFNClient(region);
+        const command = new client_sfn_1.TagResourceCommand({
+            resourceArn: stateMachineArn,
+            tags: [
+                {
+                    key: key,
+                    value: value
+                }
+            ]
+        });
+        await sfnClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateStateMachineTag Error !!!", error);
+        return result;
+    }
+}
+async function RemoveStateMachineTag(region, stateMachineArn, key) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const sfnClient = await GetSFNClient(region);
+        const command = new client_sfn_1.UntagResourceCommand({
+            resourceArn: stateMachineArn,
+            tagKeys: [key]
+        });
+        await sfnClient.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveStateMachineTag Error !!!", error);
         return result;
     }
 }

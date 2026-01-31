@@ -7,6 +7,7 @@ import * as ui from '../common/UI';
 import { SNSPublishGroupNode } from './SNSPublishGroupNode';
 import { SNSSubscriptionsGroupNode } from './SNSSubscriptionsGroupNode';
 import { SNSInfoGroupNode } from './SNSInfoGroupNode';
+import { SNSTagsGroupNode } from './SNSTagsGroupNode';
 
 export class SNSTopicNode extends NodeBase {
 
@@ -62,6 +63,7 @@ export class SNSTopicNode extends NodeBase {
         new SNSPublishGroupNode("Publish", this);
         new SNSSubscriptionsGroupNode("Subscriptions", this);
         new SNSInfoGroupNode("Info", this);
+        new SNSTagsGroupNode("Tags", this);
     }
 
     private handleNodeRemove(): void {

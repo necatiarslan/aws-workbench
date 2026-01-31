@@ -75,7 +75,7 @@ export class DynamoDBTagsGroupNode extends NodeBase {
             return;
         }
 
-        if (this.IsWorking) { return; }
+        // if (this.IsWorking) { return; }
 
         this.StartWorking();
 

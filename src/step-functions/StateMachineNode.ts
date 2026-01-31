@@ -12,6 +12,7 @@ import { StateMachineStudioView } from './StateMachineStudioView';
 import { Session } from '../common/Session';
 import { StateMachineExecutionNode } from './StateMachineExecutionNode';
 import { StateMachineInfoGroupNode } from './StateMachineInfoGroupNode';
+import { StateMachineTagsGroupNode } from './StateMachineTagsGroupNode';
 import * as fs from 'fs';
 
 export class StateMachineNode extends NodeBase {
@@ -106,6 +107,7 @@ export class StateMachineNode extends NodeBase {
         new StateMachineExecutionsGroupNode("Executions", this);
         new StateMachineLogsGroupNode("Logs", this);
         new StateMachineInfoGroupNode("Info", this);
+        new StateMachineTagsGroupNode("Tags", this);
     }
 
     private handleNodeRemove(): void {

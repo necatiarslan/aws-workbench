@@ -71,9 +71,9 @@ export class IamTagsGroupNode extends NodeBase {
             return;
         }
 
-        if (this.IsWorking) {
-            return;
-        }
+        // if (this.IsWorking) {
+        //     return;
+        // }
 
         this.StartWorking();
 
