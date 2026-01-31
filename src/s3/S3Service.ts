@@ -34,6 +34,6 @@ export class S3Service extends ServiceBase {
             let bucketNode = new S3BucketNode(selectedBucket, node);
 		}
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

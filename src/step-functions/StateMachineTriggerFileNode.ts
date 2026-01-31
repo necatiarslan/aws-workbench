@@ -24,7 +24,7 @@ export class StateMachineTriggerFileNode extends NodeBase {
         if(!stateMachineNode) return;
         stateMachineNode.PayloadFiles = stateMachineNode.PayloadFiles.filter(tf => tf.id !== this.id);
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeEdit(): Promise<void> {

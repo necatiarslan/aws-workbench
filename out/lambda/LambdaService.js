@@ -4,7 +4,6 @@ exports.LambdaService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const LambdaFunctionNode_1 = require("./LambdaFunctionNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -37,7 +36,7 @@ class LambdaService extends ServiceBase_1.ServiceBase {
         for (var selectedLambda of selectedLambdaList) {
             new LambdaFunctionNode_1.LambdaFunctionNode(selectedLambda, node).Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.LambdaService = LambdaService;

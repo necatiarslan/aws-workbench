@@ -14,7 +14,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
-const TreeState_1 = require("../tree/TreeState");
 class CommandNode extends NodeBase_1.NodeBase {
     Title = "";
     Command = "";
@@ -31,7 +30,7 @@ class CommandNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeView() {
         vscode.window.showInformationMessage(`${this.Title}`, { modal: true, detail: this.Command });
@@ -42,7 +41,7 @@ class CommandNode extends NodeBase_1.NodeBase {
             return;
         }
         this.Command = commandContent;
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeRun() {
         vscode.commands.executeCommand(this.Command);

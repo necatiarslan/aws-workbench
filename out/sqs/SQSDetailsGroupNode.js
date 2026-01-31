@@ -11,7 +11,7 @@ const SQSDlqLinkNode_1 = require("./SQSDlqLinkNode");
 class SQSDetailsGroupNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
-        this.Icon = "list-flat";
+        this.Icon = "info";
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         // Attach event handlers
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());

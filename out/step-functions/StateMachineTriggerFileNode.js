@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StateMachineTriggerFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
-const TreeState_1 = require("../tree/TreeState");
 class StateMachineTriggerFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -20,7 +19,7 @@ class StateMachineTriggerFileNode extends NodeBase_1.NodeBase {
             return;
         stateMachineNode.PayloadFiles = stateMachineNode.PayloadFiles.filter(tf => tf.id !== this.id);
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeEdit() {
         if (this.FilePath) {

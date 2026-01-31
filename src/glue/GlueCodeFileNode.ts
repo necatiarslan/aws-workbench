@@ -57,7 +57,7 @@ export class GlueCodeFileNode extends NodeBase {
 
         job.CodePath = fileUris[0].fsPath;
         this.description = job.CodePath;
-        TreeState.save();
+        this.TreeSave();
         
         ui.showInfoMessage(`Code file set to: ${job.CodePath}`);
         ui.logToOutput(`GlueCodeFileNode: Code path set to ${job.CodePath}`);

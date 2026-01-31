@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const GlueJobNode_1 = require("./GlueJobNode");
 const GlueTriggerFileNode_1 = require("./GlueTriggerFileNode");
-const TreeState_1 = require("../tree/TreeState");
 const ui = require("../common/UI");
 const GlueJobRunView_1 = require("./GlueJobRunView");
 class GlueTriggerGroupNode extends NodeBase_1.NodeBase {
@@ -61,7 +60,7 @@ class GlueTriggerGroupNode extends NodeBase_1.NodeBase {
         job.TriggerFiles.push({ id, path: filePath });
         // Create child node
         new GlueTriggerFileNode_1.GlueTriggerFileNode(filePath, this, id);
-        TreeState_1.TreeState.save();
+        this.TreeSave();
         ui.showInfoMessage(`Trigger file added: ${filePath}`);
     }
     LoadTriggerFiles() {

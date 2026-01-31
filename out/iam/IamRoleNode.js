@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const IamRolePoliciesGroupNode_1 = require("./IamRolePoliciesGroupNode");
 const IamRoleTrustGroupNode_1 = require("./IamRoleTrustGroupNode");
 const IamTagsGroupNode_1 = require("./IamTagsGroupNode");
@@ -45,7 +44,7 @@ class IamRoleNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeInfo() {
         ui.logToOutput('IamRoleNode.NodeInfo Started');

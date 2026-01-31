@@ -13,7 +13,6 @@ class SQSPolicyNode extends NodeBase_1.NodeBase {
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         // Attach event handlers
         this.OnNodeView.subscribe(() => this.handleNodeView());
-        this.OnNodeOpen.subscribe(() => this.handleNodeView());
         this.SetContextValue();
     }
     GetQueueNode() {

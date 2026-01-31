@@ -14,7 +14,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
-const TreeState_1 = require("../tree/TreeState");
 class BashScriptNode extends NodeBase_1.NodeBase {
     Title = "";
     Script = "";
@@ -31,7 +30,7 @@ class BashScriptNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeView() {
         vscode.window.showInformationMessage(`${this.Title}`, { modal: true, detail: this.Script });
@@ -42,7 +41,7 @@ class BashScriptNode extends NodeBase_1.NodeBase {
             return;
         }
         this.Script = scriptContent;
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeRun() {
         this.StartWorking();

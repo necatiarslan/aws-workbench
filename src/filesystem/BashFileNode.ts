@@ -30,7 +30,7 @@ export class BashFileNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private handleNodeRun(): void {

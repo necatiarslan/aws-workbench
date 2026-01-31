@@ -77,7 +77,7 @@ export class GlueTriggerGroupNode extends NodeBase {
         // Create child node
         new GlueTriggerFileNode(filePath, this, id);
 
-        TreeState.save();
+        this.TreeSave();
         ui.showInfoMessage(`Trigger file added: ${filePath}`);
     }
 

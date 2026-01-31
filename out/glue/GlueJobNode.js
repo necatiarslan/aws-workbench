@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const GlueCodeGroupNode_1 = require("./GlueCodeGroupNode");
 const GlueTriggerGroupNode_1 = require("./GlueTriggerGroupNode");
 const GlueInfoGroupNode_1 = require("./GlueInfoGroupNode");
@@ -70,7 +69,7 @@ class GlueJobNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeRun() {
         // Open the Job Run View webview

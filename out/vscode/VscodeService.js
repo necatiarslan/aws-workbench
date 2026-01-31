@@ -5,7 +5,6 @@ const vscode = require("vscode");
 const ServiceBase_1 = require("../tree/ServiceBase");
 const ui = require("../common/UI");
 const CommandNode_1 = require("./CommandNode");
-const TreeState_1 = require("../tree/TreeState");
 class VscodeService extends ServiceBase_1.ServiceBase {
     static Current;
     constructor() {
@@ -30,7 +29,7 @@ class VscodeService extends ServiceBase_1.ServiceBase {
             }
             const commandNode = new CommandNode_1.CommandNode(title, node);
             commandNode.Command = command;
-            TreeState_1.TreeState.save();
+            this.TreeSave();
         }
     }
 }

@@ -41,7 +41,7 @@ export class StateMachineDefinitionDownloadNode extends NodeBase {
                 if(uri) {
                     fs.writeFileSync(uri.fsPath, prettyDef);
                     stateMachineNode.CodePath = uri.fsPath;
-                    TreeState.save();
+                    this.TreeSave();
                     ui.showInfoMessage('Definition downloaded successfully');
                     
                     const openFile = await vscode.window.showQuickPick(['Yes', 'No'], {

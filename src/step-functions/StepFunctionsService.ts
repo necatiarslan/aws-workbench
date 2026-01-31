@@ -51,6 +51,6 @@ export class StepFunctionsService extends ServiceBase {
             new StateMachineNode(selectedStateMachine, node).Region = selectedRegion;
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

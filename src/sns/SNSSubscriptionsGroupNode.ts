@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -189,6 +188,3 @@ export class SNSSubscriptionsGroupNode extends NodeBase {
         }
     }
 }
-
-// Register the node for serialization
-NodeRegistry.register('SNSSubscriptionsGroupNode', SNSSubscriptionsGroupNode);

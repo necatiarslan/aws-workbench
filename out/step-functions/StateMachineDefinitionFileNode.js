@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const fs = require("fs");
-const TreeState_1 = require("../tree/TreeState");
 const StateMachineStudioView_1 = require("./StateMachineStudioView");
 const Session_1 = require("../common/Session");
 class StateMachineDefinitionFileNode extends NodeBase_1.NodeBase {
@@ -53,7 +52,7 @@ class StateMachineDefinitionFileNode extends NodeBase_1.NodeBase {
             const filePath = uri[0].fsPath;
             stateMachineNode.CodePath = filePath;
             this.label = `File: ${stateMachineNode.CodePath}`;
-            TreeState_1.TreeState.save();
+            this.TreeSave();
             ui.logToOutput('File: ' + stateMachineNode.CodePath);
             ui.showInfoMessage('Definition file set successfully');
             this.RefreshTree();
@@ -88,7 +87,7 @@ class StateMachineDefinitionFileNode extends NodeBase_1.NodeBase {
             return;
         stateMachineNode.CodePath = '';
         this.label = 'Select File';
-        TreeState_1.TreeState.save();
+        this.TreeSave();
         ui.logToOutput('Definition file removed: ' + stateMachineNode.CodePath);
         ui.showInfoMessage('Definition file removed successfully');
         this.RefreshTree();

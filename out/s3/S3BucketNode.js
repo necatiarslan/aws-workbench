@@ -13,7 +13,6 @@ exports.S3BucketNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
-const TreeState_1 = require("../tree/TreeState");
 const S3Explorer_1 = require("./S3Explorer");
 const S3BucketShortcutGroupNode_1 = require("./S3BucketShortcutGroupNode");
 class S3BucketNode extends NodeBase_1.NodeBase {
@@ -34,7 +33,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     ShortcutGroupNode;
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async LoadDefaultChildren() {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
@@ -54,13 +53,13 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         if (!this.IsShortcutExists(key)) {
             this.Shortcuts.push(key);
             this.ShortcutGroupNode?.NodeRefresh();
-            TreeState_1.TreeState.save();
+            this.TreeSave();
         }
     }
     RemoveShortcut(key) {
         this.Shortcuts = this.Shortcuts.filter(k => k !== key);
         this.ShortcutGroupNode?.NodeRefresh();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeView() {
         S3Explorer_1.S3Explorer.Render(this);

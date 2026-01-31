@@ -14,7 +14,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
-const TreeState_1 = require("../tree/TreeState");
 const CloudWatchLogView_1 = require("./CloudWatchLogView");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -72,11 +71,11 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
                 newNode.LogGroup = this.LogGroup;
             }
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeView() {
         CloudWatchLogView_1.CloudWatchLogView.Render(this.Region, this.LogGroup);

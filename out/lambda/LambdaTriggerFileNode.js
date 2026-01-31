@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LambdaTriggerFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
-const TreeState_1 = require("../tree/TreeState");
 class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -18,7 +17,7 @@ class LambdaTriggerFileNode extends NodeBase_1.NodeBase {
         const lambdaNode = this.GetAwsResourceNode();
         lambdaNode.TriggerFiles = lambdaNode.TriggerFiles.filter(tf => tf.id !== this.id);
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeEdit() {
         if (this.FilePath) {

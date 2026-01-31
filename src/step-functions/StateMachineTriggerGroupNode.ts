@@ -71,7 +71,7 @@ export class StateMachineTriggerGroupNode extends NodeBase {
 
             stateMachineNode.PayloadFiles.push(payloadEntry);
             
-            TreeState.save();
+            this.TreeSave();
             this.RefreshTree(stateMachineNode);
         } catch (error: any) {
             ui.logToOutput('Failed to add payload file', error);

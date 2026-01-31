@@ -69,6 +69,6 @@ export class SQSService extends ServiceBase {
             }
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

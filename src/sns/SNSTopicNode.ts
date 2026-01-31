@@ -4,7 +4,6 @@ import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeState } from '../tree/TreeState';
 import { SNSPublishGroupNode } from './SNSPublishGroupNode';
 import { SNSSubscriptionsGroupNode } from './SNSSubscriptionsGroupNode';
 
@@ -46,7 +45,7 @@ export class SNSTopicNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeInfo(): Promise<void> {
@@ -97,12 +96,12 @@ export class SNSTopicNode extends NodeBase {
     public AddMessageFile(filePath: string): void {
         const id = Date.now().toString() + Math.floor(Math.random() * 1000).toString();
         this.MessageFiles.push({ id, path: filePath });
-        TreeState.save();
+        this.TreeSave();
     }
 
     public RemoveMessageFile(id: string): void {
         this.MessageFiles = this.MessageFiles.filter(f => f.id !== id);
-        TreeState.save();
+        this.TreeSave();
     }
 }
 

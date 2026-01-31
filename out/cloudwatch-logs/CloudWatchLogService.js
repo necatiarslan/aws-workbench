@@ -4,7 +4,6 @@ exports.CloudWatchLogService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const CloudWatchLogGroupNode_1 = require("./CloudWatchLogGroupNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -33,7 +32,7 @@ class CloudWatchLogService extends ServiceBase_1.ServiceBase {
         for (var selectedLogGroup of selectedLogGroupList) {
             new CloudWatchLogGroupNode_1.CloudWatchLogGroupNode(selectedLogGroup, node).Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.CloudWatchLogService = CloudWatchLogService;

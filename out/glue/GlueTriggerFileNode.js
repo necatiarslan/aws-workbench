@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GlueTriggerFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const GlueJobNode_1 = require("./GlueJobNode");
-const TreeState_1 = require("../tree/TreeState");
 const ui = require("../common/UI");
 const vscode = require("vscode");
 const path = require("path");
@@ -60,7 +59,7 @@ class GlueTriggerFileNode extends NodeBase_1.NodeBase {
             job.TriggerFiles = job.TriggerFiles.filter(tf => tf.id !== this.FileId);
         }
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.GlueTriggerFileNode = GlueTriggerFileNode;

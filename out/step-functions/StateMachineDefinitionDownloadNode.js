@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const fs = require("fs");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 class StateMachineDefinitionDownloadNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
@@ -34,7 +33,7 @@ class StateMachineDefinitionDownloadNode extends NodeBase_1.NodeBase {
                 if (uri) {
                     fs.writeFileSync(uri.fsPath, prettyDef);
                     stateMachineNode.CodePath = uri.fsPath;
-                    TreeState_1.TreeState.save();
+                    this.TreeSave();
                     ui.showInfoMessage('Definition downloaded successfully');
                     const openFile = await vscode.window.showQuickPick(['Yes', 'No'], {
                         placeHolder: 'Open downloaded file?'

@@ -37,12 +37,12 @@ export class FolderNode extends NodeBase {
         this.FolderName = newName;
         this.label = newName;
         this.RefreshTree()
-        TreeState.save();
+        this.TreeSave();
     }
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
 }

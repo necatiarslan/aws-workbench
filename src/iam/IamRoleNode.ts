@@ -47,7 +47,7 @@ export class IamRoleNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeInfo(): Promise<void> {

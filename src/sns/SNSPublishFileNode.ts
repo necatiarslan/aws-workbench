@@ -104,7 +104,7 @@ export class SNSPublishFileNode extends NodeBase {
         }
 
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
         this.RefreshTree(this.Parent);
     }
 }

@@ -30,7 +30,7 @@ export class VscodeService extends ServiceBase {
             if(!title){ return; }
             const commandNode = new CommandNode(title, node);
             commandNode.Command = command;
-            TreeState.save();
+            this.TreeSave();
         }
 
     }

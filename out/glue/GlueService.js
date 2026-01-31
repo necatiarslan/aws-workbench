@@ -4,7 +4,6 @@ exports.GlueService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const GlueJobNode_1 = require("./GlueJobNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -50,7 +49,7 @@ class GlueService extends ServiceBase_1.ServiceBase {
         for (const selectedJob of selectedJobList) {
             new GlueJobNode_1.GlueJobNode(selectedJob, node).Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.GlueService = GlueService;

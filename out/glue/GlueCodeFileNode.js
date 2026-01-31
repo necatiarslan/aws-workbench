@@ -4,7 +4,6 @@ exports.GlueCodeFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const GlueJobNode_1 = require("./GlueJobNode");
-const TreeState_1 = require("../tree/TreeState");
 const ui = require("../common/UI");
 class GlueCodeFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -51,7 +50,7 @@ class GlueCodeFileNode extends NodeBase_1.NodeBase {
         }
         job.CodePath = fileUris[0].fsPath;
         this.description = job.CodePath;
-        TreeState_1.TreeState.save();
+        this.TreeSave();
         ui.showInfoMessage(`Code file set to: ${job.CodePath}`);
         ui.logToOutput(`GlueCodeFileNode: Code path set to ${job.CodePath}`);
     }

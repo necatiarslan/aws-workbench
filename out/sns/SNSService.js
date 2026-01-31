@@ -4,7 +4,6 @@ exports.SNSService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const SNSTopicNode_1 = require("./SNSTopicNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -52,7 +51,7 @@ class SNSService extends ServiceBase_1.ServiceBase {
             const topicNode = new SNSTopicNode_1.SNSTopicNode(selectedTopic, node);
             topicNode.Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
         ui.logToOutput('SNSService.Add Completed - Added ' + selectedTopicList.length + ' topic(s)');
     }
 }

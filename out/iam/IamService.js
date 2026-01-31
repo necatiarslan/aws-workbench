@@ -5,7 +5,6 @@ const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const IamRoleNode_1 = require("./IamRoleNode");
 const IamPolicyNode_1 = require("./IamPolicyNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -68,7 +67,7 @@ class IamService extends ServiceBase_1.ServiceBase {
             const roleNode = new IamRoleNode_1.IamRoleNode(selectedRole, node);
             roleNode.Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async AddPolicy(node) {
         Telemetry_1.Telemetry.Current?.send("IamService.AddPolicy");
@@ -133,7 +132,7 @@ class IamService extends ServiceBase_1.ServiceBase {
             policyNode.Region = selectedRegion;
             policyNode.IsAwsManaged = selectedPolicy.isAwsManaged;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.IamService = IamService;

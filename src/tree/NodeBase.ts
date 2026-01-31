@@ -300,7 +300,7 @@ export abstract class NodeBase extends vscode.TreeItem {
             // Swap with previous sibling
             [siblings[index - 1], siblings[index]] = [siblings[index], siblings[index - 1]];
             this.RefreshTree(this.Parent);
-            TreeState.save();
+            this.TreeSave();
         }
     }
 
@@ -311,7 +311,7 @@ export abstract class NodeBase extends vscode.TreeItem {
             // Swap with next sibling
             [siblings[index], siblings[index + 1]] = [siblings[index + 1], siblings[index]];
             this.RefreshTree(this.Parent);
-            TreeState.save();
+            this.TreeSave();
         }
     }
 
@@ -339,7 +339,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         targetFolder.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         this.RefreshTree(targetFolder);
-        TreeState.save();
+        this.TreeSave();
     }
 
     public async SetCustomTooltip(): Promise<void> {
@@ -351,7 +351,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         
         this.CustomTooltip = tooltip.trim() || undefined;
         this.RefreshTree()
-        TreeState.save();
+        this.TreeSave();
     }
 
     /**
@@ -398,7 +398,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         this.Alias = alias;
 
         this.RefreshTree()
-        TreeState.save();
+        this.TreeSave();
 
     }
 
@@ -408,6 +408,10 @@ export abstract class NodeBase extends vscode.TreeItem {
             return;
         }
         TreeProvider.Current.Refresh(this);
+    }
+
+    public TreeSave(): void {
+        TreeState.save();
     }
 
     // Event-based node operation methods - fire events that handlers are subscribed to

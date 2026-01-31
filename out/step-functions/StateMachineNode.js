@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const StateMachineDefinitionGroupNode_1 = require("./StateMachineDefinitionGroupNode");
 const StateMachineTriggerGroupNode_1 = require("./StateMachineTriggerGroupNode");
 const StateMachineExecutionsGroupNode_1 = require("./StateMachineExecutionsGroupNode");
@@ -96,7 +95,7 @@ class StateMachineNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeInfo() {
         ui.logToOutput('StateMachineNode.NodeInfo Started');

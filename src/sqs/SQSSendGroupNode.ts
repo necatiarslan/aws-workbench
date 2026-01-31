@@ -66,7 +66,7 @@ export class SQSSendGroupNode extends NodeBase {
             const id = uuidv4();
             queueNode.MessageFiles.push({ id, path: filePath });
             new SQSSendFileNode(filePath, this, id);
-            TreeState.save();
+            this.TreeSave();
         }
     }
 }

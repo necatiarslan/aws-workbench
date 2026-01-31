@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -14,7 +13,6 @@ export class SQSPolicyNode extends NodeBase {
         
         // Attach event handlers
         this.OnNodeView.subscribe(() => this.handleNodeView());
-        this.OnNodeOpen.subscribe(() => this.handleNodeView());
         
         this.SetContextValue();
     }

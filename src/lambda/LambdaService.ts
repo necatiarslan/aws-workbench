@@ -37,6 +37,6 @@ export class LambdaService extends ServiceBase {
             new LambdaFunctionNode(selectedLambda, node).Region = selectedRegion;
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

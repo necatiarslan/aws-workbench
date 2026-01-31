@@ -74,7 +74,7 @@ export class IamService extends ServiceBase {
             roleNode.Region = selectedRegion;
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 
     public async AddPolicy(node?: NodeBase): Promise<void> {
@@ -143,6 +143,6 @@ export class IamService extends ServiceBase {
             policyNode.IsAwsManaged = selectedPolicy.isAwsManaged;
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

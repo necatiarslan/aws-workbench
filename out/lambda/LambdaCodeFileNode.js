@@ -4,7 +4,6 @@ exports.LambdaCodeFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 class LambdaCodeFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -36,7 +35,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         const lambdaNode = this.GetAwsResourceNode();
         lambdaNode.CodePath = selectedPath[0].fsPath;
         this.label = `Code Path: ${lambdaNode.CodePath}`;
-        TreeState_1.TreeState.save();
+        this.TreeSave();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Set Successfully');
         this.RefreshTree();
@@ -46,7 +45,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         const lambdaNode = this.GetAwsResourceNode();
         lambdaNode.CodePath = '';
         this.label = 'Select File';
-        TreeState_1.TreeState.save();
+        this.TreeSave();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Removed Successfully');
         this.RefreshTree();

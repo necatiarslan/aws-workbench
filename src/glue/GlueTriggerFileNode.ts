@@ -72,6 +72,6 @@ export class GlueTriggerFileNode extends NodeBase {
             job.TriggerFiles = job.TriggerFiles.filter(tf => tf.id !== this.FileId);
         }
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 }

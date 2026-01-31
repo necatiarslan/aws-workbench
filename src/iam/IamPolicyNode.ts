@@ -49,7 +49,7 @@ export class IamPolicyNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeOpen(): Promise<void> {

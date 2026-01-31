@@ -14,7 +14,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
-const TreeState_1 = require("../tree/TreeState");
 const TreeView_1 = require("../tree/TreeView");
 class FolderNode extends NodeBase_1.NodeBase {
     FolderName = "";
@@ -41,11 +40,11 @@ class FolderNode extends NodeBase_1.NodeBase {
         this.FolderName = newName;
         this.label = newName;
         this.RefreshTree();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.FolderNode = FolderNode;

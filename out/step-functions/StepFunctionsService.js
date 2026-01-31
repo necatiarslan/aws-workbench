@@ -4,7 +4,6 @@ exports.StepFunctionsService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const StateMachineNode_1 = require("./StateMachineNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -48,7 +47,7 @@ class StepFunctionsService extends ServiceBase_1.ServiceBase {
         for (const selectedStateMachine of selectedStateMachineList) {
             new StateMachineNode_1.StateMachineNode(selectedStateMachine, node).Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.StepFunctionsService = StepFunctionsService;

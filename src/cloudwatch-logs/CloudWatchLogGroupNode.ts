@@ -2,8 +2,6 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
-import { TreeState } from '../tree/TreeState';
-import { Session } from '../common/Session';
 import  { CloudWatchLogView } from './CloudWatchLogView';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -74,12 +72,12 @@ export class CloudWatchLogGroupNode extends NodeBase {
                 newNode.LogGroup = this.LogGroup;
 			}
 		}
-        TreeState.save();
+        this.TreeSave();
     }
 
     public handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     public handleNodeView(): void {

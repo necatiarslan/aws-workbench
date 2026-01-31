@@ -4,7 +4,6 @@ exports.S3Service = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const S3BucketNode_1 = require("./S3BucketNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -32,7 +31,7 @@ class S3Service extends ServiceBase_1.ServiceBase {
         for (var selectedBucket of selectedBucketList) {
             let bucketNode = new S3BucketNode_1.S3BucketNode(selectedBucket, node);
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.S3Service = S3Service;

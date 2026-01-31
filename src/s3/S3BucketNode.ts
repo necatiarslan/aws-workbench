@@ -37,7 +37,7 @@ export class S3BucketNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     public async LoadDefaultChildren(): Promise<void> {
@@ -63,7 +63,7 @@ export class S3BucketNode extends NodeBase {
         if (!this.IsShortcutExists(key)) {
             this.Shortcuts.push(key);
             this.ShortcutGroupNode?.NodeRefresh();
-            TreeState.save();
+            this.TreeSave();
         }
     }
 
@@ -71,7 +71,7 @@ export class S3BucketNode extends NodeBase {
     {
         this.Shortcuts = this.Shortcuts.filter(k => k !== key);
         this.ShortcutGroupNode?.NodeRefresh();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private handleNodeView(): void {

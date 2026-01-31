@@ -23,7 +23,7 @@ export class LambdaTriggerFileNode extends NodeBase {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         lambdaNode.TriggerFiles = lambdaNode.TriggerFiles.filter(tf => tf.id !== this.id);
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeEdit(): Promise<void> {

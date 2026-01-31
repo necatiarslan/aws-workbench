@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const uuid_1 = require("uuid");
-const TreeState_1 = require("../tree/TreeState");
 const SQSSendAdhocNode_1 = require("./SQSSendAdhocNode");
 const SQSSendFileNode_1 = require("./SQSSendFileNode");
 const SQSQueueNode_1 = require("./SQSQueueNode");
@@ -56,7 +55,7 @@ class SQSSendGroupNode extends NodeBase_1.NodeBase {
             const id = (0, uuid_1.v4)();
             queueNode.MessageFiles.push({ id, path: filePath });
             new SQSSendFileNode_1.SQSSendFileNode(filePath, this, id);
-            TreeState_1.TreeState.save();
+            this.TreeSave();
         }
     }
 }

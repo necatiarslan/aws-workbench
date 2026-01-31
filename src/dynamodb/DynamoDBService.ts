@@ -51,6 +51,6 @@ export class DynamoDBService extends ServiceBase {
             new DynamoDBTableNode(selectedTable, node).Region = selectedRegion;
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

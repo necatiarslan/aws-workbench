@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const LambdaTriggerFileNode_1 = require("./LambdaTriggerFileNode");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -32,7 +31,7 @@ class LambdaTriggerGroupNode extends NodeBase_1.NodeBase {
             const node = new LambdaTriggerFileNode_1.LambdaTriggerFileNode(fileName, this);
             node.FilePath = filePath;
             lambdaNode.TriggerFiles.push({ id: node.id || '', path: filePath });
-            TreeState_1.TreeState.save();
+            this.TreeSave();
         }
     }
     handleNodeRefresh() {

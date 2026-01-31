@@ -62,7 +62,7 @@ export class SNSPublishGroupNode extends NodeBase {
             // Create the file node
             new SNSPublishFileNode(filePath, id, this);
             
-            TreeState.save();
+            this.TreeSave();
             this.RefreshTree()
             ui.showInfoMessage('Message file added successfully');
         }

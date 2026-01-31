@@ -4,7 +4,6 @@ exports.DynamoDBService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const DynamoDBTableNode_1 = require("./DynamoDBTableNode");
-const TreeState_1 = require("../tree/TreeState");
 const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
@@ -50,7 +49,7 @@ class DynamoDBService extends ServiceBase_1.ServiceBase {
         for (const selectedTable of selectedTableList) {
             new DynamoDBTableNode_1.DynamoDBTableNode(selectedTable, node).Region = selectedRegion;
         }
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.DynamoDBService = DynamoDBService;

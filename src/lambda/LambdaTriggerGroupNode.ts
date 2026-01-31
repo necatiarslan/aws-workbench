@@ -38,7 +38,7 @@ export class LambdaTriggerGroupNode extends NodeBase {
             const node = new LambdaTriggerFileNode(fileName, this);
             node.FilePath = filePath;
             lambdaNode.TriggerFiles.push({ id: node.id || '', path: filePath });
-            TreeState.save();
+            this.TreeSave();
         }
     }
 

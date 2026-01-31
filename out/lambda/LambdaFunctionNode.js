@@ -17,7 +17,6 @@ const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const util_1 = require("util");
-const TreeState_1 = require("../tree/TreeState");
 const LambdaCodeGroupNode_1 = require("./LambdaCodeGroupNode");
 const LambdaEnvGroupNode_1 = require("./LambdaEnvGroupNode");
 const LambdaInfoGroupNode_1 = require("./LambdaInfoGroupNode");
@@ -78,7 +77,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeRun() {
         this.TriggerLambda();

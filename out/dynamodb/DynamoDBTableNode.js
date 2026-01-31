@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const ServiceHub_1 = require("../tree/ServiceHub");
 const DynamoDBKeysGroupNode_1 = require("./DynamoDBKeysGroupNode");
 const DynamoDBIndexesGroupNode_1 = require("./DynamoDBIndexesGroupNode");
@@ -69,7 +68,7 @@ class DynamoDBTableNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeRun() {
         // Open Query View

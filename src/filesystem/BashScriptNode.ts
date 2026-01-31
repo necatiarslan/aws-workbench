@@ -31,7 +31,7 @@ export class BashScriptNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private handleNodeView(): void {
@@ -42,7 +42,7 @@ export class BashScriptNode extends NodeBase {
         let scriptContent = await vscode.window.showInputBox({ placeHolder: 'Script', value: this.Script });
         if(!scriptContent){ return; }
         this.Script = scriptContent;
-        TreeState.save();   
+        this.TreeSave();   
     }
 
     private handleNodeRun(): void {

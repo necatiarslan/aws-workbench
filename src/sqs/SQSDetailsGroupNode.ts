@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -11,7 +10,7 @@ export class SQSDetailsGroupNode extends NodeBase {
 
     constructor(label: string, parent?: NodeBase) {
         super(label, parent);
-        this.Icon = "list-flat";
+        this.Icon = "info";
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         
         // Attach event handlers

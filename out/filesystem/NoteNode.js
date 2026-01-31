@@ -13,7 +13,6 @@ exports.NoteNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
-const TreeState_1 = require("../tree/TreeState");
 const NoteView_1 = require("./NoteView");
 class NoteNode extends NodeBase_1.NodeBase {
     NoteTitle = "";
@@ -28,7 +27,7 @@ class NoteNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeEdit() {
         // Open in rich text editor

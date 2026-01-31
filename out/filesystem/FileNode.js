@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileNode = void 0;
 const serialization_1 = require("../common/serialization");
 const NodeBase_1 = require("../tree/NodeBase");
-const TreeState_1 = require("../tree/TreeState");
 const ui = require("../common/UI");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 class FileNode extends NodeBase_1.NodeBase {
@@ -29,7 +28,7 @@ class FileNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeOpen() {
         ui.openFile(this.FilePath);

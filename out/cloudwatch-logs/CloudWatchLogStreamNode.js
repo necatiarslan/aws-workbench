@@ -13,7 +13,6 @@ exports.CloudWatchLogStreamNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
-const TreeState_1 = require("../tree/TreeState");
 const CloudWatchLogView_1 = require("./CloudWatchLogView");
 class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     constructor(LogStream, parent) {
@@ -32,7 +31,7 @@ class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     Region = "";
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     handleNodeView() {
         CloudWatchLogView_1.CloudWatchLogView.Render(this.Region, this.LogGroup, this.LogStream);

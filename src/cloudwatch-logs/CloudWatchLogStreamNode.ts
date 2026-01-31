@@ -35,7 +35,7 @@ export class CloudWatchLogStreamNode extends NodeBase {
 
     public handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     public handleNodeView(): void {

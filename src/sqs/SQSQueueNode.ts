@@ -54,13 +54,13 @@ export class SQSQueueNode extends NodeBase {
     public async LoadDefaultChildren(): Promise<void> {
         new SQSSendGroupNode("Send", this);
         new SQSReceiveGroupNode("Receive", this);
-        new SQSDetailsGroupNode("Details", this);
+        new SQSDetailsGroupNode("Info", this);
         new SQSPolicyNode("Policy", this);
     }
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeInfo(): Promise<void> {
@@ -121,12 +121,12 @@ export class SQSQueueNode extends NodeBase {
     public AddMessageFile(filePath: string): void {
         const id = uuidv4();
         this.MessageFiles.push({ id, path: filePath });
-        TreeState.save();
+        this.TreeSave();
     }
 
     public RemoveMessageFile(id: string): void {
         this.MessageFiles = this.MessageFiles.filter(f => f.id !== id);
-        TreeState.save();
+        this.TreeSave();
     }
 }
 

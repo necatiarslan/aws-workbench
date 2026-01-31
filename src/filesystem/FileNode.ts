@@ -28,7 +28,7 @@ export class FileNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private handleNodeOpen(): void {

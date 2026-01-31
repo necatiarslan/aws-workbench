@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const SNSPublishGroupNode_1 = require("./SNSPublishGroupNode");
 const SNSSubscriptionsGroupNode_1 = require("./SNSSubscriptionsGroupNode");
 class SNSTopicNode extends NodeBase_1.NodeBase {
@@ -43,7 +42,7 @@ class SNSTopicNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeInfo() {
         ui.logToOutput('SNSTopicNode.handleNodeInfo Started');
@@ -87,11 +86,11 @@ class SNSTopicNode extends NodeBase_1.NodeBase {
     AddMessageFile(filePath) {
         const id = Date.now().toString() + Math.floor(Math.random() * 1000).toString();
         this.MessageFiles.push({ id, path: filePath });
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     RemoveMessageFile(id) {
         this.MessageFiles = this.MessageFiles.filter(f => f.id !== id);
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.SNSTopicNode = SNSTopicNode;

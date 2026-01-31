@@ -1,11 +1,8 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { v4 as uuidv4 } from 'uuid';
-import { TreeState } from '../tree/TreeState';
 import { SQSQueueNode } from './SQSQueueNode';
 import { SQSSendGroupNode } from './SQSSendGroupNode';
 import * as fs from 'fs';
@@ -29,10 +26,8 @@ export class SQSSendFileNode extends NodeBase {
         this.SetContextValue();
     }
 
-    @Serialize()
     public FilePath: string = "";
 
-    @Serialize()
     public FileId: string = "";
 
     public GetQueueNode(): SQSQueueNode | undefined {
@@ -54,10 +49,9 @@ export class SQSSendFileNode extends NodeBase {
     private handleNodeRemove(): void {
         const queueNode = this.GetQueueNode();
         if (queueNode) {
-            queueNode.MessageFiles = queueNode.MessageFiles.filter(f => f.id !== this.FileId);
+            queueNode.RemoveMessageFile(this.FileId);
+            this.Remove();
         }
-        this.Remove();
-        TreeState.save();
     }
 
     private async handleNodeRun(): Promise<void> {

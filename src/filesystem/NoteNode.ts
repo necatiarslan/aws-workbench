@@ -27,7 +27,7 @@ export class NoteNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeEdit(): Promise<void> {

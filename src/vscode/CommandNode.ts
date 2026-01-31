@@ -30,7 +30,7 @@ export class CommandNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private handleNodeView(): void {
@@ -41,7 +41,7 @@ export class CommandNode extends NodeBase {
         let commandContent = await vscode.window.showInputBox({ placeHolder: 'Command', value: this.Command });
         if(!commandContent){ return; }
         this.Command = commandContent;
-        TreeState.save();   
+        this.TreeSave();   
     }
 
     private handleNodeRun(): void {

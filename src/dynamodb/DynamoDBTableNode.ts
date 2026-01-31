@@ -71,7 +71,7 @@ export class DynamoDBTableNode extends NodeBase {
 
     private handleNodeRemove(): void {
         this.Remove();
-        TreeState.save();
+        this.TreeSave();
     }
 
     private async handleNodeRun(): Promise<void> {

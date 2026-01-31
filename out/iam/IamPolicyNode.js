@@ -16,7 +16,6 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const IamPolicyVersionsGroupNode_1 = require("./IamPolicyVersionsGroupNode");
 const IamPolicyAttachmentsGroupNode_1 = require("./IamPolicyAttachmentsGroupNode");
 const IamPolicyInfoGroupNode_1 = require("./IamPolicyInfoGroupNode");
@@ -45,7 +44,7 @@ class IamPolicyNode extends NodeBase_1.NodeBase {
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeOpen() {
         ui.logToOutput('IamPolicyNode.NodeOpen Started');

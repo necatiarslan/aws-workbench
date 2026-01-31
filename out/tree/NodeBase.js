@@ -295,7 +295,7 @@ class NodeBase extends vscode.TreeItem {
             // Swap with previous sibling
             [siblings[index - 1], siblings[index]] = [siblings[index], siblings[index - 1]];
             this.RefreshTree(this.Parent);
-            TreeState_1.TreeState.save();
+            this.TreeSave();
         }
     }
     MoveDown() {
@@ -305,7 +305,7 @@ class NodeBase extends vscode.TreeItem {
             // Swap with next sibling
             [siblings[index], siblings[index + 1]] = [siblings[index + 1], siblings[index]];
             this.RefreshTree(this.Parent);
-            TreeState_1.TreeState.save();
+            this.TreeSave();
         }
     }
     MoveToFolder(targetFolder) {
@@ -331,7 +331,7 @@ class NodeBase extends vscode.TreeItem {
         targetFolder.Children.push(this);
         targetFolder.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
         this.RefreshTree(targetFolder);
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async SetCustomTooltip() {
         const tooltip = await vscode.window.showInputBox({
@@ -343,7 +343,7 @@ class NodeBase extends vscode.TreeItem {
         }
         this.CustomTooltip = tooltip.trim() || undefined;
         this.RefreshTree();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     /**
      * Finalize node after deserialization.
@@ -383,7 +383,7 @@ class NodeBase extends vscode.TreeItem {
         alias = alias.trim();
         this.Alias = alias;
         this.RefreshTree();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     RefreshTree(node) {
         if (node) {
@@ -391,6 +391,9 @@ class NodeBase extends vscode.TreeItem {
             return;
         }
         TreeProvider_1.TreeProvider.Current.Refresh(this);
+    }
+    TreeSave() {
+        TreeState_1.TreeState.save();
     }
     // Event-based node operation methods - fire events that handlers are subscribed to
     async NodeAdd() {

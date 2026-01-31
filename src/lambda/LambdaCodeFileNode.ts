@@ -41,7 +41,7 @@ export class LambdaCodeFileNode extends NodeBase {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         lambdaNode.CodePath = selectedPath[0].fsPath;
         this.label = `Code Path: ${lambdaNode.CodePath}`;
-        TreeState.save();
+        this.TreeSave();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Set Successfully');
         this.RefreshTree()
@@ -53,7 +53,7 @@ export class LambdaCodeFileNode extends NodeBase {
         const lambdaNode = this.GetAwsResourceNode() as LambdaFunctionNode;
         lambdaNode.CodePath = '';
         this.label = 'Select File';
-        TreeState.save();
+        this.TreeSave();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Removed Successfully');
         this.RefreshTree()

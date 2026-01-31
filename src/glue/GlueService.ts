@@ -51,6 +51,6 @@ export class GlueService extends ServiceBase {
             new GlueJobNode(selectedJob, node).Region = selectedRegion;
         }
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

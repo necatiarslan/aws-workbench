@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const fs = require("fs");
-const TreeState_1 = require("../tree/TreeState");
 const StateMachineTriggerFileNode_1 = require("./StateMachineTriggerFileNode");
 class StateMachineTriggerGroupNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
@@ -60,7 +59,7 @@ class StateMachineTriggerGroupNode extends NodeBase_1.NodeBase {
                 path: filePath
             };
             stateMachineNode.PayloadFiles.push(payloadEntry);
-            TreeState_1.TreeState.save();
+            this.TreeSave();
             this.RefreshTree(stateMachineNode);
         }
         catch (error) {

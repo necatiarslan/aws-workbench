@@ -17,7 +17,6 @@ const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const uuid_1 = require("uuid");
-const TreeState_1 = require("../tree/TreeState");
 const SQSSendGroupNode_1 = require("./SQSSendGroupNode");
 const SQSReceiveGroupNode_1 = require("./SQSReceiveGroupNode");
 const SQSDetailsGroupNode_1 = require("./SQSDetailsGroupNode");
@@ -45,12 +44,12 @@ class SQSQueueNode extends NodeBase_1.NodeBase {
     async LoadDefaultChildren() {
         new SQSSendGroupNode_1.SQSSendGroupNode("Send", this);
         new SQSReceiveGroupNode_1.SQSReceiveGroupNode("Receive", this);
-        new SQSDetailsGroupNode_1.SQSDetailsGroupNode("Details", this);
+        new SQSDetailsGroupNode_1.SQSDetailsGroupNode("Info", this);
         new SQSPolicyNode_1.SQSPolicyNode("Policy", this);
     }
     handleNodeRemove() {
         this.Remove();
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     async handleNodeInfo() {
         ui.logToOutput('SQSQueueNode.handleNodeInfo Started');
@@ -102,11 +101,11 @@ class SQSQueueNode extends NodeBase_1.NodeBase {
     AddMessageFile(filePath) {
         const id = (0, uuid_1.v4)();
         this.MessageFiles.push({ id, path: filePath });
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
     RemoveMessageFile(id) {
         this.MessageFiles = this.MessageFiles.filter(f => f.id !== id);
-        TreeState_1.TreeState.save();
+        this.TreeSave();
     }
 }
 exports.SQSQueueNode = SQSQueueNode;

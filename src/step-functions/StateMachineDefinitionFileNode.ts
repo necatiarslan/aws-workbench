@@ -60,7 +60,7 @@ export class StateMachineDefinitionFileNode extends NodeBase {
             const filePath = uri[0].fsPath;
             stateMachineNode.CodePath = filePath;
             this.label = `File: ${stateMachineNode.CodePath}`;
-            TreeState.save();
+            this.TreeSave();
             ui.logToOutput('File: ' + stateMachineNode.CodePath);
             ui.showInfoMessage('Definition file set successfully');
             this.RefreshTree()
@@ -96,7 +96,7 @@ export class StateMachineDefinitionFileNode extends NodeBase {
 
         stateMachineNode.CodePath = '';
         this.label = 'Select File';
-        TreeState.save();
+        this.TreeSave();
         ui.logToOutput('Definition file removed: ' + stateMachineNode.CodePath);
         ui.showInfoMessage('Definition file removed successfully');
         this.RefreshTree()

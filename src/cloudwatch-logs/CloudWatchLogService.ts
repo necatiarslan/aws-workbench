@@ -36,6 +36,6 @@ export class CloudWatchLogService extends ServiceBase {
 			new CloudWatchLogGroupNode(selectedLogGroup, node).Region = selectedRegion;
 		}
 
-        TreeState.save();
+        this.TreeSave();
     }
 }

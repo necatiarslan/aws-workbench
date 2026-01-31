@@ -4,7 +4,6 @@ exports.SNSPublishGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
-const TreeState_1 = require("../tree/TreeState");
 const SNSPublishAdhocNode_1 = require("./SNSPublishAdhocNode");
 const SNSPublishFileNode_1 = require("./SNSPublishFileNode");
 class SNSPublishGroupNode extends NodeBase_1.NodeBase {
@@ -53,7 +52,7 @@ class SNSPublishGroupNode extends NodeBase_1.NodeBase {
             topicNode.MessageFiles.push({ id, path: filePath });
             // Create the file node
             new SNSPublishFileNode_1.SNSPublishFileNode(filePath, id, this);
-            TreeState_1.TreeState.save();
+            this.TreeSave();
             this.RefreshTree();
             ui.showInfoMessage('Message file added successfully');
         }

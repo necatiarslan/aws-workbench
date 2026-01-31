@@ -55,7 +55,7 @@ export class SNSService extends ServiceBase {
             topicNode.Region = selectedRegion;
         }
 
-        TreeState.save();
+        this.TreeSave();
         ui.logToOutput('SNSService.Add Completed - Added ' + selectedTopicList.length + ' topic(s)');
     }
 }
