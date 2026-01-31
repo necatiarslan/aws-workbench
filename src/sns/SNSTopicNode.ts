@@ -6,6 +6,7 @@ import * as api from './API';
 import * as ui from '../common/UI';
 import { SNSPublishGroupNode } from './SNSPublishGroupNode';
 import { SNSSubscriptionsGroupNode } from './SNSSubscriptionsGroupNode';
+import { SNSInfoGroupNode } from './SNSInfoGroupNode';
 
 export class SNSTopicNode extends NodeBase {
 
@@ -38,9 +39,29 @@ export class SNSTopicNode extends NodeBase {
     @Serialize()
     public MessageFiles: { id: string; path: string }[] = [];
 
+    private _attributes: Record<string, string> | undefined = undefined;
+
+    public get Attributes(): Promise<Record<string, string> | undefined> {
+        return this.getAttributes();
+    }
+
+    private async getAttributes(): Promise<Record<string, string> | undefined> {
+        if (!this._attributes) {
+            const response = await api.GetTopicAttributes(this.Region, this.TopicArn);
+            if (response.isSuccessful) {
+                this._attributes = response.result?.Attributes;
+            } else {
+                ui.logToOutput('api.GetTopicAttributes Error !!!', response.error);
+                ui.showErrorMessage('Get Topic Attributes Error !!!', response.error);
+            }
+        }
+        return this._attributes;
+    }
+
     public async LoadDefaultChildren(): Promise<void> {
         new SNSPublishGroupNode("Publish", this);
         new SNSSubscriptionsGroupNode("Subscriptions", this);
+        new SNSInfoGroupNode("Info", this);
     }
 
     private handleNodeRemove(): void {
@@ -51,27 +72,11 @@ export class SNSTopicNode extends NodeBase {
     private async handleNodeInfo(): Promise<void> {
         ui.logToOutput('SNSTopicNode.handleNodeInfo Started');
 
-        if (!this.TopicArn || !this.Region) {
-            ui.showWarningMessage('Topic ARN or region is not set.');
-            return;
-        }
-
-        if (this.IsWorking) {
-            return;
-        }
-
         this.StartWorking();
 
         try {
-            const result = await api.GetTopicAttributes(this.Region, this.TopicArn);
 
-            if (!result.isSuccessful) {
-                ui.logToOutput('api.GetTopicAttributes Error !!!', result.error);
-                ui.showErrorMessage('Get Topic Attributes Error !!!', result.error);
-                return;
-            }
-
-            const attributes = result.result?.Attributes || {};
+            const attributes = await this.Attributes;
             const info = {
                 TopicArn: this.TopicArn,
                 Region: this.Region,

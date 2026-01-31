@@ -11,6 +11,7 @@ import { StateMachineLogsGroupNode } from './StateMachineLogsGroupNode';
 import { StateMachineStudioView } from './StateMachineStudioView';
 import { Session } from '../common/Session';
 import { StateMachineExecutionNode } from './StateMachineExecutionNode';
+import { StateMachineInfoGroupNode } from './StateMachineInfoGroupNode';
 import * as fs from 'fs';
 
 export class StateMachineNode extends NodeBase {
@@ -104,6 +105,7 @@ export class StateMachineNode extends NodeBase {
         new StateMachineTriggerGroupNode("Trigger", this);
         new StateMachineExecutionsGroupNode("Executions", this);
         new StateMachineLogsGroupNode("Logs", this);
+        new StateMachineInfoGroupNode("Info", this);
     }
 
     private handleNodeRemove(): void {

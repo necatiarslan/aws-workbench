@@ -18,6 +18,7 @@ const api = require("./API");
 const ui = require("../common/UI");
 const SNSPublishGroupNode_1 = require("./SNSPublishGroupNode");
 const SNSSubscriptionsGroupNode_1 = require("./SNSSubscriptionsGroupNode");
+const SNSInfoGroupNode_1 = require("./SNSInfoGroupNode");
 class SNSTopicNode extends NodeBase_1.NodeBase {
     constructor(TopicArn, parent) {
         super(api.GetTopicNameFromArn(TopicArn), parent);
@@ -36,9 +37,27 @@ class SNSTopicNode extends NodeBase_1.NodeBase {
     TopicArn = "";
     Region = "";
     MessageFiles = [];
+    _attributes = undefined;
+    get Attributes() {
+        return this.getAttributes();
+    }
+    async getAttributes() {
+        if (!this._attributes) {
+            const response = await api.GetTopicAttributes(this.Region, this.TopicArn);
+            if (response.isSuccessful) {
+                this._attributes = response.result?.Attributes;
+            }
+            else {
+                ui.logToOutput('api.GetTopicAttributes Error !!!', response.error);
+                ui.showErrorMessage('Get Topic Attributes Error !!!', response.error);
+            }
+        }
+        return this._attributes;
+    }
     async LoadDefaultChildren() {
         new SNSPublishGroupNode_1.SNSPublishGroupNode("Publish", this);
         new SNSSubscriptionsGroupNode_1.SNSSubscriptionsGroupNode("Subscriptions", this);
+        new SNSInfoGroupNode_1.SNSInfoGroupNode("Info", this);
     }
     handleNodeRemove() {
         this.Remove();
@@ -46,22 +65,9 @@ class SNSTopicNode extends NodeBase_1.NodeBase {
     }
     async handleNodeInfo() {
         ui.logToOutput('SNSTopicNode.handleNodeInfo Started');
-        if (!this.TopicArn || !this.Region) {
-            ui.showWarningMessage('Topic ARN or region is not set.');
-            return;
-        }
-        if (this.IsWorking) {
-            return;
-        }
         this.StartWorking();
         try {
-            const result = await api.GetTopicAttributes(this.Region, this.TopicArn);
-            if (!result.isSuccessful) {
-                ui.logToOutput('api.GetTopicAttributes Error !!!', result.error);
-                ui.showErrorMessage('Get Topic Attributes Error !!!', result.error);
-                return;
-            }
-            const attributes = result.result?.Attributes || {};
+            const attributes = await this.Attributes;
             const info = {
                 TopicArn: this.TopicArn,
                 Region: this.Region,
