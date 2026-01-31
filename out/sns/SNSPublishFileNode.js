@@ -6,7 +6,6 @@ const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const TreeState_1 = require("../tree/TreeState");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const path = require("path");
 class SNSPublishFileNode extends NodeBase_1.NodeBase {
     constructor(filePath, fileId, parent) {
@@ -89,7 +88,7 @@ class SNSPublishFileNode extends NodeBase_1.NodeBase {
         }
         this.Remove();
         TreeState_1.TreeState.save();
-        TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+        this.RefreshTree(this.Parent);
     }
 }
 exports.SNSPublishFileNode = SNSPublishFileNode;

@@ -2,7 +2,6 @@ import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { DynamoDBTableNode } from './DynamoDBTableNode';
 import { DynamoDBTagNode } from './DynamoDBTagNode';
 
@@ -61,7 +60,7 @@ export class DynamoDBTagsGroupNode extends NodeBase {
             ui.logToOutput('DynamoDBTagsGroupNode.handleNodeRefresh Error !!!', error);
         } finally {
             this.StopWorking();
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
         }
     }
 }

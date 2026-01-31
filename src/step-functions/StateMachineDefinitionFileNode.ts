@@ -4,7 +4,6 @@ import * as ui from '../common/UI';
 import { StateMachineNode } from './StateMachineNode';
 import * as fs from 'fs';
 import { TreeState } from '../tree/TreeState';
-import { TreeProvider } from '../tree/TreeProvider';
 import { StateMachineStudioView } from './StateMachineStudioView';
 import { Session } from '../common/Session';
 
@@ -64,7 +63,7 @@ export class StateMachineDefinitionFileNode extends NodeBase {
             TreeState.save();
             ui.logToOutput('File: ' + stateMachineNode.CodePath);
             ui.showInfoMessage('Definition file set successfully');
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
         }
     }
 
@@ -100,6 +99,6 @@ export class StateMachineDefinitionFileNode extends NodeBase {
         TreeState.save();
         ui.logToOutput('Definition file removed: ' + stateMachineNode.CodePath);
         ui.showInfoMessage('Definition file removed successfully');
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 }

@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { LambdaEnvNode } from './LambdaEnvNode';
-import { TreeProvider } from '../tree/TreeProvider';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
 
 export class LambdaEnvGroupNode extends NodeBase {
@@ -69,7 +68,7 @@ export class LambdaEnvGroupNode extends NodeBase {
         // }
 
         this.StopWorking();
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 
 }

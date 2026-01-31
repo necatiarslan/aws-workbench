@@ -1,10 +1,8 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { SNSTopicNode } from './SNSTopicNode';
-import { TreeProvider } from '../tree/TreeProvider';
 
 export class SNSSubscriptionNode extends NodeBase {
 
@@ -65,7 +63,7 @@ export class SNSSubscriptionNode extends NodeBase {
         if (this.IsPending) {
             ui.showInfoMessage('Pending subscription removed from view. It will be deleted automatically if not confirmed.');
             this.Remove();
-            TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
             return;
         }
 
@@ -99,7 +97,7 @@ export class SNSSubscriptionNode extends NodeBase {
             ui.showInfoMessage('Subscription removed successfully.');
 
             this.Remove();
-            TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
         } catch (error: any) {
             ui.logToOutput('SNSSubscriptionNode.handleNodeRemove Error !!!', error);
             ui.showErrorMessage('Unsubscribe Error !!!', error);

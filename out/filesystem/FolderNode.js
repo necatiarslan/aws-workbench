@@ -15,7 +15,6 @@ const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const vscode = require("vscode");
 const TreeState_1 = require("../tree/TreeState");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const TreeView_1 = require("../tree/TreeView");
 class FolderNode extends NodeBase_1.NodeBase {
     FolderName = "";
@@ -41,7 +40,7 @@ class FolderNode extends NodeBase_1.NodeBase {
         }
         this.FolderName = newName;
         this.label = newName;
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
         TreeState_1.TreeState.save();
     }
     handleNodeRemove() {

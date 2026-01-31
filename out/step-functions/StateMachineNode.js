@@ -25,7 +25,6 @@ const StateMachineStudioView_1 = require("./StateMachineStudioView");
 const Session_1 = require("../common/Session");
 const StateMachineExecutionNode_1 = require("./StateMachineExecutionNode");
 const fs = require("fs");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class StateMachineNode extends NodeBase_1.NodeBase {
     constructor(stateMachineName, parent) {
         super(stateMachineName, parent);
@@ -224,7 +223,7 @@ class StateMachineNode extends NodeBase_1.NodeBase {
                     newExecutionNode.Status = 'RUNNING';
                     newExecutionNode.StartDate = new Date().toLocaleString();
                     newExecutionNode.StopDate = '';
-                    TreeProvider_1.TreeProvider.Current.Refresh(node);
+                    this.RefreshTree(this.Parent);
                 }
             }
             else {

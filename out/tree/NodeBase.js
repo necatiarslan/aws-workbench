@@ -51,7 +51,7 @@ class NodeBase extends vscode.TreeItem {
         else {
             NodeBase.RootNodes.push(this);
         }
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
     EnableNodeAlias = false;
     IsOnNodeLoadChildrenCalled = false;
@@ -82,12 +82,12 @@ class NodeBase extends vscode.TreeItem {
     StartWorking() {
         this.IsWorking = true;
         this.iconPath = new vscode.ThemeIcon("loading~spin");
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
     StopWorking() {
         this.IsWorking = false;
         this.iconPath = new vscode.ThemeIcon(this._icon);
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
     get IsSerializable() {
         return NodeRegistry_1.NodeRegistry.has(this.constructor.name);
@@ -239,7 +239,7 @@ class NodeBase extends vscode.TreeItem {
     set IsHidden(value) {
         this._isHidden = value;
         this.SetContextValue();
-        TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+        this.RefreshTree(this.Parent);
         for (const child of this.Children) {
             child.IsHidden = value;
         }
@@ -254,7 +254,7 @@ class NodeBase extends vscode.TreeItem {
     set IsFavorite(value) {
         this._isFavorite = value;
         this.SetContextValue();
-        TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+        this.RefreshTree(this.Parent);
         for (const child of this.Children) {
             child.IsFavorite = value;
         }
@@ -286,7 +286,7 @@ class NodeBase extends vscode.TreeItem {
                 NodeBase.RootNodes.splice(index, 1);
             }
         }
-        TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+        this.RefreshTree(this.Parent);
     }
     MoveUp() {
         const siblings = this.Parent ? this.Parent.Children : NodeBase.RootNodes;
@@ -294,7 +294,7 @@ class NodeBase extends vscode.TreeItem {
         if (index > 0) {
             // Swap with previous sibling
             [siblings[index - 1], siblings[index]] = [siblings[index], siblings[index - 1]];
-            TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
             TreeState_1.TreeState.save();
         }
     }
@@ -304,7 +304,7 @@ class NodeBase extends vscode.TreeItem {
         if (index >= 0 && index < siblings.length - 1) {
             // Swap with next sibling
             [siblings[index], siblings[index + 1]] = [siblings[index + 1], siblings[index]];
-            TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
             TreeState_1.TreeState.save();
         }
     }
@@ -318,7 +318,7 @@ class NodeBase extends vscode.TreeItem {
                     this.Parent.collapsibleState = vscode.TreeItemCollapsibleState.None;
                 }
             }
-            TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
         }
         else {
             const index = NodeBase.RootNodes.indexOf(this);
@@ -330,7 +330,7 @@ class NodeBase extends vscode.TreeItem {
         this.Parent = targetFolder;
         targetFolder.Children.push(this);
         targetFolder.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-        TreeProvider_1.TreeProvider.Current.Refresh(targetFolder);
+        this.RefreshTree(targetFolder);
         TreeState_1.TreeState.save();
     }
     async SetCustomTooltip() {
@@ -342,7 +342,7 @@ class NodeBase extends vscode.TreeItem {
             return;
         }
         this.CustomTooltip = tooltip.trim() || undefined;
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
         TreeState_1.TreeState.save();
     }
     /**
@@ -382,8 +382,15 @@ class NodeBase extends vscode.TreeItem {
         }
         alias = alias.trim();
         this.Alias = alias;
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
         TreeState_1.TreeState.save();
+    }
+    RefreshTree(node) {
+        if (node) {
+            TreeProvider_1.TreeProvider.Current.Refresh(node);
+            return;
+        }
+        TreeProvider_1.TreeProvider.Current.Refresh(this);
     }
     // Event-based node operation methods - fire events that handlers are subscribed to
     async NodeAdd() {

@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
-import { TreeProvider } from '../tree/TreeProvider';
 
 export class LambdaCodeDownloadNode extends NodeBase {
 
@@ -224,7 +223,7 @@ export class LambdaCodeDownloadNode extends NodeBase {
                 // Store code path in the Lambda function node or a code path node
                 ui.showInfoMessage('Code path set successfully');
                 ui.logToOutput('Code Path: ' + codePathToSet);
-                TreeProvider.Current.Refresh(this.Parent);
+                this.RefreshTree(this.Parent);
             }
 
             const openChoice = await vscode.window.showInformationMessage(

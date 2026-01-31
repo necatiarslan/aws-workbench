@@ -4,7 +4,6 @@ exports.SQSDlqLinkNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const SQSQueueNode_1 = require("./SQSQueueNode");
 class SQSDlqLinkNode extends NodeBase_1.NodeBase {
     DlqArn = "";
@@ -27,7 +26,7 @@ class SQSDlqLinkNode extends NodeBase_1.NodeBase {
         const dlqNode = this.findDlqInTree();
         if (dlqNode) {
             // Reveal the node in the tree
-            TreeProvider_1.TreeProvider.Current?.Refresh();
+            this.RefreshTree();
             ui.showInfoMessage(`Found DLQ: ${dlqNode.label}`);
         }
         else {

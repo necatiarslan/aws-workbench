@@ -2,7 +2,6 @@ import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { IamPolicyNode } from './IamPolicyNode';
 import { IamPolicyVersionNode } from './IamPolicyVersionNode';
 
@@ -71,7 +70,7 @@ export class IamPolicyVersionsGroupNode extends NodeBase {
         }
 
         this.StopWorking();
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 
 }

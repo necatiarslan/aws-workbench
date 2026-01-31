@@ -7,7 +7,6 @@ const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const SNSSubscriptionNode_1 = require("./SNSSubscriptionNode");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class SNSSubscriptionsGroupNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
@@ -59,7 +58,7 @@ class SNSSubscriptionsGroupNode extends NodeBase_1.NodeBase {
                     new SNSSubscriptionNode_1.SNSSubscriptionNode(sub.Protocol, sub.Endpoint, sub.SubscriptionArn, this);
                 }
             }
-            TreeProvider_1.TreeProvider.Current.Refresh(this);
+            this.RefreshTree();
         }
         catch (error) {
             ui.logToOutput('SNSSubscriptionsGroupNode.loadSubscriptions Error !!!', error);
@@ -137,7 +136,7 @@ class SNSSubscriptionsGroupNode extends NodeBase_1.NodeBase {
             const subscriptionArn = result.result?.SubscriptionArn || 'PendingConfirmation';
             // Create the new subscription node
             new SNSSubscriptionNode_1.SNSSubscriptionNode(selectedProtocol.value, endpoint.trim(), subscriptionArn, this);
-            TreeProvider_1.TreeProvider.Current.Refresh(this);
+            this.RefreshTree();
             if (api.IsSubscriptionPending(subscriptionArn)) {
                 ui.showInfoMessage('Subscription created. Confirmation pending - check email/endpoint for confirmation link.');
             }

@@ -13,7 +13,6 @@ import { StateMachineStudioView } from './StateMachineStudioView';
 import { Session } from '../common/Session';
 import { StateMachineExecutionNode } from './StateMachineExecutionNode';
 import * as fs from 'fs';
-import { TreeProvider } from '../tree/TreeProvider';
 
 export class StateMachineNode extends NodeBase {
 
@@ -260,7 +259,7 @@ export class StateMachineNode extends NodeBase {
                     newExecutionNode.Status = 'RUNNING';
                     newExecutionNode.StartDate = new Date().toLocaleString();
                     newExecutionNode.StopDate = '';
-                    TreeProvider.Current.Refresh(node);
+                    this.RefreshTree(this.Parent);
                 }
             } else {
                 ui.logToOutput('api.StartExecution Error !!!', result.error);

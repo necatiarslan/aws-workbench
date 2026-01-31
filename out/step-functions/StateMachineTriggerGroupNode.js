@@ -6,7 +6,6 @@ const vscode = require("vscode");
 const ui = require("../common/UI");
 const fs = require("fs");
 const TreeState_1 = require("../tree/TreeState");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const StateMachineTriggerFileNode_1 = require("./StateMachineTriggerFileNode");
 class StateMachineTriggerGroupNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
@@ -62,7 +61,7 @@ class StateMachineTriggerGroupNode extends NodeBase_1.NodeBase {
             };
             stateMachineNode.PayloadFiles.push(payloadEntry);
             TreeState_1.TreeState.save();
-            TreeProvider_1.TreeProvider.Current.Refresh(stateMachineNode);
+            this.RefreshTree(stateMachineNode);
         }
         catch (error) {
             ui.logToOutput('Failed to add payload file', error);

@@ -1,8 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { SQSQueueNode } from './SQSQueueNode';
 
 export class SQSDlqLinkNode extends NodeBase {
@@ -34,7 +32,7 @@ export class SQSDlqLinkNode extends NodeBase {
         
         if (dlqNode) {
             // Reveal the node in the tree
-            TreeProvider.Current?.Refresh();
+            this.RefreshTree();
             ui.showInfoMessage(`Found DLQ: ${dlqNode.label}`);
         } else {
             // DLQ not in tree, show info with ARN

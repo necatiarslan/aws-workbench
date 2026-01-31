@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class SNSSubscriptionNode extends NodeBase_1.NodeBase {
     Protocol = "";
     Endpoint = "";
@@ -54,7 +53,7 @@ class SNSSubscriptionNode extends NodeBase_1.NodeBase {
         if (this.IsPending) {
             ui.showInfoMessage('Pending subscription removed from view. It will be deleted automatically if not confirmed.');
             this.Remove();
-            TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
             return;
         }
         // Confirm deletion
@@ -78,7 +77,7 @@ class SNSSubscriptionNode extends NodeBase_1.NodeBase {
             ui.logToOutput('api.Unsubscribe Success');
             ui.showInfoMessage('Subscription removed successfully.');
             this.Remove();
-            TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+            this.RefreshTree(this.Parent);
         }
         catch (error) {
             ui.logToOutput('SNSSubscriptionNode.handleNodeRemove Error !!!', error);

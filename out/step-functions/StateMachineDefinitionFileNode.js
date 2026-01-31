@@ -6,7 +6,6 @@ const vscode = require("vscode");
 const ui = require("../common/UI");
 const fs = require("fs");
 const TreeState_1 = require("../tree/TreeState");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const StateMachineStudioView_1 = require("./StateMachineStudioView");
 const Session_1 = require("../common/Session");
 class StateMachineDefinitionFileNode extends NodeBase_1.NodeBase {
@@ -57,7 +56,7 @@ class StateMachineDefinitionFileNode extends NodeBase_1.NodeBase {
             TreeState_1.TreeState.save();
             ui.logToOutput('File: ' + stateMachineNode.CodePath);
             ui.showInfoMessage('Definition file set successfully');
-            TreeProvider_1.TreeProvider.Current.Refresh(this);
+            this.RefreshTree();
         }
     }
     async handleNodeEdit() {
@@ -92,7 +91,7 @@ class StateMachineDefinitionFileNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
         ui.logToOutput('Definition file removed: ' + stateMachineNode.CodePath);
         ui.showInfoMessage('Definition file removed successfully');
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
 }
 exports.StateMachineDefinitionFileNode = StateMachineDefinitionFileNode;

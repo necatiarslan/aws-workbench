@@ -7,7 +7,6 @@ const ui = require("../common/UI");
 const TreeState_1 = require("../tree/TreeState");
 const SNSPublishAdhocNode_1 = require("./SNSPublishAdhocNode");
 const SNSPublishFileNode_1 = require("./SNSPublishFileNode");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class SNSPublishGroupNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
@@ -55,7 +54,7 @@ class SNSPublishGroupNode extends NodeBase_1.NodeBase {
             // Create the file node
             new SNSPublishFileNode_1.SNSPublishFileNode(filePath, id, this);
             TreeState_1.TreeState.save();
-            TreeProvider_1.TreeProvider.Current.Refresh(this);
+            this.RefreshTree();
             ui.showInfoMessage('Message file added successfully');
         }
     }

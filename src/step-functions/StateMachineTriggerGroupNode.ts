@@ -1,13 +1,9 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import * as fs from 'fs';
 import { StateMachineNode } from './StateMachineNode';
-import * as api from './API';
 import { TreeState } from '../tree/TreeState';
-import { StateMachineExecutionNode } from './StateMachineExecutionNode';
-import { TreeProvider } from '../tree/TreeProvider';
 import { StateMachineTriggerFileNode } from './StateMachineTriggerFileNode';
 
 export class StateMachineTriggerGroupNode extends NodeBase {
@@ -76,7 +72,7 @@ export class StateMachineTriggerGroupNode extends NodeBase {
             stateMachineNode.PayloadFiles.push(payloadEntry);
             
             TreeState.save();
-            TreeProvider.Current.Refresh(stateMachineNode);
+            this.RefreshTree(stateMachineNode);
         } catch (error: any) {
             ui.logToOutput('Failed to add payload file', error);
             ui.showErrorMessage('Failed to add payload file', error);

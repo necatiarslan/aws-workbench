@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { TreeState } from '../tree/TreeState';
 import { LambdaFunctionNode } from './LambdaFunctionNode';
 
@@ -45,7 +44,7 @@ export class LambdaCodeFileNode extends NodeBase {
         TreeState.save();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Set Successfully');
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 
     private async handleNodeRemove(): Promise<void> {
@@ -57,7 +56,7 @@ export class LambdaCodeFileNode extends NodeBase {
         TreeState.save();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Removed Successfully');
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 
     private async handleNodeEdit(): Promise<void> {

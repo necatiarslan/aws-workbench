@@ -4,7 +4,6 @@ exports.DynamoDBKeysGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const DynamoDBKeyNode_1 = require("./DynamoDBKeyNode");
 class DynamoDBKeysGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -58,7 +57,7 @@ class DynamoDBKeysGroupNode extends NodeBase_1.NodeBase {
         }
         finally {
             this.StopWorking();
-            TreeProvider_1.TreeProvider.Current.Refresh(this);
+            this.RefreshTree();
         }
     }
 }

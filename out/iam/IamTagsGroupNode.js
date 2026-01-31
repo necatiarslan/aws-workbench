@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const IamTagNode_1 = require("./IamTagNode");
 class IamTagsGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -87,7 +86,7 @@ class IamTagsGroupNode extends NodeBase_1.NodeBase {
             }
         }
         this.StopWorking();
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
 }
 exports.IamTagsGroupNode = IamTagsGroupNode;

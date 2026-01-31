@@ -1,12 +1,10 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import { TreeState } from '../tree/TreeState';
 import { SNSTopicNode } from './SNSTopicNode';
 import { SNSPublishAdhocNode } from './SNSPublishAdhocNode';
 import { SNSPublishFileNode } from './SNSPublishFileNode';
-import { TreeProvider } from '../tree/TreeProvider';
 
 export class SNSPublishGroupNode extends NodeBase {
 
@@ -65,7 +63,7 @@ export class SNSPublishGroupNode extends NodeBase {
             new SNSPublishFileNode(filePath, id, this);
             
             TreeState.save();
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
             ui.showInfoMessage('Message file added successfully');
         }
     }

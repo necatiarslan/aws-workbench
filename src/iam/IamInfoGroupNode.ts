@@ -1,6 +1,5 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
-import { TreeProvider } from '../tree/TreeProvider';
 import { IamInfoNode } from './IamInfoNode';
 
 export class IamInfoGroupNode extends NodeBase {
@@ -35,7 +34,7 @@ export class IamInfoGroupNode extends NodeBase {
             this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
         }
 
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 
     public SetInfoItems(items: { key: string; value: string }[]): void {

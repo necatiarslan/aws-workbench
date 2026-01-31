@@ -6,7 +6,6 @@ const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 const LambdaEnvNode_1 = require("./LambdaEnvNode");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -56,7 +55,7 @@ class LambdaEnvGroupNode extends NodeBase_1.NodeBase {
         //     this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         // }
         this.StopWorking();
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
 }
 exports.LambdaEnvGroupNode = LambdaEnvGroupNode;

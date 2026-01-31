@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const LambdaInfoNode_1 = require("./LambdaInfoNode");
 class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -62,7 +61,7 @@ class LambdaInfoGroupNode extends NodeBase_1.NodeBase {
             this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
         }
         this.StopWorking();
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
 }
 exports.LambdaInfoGroupNode = LambdaInfoGroupNode;

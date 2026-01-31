@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -183,7 +182,7 @@ class LambdaCodeDownloadNode extends NodeBase_1.NodeBase {
                 // Store code path in the Lambda function node or a code path node
                 ui.showInfoMessage('Code path set successfully');
                 ui.logToOutput('Code Path: ' + codePathToSet);
-                TreeProvider_1.TreeProvider.Current.Refresh(this.Parent);
+                this.RefreshTree(this.Parent);
             }
             const openChoice = await vscode.window.showInformationMessage('Do you want to open the extracted folder?', 'Open Folder', 'Cancel');
             if (openChoice === 'Open Folder') {

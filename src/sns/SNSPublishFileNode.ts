@@ -1,12 +1,9 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
 import { TreeState } from '../tree/TreeState';
 import { SNSTopicNode } from './SNSTopicNode';
-import { TreeProvider } from '../tree/TreeProvider';
 import * as path from 'path';
 
 export class SNSPublishFileNode extends NodeBase {
@@ -108,6 +105,6 @@ export class SNSPublishFileNode extends NodeBase {
 
         this.Remove();
         TreeState.save();
-        TreeProvider.Current.Refresh(this.Parent);
+        this.RefreshTree(this.Parent);
     }
 }

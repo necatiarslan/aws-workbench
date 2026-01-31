@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { DynamoDBTableNode } from './DynamoDBTableNode';
 import { DynamoDBIndexNode } from './DynamoDBIndexNode';
 
@@ -90,7 +89,7 @@ export class DynamoDBIndexesGroupNode extends NodeBase {
             ui.showErrorMessage('Load Indexes Error !!!', error);
         } finally {
             this.StopWorking();
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
         }
     }
 }

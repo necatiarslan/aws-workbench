@@ -1,7 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { DynamoDBTableNode } from './DynamoDBTableNode';
 
 export class DynamoDBCapacityNode extends NodeBase {
@@ -57,7 +56,7 @@ export class DynamoDBCapacityNode extends NodeBase {
             ui.showErrorMessage('Load Capacity Error !!!', error);
         } finally {
             this.StopWorking();
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
         }
     }
 

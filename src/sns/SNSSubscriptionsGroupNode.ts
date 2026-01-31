@@ -5,7 +5,6 @@ import * as api from './API';
 import * as ui from '../common/UI';
 import { SNSTopicNode } from './SNSTopicNode';
 import { SNSSubscriptionNode } from './SNSSubscriptionNode';
-import { TreeProvider } from '../tree/TreeProvider';
 
 export class SNSSubscriptionsGroupNode extends NodeBase {
 
@@ -78,7 +77,7 @@ export class SNSSubscriptionsGroupNode extends NodeBase {
                 }
             }
 
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
         } catch (error: any) {
             ui.logToOutput('SNSSubscriptionsGroupNode.loadSubscriptions Error !!!', error);
             ui.showErrorMessage('Load Subscriptions Error !!!', error);
@@ -175,7 +174,7 @@ export class SNSSubscriptionsGroupNode extends NodeBase {
                 this
             );
 
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
 
             if (api.IsSubscriptionPending(subscriptionArn)) {
                 ui.showInfoMessage('Subscription created. Confirmation pending - check email/endpoint for confirmation link.');

@@ -3,7 +3,6 @@ import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import { TreeState } from '../tree/TreeState';
-import { TreeProvider } from '../tree/TreeProvider';
 import { TreeView } from '../tree/TreeView';
 
 export class FolderNode extends NodeBase {
@@ -37,7 +36,7 @@ export class FolderNode extends NodeBase {
 
         this.FolderName = newName;
         this.label = newName;
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
         TreeState.save();
     }
 

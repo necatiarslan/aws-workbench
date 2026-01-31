@@ -1,8 +1,6 @@
 import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
-import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { DynamoDBTableNode } from './DynamoDBTableNode';
 import { DynamoDBKeyNode } from './DynamoDBKeyNode';
 
@@ -73,7 +71,7 @@ export class DynamoDBKeysGroupNode extends NodeBase {
             ui.showErrorMessage('Load Keys Error !!!', error);
         } finally {
             this.StopWorking();
-            TreeProvider.Current.Refresh(this);
+            this.RefreshTree()
         }
     }
 }

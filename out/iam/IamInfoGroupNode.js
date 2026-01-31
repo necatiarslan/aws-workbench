@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IamInfoGroupNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const IamInfoNode_1 = require("./IamInfoNode");
 class IamInfoGroupNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -28,7 +27,7 @@ class IamInfoGroupNode extends NodeBase_1.NodeBase {
         if (this.Children.length > 0) {
             this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
         }
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
     SetInfoItems(items) {
         this.InfoItems = items;

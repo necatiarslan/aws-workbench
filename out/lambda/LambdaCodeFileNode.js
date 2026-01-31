@@ -4,7 +4,6 @@ exports.LambdaCodeFileNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
-const TreeProvider_1 = require("../tree/TreeProvider");
 const TreeState_1 = require("../tree/TreeState");
 class LambdaCodeFileNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
@@ -40,7 +39,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Set Successfully');
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
     async handleNodeRemove() {
         ui.logToOutput('LambdaCodeFileNode.handleNodeRemove Started');
@@ -50,7 +49,7 @@ class LambdaCodeFileNode extends NodeBase_1.NodeBase {
         TreeState_1.TreeState.save();
         ui.logToOutput('Code Path: ' + lambdaNode.CodePath);
         ui.showInfoMessage('Code Path Removed Successfully');
-        TreeProvider_1.TreeProvider.Current.Refresh(this);
+        this.RefreshTree();
     }
     async handleNodeEdit() {
         ui.logToOutput('LambdaCodeFileNode.NodeEdit Started');

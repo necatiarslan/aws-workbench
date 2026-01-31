@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 const api = require("./API");
-const TreeProvider_1 = require("../tree/TreeProvider");
 class LambdaEnvNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
@@ -55,7 +54,7 @@ class LambdaEnvNode extends NodeBase_1.NodeBase {
             this.Parent.NodeRefresh();
         }
         else {
-            TreeProvider_1.TreeProvider.Current.Refresh(this);
+            this.RefreshTree();
         }
         this.StopWorking();
     }

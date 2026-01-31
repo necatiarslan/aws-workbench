@@ -2,7 +2,6 @@ import { NodeBase } from '../tree/NodeBase';
 import * as vscode from 'vscode';
 import * as api from './API';
 import * as ui from '../common/UI';
-import { TreeProvider } from '../tree/TreeProvider';
 import { IamRoleNode } from './IamRoleNode';
 import { IamInfoNode } from './IamInfoNode';
 
@@ -73,7 +72,7 @@ export class IamRoleInfoGroupNode extends NodeBase {
         }
 
         this.StopWorking();
-        TreeProvider.Current.Refresh(this);
+        this.RefreshTree()
     }
 
 }
