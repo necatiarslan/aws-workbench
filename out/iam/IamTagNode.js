@@ -6,9 +6,13 @@ const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
 class IamTagNode extends NodeBase_1.NodeBase {
-    constructor(Label, parent) {
-        super(Label, parent);
-        this.Icon = "circle-filled";
+    constructor(Key, Value, parent) {
+        super(Key, parent);
+        this.Icon = "circle-outline";
+        this.Key = Key;
+        this.Value = Value;
+        this.description = Value;
+        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());

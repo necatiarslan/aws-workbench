@@ -6,10 +6,14 @@ import { IamRoleNode } from './IamRoleNode';
 
 export class IamTagNode extends NodeBase {
 
-    constructor(Label: string, parent?: NodeBase) 
+    constructor(Key: string, Value: string, parent?: NodeBase) 
     {
-        super(Label, parent);
-        this.Icon = "circle-filled";
+        super(Key, parent);
+        this.Icon = "circle-outline";
+        this.Key = Key;
+        this.Value = Value;
+        this.description = Value;
+        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());

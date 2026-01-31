@@ -115,7 +115,7 @@ export class LambdaTagGroupNode extends NodeBase {
         if (tagsResult.result) {
             for (const key in tagsResult.result) {
                 const value = tagsResult.result[key];
-                const tagNode = new LambdaTagNode(`${key} = ${value}`, this);
+                const tagNode = new LambdaTagNode(key, value || '', this);
                 tagNode.Key = key;
                 tagNode.Value = value || '';
             }

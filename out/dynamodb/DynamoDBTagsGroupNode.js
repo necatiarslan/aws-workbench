@@ -12,8 +12,52 @@ class DynamoDBTagsGroupNode extends NodeBase_1.NodeBase {
         this.Icon = "tag";
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    }
+    async handleNodeAdd() {
+        ui.logToOutput('DynamoDBTagsGroupNode.handleNodeAdd Started');
+        const tableNode = this.Parent;
+        if (!tableNode || !tableNode.TableName) {
+            ui.logToOutput('DynamoDBTagsGroupNode.handleNodeAdd - Parent table node not found');
+            return;
+        }
+        const key = await await vscode.window.showInputBox({ prompt: 'Enter tag key:' });
+        if (!key) {
+            ui.showWarningMessage('Tag key is required.');
+            return;
+        }
+        const value = await vscode.window.showInputBox({ prompt: 'Enter tag value:' });
+        if (value === undefined) {
+            ui.showWarningMessage('Tag value is required.');
+            return;
+        }
+        this.StartWorking();
+        try {
+            const details = await tableNode.TableDetails;
+            if (!details || !details.tableArn) {
+                this.StopWorking();
+                return;
+            }
+            // Add tag
+            const tagResult = await api.UpdateDynamoDBTag(tableNode.Region, details.tableArn, key, value);
+            if (tagResult.isSuccessful) {
+                ui.showInfoMessage(`Tag "${key}" added successfully.`);
+                this.RefreshTree();
+            }
+            else {
+                ui.logToOutput('DynamoDBTagsGroupNode.handleNodeAdd - TagTable Error !!!', tagResult.error);
+                ui.showErrorMessage('Failed to add tag.', tagResult.error);
+            }
+        }
+        catch (error) {
+            ui.logToOutput('DynamoDBTagsGroupNode.handleNodeAdd Error !!!', error);
+            ui.showErrorMessage('Error adding tag.', error);
+        }
+        finally {
+            this.StopWorking();
+        }
     }
     async handleNodeRefresh() {
         ui.logToOutput('DynamoDBTagsGroupNode.handleNodeRefresh Started');
@@ -38,9 +82,9 @@ class DynamoDBTagsGroupNode extends NodeBase_1.NodeBase {
             this.Children = [];
             if (tagsResult.isSuccessful && tagsResult.result.length > 0) {
                 for (const tag of tagsResult.result) {
-                    const tagNode = new DynamoDBTagNode_1.DynamoDBTagNode(`${tag.key}: ${tag.value}`, this);
-                    tagNode.TagKey = tag.key;
-                    tagNode.TagValue = tag.value;
+                    const tagNode = new DynamoDBTagNode_1.DynamoDBTagNode(tag.key || '', tag.value || '', this);
+                    tagNode.Key = tag.key;
+                    tagNode.Value = tag.value;
                 }
                 this.label = `Tags (${tagsResult.result.length})`;
                 this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;

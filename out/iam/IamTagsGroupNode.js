@@ -80,7 +80,7 @@ class IamTagsGroupNode extends NodeBase_1.NodeBase {
         // Add tags as children
         if (tagsResult.result && tagsResult.result.Tags) {
             for (const tag of tagsResult.result.Tags) {
-                const tagNode = new IamTagNode_1.IamTagNode(`${tag.Key} = ${tag.Value}`, this);
+                const tagNode = new IamTagNode_1.IamTagNode(tag.Key || '', tag.Value || '', this);
                 tagNode.Key = tag.Key || '';
                 tagNode.Value = tag.Value || '';
             }

@@ -11,7 +11,9 @@ import {
     GetItemCommand,
     BatchGetItemCommand,
     BatchWriteItemCommand,
-    ListTagsOfResourceCommand
+    ListTagsOfResourceCommand,
+    TagResourceCommand,
+    UntagResourceCommand
 } from "@aws-sdk/client-dynamodb";
 import * as ui from "../common/UI";
 import { MethodResult } from '../common/MethodResult';
@@ -247,6 +249,64 @@ export async function GetTableTags(
         result.isSuccessful = false;
         result.error = error;
         ui.logToOutput("api.GetTableTags Error !!!", error);
+        return result;
+    }
+}
+
+export async function UpdateDynamoDBTag(
+    region: string,
+    tableArn: string,
+    key: string,
+    value: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const dynamodb = await GetDynamoDBClient(region);
+
+        const command = new TagResourceCommand({
+            ResourceArn: tableArn,
+            Tags: [
+                {
+                    Key: key,
+                    Value: value
+                }
+            ]
+        });
+
+        await dynamodb.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateDynamoDBTag Error !!!", error);
+        return result;
+    }
+}
+
+export async function RemoveDynamoDBTag(
+    region: string,
+    tableArn: string,
+    key: string
+): Promise<MethodResult<void>> {
+    const result: MethodResult<void> = new MethodResult<void>();
+
+    try {
+        const dynamodb = await GetDynamoDBClient(region);
+
+        const command = new UntagResourceCommand({
+            ResourceArn: tableArn,
+            TagKeys: [key]
+        });
+
+        await dynamodb.send(command);
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveDynamoDBTag Error !!!", error);
         return result;
     }
 }

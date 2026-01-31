@@ -5,6 +5,8 @@ exports.GetDynamoDBTableList = GetDynamoDBTableList;
 exports.DescribeTable = DescribeTable;
 exports.ExtractTableDetails = ExtractTableDetails;
 exports.GetTableTags = GetTableTags;
+exports.UpdateDynamoDBTag = UpdateDynamoDBTag;
+exports.RemoveDynamoDBTag = RemoveDynamoDBTag;
 exports.QueryTable = QueryTable;
 exports.ScanTable = ScanTable;
 exports.GetItem = GetItem;
@@ -192,6 +194,49 @@ async function GetTableTags(region, tableArn) {
         result.isSuccessful = false;
         result.error = error;
         ui.logToOutput("api.GetTableTags Error !!!", error);
+        return result;
+    }
+}
+async function UpdateDynamoDBTag(region, tableArn, key, value) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const dynamodb = await GetDynamoDBClient(region);
+        const command = new client_dynamodb_1.TagResourceCommand({
+            ResourceArn: tableArn,
+            Tags: [
+                {
+                    Key: key,
+                    Value: value
+                }
+            ]
+        });
+        await dynamodb.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.UpdateDynamoDBTag Error !!!", error);
+        return result;
+    }
+}
+async function RemoveDynamoDBTag(region, tableArn, key) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const dynamodb = await GetDynamoDBClient(region);
+        const command = new client_dynamodb_1.UntagResourceCommand({
+            ResourceArn: tableArn,
+            TagKeys: [key]
+        });
+        await dynamodb.send(command);
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.RemoveDynamoDBTag Error !!!", error);
         return result;
     }
 }
