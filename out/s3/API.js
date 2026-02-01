@@ -11,6 +11,7 @@ exports.GetObjectProperties = GetObjectProperties;
 exports.SearchObject = SearchObject;
 exports.CreateFolder = CreateFolder;
 exports.GetBucketTags = GetBucketTags;
+exports.GetBucketPolicy = GetBucketPolicy;
 exports.UpdateS3BucketTag = UpdateS3BucketTag;
 exports.RemoveS3BucketTag = RemoveS3BucketTag;
 exports.DeleteObject = DeleteObject;
@@ -243,6 +244,31 @@ async function GetBucketTags(bucketName) {
         result.isSuccessful = false;
         result.error = error;
         ui.logToOutput("api.GetBucketTags Error !!!", error);
+        return result;
+    }
+}
+async function GetBucketPolicy(bucketName) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new client_s3_5.GetBucketPolicyCommand({
+            Bucket: bucketName
+        });
+        const response = await s3Client.send(command);
+        result.result = response.Policy;
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        if (error?.name === 'NoSuchBucketPolicy') {
+            result.isSuccessful = true;
+            result.result = undefined;
+            return result;
+        }
+        result.isSuccessful = false;
+        result.error = error;
+        ui.showErrorMessage("api.GetBucketPolicy Error !!!", error);
+        ui.logToOutput("api.GetBucketPolicy Error !!!", error);
         return result;
     }
 }

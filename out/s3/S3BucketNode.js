@@ -17,6 +17,7 @@ const S3Explorer_1 = require("./S3Explorer");
 const S3BucketShortcutGroupNode_1 = require("./S3BucketShortcutGroupNode");
 const S3TagsGroupNode_1 = require("./S3TagsGroupNode");
 const S3InfoGroupNode_1 = require("./S3InfoGroupNode");
+const S3BucketPolicyNode_1 = require("./S3BucketPolicyNode");
 const api = require("./API");
 const ui = require("../common/UI");
 class S3BucketNode extends NodeBase_1.NodeBase {
@@ -59,6 +60,7 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     async LoadDefaultChildren() {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
         new S3InfoGroupNode_1.S3InfoGroupNode("Info", this);
+        new S3BucketPolicyNode_1.S3BucketPolicyNode("Policy", this);
         new S3TagsGroupNode_1.S3TagsGroupNode("Tags", this);
     }
     IsShortcutExists(key) {

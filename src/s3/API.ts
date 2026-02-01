@@ -216,7 +216,7 @@ export async function CreateFolder(Bucket: string, Key: string, FolderName: stri
   }
 }
 
-import { DeleteObjectCommand, GetBucketTaggingCommand, PutBucketTaggingCommand, DeleteBucketTaggingCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetBucketTaggingCommand, PutBucketTaggingCommand, DeleteBucketTaggingCommand, GetBucketPolicyCommand } from "@aws-sdk/client-s3";
 
 export async function GetBucketTags(
     bucketName: string
@@ -253,6 +253,35 @@ export async function GetBucketTags(
         return result;
     }
 }
+
+    export async function GetBucketPolicy(
+      bucketName: string
+    ): Promise<MethodResult<string | undefined>> {
+      const result: MethodResult<string | undefined> = new MethodResult<string | undefined>();
+
+      try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new GetBucketPolicyCommand({
+          Bucket: bucketName
+        });
+
+        const response = await s3Client.send(command);
+        result.result = response.Policy;
+        result.isSuccessful = true;
+        return result;
+      } catch (error: any) {
+        if (error?.name === 'NoSuchBucketPolicy') {
+          result.isSuccessful = true;
+          result.result = undefined;
+          return result;
+        }
+        result.isSuccessful = false;
+        result.error = error;
+        ui.showErrorMessage("api.GetBucketPolicy Error !!!", error);
+        ui.logToOutput("api.GetBucketPolicy Error !!!", error);
+        return result;
+      }
+    }
 
 export async function UpdateS3BucketTag(
     bucketName: string,

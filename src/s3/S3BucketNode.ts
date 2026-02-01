@@ -5,6 +5,7 @@ import { S3Explorer } from './S3Explorer';
 import { S3BucketShortcutGroupNode } from './S3BucketShortcutGroupNode';
 import { S3TagsGroupNode } from './S3TagsGroupNode';
 import { S3InfoGroupNode } from './S3InfoGroupNode';
+import { S3BucketPolicyNode } from './S3BucketPolicyNode';
 import { HeadBucketCommandOutput } from '@aws-sdk/client-s3';
 import * as api from './API';
 import * as ui from '../common/UI';
@@ -66,6 +67,7 @@ export class S3BucketNode extends NodeBase {
     public async LoadDefaultChildren(): Promise<void> {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode("Shortcuts", this);
         new S3InfoGroupNode("Info", this);
+        new S3BucketPolicyNode("Policy", this);
         new S3TagsGroupNode("Tags", this);
     }
 
