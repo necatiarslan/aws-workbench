@@ -1,25 +1,150 @@
-# AWS Workbench – AI Guide
-- Purpose: VS Code extension exposing AWS resources in a single tree view; entrypoint activates Session, ServiceHub, TreeView, then loads/saves tree state [src/extension.ts](src/extension.ts), [src/tree/TreeView.ts](src/tree/TreeView.ts), [src/tree/TreeState.ts](src/tree/TreeState.ts).
-- Build/run: install deps with npm; compile once via `npm run compile`, live rebuild with `npm run watch`, lint with `npm run lint`, extension tests with `npm test` (uses @vscode/test-electron), publish flow uses `npm run vscode:prepublish`.
-- Tree architecture: all nodes extend [src/tree/NodeBase.ts](src/tree/NodeBase.ts); constructor auto-attaches to parent or RootNodes and triggers TreeProvider refresh; use event emitters (OnNodeAdd/Remove/Refresh/View/Edit/Run/Stop/Open/Info/LoadChildren) instead of overriding methods; call TreeState.save after mutations.
-- Visibility/filtering: NodeBase.SetVisible honors Session filters (favorite, hidden, profile, workspace, text filter) and propagates to children; TreeView toggles flags and refreshes view.
-- Context menus: NodeBase builds `contextValue` with tags (#AddFav#, #Hide#, #NodeRun#, etc.); package.json menus rely on these tags—update SetContextValue when adding new actions; node alias support gated by EnableNodeAlias.
-- Serialization/persistence: mark fields with @Serialize to persist; register every node class with NodeRegistry to allow restore; TreeSerializer walks children and skips unregistered node types; TreeState.save is debounced 500ms, saveImmediate runs on deactivate; export/import uses JSON via TreeState.
-- Busy state: call StartWorking/StopWorking to swap icon to loading spinner and refresh; IsAwsResourceNode tracks AWS-bound nodes for ancestor lookups.
-- Session/certs: Session stores profile, region, endpoint, filters in globalState and caches AWS credentials via fromNodeProviderChain; SetAwsProfile/SetAwsRegion/SetAwsEndpoint clear credentials; TestAwsConnection calls STS GetCallerIdentity [src/common/Session.ts](src/common/Session.ts).
-- Services: ServiceHub instantiates FileSystemService, S3Service, CloudWatchLogService, LambdaService, StepFunctionsService, VscodeService and exposes singletons [src/tree/ServiceHub.ts](src/tree/ServiceHub.ts); commands delegate to service Add methods for root additions.
-- S3 pattern: S3Service.Add prompts for bucket(s) then creates S3BucketNode children; S3BucketNode uses aliases, shortcut group child, and TreeState.save on changes [src/s3/S3Service.ts](src/s3/S3Service.ts), [src/s3/S3BucketNode.ts](src/s3/S3BucketNode.ts).
-- S3 API: wrappers in [src/s3/API.ts](src/s3/API.ts) return MethodResult, use cached S3 client with Session endpoint/region and forcePathStyle; deletion copies respect folder vs file; StartConnection/StopConnection manage cached client/credentials.
-- Lambda pattern: LambdaService.Add prompts region, lists functions, creates LambdaFunctionNode with Region set; node wires NodeRun->TriggerLambda (optional payload prompt or file), NodeInfo -> open JSON config; default children: code/env/info/logs/tags/triggers nodes [src/lambda/LambdaService.ts](src/lambda/LambdaService.ts), [src/lambda/LambdaFunctionNode.ts](src/lambda/LambdaFunctionNode.ts).
-- Lambda API: [src/lambda/API.ts](src/lambda/API.ts) wraps AWS SDK clients, supports listing, invoking, fetching logs via CloudWatch Logs helpers; many helpers expect Session.Current credentials and optional endpoint.
-- Step Functions pattern: StepFunctionsService.Add prompts region/name filter, lists state machines, creates StateMachineNode with Region set; node wires NodeInfo->show definition JSON; default children: Definition (view/download/compare/update), Trigger (start execution with JSON prompt or file validation), Executions (status groups: all/running/succeeded/failed/timed out/aborted), Logs (latest stream per execution) [src/step-functions/StepFunctionsService.ts](src/step-functions/StepFunctionsService.ts), [src/step-functions/StateMachineNode.ts](src/step-functions/StateMachineNode.ts).
-- Step Functions API: [src/step-functions/API.ts](src/step-functions/API.ts) wraps SFN client (list state machines, get/update definition, start execution, list/describe executions, get history) and CloudWatch Logs (resolve log group from state machine ARN, fetch latest stream for execution); uses MethodResult pattern and Session credentials/endpoint.
-- CloudWatch logs: CloudWatchLogService.Add prompts region, log groups, creates CloudWatchLogGroupNode/Stream nodes; relies on TreeState.save for persistence [src/cloudwatch-logs/CloudWatchLogService.ts](src/cloudwatch-logs/CloudWatchLogService.ts).
-- Filesystem nodes: FileNode stores FileName/FilePath, OnNodeOpen calls ui.openFile, persists via @Serialize and NodeRegistry registration [src/filesystem/FileNode.ts](src/filesystem/FileNode.ts).
-- UI utilities: use ui.logToOutput for diagnostic channel (AwsWorkbench-Log) and ui.showOutputMessage for user-facing output; helper includes sleep, bytesToText, date checks, clipboard helpers [src/common/UI.ts](src/common/UI.ts).
-- Telemetry hooks: Telemetry.Current?.send(...) sprinkled in services/nodes; ensure any new telemetry events follow existing pattern before/after actions.
-- Icons: custom AWS codicon font defined in package.json `icons`; set NodeBase.Icon to key (e.g., s3-bucket, lambda-function, step-functions) to display.
-- Commands/view: TreeView registers all AwsWorkbench.* commands; view container/activity bar id AwsWorkbench, main view id AwsWorkbenchView configured in package.json (menus, view/title buttons, view welcome text).
-- Persistence UX: export/import commands save JSON via TreeState; loading clears RootNodes then finalizes nodes (expands root children automatically) [src/tree/TreeState.ts](src/tree/TreeState.ts).
-- Error handling: MethodResult pattern (isSuccessful, result, error) throughout AWS API wrappers; surface errors with ui.showErrorMessage + ui.logToOutput for consistency.
-- When adding a new node type: extend NodeBase, set Icon/context tags, wire EventEmitter handlers instead of overriding, mark persisted fields with @Serialize, register with NodeRegistry, call TreeState.save after structural changes, and ensure visibility rules align with Session filters.
+# AWS Workbench Copilot Instructions
+
+## Project Overview
+AWS Workbench is a VS Code extension providing unified management of AWS resources (S3, Lambda, DynamoDB, Step Functions, Glue, SQS, SNS, IAM, CloudWatch Logs) through a tree view sidebar. Built with TypeScript/Node.js using the VS Code Extension API.
+
+**Key Architecture**: Unified tree provider → Service layer (per-service) → API clients → AWS SDK v3
+
+---
+
+## Critical Architecture Patterns
+
+### 1. Service Layer Pattern
+Each AWS service follows identical structure:
+- **ServiceBase** abstract class in [src/tree/ServiceBase.ts](src/tree/ServiceBase.ts) - defines `Add()` interface
+- Each service (`LambdaService`, `S3Service`, `DynamoDBService`, etc.) extends `ServiceBase`:
+  - Singleton pattern: `public static Current: ServiceName`
+  - Instantiated in [src/tree/ServiceHub.ts](src/tree/ServiceHub.ts) during extension activation
+  - Implements `async Add()` to handle user resource selection workflows
+  - Uses telemetry tracking and `ui.logToOutput()` for debugging
+
+**Example flow**: User clicks "Add" → `ServiceHub.Current.S3Service.Add()` → shows region input → queries AWS → creates S3BucketNode children
+
+### 2. Node Tree Hierarchy
+All tree items extend [NodeBase](src/tree/NodeBase.ts) (which extends `vscode.TreeItem`):
+- **Root nodes**: Direct children of tree (e.g., `S3BucketNode`, `LambdaFunctionNode`)
+- **Parent-child relationships**: Nodes maintain `Parent` and `Children[]` arrays; parent inherits `AwsProfile`, `Workspace`, visibility flags
+- **Event emitters**: Each node has `OnNodeAdd`, `OnNodeRemove`, `OnNodeRefresh`, etc. - subscribe in constructor to handle operations
+- **@Serialize() decorator**: Only marked properties persist to VS Code `globalState` (see [Serialize.ts](src/common/serialization/Serialize.ts))
+
+**Example node structure**:
+```
+LambdaFunctionNode (FunctionName)
+├─ LambdaInfoGroupNode
+├─ LambdaCodeGroupNode
+│  ├─ LambdaCodeFileNode
+│  ├─ LambdaCodeDownloadNode
+│  └─ LambdaCodeUpdateNode
+├─ LambdaEnvGroupNode
+└─ LambdaLogGroupNode
+```
+
+### 3. API Layer Pattern
+Each service has `API.ts` containing:
+- AWS SDK client factory functions: `GetS3Client()`, `GetLambdaClient()`, etc.
+  - All accept `region: string`, fetch credentials from `Session.Current.GetCredentials()`
+  - Support custom AWS endpoint via `Session.Current.AwsEndPoint`
+- API functions return `MethodResult<T>` (generic wrapper with `result`, `isSuccessful`, `error`)
+- Consistent error handling: catch blocks call `ui.showErrorMessage()` AND `ui.logToOutput()`
+
+**Example**: [src/step-functions/API.ts#L25](src/step-functions/API.ts#L25)
+
+### 4. Webview Pattern
+Interactive data views (queries, editing, logs) use WebviewPanels:
+- Constructor takes `vscode.WebviewPanel` + data params
+- Static factory method: `public static async show(...)` creates panel, instantiates view, handles messages
+- HTML/CSS/JS in `media/<service>/` folders
+- Message passing: `panel.webview.postMessage()` ↔ `panel.webview.onDidReceiveMessage()`
+
+**Examples**: [CloudWatchLogView](src/cloudwatch-logs/CloudWatchLogView.ts), [DynamoDBQueryView](src/dynamodb/DynamoDBQueryView.ts)
+
+---
+
+## State Management & Persistence
+
+### Tree State (Node Structure)
+- [TreeState.ts](src/tree/TreeState.ts): Debounced save/load of entire tree to VS Code `globalState`
+- Triggered by node changes via `TreeState.save()` (500ms debounce) or `TreeState.saveImmediate()` on deactivation
+- Uses [TreeSerializer](src/common/serialization/TreeSerializer.ts) with `@Serialize()` decorator to selectively persist properties
+- Deserialization uses `NodeRegistry` to recreate correct node types from JSON
+
+**On Extension Activate** (see [extension.ts](src/extension.ts#L18)):
+1. Initialize `Session` (AWS credentials/profile)
+2. Initialize `ServiceHub` (all service instances)
+3. Create `TreeView` (registers commands, creates tree provider)
+4. `TreeState.load()` deserializes saved nodes
+5. `TreeView.Current.Refresh()` renders tree
+
+---
+
+## Build, Test & Development
+
+### Build & Watch
+```bash
+npm run compile      # TypeScript → JavaScript in ./out/
+npm run watch        # tsc -watch -p ./
+```
+VS Code automatically reloads extension on file changes during `npm run watch` in debug mode.
+
+### Debugging
+- Press F5 in VS Code to launch extension in debug window
+- Set breakpoints, use Debug Console
+- Output goes to "Debug Console" tab and `ui.logToOutput()` populates "Aws Workbench" output channel
+
+### Commands Registration
+- All commands registered in [TreeView.RegisterCommands()](src/tree/TreeView.ts#L24)
+- Commands defined in `package.json` under `contributes.commands`
+- Context menu visibility controlled by `viewItem` regex patterns (e.g., `viewItem =~ /#NodeAdd#/`)
+
+---
+
+## Key Conventions & Patterns
+
+### Error Handling
+- **Always use `MethodResult<T>`** for API returns (not throw exceptions)
+- Display errors: `ui.showErrorMessage("Context", error)` + `ui.logToOutput()`
+- Check `result.isSuccessful` before accessing `result.result`
+
+### Telemetry
+- Optional anonymous telemetry tracking
+- Call `Telemetry.Current?.send("ServiceName.MethodName")` at operation start
+- User can disable in VS Code settings
+
+### Node Context Values
+- Set via `this.contextValue = "..."` containing `#ActionName#` flags
+- Controls which context menu items appear (package.json menus with `viewItem =~ /pattern/`)
+- Example: `contextValue = "#NodeAdd##NodeRemove##NodeRefresh#"` enables Add/Remove/Refresh
+
+### Tree Refresh
+- Call `this.RefreshTree()` after node state changes
+- TreeProvider observes `TreeProvider._onDidChangeTreeData` to re-render affected nodes
+- Debounced `TreeState.save()` automatically called
+
+### AWS Credentials & Sessions
+- [Session](src/common/Session.ts) singleton manages AWS profile, region, endpoint
+- Accessed as `Session.Current.AwsProfile`, `Session.Current.AwsRegion`
+- Credentials loaded via `Session.Current.GetCredentials()` from local `~/.aws/credentials`
+
+---
+
+## File Organization Guide
+
+| Directory | Purpose |
+|-----------|---------|
+| `src/tree/` | Core: TreeView, TreeProvider, NodeBase, ServiceBase, TreeState, ServiceHub |
+| `src/common/` | Shared: Session, UI, Telemetry, EventEmitter, MethodResult, serialization |
+| `src/<service>/` | Service-specific: API.ts, Service.ts, Node classes (e.g., LambdaFunctionNode) |
+| `media/<service>/` | Webview HTML/CSS/JS for interactive views |
+| `src/aws-sdk/` | AWS credentials file parsing (AWS SDK helpers) |
+
+---
+
+## Common Tasks
+
+**Adding a new tree node type**: Extend `NodeBase`, mark properties with `@Serialize()`, override `LoadDefaultChildren()`, attach event handlers in constructor.
+
+**Integrating new AWS service**: Create service folder, implement `API.ts` (AWS SDK calls returning `MethodResult`), create `Service.ts` extending `ServiceBase`, add to `ServiceHub`, create node classes, register in `NodeRegistry`.
+
+**Creating interactive view**: Extend webview pattern from DynamoDBQueryView/CloudWatchLogView - create TypeScript class with static `show()` factory, message handlers, and corresponding HTML in `media/`.
+
+**Adding command**: Register in `TreeView.RegisterCommands()`, define in `package.json`, implement handler logic, set appropriate node `contextValue` flags.
