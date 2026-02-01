@@ -78,3 +78,9 @@ list_bucket_content:
 
 upload_file:
     aws --endpoint-url=http://localhost:4566 s3 cp README.md s3://my-bucket
+
+create_emr:
+    aws --endpoint-url=http://localhost:4566 emr create-cluster --name "Test cluster" --release-label emr-5.30.0 --applications Name=Hadoop Name=Spark --ec2-attributes KeyName=myKey --instance-type m5.xlarge --instance-count 3 --use-default-roles
+
+list_emr_clusters:
+    aws --endpoint-url=http://localhost:4566 emr list-clusters
