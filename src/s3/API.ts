@@ -216,7 +216,7 @@ export async function CreateFolder(Bucket: string, Key: string, FolderName: stri
   }
 }
 
-import { DeleteObjectCommand, GetBucketTaggingCommand, PutBucketTaggingCommand, DeleteBucketTaggingCommand, GetBucketPolicyCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetBucketTaggingCommand, PutBucketTaggingCommand, DeleteBucketTaggingCommand, GetBucketPolicyCommand, GetBucketLifecycleConfigurationCommand, GetBucketLoggingCommand, GetBucketNotificationConfigurationCommand } from "@aws-sdk/client-s3";
 
 export async function GetBucketTags(
     bucketName: string
@@ -282,6 +282,84 @@ export async function GetBucketTags(
         return result;
       }
     }
+
+export async function GetBucketLifecycleConfiguration(
+    bucketName: string
+): Promise<MethodResult<any>> {
+    const result: MethodResult<any> = new MethodResult<any>();
+
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new GetBucketLifecycleConfigurationCommand({
+            Bucket: bucketName
+        });
+
+        const response = await s3Client.send(command);
+        result.result = response.Rules || [];
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        if (error?.name === 'NoSuchLifecycleConfiguration') {
+            result.isSuccessful = true;
+            result.result = [];
+            return result;
+        }
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketLifecycleConfiguration Error !!!", error);
+        return result;
+    }
+}
+
+export async function GetBucketLogging(
+    bucketName: string
+): Promise<MethodResult<any>> {
+    const result: MethodResult<any> = new MethodResult<any>();
+
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new GetBucketLoggingCommand({
+            Bucket: bucketName
+        });
+
+        const response = await s3Client.send(command);
+        result.result = response.LoggingEnabled || undefined;
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketLogging Error !!!", error);
+        return result;
+    }
+}
+
+export async function GetBucketNotificationConfiguration(
+    bucketName: string
+): Promise<MethodResult<any>> {
+    const result: MethodResult<any> = new MethodResult<any>();
+
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new GetBucketNotificationConfigurationCommand({
+            Bucket: bucketName
+        });
+
+        const response = await s3Client.send(command);
+        result.result = {
+            TopicConfigurations: response.TopicConfigurations || [],
+            QueueConfigurations: response.QueueConfigurations || [],
+            LambdaFunctionConfigurations: response.LambdaFunctionConfigurations || []
+        };
+        result.isSuccessful = true;
+        return result;
+    } catch (error: any) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketNotificationConfiguration Error !!!", error);
+        return result;
+    }
+}
 
 export async function UpdateS3BucketTag(
     bucketName: string,

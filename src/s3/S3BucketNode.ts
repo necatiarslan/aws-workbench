@@ -6,10 +6,12 @@ import { S3BucketShortcutGroupNode } from './S3BucketShortcutGroupNode';
 import { S3TagsGroupNode } from './S3TagsGroupNode';
 import { S3InfoGroupNode } from './S3InfoGroupNode';
 import { S3BucketPolicyNode } from './S3BucketPolicyNode';
+import { S3LifecycleGroupNode } from './S3LifecycleGroupNode';
+import { S3LoggingGroupNode } from './S3LoggingGroupNode';
+import { S3NotificationGroupNode } from './S3NotificationGroupNode';
 import { HeadBucketCommandOutput } from '@aws-sdk/client-s3';
 import * as api from './API';
 import * as ui from '../common/UI';
-import * as vscode from 'vscode';
 
 export class S3BucketNode extends NodeBase {
 
@@ -68,6 +70,9 @@ export class S3BucketNode extends NodeBase {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode("Shortcuts", this);
         new S3InfoGroupNode("Info", this);
         new S3BucketPolicyNode("Policy", this);
+        new S3LifecycleGroupNode("Lifecycle", this);
+        new S3LoggingGroupNode("Logging", this);
+        new S3NotificationGroupNode("Notifications", this);
         new S3TagsGroupNode("Tags", this);
     }
 

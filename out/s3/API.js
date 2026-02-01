@@ -12,6 +12,9 @@ exports.SearchObject = SearchObject;
 exports.CreateFolder = CreateFolder;
 exports.GetBucketTags = GetBucketTags;
 exports.GetBucketPolicy = GetBucketPolicy;
+exports.GetBucketLifecycleConfiguration = GetBucketLifecycleConfiguration;
+exports.GetBucketLogging = GetBucketLogging;
+exports.GetBucketNotificationConfiguration = GetBucketNotificationConfiguration;
 exports.UpdateS3BucketTag = UpdateS3BucketTag;
 exports.RemoveS3BucketTag = RemoveS3BucketTag;
 exports.DeleteObject = DeleteObject;
@@ -269,6 +272,72 @@ async function GetBucketPolicy(bucketName) {
         result.error = error;
         ui.showErrorMessage("api.GetBucketPolicy Error !!!", error);
         ui.logToOutput("api.GetBucketPolicy Error !!!", error);
+        return result;
+    }
+}
+async function GetBucketLifecycleConfiguration(bucketName) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new client_s3_5.GetBucketLifecycleConfigurationCommand({
+            Bucket: bucketName
+        });
+        const response = await s3Client.send(command);
+        result.result = response.Rules || [];
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        if (error?.name === 'NoSuchLifecycleConfiguration') {
+            result.isSuccessful = true;
+            result.result = [];
+            return result;
+        }
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketLifecycleConfiguration Error !!!", error);
+        return result;
+    }
+}
+async function GetBucketLogging(bucketName) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new client_s3_5.GetBucketLoggingCommand({
+            Bucket: bucketName
+        });
+        const response = await s3Client.send(command);
+        result.result = response.LoggingEnabled || undefined;
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketLogging Error !!!", error);
+        return result;
+    }
+}
+async function GetBucketNotificationConfiguration(bucketName) {
+    const result = new MethodResult_1.MethodResult();
+    try {
+        const s3Client = CurrentS3Client || await GetS3Client();
+        const command = new client_s3_5.GetBucketNotificationConfigurationCommand({
+            Bucket: bucketName
+        });
+        const response = await s3Client.send(command);
+        result.result = {
+            TopicConfigurations: response.TopicConfigurations || [],
+            QueueConfigurations: response.QueueConfigurations || [],
+            LambdaFunctionConfigurations: response.LambdaFunctionConfigurations || []
+        };
+        result.isSuccessful = true;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.logToOutput("api.GetBucketNotificationConfiguration Error !!!", error);
         return result;
     }
 }

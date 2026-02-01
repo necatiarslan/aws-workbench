@@ -18,6 +18,9 @@ const S3BucketShortcutGroupNode_1 = require("./S3BucketShortcutGroupNode");
 const S3TagsGroupNode_1 = require("./S3TagsGroupNode");
 const S3InfoGroupNode_1 = require("./S3InfoGroupNode");
 const S3BucketPolicyNode_1 = require("./S3BucketPolicyNode");
+const S3LifecycleGroupNode_1 = require("./S3LifecycleGroupNode");
+const S3LoggingGroupNode_1 = require("./S3LoggingGroupNode");
+const S3NotificationGroupNode_1 = require("./S3NotificationGroupNode");
 const api = require("./API");
 const ui = require("../common/UI");
 class S3BucketNode extends NodeBase_1.NodeBase {
@@ -61,6 +64,9 @@ class S3BucketNode extends NodeBase_1.NodeBase {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
         new S3InfoGroupNode_1.S3InfoGroupNode("Info", this);
         new S3BucketPolicyNode_1.S3BucketPolicyNode("Policy", this);
+        new S3LifecycleGroupNode_1.S3LifecycleGroupNode("Lifecycle", this);
+        new S3LoggingGroupNode_1.S3LoggingGroupNode("Logging", this);
+        new S3NotificationGroupNode_1.S3NotificationGroupNode("Notifications", this);
         new S3TagsGroupNode_1.S3TagsGroupNode("Tags", this);
     }
     IsShortcutExists(key) {
