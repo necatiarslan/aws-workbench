@@ -1,9 +1,7 @@
 import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
-import { TreeState } from '../tree/TreeState';
 import { NoteView } from './NoteView';
-import { Session } from '../common/Session';
 
 export class NoteNode extends NodeBase {
 

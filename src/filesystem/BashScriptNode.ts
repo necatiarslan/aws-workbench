@@ -2,7 +2,6 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
-import { ServiceHub } from '../tree/ServiceHub';
 
 export class BashScriptNode extends NodeBase {
 

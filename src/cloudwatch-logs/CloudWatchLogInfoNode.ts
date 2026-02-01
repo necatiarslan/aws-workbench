@@ -4,6 +4,9 @@ import * as ui from '../common/UI';
 
 export class CloudWatchLogInfoNode extends NodeBase {
 
+    public InfoKey: string;
+    public InfoValue: string;
+
     constructor(key: string, value: string, parent?: NodeBase) 
     {
         super(key, parent);
@@ -17,9 +20,6 @@ export class CloudWatchLogInfoNode extends NodeBase {
         
         this.SetContextValue();
     }
-
-    public InfoKey: string;
-    public InfoValue: string;
 
     private async handleNodeCopy(): Promise<void> {
         // Copy value to clipboard

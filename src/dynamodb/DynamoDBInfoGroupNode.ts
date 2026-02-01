@@ -52,9 +52,7 @@ export class DynamoDBInfoGroupNode extends NodeBase {
             ];
 
             for (const item of infoItems) {
-                const infoNode = new DynamoDBInfoNode(`${item.key}: ${item.value}`, this);
-                infoNode.InfoKey = item.key;
-                infoNode.InfoValue = item.value;
+                const infoNode = new DynamoDBInfoNode(item.key, item.value, this);
             }
 
             if (this.Children.length > 0) {

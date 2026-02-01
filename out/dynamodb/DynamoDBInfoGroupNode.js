@@ -44,9 +44,7 @@ class DynamoDBInfoGroupNode extends NodeBase_1.NodeBase {
                 { key: 'ARN', value: details.tableArn || 'N/A' }
             ];
             for (const item of infoItems) {
-                const infoNode = new DynamoDBInfoNode_1.DynamoDBInfoNode(`${item.key}: ${item.value}`, this);
-                infoNode.InfoKey = item.key;
-                infoNode.InfoValue = item.value;
+                const infoNode = new DynamoDBInfoNode_1.DynamoDBInfoNode(item.key, item.value, this);
             }
             if (this.Children.length > 0) {
                 this.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;

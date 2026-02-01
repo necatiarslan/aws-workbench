@@ -5,16 +5,20 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const ui = require("../common/UI");
 class DynamoDBInfoNode extends NodeBase_1.NodeBase {
-    constructor(Label, parent) {
-        super(Label, parent);
+    InfoKey;
+    InfoValue;
+    constructor(key, value, parent) {
+        super(key, parent);
         this.Icon = "circle-outline";
+        this.InfoKey = key;
+        this.InfoValue = value;
+        this.description = value;
+        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
-    InfoKey = "";
-    InfoValue = "";
-    handleNodeCopy() {
+    async handleNodeCopy() {
+        // Copy value to clipboard
         ui.CopyToClipboard(this.InfoValue);
         ui.showInfoMessage(`Copied to clipboard: ${this.InfoValue}`);
     }

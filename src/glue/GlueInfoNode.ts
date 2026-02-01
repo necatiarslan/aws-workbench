@@ -7,7 +7,8 @@ export class GlueInfoNode extends NodeBase {
     public InfoKey: string;
     public InfoValue: string;
 
-    constructor(key: string, value: string, parent?: NodeBase) {
+    constructor(key: string, value: string, parent?: NodeBase) 
+    {
         super(key, parent);
         this.Icon = "circle-outline";
         this.InfoKey = key;

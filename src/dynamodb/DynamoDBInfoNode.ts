@@ -4,20 +4,25 @@ import * as ui from '../common/UI';
 
 export class DynamoDBInfoNode extends NodeBase {
 
-    constructor(Label: string, parent?: NodeBase) {
-        super(Label, parent);
+    public InfoKey: string;
+    public InfoValue: string;
+
+    constructor(key: string, value: string, parent?: NodeBase) 
+    {
+        super(key, parent);
         this.Icon = "circle-outline";
+        this.InfoKey = key;
+        this.InfoValue = value;
+        this.description = value;
+        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         
         this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         
         this.SetContextValue();
-        this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
 
-    public InfoKey: string = "";
-    public InfoValue: string = "";
-
-    private handleNodeCopy(): void {
+    private async handleNodeCopy(): Promise<void> {
+        // Copy value to clipboard
         ui.CopyToClipboard(this.InfoValue);
         ui.showInfoMessage(`Copied to clipboard: ${this.InfoValue}`);
     }

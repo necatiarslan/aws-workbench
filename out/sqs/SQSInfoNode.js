@@ -9,6 +9,7 @@ class SQSInfoNode extends NodeBase_1.NodeBase {
     InfoValue;
     constructor(key, value, parent) {
         super(key, parent);
+        this.Icon = "circle-outline";
         this.InfoKey = key;
         this.InfoValue = value;
         this.description = value;

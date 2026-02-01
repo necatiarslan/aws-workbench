@@ -5,6 +5,8 @@ const vscode = require("vscode");
 const ui = require("../common/UI");
 const NodeBase_1 = require("../tree/NodeBase");
 class IamInfoNode extends NodeBase_1.NodeBase {
+    InfoKey;
+    InfoValue;
     constructor(key, value, parent) {
         super(key, parent);
         this.Icon = "circle-outline";
@@ -15,8 +17,6 @@ class IamInfoNode extends NodeBase_1.NodeBase {
         this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
     }
-    InfoKey;
-    InfoValue;
     async handleNodeCopy() {
         // Copy value to clipboard
         ui.CopyToClipboard(this.InfoValue);
