@@ -68,9 +68,9 @@ export class GlueJobNode extends NodeBase {
     }
 
     public async LoadDefaultChildren(): Promise<void> {
+        new GlueInfoGroupNode("Info", this);
         new GlueCodeGroupNode("Code", this);
         new GlueTriggerGroupNode("Trigger", this);
-        new GlueInfoGroupNode("Info", this);
         new GlueRunsGroupNode("Runs", this);
         new GlueLogsGroupNode("Logs", this);
         new GlueTagsGroupNode("Tags", this);

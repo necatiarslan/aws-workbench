@@ -52,9 +52,9 @@ export class SQSQueueNode extends NodeBase {
     public MessageFiles: { id: string; path: string }[] = [];
 
     public async LoadDefaultChildren(): Promise<void> {
+        new SQSInfoGroupNode("Info", this);
         new SQSSendGroupNode("Send", this);
         new SQSReceiveGroupNode("Receive", this);
-        new SQSInfoGroupNode("Info", this);
         new SQSPolicyNode("Policy", this);
         new SQSTagsGroupNode("Tags", this);
     }

@@ -41,9 +41,9 @@ export class IamPolicyNode extends NodeBase {
     public IsAwsManaged: boolean = false;
 
     public async LoadDefaultChildren(): Promise<void> {
+        new IamPolicyInfoGroupNode("Info", this);
         new IamPolicyVersionsGroupNode("Versions", this);
         new IamPolicyAttachmentsGroupNode("Attachments", this);
-        new IamPolicyInfoGroupNode("Info", this);
     }
 
     private handleNodeRemove(): void {

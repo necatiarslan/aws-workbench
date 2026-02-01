@@ -90,11 +90,11 @@ class StateMachineNode extends NodeBase_1.NodeBase {
         }
     }
     async LoadDefaultChildren() {
+        new StateMachineInfoGroupNode_1.StateMachineInfoGroupNode("Info", this);
         new StateMachineDefinitionGroupNode_1.StateMachineDefinitionGroupNode("Definition", this);
         new StateMachineTriggerGroupNode_1.StateMachineTriggerGroupNode("Trigger", this);
         new StateMachineExecutionsGroupNode_1.StateMachineExecutionsGroupNode("Executions", this);
         new StateMachineLogsGroupNode_1.StateMachineLogsGroupNode("Logs", this);
-        new StateMachineInfoGroupNode_1.StateMachineInfoGroupNode("Info", this);
         new StateMachineTagsGroupNode_1.StateMachineTagsGroupNode("Tags", this);
     }
     handleNodeRemove() {

@@ -56,9 +56,9 @@ class SNSTopicNode extends NodeBase_1.NodeBase {
         return this._attributes;
     }
     async LoadDefaultChildren() {
+        new SNSInfoGroupNode_1.SNSInfoGroupNode("Info", this);
         new SNSPublishGroupNode_1.SNSPublishGroupNode("Publish", this);
         new SNSSubscriptionsGroupNode_1.SNSSubscriptionsGroupNode("Subscriptions", this);
-        new SNSInfoGroupNode_1.SNSInfoGroupNode("Info", this);
         new SNSTagsGroupNode_1.SNSTagsGroupNode("Tags", this);
     }
     handleNodeRemove() {

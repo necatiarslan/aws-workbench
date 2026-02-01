@@ -25,7 +25,7 @@ const DynamoDBInfoGroupNode_1 = require("./DynamoDBInfoGroupNode");
 class DynamoDBTableNode extends NodeBase_1.NodeBase {
     constructor(TableName, parent) {
         super(TableName, parent);
-        this.Icon = "dynamodb-table";
+        this.Icon = "database";
         this.TableName = TableName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
@@ -60,11 +60,11 @@ class DynamoDBTableNode extends NodeBase_1.NodeBase {
         this._tableDetails = value;
     }
     async LoadDefaultChildren() {
+        new DynamoDBInfoGroupNode_1.DynamoDBInfoGroupNode("Info", this);
         new DynamoDBKeysGroupNode_1.DynamoDBKeysGroupNode("Keys", this);
         new DynamoDBIndexesGroupNode_1.DynamoDBIndexesGroupNode("Indexes", this);
         new DynamoDBCapacityNode_1.DynamoDBCapacityNode("Capacity", this);
         new DynamoDBTagsGroupNode_1.DynamoDBTagsGroupNode("Tags", this);
-        new DynamoDBInfoGroupNode_1.DynamoDBInfoGroupNode("Info", this);
     }
     handleNodeRemove() {
         this.Remove();

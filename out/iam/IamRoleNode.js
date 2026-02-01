@@ -37,10 +37,10 @@ class IamRoleNode extends NodeBase_1.NodeBase {
     Region = "";
     Arn = "";
     async LoadDefaultChildren() {
+        new IamRoleInfoGroupNode_1.IamRoleInfoGroupNode("Info", this);
         new IamRolePoliciesGroupNode_1.IamRolePoliciesGroupNode("Policies", this);
         new IamRoleTrustGroupNode_1.IamRoleTrustGroupNode("Trust Relationships", this);
         new IamTagsGroupNode_1.IamTagsGroupNode("Tags", this);
-        new IamRoleInfoGroupNode_1.IamRoleInfoGroupNode("Info", this);
     }
     handleNodeRemove() {
         this.Remove();

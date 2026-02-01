@@ -43,9 +43,9 @@ class SQSQueueNode extends NodeBase_1.NodeBase {
     DlqQueueArn;
     MessageFiles = [];
     async LoadDefaultChildren() {
+        new SQSInfoGroupNode_1.SQSInfoGroupNode("Info", this);
         new SQSSendGroupNode_1.SQSSendGroupNode("Send", this);
         new SQSReceiveGroupNode_1.SQSReceiveGroupNode("Receive", this);
-        new SQSInfoGroupNode_1.SQSInfoGroupNode("Info", this);
         new SQSPolicyNode_1.SQSPolicyNode("Policy", this);
         new SQSTagsGroupNode_1.SQSTagsGroupNode("Tags", this);
     }

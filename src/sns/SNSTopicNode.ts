@@ -60,9 +60,9 @@ export class SNSTopicNode extends NodeBase {
     }
 
     public async LoadDefaultChildren(): Promise<void> {
+        new SNSInfoGroupNode("Info", this);
         new SNSPublishGroupNode("Publish", this);
         new SNSSubscriptionsGroupNode("Subscriptions", this);
-        new SNSInfoGroupNode("Info", this);
         new SNSTagsGroupNode("Tags", this);
     }
 

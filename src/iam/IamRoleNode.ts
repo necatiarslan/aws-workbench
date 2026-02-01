@@ -38,10 +38,10 @@ export class IamRoleNode extends NodeBase {
     public Arn: string = "";
 
     public async LoadDefaultChildren(): Promise<void> {
+        new IamRoleInfoGroupNode("Info", this);
         new IamRolePoliciesGroupNode("Policies", this);
         new IamRoleTrustGroupNode("Trust Relationships", this);
         new IamTagsGroupNode("Tags", this);
-        new IamRoleInfoGroupNode("Info", this);
     }
 
     private handleNodeRemove(): void {

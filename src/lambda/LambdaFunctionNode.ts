@@ -68,13 +68,13 @@ export class LambdaFunctionNode extends NodeBase {
     }
 
     public async LoadDefaultChildren(): Promise<void> {
+        new LambdaInfoGroupNode("Info", this);
         const code = new LambdaCodeGroupNode("Code", this);
         new LambdaCodeFileNode("Select File", code);
         new LambdaCodeDownloadNode("Download", code);
         new LambdaCodeUpdateNode("Update", code);
 
         new LambdaEnvGroupNode("Env", this);
-        new LambdaInfoGroupNode("Info", this);
         new LambdaLogGroupNode("Logs", this);
         new LambdaTagGroupNode("Tags", this);
         new LambdaTriggerGroupNode("Triggers", this);

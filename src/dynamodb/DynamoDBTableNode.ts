@@ -15,7 +15,7 @@ export class DynamoDBTableNode extends NodeBase {
 
     constructor(TableName: string, parent?: NodeBase) {
         super(TableName, parent);
-        this.Icon = "dynamodb-table";
+        this.Icon = "database";
         this.TableName = TableName;
         
         this.EnableNodeAlias = true;
@@ -61,11 +61,11 @@ export class DynamoDBTableNode extends NodeBase {
     }
 
     public async LoadDefaultChildren(): Promise<void> {
+        new DynamoDBInfoGroupNode("Info", this);
         new DynamoDBKeysGroupNode("Keys", this);
         new DynamoDBIndexesGroupNode("Indexes", this);
         new DynamoDBCapacityNode("Capacity", this);
         new DynamoDBTagsGroupNode("Tags", this);
-        new DynamoDBInfoGroupNode("Info", this);
     }
 
     private handleNodeRemove(): void {

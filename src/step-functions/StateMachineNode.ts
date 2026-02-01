@@ -102,11 +102,11 @@ export class StateMachineNode extends NodeBase {
     }
 
     public async LoadDefaultChildren(): Promise<void> {
+        new StateMachineInfoGroupNode("Info", this);
         new StateMachineDefinitionGroupNode("Definition", this);
         new StateMachineTriggerGroupNode("Trigger", this);
         new StateMachineExecutionsGroupNode("Executions", this);
         new StateMachineLogsGroupNode("Logs", this);
-        new StateMachineInfoGroupNode("Info", this);
         new StateMachineTagsGroupNode("Tags", this);
     }
 

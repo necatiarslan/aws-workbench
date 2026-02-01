@@ -62,9 +62,9 @@ class GlueJobNode extends NodeBase_1.NodeBase {
         this._jobConfig = value;
     }
     async LoadDefaultChildren() {
+        new GlueInfoGroupNode_1.GlueInfoGroupNode("Info", this);
         new GlueCodeGroupNode_1.GlueCodeGroupNode("Code", this);
         new GlueTriggerGroupNode_1.GlueTriggerGroupNode("Trigger", this);
-        new GlueInfoGroupNode_1.GlueInfoGroupNode("Info", this);
         new GlueRunsGroupNode_1.GlueRunsGroupNode("Runs", this);
         new GlueLogsGroupNode_1.GlueLogsGroupNode("Logs", this);
         new GlueTagsGroupNode_1.GlueTagsGroupNode("Tags", this);

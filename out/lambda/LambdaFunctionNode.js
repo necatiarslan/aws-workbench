@@ -61,12 +61,12 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         return this._info;
     }
     async LoadDefaultChildren() {
+        new LambdaInfoGroupNode_1.LambdaInfoGroupNode("Info", this);
         const code = new LambdaCodeGroupNode_1.LambdaCodeGroupNode("Code", this);
         new LambdaCodeFileNode_1.LambdaCodeFileNode("Select File", code);
         new LambdaCodeDownloadNode_1.LambdaCodeDownloadNode("Download", code);
         new LambdaCodeUpdateNode_1.LambdaCodeUpdateNode("Update", code);
         new LambdaEnvGroupNode_1.LambdaEnvGroupNode("Env", this);
-        new LambdaInfoGroupNode_1.LambdaInfoGroupNode("Info", this);
         new LambdaLogGroupNode_1.LambdaLogGroupNode("Logs", this);
         new LambdaTagGroupNode_1.LambdaTagGroupNode("Tags", this);
         new LambdaTriggerGroupNode_1.LambdaTriggerGroupNode("Triggers", this);

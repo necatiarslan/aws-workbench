@@ -38,9 +38,9 @@ class IamPolicyNode extends NodeBase_1.NodeBase {
     Region = "";
     IsAwsManaged = false;
     async LoadDefaultChildren() {
+        new IamPolicyInfoGroupNode_1.IamPolicyInfoGroupNode("Info", this);
         new IamPolicyVersionsGroupNode_1.IamPolicyVersionsGroupNode("Versions", this);
         new IamPolicyAttachmentsGroupNode_1.IamPolicyAttachmentsGroupNode("Attachments", this);
-        new IamPolicyInfoGroupNode_1.IamPolicyInfoGroupNode("Info", this);
     }
     handleNodeRemove() {
         this.Remove();
