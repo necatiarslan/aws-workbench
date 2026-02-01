@@ -16,10 +16,16 @@ class IamTagNode extends NodeBase_1.NodeBase {
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
     }
     Key = "";
     Value = "";
+    async handleNodeCopy() {
+        const info = `${this.Key}: ${this.Value}`;
+        ui.CopyToClipboard(info);
+        ui.showInfoMessage(`Copied to clipboard: ${info}`);
+    }
     async handleNodeRemove() {
         ui.logToOutput('IamTagNode.NodeRemove Started');
         if (!this.Key) {

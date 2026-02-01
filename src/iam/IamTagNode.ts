@@ -18,6 +18,7 @@ export class IamTagNode extends NodeBase {
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
 
         this.SetContextValue();
     }
@@ -25,6 +26,12 @@ export class IamTagNode extends NodeBase {
     public Key: string = "";
 
     public Value: string = "";
+
+    private async handleNodeCopy(): Promise<void> {
+        const info = `${this.Key}: ${this.Value}`;
+        ui.CopyToClipboard(info);
+        ui.showInfoMessage(`Copied to clipboard: ${info}`);
+    }
 
     public async handleNodeRemove(): Promise<void> {
         ui.logToOutput('IamTagNode.NodeRemove Started');
