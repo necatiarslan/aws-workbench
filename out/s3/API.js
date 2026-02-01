@@ -31,6 +31,7 @@ exports.DownloadObject = DownloadObject;
 exports.DownloadFolder = DownloadFolder;
 exports.DownloadFile = DownloadFile;
 exports.GetBucketList = GetBucketList;
+exports.GetBucket = GetBucket;
 exports.TestAwsCredentials = TestAwsCredentials;
 exports.TestAwsConnection = TestAwsConnection;
 exports.GetAwsProfileList = GetAwsProfileList;
@@ -757,7 +758,7 @@ async function GetBucketList(BucketName) {
         if (BucketName) {
             try {
                 const command = new client_s3_8.HeadBucketCommand({ Bucket: BucketName });
-                await s3.send(command);
+                const response = await s3.send(command);
                 // bucket exists, so return it
                 result.result.push(BucketName);
                 result.isSuccessful = true;
@@ -784,6 +785,24 @@ async function GetBucketList(BucketName) {
         result.error = error;
         ui.showErrorMessage('api.GetBucketList Error !!!', error);
         ui.logToOutput('api.GetBucketList Error !!!', error);
+        return result;
+    }
+}
+async function GetBucket(BucketName) {
+    let result = new MethodResult_1.MethodResult();
+    try {
+        const s3 = await GetS3Client();
+        const command = new client_s3_8.HeadBucketCommand({ Bucket: BucketName });
+        const response = await s3.send(command);
+        result.isSuccessful = true;
+        result.result = response;
+        return result;
+    }
+    catch (error) {
+        result.isSuccessful = false;
+        result.error = error;
+        ui.showErrorMessage('api.GetBucket Error !!!', error);
+        ui.logToOutput('api.GetBucket Error !!!', error);
         return result;
     }
 }

@@ -904,7 +904,7 @@ export async function DownloadFile(
 }
 
 
-import { HeadBucketCommand, ListBucketsCommand } from '@aws-sdk/client-s3';
+import { HeadBucketCommand, ListBucketsCommand, HeadBucketCommandOutput } from '@aws-sdk/client-s3';
 export async function GetBucketList(BucketName?: string): Promise<MethodResult<string[]>> {
   let result: MethodResult<string[]> = new MethodResult<string[]>();
   result.result = [];
@@ -915,7 +915,7 @@ export async function GetBucketList(BucketName?: string): Promise<MethodResult<s
     if (BucketName) {
       try {
         const command = new HeadBucketCommand({ Bucket: BucketName });
-        await s3.send(command);
+        const response = await s3.send(command);
         // bucket exists, so return it
         result.result.push(BucketName);
         result.isSuccessful = true;
@@ -942,6 +942,26 @@ export async function GetBucketList(BucketName?: string): Promise<MethodResult<s
     result.error = error;
     ui.showErrorMessage('api.GetBucketList Error !!!', error);
     ui.logToOutput('api.GetBucketList Error !!!', error);
+    return result;
+  }
+}
+
+export async function GetBucket(BucketName: string): Promise<MethodResult<HeadBucketCommandOutput>> {
+  let result: MethodResult<HeadBucketCommandOutput> = new MethodResult<HeadBucketCommandOutput>();
+
+  try {
+    const s3 = await GetS3Client();
+    const command = new HeadBucketCommand({ Bucket: BucketName });
+    const response = await s3.send(command);
+
+    result.isSuccessful = true;
+    result.result = response;
+    return result;
+  } catch (error: any) {
+    result.isSuccessful = false;
+    result.error = error;
+    ui.showErrorMessage('api.GetBucket Error !!!', error);
+    ui.logToOutput('api.GetBucket Error !!!', error);
     return result;
   }
 }

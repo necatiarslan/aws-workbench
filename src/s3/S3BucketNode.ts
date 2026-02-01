@@ -4,6 +4,11 @@ import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import { S3Explorer } from './S3Explorer';
 import { S3BucketShortcutGroupNode } from './S3BucketShortcutGroupNode';
 import { S3TagsGroupNode } from './S3TagsGroupNode';
+import { S3InfoGroupNode } from './S3InfoGroupNode';
+import { HeadBucketCommandOutput } from '@aws-sdk/client-s3';
+import * as api from './API';
+import * as ui from '../common/UI';
+import * as vscode from 'vscode';
 
 export class S3BucketNode extends NodeBase {
 
@@ -34,6 +39,25 @@ export class S3BucketNode extends NodeBase {
 
     private ShortcutGroupNode: S3BucketShortcutGroupNode | undefined;
 
+    private _info: HeadBucketCommandOutput | undefined = undefined;
+
+    public get Info(): Promise<HeadBucketCommandOutput | undefined> {
+        return this.getInfo();
+    }
+
+    private async getInfo(): Promise<HeadBucketCommandOutput | undefined> {
+        if(!this._info) {
+            const response = await api.GetBucket(this.BucketName);
+            if (response.isSuccessful) {
+                this._info = response.result;
+            } else {
+                ui.logToOutput('api.GetBucket Error !!!', response.error);
+                ui.showErrorMessage('Get Bucket Error !!!', response.error);
+            }
+        }
+        return this._info;
+    }
+
     private handleNodeRemove(): void {
         this.Remove();
         this.TreeSave();
@@ -41,6 +65,7 @@ export class S3BucketNode extends NodeBase {
 
     public async LoadDefaultChildren(): Promise<void> {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode("Shortcuts", this);
+        new S3InfoGroupNode("Info", this);
         new S3TagsGroupNode("Tags", this);
     }
 

@@ -16,6 +16,9 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const S3Explorer_1 = require("./S3Explorer");
 const S3BucketShortcutGroupNode_1 = require("./S3BucketShortcutGroupNode");
 const S3TagsGroupNode_1 = require("./S3TagsGroupNode");
+const S3InfoGroupNode_1 = require("./S3InfoGroupNode");
+const api = require("./API");
+const ui = require("../common/UI");
 class S3BucketNode extends NodeBase_1.NodeBase {
     constructor(BucketName, parent) {
         super(BucketName, parent);
@@ -32,12 +35,30 @@ class S3BucketNode extends NodeBase_1.NodeBase {
     BucketName = "";
     Shortcuts = [];
     ShortcutGroupNode;
+    _info = undefined;
+    get Info() {
+        return this.getInfo();
+    }
+    async getInfo() {
+        if (!this._info) {
+            const response = await api.GetBucket(this.BucketName);
+            if (response.isSuccessful) {
+                this._info = response.result;
+            }
+            else {
+                ui.logToOutput('api.GetBucket Error !!!', response.error);
+                ui.showErrorMessage('Get Bucket Error !!!', response.error);
+            }
+        }
+        return this._info;
+    }
     handleNodeRemove() {
         this.Remove();
         this.TreeSave();
     }
     async LoadDefaultChildren() {
         this.ShortcutGroupNode = new S3BucketShortcutGroupNode_1.S3BucketShortcutGroupNode("Shortcuts", this);
+        new S3InfoGroupNode_1.S3InfoGroupNode("Info", this);
         new S3TagsGroupNode_1.S3TagsGroupNode("Tags", this);
     }
     IsShortcutExists(key) {
