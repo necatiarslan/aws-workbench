@@ -8,14 +8,14 @@ class DynamoDBInfoNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "circle-outline";
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
     InfoKey = "";
     InfoValue = "";
-    handleNodeOpen() {
-        vscode.env.clipboard.writeText(this.InfoValue);
+    handleNodeCopy() {
+        ui.CopyToClipboard(this.InfoValue);
         ui.showInfoMessage(`Copied to clipboard: ${this.InfoValue}`);
     }
 }

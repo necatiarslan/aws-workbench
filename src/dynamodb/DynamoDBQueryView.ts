@@ -287,7 +287,7 @@ export class DynamoDBQueryView {
 
     private async copyResults(items: any[]) {
         const json = JSON.stringify(items, null, 2);
-        await vscode.env.clipboard.writeText(json);
+        ui.CopyToClipboard(json);
         ui.showInfoMessage(`Copied ${items.length} items to clipboard`);
     }
 

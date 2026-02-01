@@ -10,7 +10,7 @@ class DynamoDBCapacityNode extends NodeBase_1.NodeBase {
         this.Icon = "dashboard";
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
@@ -53,11 +53,11 @@ class DynamoDBCapacityNode extends NodeBase_1.NodeBase {
             this.RefreshTree();
         }
     }
-    handleNodeOpen() {
+    handleNodeCopy() {
         const info = this.BillingMode === 'PAY_PER_REQUEST'
             ? 'Billing Mode: On-Demand (PAY_PER_REQUEST)'
             : `Billing Mode: Provisioned (RCU: ${this.ReadCapacity}, WCU: ${this.WriteCapacity})`;
-        vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
 }

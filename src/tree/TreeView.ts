@@ -127,6 +127,10 @@ export class TreeView {
             this.NodeInfo(node);
         });
 
+        vscode.commands.registerCommand('AwsWorkbench.NodeCopy', (node: NodeBase) => {
+            this.NodeCopy(node);
+        });
+
         vscode.commands.registerCommand('AwsWorkbench.NodeAlias', (node: NodeBase) => {
             this.NodeAlias(node);
         });
@@ -428,6 +432,10 @@ export class TreeView {
 
     public NodeInfo(node: NodeBase): void {
         node.NodeInfo();
+    }
+
+    public NodeCopy(node: NodeBase): void {
+        node.NodeCopy();
     }
 
     public NodeAlias(node: NodeBase): void {

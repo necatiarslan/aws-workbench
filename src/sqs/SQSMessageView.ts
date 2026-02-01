@@ -98,12 +98,12 @@ export class SQSMessageView {
     }
 
     private async copyBody() {
-        await vscode.env.clipboard.writeText(this.state.body);
+        ui.CopyToClipboard(this.state.body);
         ui.showInfoMessage('Message body copied to clipboard');
     }
 
     private async copyMessageId() {
-        await vscode.env.clipboard.writeText(this.state.messageId);
+        ui.CopyToClipboard(this.state.messageId);
         ui.showInfoMessage('Message ID copied to clipboard');
     }
 
@@ -114,7 +114,7 @@ export class SQSMessageView {
             Attributes: this.state.attributes,
             ReceiptHandle: this.state.receiptHandle
         };
-        await vscode.env.clipboard.writeText(JSON.stringify(fullMessage, null, 2));
+        ui.CopyToClipboard(JSON.stringify(fullMessage, null, 2));
         ui.showInfoMessage('Full message copied to clipboard');
     }
 

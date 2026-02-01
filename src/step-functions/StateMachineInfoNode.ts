@@ -13,7 +13,7 @@ export class StateMachineInfoNode extends NodeBase {
         this.description = value;
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         
         this.SetContextValue();
     }
@@ -21,9 +21,9 @@ export class StateMachineInfoNode extends NodeBase {
     public InfoKey: string;
     public InfoValue: string;
 
-    private async handleNodeOpen(): Promise<void> {
+    private async handleNodeCopy(): Promise<void> {
         // Copy value to clipboard
-        await vscode.env.clipboard.writeText(this.InfoValue);
+        ui.CopyToClipboard(this.InfoValue);
         ui.showInfoMessage(`Copied to clipboard: ${this.InfoValue}`);
     }
 }

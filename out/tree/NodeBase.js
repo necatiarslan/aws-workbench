@@ -31,6 +31,7 @@ class NodeBase extends vscode.TreeItem {
     OnNodeStop = new EventEmitter_1.EventEmitter();
     OnNodeOpen = new EventEmitter_1.EventEmitter();
     OnNodeInfo = new EventEmitter_1.EventEmitter();
+    OnNodeCopy = new EventEmitter_1.EventEmitter();
     OnNodeDeserialized = new EventEmitter_1.EventEmitter();
     OnNodeLoadChildren = new EventEmitter_1.EventEmitter();
     OnNodeLoaded = new EventEmitter_1.EventEmitter();
@@ -194,6 +195,9 @@ class NodeBase extends vscode.TreeItem {
         }
         if (this.OnNodeInfo.hasListeners()) {
             context += "#NodeInfo#";
+        }
+        if (this.OnNodeCopy.hasListeners()) {
+            context += "#NodeCopy#";
         }
         if (this.EnableNodeAlias) {
             context += "#NodeAlias#";
@@ -422,6 +426,9 @@ class NodeBase extends vscode.TreeItem {
     }
     async NodeInfo() {
         await this.OnNodeInfo.fire(undefined);
+    }
+    async NodeCopy() {
+        await this.OnNodeCopy.fire(undefined);
     }
     async NodeDeserialized() {
         await this.OnNodeDeserialized.fire(undefined);

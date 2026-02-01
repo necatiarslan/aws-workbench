@@ -11,7 +11,7 @@ export class DynamoDBIndexNode extends NodeBase {
         this.Icon = "list-tree";
         
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
@@ -57,10 +57,10 @@ export class DynamoDBIndexNode extends NodeBase {
         }
     }
 
-    private handleNodeOpen(): void {
+    private handleNodeCopy(): void {
         // Copy index info to clipboard
         const info = `${this.IndexType}: ${this.IndexName} - ${this.Keys}`;
-        vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
 

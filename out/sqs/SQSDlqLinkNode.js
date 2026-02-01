@@ -33,7 +33,7 @@ class SQSDlqLinkNode extends NodeBase_1.NodeBase {
             // DLQ not in tree, show info with ARN
             const action = await vscode.window.showInformationMessage(`Dead Letter Queue: ${this.DlqArn}`, 'Copy ARN');
             if (action === 'Copy ARN') {
-                await vscode.env.clipboard.writeText(this.DlqArn);
+                ui.CopyToClipboard(this.DlqArn);
                 ui.showInfoMessage('DLQ ARN copied to clipboard');
             }
         }

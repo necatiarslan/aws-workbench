@@ -197,7 +197,7 @@ class DynamoDBScanView {
     }
     async copyResults(items) {
         const json = JSON.stringify(items, null, 2);
-        await vscode.env.clipboard.writeText(json);
+        ui.CopyToClipboard(json);
         ui.showInfoMessage(`Copied ${items.length} items to clipboard`);
     }
     async exportResults(items) {

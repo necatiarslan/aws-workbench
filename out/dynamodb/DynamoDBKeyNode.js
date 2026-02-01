@@ -8,17 +8,17 @@ class DynamoDBKeyNode extends NodeBase_1.NodeBase {
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "key";
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
     KeyName = "";
     KeyType = "";
     KeyRole = ""; // HASH or RANGE
-    handleNodeOpen() {
+    handleNodeCopy() {
         // Copy key info to clipboard
         const info = `${this.KeyName} (${this.KeyType}) - ${this.KeyRole === 'HASH' ? 'Partition Key' : 'Sort Key'}`;
-        vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
 }

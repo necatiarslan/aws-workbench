@@ -140,6 +140,11 @@
         "icon": "$(info)"
       },
       {
+        "command": "AwsWorkbench.NodeCopy",
+        "title": "Copy",
+        "icon": "$(copy)"
+      },
+      {
         "command": "AwsWorkbench.NodeAlias",
         "title": "Alias",
         "icon": "$(case-sensitive)"
@@ -388,6 +393,11 @@
           "command": "AwsWorkbench.NodeInfo",
           "when": "view == AwsWorkbenchView && viewItem =~ /#NodeInfo#/",
           "group": "inline@9"
+        },
+        {
+          "command": "AwsWorkbench.NodeCopy",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#NodeCopy#/",
+          "group": "inline@10"
         }
       ],
       "AwsWorkbench.Connection": [

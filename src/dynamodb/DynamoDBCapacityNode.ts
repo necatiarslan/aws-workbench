@@ -11,7 +11,7 @@ export class DynamoDBCapacityNode extends NodeBase {
         
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
 
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
@@ -60,11 +60,11 @@ export class DynamoDBCapacityNode extends NodeBase {
         }
     }
 
-    private handleNodeOpen(): void {
+    private handleNodeCopy(): void {
         const info = this.BillingMode === 'PAY_PER_REQUEST' 
             ? 'Billing Mode: On-Demand (PAY_PER_REQUEST)'
             : `Billing Mode: Provisioned (RCU: ${this.ReadCapacity}, WCU: ${this.WriteCapacity})`;
-        vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
 }

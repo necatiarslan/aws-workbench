@@ -22,6 +22,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     protected OnNodeStop: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeOpen: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeInfo: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeCopy: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeDeserialized: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeLoadChildren: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeLoaded: EventEmitter<void> = new EventEmitter<void>();
@@ -204,6 +205,7 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (this.OnNodeStop.hasListeners()) { context += "#NodeStop#"; }
         if (this.OnNodeOpen.hasListeners()) { context += "#NodeOpen#"; }
         if (this.OnNodeInfo.hasListeners()) { context += "#NodeInfo#"; }
+        if (this.OnNodeCopy.hasListeners()) { context += "#NodeCopy#"; }
         if (this.EnableNodeAlias) { context += "#NodeAlias#"; }
 
         if(this.IsSerializable){
@@ -449,6 +451,10 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public async NodeInfo(): Promise<void> {
         await this.OnNodeInfo.fire(undefined);
+    }
+    
+    public async NodeCopy(): Promise<void> {
+        await this.OnNodeCopy.fire(undefined);
     }
 
     public async NodeDeserialized(): Promise<void> {

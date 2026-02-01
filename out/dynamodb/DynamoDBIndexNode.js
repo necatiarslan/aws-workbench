@@ -10,7 +10,7 @@ class DynamoDBIndexNode extends NodeBase_1.NodeBase {
         super(Label, parent);
         this.Icon = "list-tree";
         this.OnNodeRun.subscribe(() => this.handleNodeRun());
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
@@ -46,10 +46,10 @@ class DynamoDBIndexNode extends NodeBase_1.NodeBase {
             this.StopWorking();
         }
     }
-    handleNodeOpen() {
+    handleNodeCopy() {
         // Copy index info to clipboard
         const info = `${this.IndexType}: ${this.IndexName} - ${this.Keys}`;
-        vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
     updateDescription() {

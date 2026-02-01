@@ -13,7 +13,7 @@ class DynamoDBTagNode extends NodeBase_1.NodeBase {
         this.Value = Value;
         this.description = Value;
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
@@ -22,9 +22,9 @@ class DynamoDBTagNode extends NodeBase_1.NodeBase {
     }
     Key = "";
     Value = "";
-    handleNodeOpen() {
+    handleNodeCopy() {
         const info = `${this.Key}: ${this.Value}`;
-        vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
     async handleNodeRemove() {

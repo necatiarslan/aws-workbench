@@ -16,7 +16,7 @@ class CloudWatchLogTagNode extends NodeBase_1.NodeBase {
         this.description = value;
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
         this.Icon = "circle-outline";
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
@@ -29,9 +29,9 @@ class CloudWatchLogTagNode extends NodeBase_1.NodeBase {
         this.contextValue += "#CanRemove#";
         this.contextValue += "#CanCopyToClipboard#";
     }
-    async handleNodeOpen() {
+    async handleNodeCopy() {
         const info = `${this.Key}: ${this.Value}`;
-        await vscode.env.clipboard.writeText(info);
+        ui.CopyToClipboard(info);
         ui.showInfoMessage(`Copied to clipboard: ${info}`);
     }
     async handleNodeRemove() {

@@ -14,12 +14,12 @@ class GlueInfoNode extends NodeBase_1.NodeBase {
         this.InfoValue = value;
         this.description = value;
         this.collapsibleState = vscode.TreeItemCollapsibleState.None;
-        this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
+        this.OnNodeCopy.subscribe(() => this.handleNodeCopy());
         this.SetContextValue();
     }
-    async handleNodeOpen() {
+    async handleNodeCopy() {
         // Copy value to clipboard
-        await vscode.env.clipboard.writeText(this.InfoValue);
+        ui.CopyToClipboard(this.InfoValue);
         ui.showInfoMessage(`Copied to clipboard: ${this.InfoValue}`);
     }
 }

@@ -42,7 +42,7 @@ export class SQSDlqLinkNode extends NodeBase {
             );
             
             if (action === 'Copy ARN') {
-                await vscode.env.clipboard.writeText(this.DlqArn);
+                ui.CopyToClipboard(this.DlqArn);
                 ui.showInfoMessage('DLQ ARN copied to clipboard');
             }
         }
