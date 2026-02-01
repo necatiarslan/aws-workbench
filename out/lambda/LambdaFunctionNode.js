@@ -43,25 +43,22 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
     Region = "";
     CodePath = "";
     TriggerFiles = [];
-    _configuration = undefined;
-    get Configuration() {
-        return this.getConfiguration();
+    _info = undefined;
+    get Info() {
+        return this.getInfo();
     }
-    async getConfiguration() {
-        if (!this._configuration) {
+    async getInfo() {
+        if (!this._info) {
             const response = await api.GetLambdaConfiguration(this.Region, this.FunctionName);
             if (response.isSuccessful) {
-                this._configuration = response.result;
+                this._info = response.result;
             }
             else {
                 ui.logToOutput('api.GetLambdaConfiguration Error !!!', response.error);
                 ui.showErrorMessage('Get Lambda Configuration Error !!!', response.error);
             }
         }
-        return this._configuration;
-    }
-    set Configuration(value) {
-        this._configuration = value;
+        return this._info;
     }
     async LoadDefaultChildren() {
         const code = new LambdaCodeGroupNode_1.LambdaCodeGroupNode("Code", this);
@@ -167,7 +164,7 @@ class LambdaFunctionNode extends NodeBase_1.NodeBase {
         }
         this.StartWorking();
         try {
-            const config = await this.Configuration;
+            const config = await this.Info;
             if (config) {
                 const jsonContent = JSON.stringify(config, null, 2);
                 const document = await vscode.workspace.openTextDocument({

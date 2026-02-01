@@ -16,6 +16,7 @@ const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const CloudWatchLogView_1 = require("./CloudWatchLogView");
 const CloudWatchLogTagsGroupNode_1 = require("./CloudWatchLogTagsGroupNode");
 const CloudWatchLogStreamsGroupNode_1 = require("./CloudWatchLogStreamsGroupNode");
+const CloudWatchLogInfoGroupNode_1 = require("./CloudWatchLogInfoGroupNode");
 class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     constructor(LogGroup, parent) {
         super(LogGroup, parent);
@@ -32,7 +33,27 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     LogGroup = "";
     Region = "";
     LogStreams = [];
+    _info = undefined;
+    get Info() {
+        return this.getInfo();
+    }
+    async getInfo() {
+        if (!this._info) {
+            const api = await Promise.resolve().then(() => require('./API'));
+            const ui = await Promise.resolve().then(() => require('../common/UI'));
+            const response = await api.GetLogGroupInfo(this.Region, this.LogGroup);
+            if (response.isSuccessful) {
+                this._info = response.result;
+            }
+            else {
+                ui.logToOutput('api.GetLogGroupInfo Error !!!', response.error);
+                ui.showErrorMessage('Get Log Group Info Error !!!', response.error);
+            }
+        }
+        return this._info;
+    }
     async LoadDefaultChildren() {
+        new CloudWatchLogInfoGroupNode_1.CloudWatchLogInfoGroupNode("Info", this);
         new CloudWatchLogStreamsGroupNode_1.CloudWatchLogStreamsGroupNode("Log Streams", this);
         new CloudWatchLogTagsGroupNode_1.CloudWatchLogTagsGroupNode("Tags", this);
     }

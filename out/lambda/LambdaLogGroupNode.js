@@ -25,7 +25,7 @@ class LambdaLogGroupNode extends NodeBase_1.NodeBase {
         //  "LoggingConfig": {
         // "LogFormat": "Text",
         // "LogGroup": "/aws/lambda/my-lambda"
-        const LoggingConfig = (await lambdaNode.Configuration)?.["LoggingConfig"];
+        const LoggingConfig = (await lambdaNode.Info)?.["LoggingConfig"];
         if (!LoggingConfig) {
             ui.logToOutput('LambdaLogGroupNode.NodeRefresh - No logging configuration found');
             return;

@@ -48,27 +48,23 @@ export class LambdaFunctionNode extends NodeBase {
     @Serialize()
     public TriggerFiles: { id: string; path: string }[] = [];
 
-    public _configuration: FunctionConfiguration | undefined = undefined;
+    private _info: FunctionConfiguration | undefined = undefined;
 
-    public get Configuration(): Promise<FunctionConfiguration | undefined> {
-        return this.getConfiguration();
+    public get Info(): Promise<FunctionConfiguration | undefined> {
+        return this.getInfo();
     }
 
-    private async getConfiguration(): Promise<FunctionConfiguration | undefined> {
-        if(!this._configuration) {
+    private async getInfo(): Promise<FunctionConfiguration | undefined> {
+        if(!this._info) {
             const response = await api.GetLambdaConfiguration(this.Region, this.FunctionName);
             if (response.isSuccessful) {
-                this._configuration = response.result;
+                this._info = response.result;
             } else {
                 ui.logToOutput('api.GetLambdaConfiguration Error !!!', response.error);
                 ui.showErrorMessage('Get Lambda Configuration Error !!!', response.error);
             }
         }
-        return this._configuration;
-    }
-
-    public set Configuration(value: FunctionConfiguration | undefined) {
-        this._configuration = value;
+        return this._info;
     }
 
     public async LoadDefaultChildren(): Promise<void> {
@@ -194,7 +190,7 @@ export class LambdaFunctionNode extends NodeBase {
         this.StartWorking();
 
         try {
-            const config = await this.Configuration;
+            const config = await this.Info;
             if (config) {
             const jsonContent = JSON.stringify(config, null, 2);
             const document = await vscode.workspace.openTextDocument({
