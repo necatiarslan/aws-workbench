@@ -2,7 +2,7 @@
   "name": "aws-workbench",
   "displayName": "Aws Workbench",
   "description": "Your complete AWS toolkit, right in VS Code",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "publisher": "NecatiARSLAN",
   "repository": {
     "type": "git",
