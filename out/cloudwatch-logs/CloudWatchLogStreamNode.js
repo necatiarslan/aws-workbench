@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloudWatchLogStreamNode = void 0;
 const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const CloudWatchLogView_1 = require("./CloudWatchLogView");
 class CloudWatchLogStreamNode extends NodeBase_1.NodeBase {
     constructor(LogStream, parent) {
@@ -50,6 +49,4 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], CloudWatchLogStreamNode.prototype, "Region", void 0);
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('CloudWatchLogStreamNode', CloudWatchLogStreamNode);
 //# sourceMappingURL=CloudWatchLogStreamNode.js.map

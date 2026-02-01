@@ -39,8 +39,8 @@ class CloudWatchLogTagNode extends NodeBase_1.NodeBase {
         if (confirmation !== 'Yes') {
             return;
         }
-        const awsResourceNode = this.GetAwsResourceNode();
-        if (!(awsResourceNode instanceof CloudWatchLogGroupNode_1.CloudWatchLogGroupNode)) {
+        const logGroupNode = this.GetAwsResourceNode();
+        if (!(logGroupNode instanceof CloudWatchLogGroupNode_1.CloudWatchLogGroupNode)) {
             ui.logToOutput('CloudWatchLogTagNode.NodeRemove - Parent CloudWatch Log Group not found');
             return;
         }
@@ -48,7 +48,7 @@ class CloudWatchLogTagNode extends NodeBase_1.NodeBase {
             return;
         }
         this.StartWorking();
-        const result = await api.RemoveCloudWatchLogGroupTag(awsResourceNode.Region, awsResourceNode.LogGroupName, this.Key);
+        const result = await api.RemoveCloudWatchLogGroupTag(logGroupNode.Region, logGroupNode.LogGroup, this.Key);
         if (!result.isSuccessful) {
             ui.logToOutput('api.RemoveCloudWatchLogGroupTag Error !!!', result.error);
             ui.showErrorMessage('Remove Tag Error !!!', result.error);
@@ -76,7 +76,7 @@ class CloudWatchLogTagNode extends NodeBase_1.NodeBase {
             return;
         }
         this.StartWorking();
-        const result = await api.UpdateCloudWatchLogGroupTag(awsResourceNode.Region, awsResourceNode.LogGroupName, this.Key, newValue);
+        const result = await api.UpdateCloudWatchLogGroupTag(awsResourceNode.Region, awsResourceNode.LogGroup, this.Key, newValue);
         if (!result.isSuccessful) {
             ui.logToOutput('api.UpdateCloudWatchLogGroupTag Error !!!', result.error);
             ui.showErrorMessage('Update Tag Error !!!', result.error);
@@ -99,7 +99,7 @@ class CloudWatchLogTagNode extends NodeBase_1.NodeBase {
             return;
         }
         this.StartWorking();
-        const result = await api.GetLogGroupTags(awsResourceNode.Region, awsResourceNode.LogGroupName);
+        const result = await api.GetLogGroupTags(awsResourceNode.Region, awsResourceNode.LogGroup);
         this.StopWorking();
         if (!result.isSuccessful) {
             ui.logToOutput('api.GetLogGroupTags Error !!!', result.error);

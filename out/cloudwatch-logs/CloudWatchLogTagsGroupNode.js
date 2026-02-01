@@ -5,7 +5,6 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const api = require("./API");
 const ui = require("../common/UI");
-const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const CloudWatchLogTagNode_1 = require("./CloudWatchLogTagNode");
 const CloudWatchLogGroupNode_1 = require("./CloudWatchLogGroupNode");
 class CloudWatchLogTagsGroupNode extends NodeBase_1.NodeBase {
@@ -18,11 +17,6 @@ class CloudWatchLogTagsGroupNode extends NodeBase_1.NodeBase {
         this.OnNodeLoadChildren.subscribe(() => this.handleNodeRefresh());
         this.SetContextValue();
     }
-    SetContextValue() {
-        this.contextValue = "AwsWorkbenchCloudWatchLogTagsGroupNode";
-        this.contextValue += "#CanRefresh#";
-        this.contextValue += "#CanAdd#";
-    }
     async handleNodeRefresh() {
         ui.logToOutput('CloudWatchLogTagsGroupNode.NodeRefresh Started');
         const awsResourceNode = this.GetAwsResourceNode();
@@ -34,7 +28,7 @@ class CloudWatchLogTagsGroupNode extends NodeBase_1.NodeBase {
         //     return;
         // }
         this.StartWorking();
-        const result = await api.GetLogGroupTags(awsResourceNode.Region, awsResourceNode.LogGroupName);
+        const result = await api.GetLogGroupTags(awsResourceNode.Region, awsResourceNode.LogGroup);
         if (!result.isSuccessful) {
             ui.logToOutput('api.GetLogGroupTags Error !!!', result.error);
             ui.showErrorMessage('Get Log Group Tags Error !!!', result.error);
@@ -77,7 +71,7 @@ class CloudWatchLogTagsGroupNode extends NodeBase_1.NodeBase {
             return;
         }
         this.StartWorking();
-        const result = await api.UpdateCloudWatchLogGroupTag(awsResourceNode.Region, awsResourceNode.LogGroupName, key, value);
+        const result = await api.UpdateCloudWatchLogGroupTag(awsResourceNode.Region, awsResourceNode.LogGroup, key, value);
         if (!result.isSuccessful) {
             ui.logToOutput('api.UpdateCloudWatchLogGroupTag Error !!!', result.error);
             ui.showErrorMessage('Add Tag Error !!!', result.error);
@@ -90,6 +84,4 @@ class CloudWatchLogTagsGroupNode extends NodeBase_1.NodeBase {
     }
 }
 exports.CloudWatchLogTagsGroupNode = CloudWatchLogTagsGroupNode;
-// Register with NodeRegistry for deserialization
-NodeRegistry_1.NodeRegistry.register('CloudWatchLogTagsGroupNode', CloudWatchLogTagsGroupNode);
 //# sourceMappingURL=CloudWatchLogTagsGroupNode.js.map

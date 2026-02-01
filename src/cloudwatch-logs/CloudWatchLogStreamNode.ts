@@ -42,6 +42,3 @@ export class CloudWatchLogStreamNode extends NodeBase {
     }
 
 }
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('CloudWatchLogStreamNode', CloudWatchLogStreamNode);

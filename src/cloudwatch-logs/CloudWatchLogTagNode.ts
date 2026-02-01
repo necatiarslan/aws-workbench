@@ -52,8 +52,8 @@ export class CloudWatchLogTagNode extends NodeBase {
             return;
         }
 
-        const awsResourceNode = this.GetAwsResourceNode();
-        if (!(awsResourceNode instanceof CloudWatchLogGroupNode)) {
+        const logGroupNode = this.GetAwsResourceNode();
+        if (!(logGroupNode instanceof CloudWatchLogGroupNode)) {
             ui.logToOutput('CloudWatchLogTagNode.NodeRemove - Parent CloudWatch Log Group not found');
             return;
         }
@@ -62,8 +62,8 @@ export class CloudWatchLogTagNode extends NodeBase {
         this.StartWorking();
 
         const result = await api.RemoveCloudWatchLogGroupTag(
-            awsResourceNode.Region,
-            awsResourceNode.LogGroupName,
+            logGroupNode.Region,
+            logGroupNode.LogGroup,
             this.Key
         );
 
@@ -100,7 +100,7 @@ export class CloudWatchLogTagNode extends NodeBase {
 
         const result = await api.UpdateCloudWatchLogGroupTag(
             awsResourceNode.Region,
-            awsResourceNode.LogGroupName,
+            awsResourceNode.LogGroup,
             this.Key,
             newValue
         );
@@ -131,7 +131,7 @@ export class CloudWatchLogTagNode extends NodeBase {
 
         const result = await api.GetLogGroupTags(
             awsResourceNode.Region,
-            awsResourceNode.LogGroupName
+            awsResourceNode.LogGroup
         );
 
         this.StopWorking();

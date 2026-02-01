@@ -19,12 +19,6 @@ export class CloudWatchLogTagsGroupNode extends NodeBase {
         this.SetContextValue();
     }
 
-    SetContextValue(): void {
-        this.contextValue = "AwsWorkbenchCloudWatchLogTagsGroupNode";
-        this.contextValue += "#CanRefresh#";
-        this.contextValue += "#CanAdd#";
-    }
-
     async handleNodeRefresh() {
         ui.logToOutput('CloudWatchLogTagsGroupNode.NodeRefresh Started');
 
@@ -42,7 +36,7 @@ export class CloudWatchLogTagsGroupNode extends NodeBase {
 
         const result = await api.GetLogGroupTags(
             awsResourceNode.Region,
-            awsResourceNode.LogGroupName
+            awsResourceNode.LogGroup
         );
 
         if (!result.isSuccessful) {
@@ -102,7 +96,7 @@ export class CloudWatchLogTagsGroupNode extends NodeBase {
 
         const result = await api.UpdateCloudWatchLogGroupTag(
             awsResourceNode.Region,
-            awsResourceNode.LogGroupName,
+            awsResourceNode.LogGroup,
             key,
             value
         );
@@ -119,7 +113,3 @@ export class CloudWatchLogTagsGroupNode extends NodeBase {
         await this.handleNodeRefresh();
     }
 }
-
-
-// Register with NodeRegistry for deserialization
-NodeRegistry.register('CloudWatchLogTagsGroupNode', CloudWatchLogTagsGroupNode);
