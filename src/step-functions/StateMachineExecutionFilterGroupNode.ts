@@ -1,5 +1,4 @@
 import { NodeBase } from '../tree/NodeBase';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import { StateMachineNode } from './StateMachineNode';
@@ -7,22 +6,35 @@ import * as api from './API';
 import { StateMachineExecutionNode } from './StateMachineExecutionNode';
 import { StateMachineExecutionsGroupNode } from './StateMachineExecutionsGroupNode';
 
-export class StateMachineExecutionStatusGroupNode extends NodeBase {
+export class StateMachineExecutionFilterGroupNode extends NodeBase {
 
-    constructor(label: string, parent?: NodeBase, statusFilter?: string) 
+    constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
         this.Icon = "folder";
-        this.StatusFilter = statusFilter;
+        this.NodeId = new Date().getTime().toString();
         this.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 
         this.OnNodeRefresh.subscribe(() => this.handleNodeRefresh());
         this.OnNodeLoadChildren.subscribe(() => this.handleLoadChildren());
+        this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         
         this.SetContextValue();
     }
-
+    public NodeId?: string;
+    public StartDate?: Date;
+    public ExecutionName?: string;
     public StatusFilter?: string;
+
+    private async handleNodeRemove(): Promise<void> {
+        this.Remove();
+        const stateMachineNode = this.GetAwsResourceNode() as StateMachineNode;
+        if(!stateMachineNode) {
+            ui.showInfoMessage("State Machine node not found.");
+            return;
+        }
+        stateMachineNode.RemoveExecutionFilter(this.NodeId!);
+    };
 
     private async handleLoadChildren(): Promise<void> {
         const execGroupNode = this.Parent as StateMachineExecutionsGroupNode;
@@ -39,7 +51,9 @@ export class StateMachineExecutionStatusGroupNode extends NodeBase {
             const result = await api.ListExecutions(
                 stateMachineNode.Region,
                 stateMachineNode.StateMachineArn,
-                this.StatusFilter
+                this.StatusFilter,
+                undefined,
+                this.StartDate,
             );
 
             if(result.isSuccessful && result.result) {
@@ -47,9 +61,12 @@ export class StateMachineExecutionStatusGroupNode extends NodeBase {
                 this.Children = [];
 
                 // Add execution nodes (limit to 50 most recent)
-                const executions = result.result.slice(0, 50);
+                const executions = result.result;
                 for(const exec of executions) {
                     if(exec.executionArn && exec.name) {
+                        if(this.ExecutionName && !exec.name.includes(this.ExecutionName)) {
+                            continue;
+                        }
                         const startTime = exec.startDate ? exec.startDate.toLocaleString() : 'Unknown';
                         const status = exec.status || 'Unknown';
                         const label = `${exec.name} [${status}] - ${startTime}`;

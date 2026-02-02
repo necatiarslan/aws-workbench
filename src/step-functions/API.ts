@@ -164,10 +164,13 @@ export async function StartExecution(
 export async function ListExecutions(
     region: string,
     stateMachineArn: string,
-    statusFilter?: string
+    statusFilter?: string,
+    maxResults?: number,
+    startDate?: Date,
 ): Promise<MethodResult<ExecutionListItem[]>> {
     let result: MethodResult<ExecutionListItem[]> = new MethodResult<ExecutionListItem[]>();
     result.result = [];
+    if(!maxResults) {maxResults = 100;}
 
     try {
         const sfn = await GetSFNClient(region);
@@ -179,7 +182,7 @@ export async function ListExecutions(
                 stateMachineArn,
                 statusFilter: statusFilter as any,
                 nextToken,
-                maxResults: 100
+                maxResults: maxResults
             });
             const response = await sfn.send(command);
             
@@ -187,6 +190,20 @@ export async function ListExecutions(
                 result.result.push(...response.executions);
             }
             
+            if (startDate && response.executions) {
+                // if any execution's startDate is before the specified startDate, stop fetching more
+                const hasOlderExecution = response.executions.some(exec => {
+                    return exec.startDate && exec.startDate < startDate!;
+                });
+                if (hasOlderExecution) {
+                    //filter out executions before startDate
+                    result.result = result.result.filter(exec => {
+                        return exec.startDate && exec.startDate >= startDate!;
+                    });
+                    break;
+                }
+            }
+
             nextToken = response.nextToken;
         } while (nextToken);
 

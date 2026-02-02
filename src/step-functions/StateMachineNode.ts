@@ -53,7 +53,22 @@ export class StateMachineNode extends NodeBase {
     @Serialize()
     public LogGroupName: string = "";
 
+    @Serialize()
+    public ExecutionFilters: { NodeId:string, startDate: number; executionName?: string; statusFilter?: string }[] = [];
+
     private _definition: any | undefined = undefined;
+
+    public AddExecutionFilter(NodeId: string, startDate: Date, executionName?: string, statusFilter?: string): void {
+        this.ExecutionFilters.push({ NodeId, startDate: startDate.getTime(), executionName, statusFilter });
+        this.TreeSave();
+    }
+
+    public RemoveExecutionFilter(NodeId: string): void {
+        this.ExecutionFilters = this.ExecutionFilters.filter(filter => {
+            return filter.NodeId !== NodeId;
+        });
+        this.TreeSave();
+    }
 
     public async GetDefinition(): Promise<any | undefined> {
         if(!this._definition) {

@@ -46,7 +46,18 @@ class StateMachineNode extends NodeBase_1.NodeBase {
     CodePath = "";
     PayloadFiles = [];
     LogGroupName = "";
+    ExecutionFilters = [];
     _definition = undefined;
+    AddExecutionFilter(NodeId, startDate, executionName, statusFilter) {
+        this.ExecutionFilters.push({ NodeId, startDate: startDate.getTime(), executionName, statusFilter });
+        this.TreeSave();
+    }
+    RemoveExecutionFilter(NodeId) {
+        this.ExecutionFilters = this.ExecutionFilters.filter(filter => {
+            return filter.NodeId !== NodeId;
+        });
+        this.TreeSave();
+    }
     async GetDefinition() {
         if (!this._definition) {
             if (!this.StateMachineArn) {
@@ -266,6 +277,10 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", String)
 ], StateMachineNode.prototype, "LogGroupName", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", Array)
+], StateMachineNode.prototype, "ExecutionFilters", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('StateMachineNode', StateMachineNode);
 //# sourceMappingURL=StateMachineNode.js.map

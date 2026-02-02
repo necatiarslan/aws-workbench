@@ -126,9 +126,12 @@ async function StartExecution(region, stateMachineArn, input, name) {
         return result;
     }
 }
-async function ListExecutions(region, stateMachineArn, statusFilter) {
+async function ListExecutions(region, stateMachineArn, statusFilter, maxResults, startDate) {
     let result = new MethodResult_1.MethodResult();
     result.result = [];
+    if (!maxResults) {
+        maxResults = 100;
+    }
     try {
         const sfn = await GetSFNClient(region);
         let nextToken = undefined;
@@ -137,11 +140,24 @@ async function ListExecutions(region, stateMachineArn, statusFilter) {
                 stateMachineArn,
                 statusFilter: statusFilter,
                 nextToken,
-                maxResults: 100
+                maxResults: maxResults
             });
             const response = await sfn.send(command);
             if (response.executions) {
                 result.result.push(...response.executions);
+            }
+            if (startDate && response.executions) {
+                // if any execution's startDate is before the specified startDate, stop fetching more
+                const hasOlderExecution = response.executions.some(exec => {
+                    return exec.startDate && exec.startDate < startDate;
+                });
+                if (hasOlderExecution) {
+                    //filter out executions before startDate
+                    result.result = result.result.filter(exec => {
+                        return exec.startDate && exec.startDate >= startDate;
+                    });
+                    break;
+                }
             }
             nextToken = response.nextToken;
         } while (nextToken);
