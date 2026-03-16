@@ -2,8 +2,6 @@ import { NodeBase } from "../tree/NodeBase";
 import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { SQSQueueNode } from "./SQSQueueNode";
-import { TreeState } from "../tree/TreeState";
-import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";
 import { Session } from "../common/Session";
@@ -18,7 +16,6 @@ export class SQSService extends ServiceBase {
     }
 
     public async Add(node?: NodeBase): Promise<void> {
-        Telemetry.Current?.send("SQSService.Add");
         ui.logToOutput('SQSService.Add Started');
 
         let selectedRegion = await vscode.window.showInputBox({

@@ -2,8 +2,6 @@ import { NodeBase } from "../tree/NodeBase";
 import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { LambdaFunctionNode } from "./LambdaFunctionNode";
-import { TreeState } from "../tree/TreeState";
-import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";
 import { Session } from "../common/Session";
@@ -18,7 +16,6 @@ export class LambdaService extends ServiceBase {
     }
 
     public async Add(node?: NodeBase): Promise<void> {
-        Telemetry.Current?.send("LambdaService.Add");
         ui.logToOutput('LambdaService..Add Started');
 
         let selectedRegion = await vscode.window.showInputBox({value: Session.Current.AwsRegion, placeHolder: 'Region Name Exp: us-east-1'});

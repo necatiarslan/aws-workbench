@@ -16,7 +16,7 @@ Each AWS service follows identical structure:
   - Singleton pattern: `public static Current: ServiceName`
   - Instantiated in [src/tree/ServiceHub.ts](src/tree/ServiceHub.ts) during extension activation
   - Implements `async Add()` to handle user resource selection workflows
-  - Uses telemetry tracking and `ui.logToOutput()` for debugging
+  - Uses `ui.logToOutput()` for debugging
 
 **Example flow**: User clicks "Add" → `ServiceHub.Current.S3Service.Add()` → shows region input → queries AWS → creates S3BucketNode children
 
@@ -105,11 +105,6 @@ VS Code automatically reloads extension on file changes during `npm run watch` i
 - Display errors: `ui.showErrorMessage("Context", error)` + `ui.logToOutput()`
 - Check `result.isSuccessful` before accessing `result.result`
 
-### Telemetry
-- Optional anonymous telemetry tracking
-- Call `Telemetry.Current?.send("ServiceName.MethodName")` at operation start
-- User can disable in VS Code settings
-
 ### Node Context Values
 - Set via `this.contextValue = "..."` containing `#ActionName#` flags
 - Controls which context menu items appear (package.json menus with `viewItem =~ /pattern/`)
@@ -132,7 +127,7 @@ VS Code automatically reloads extension on file changes during `npm run watch` i
 | Directory | Purpose |
 |-----------|---------|
 | `src/tree/` | Core: TreeView, TreeProvider, NodeBase, ServiceBase, TreeState, ServiceHub |
-| `src/common/` | Shared: Session, UI, Telemetry, EventEmitter, MethodResult, serialization |
+| `src/common/` | Shared: Session, UI, EventEmitter, MethodResult, serialization |
 | `src/<service>/` | Service-specific: API.ts, Service.ts, Node classes (e.g., LambdaFunctionNode) |
 | `media/<service>/` | Webview HTML/CSS/JS for interactive views |
 | `src/aws-sdk/` | AWS credentials file parsing (AWS SDK helpers) |

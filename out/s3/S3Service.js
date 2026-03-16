@@ -4,7 +4,6 @@ exports.S3Service = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const S3BucketNode_1 = require("./S3BucketNode");
-const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
 class S3Service extends ServiceBase_1.ServiceBase {
@@ -14,7 +13,6 @@ class S3Service extends ServiceBase_1.ServiceBase {
         S3Service.Current = this;
     }
     async Add(node) {
-        Telemetry_1.Telemetry.Current?.send("S3TreeView.AddBucket");
         ui.logToOutput('S3TreeView.AddBucket Started');
         let selectedBucketName = await vscode.window.showInputBox({ placeHolder: 'Enter Bucket Name / Search Text' });
         if (selectedBucketName === undefined) {

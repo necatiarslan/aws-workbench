@@ -2,8 +2,6 @@ import { NodeBase } from "../tree/NodeBase";
 import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { S3BucketNode } from "./S3BucketNode";
-import { TreeState } from "../tree/TreeState";
-import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";
 
@@ -17,7 +15,6 @@ export class S3Service extends ServiceBase {
     }
 
     public async Add(node?: NodeBase): Promise<void> {
-		Telemetry.Current?.send("S3TreeView.AddBucket");
 		ui.logToOutput('S3TreeView.AddBucket Started');
 
 		let selectedBucketName = await vscode.window.showInputBox({ placeHolder: 'Enter Bucket Name / Search Text' });

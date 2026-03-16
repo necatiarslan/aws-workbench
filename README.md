@@ -82,16 +82,12 @@ A powerful VS Code extension that brings your AWS resources directly into your e
 - Create and manage bash scripts
 - Quick access to project notes
 
-### Telemetry
-Anonymous usage telemetry helps improve the extension (can be disabled in VS Code settings)
-
 ## Contributing
 ### Coming Soon
 - Bucket with a default key prefix: set a default key prefix when adding a bucket to the tree view to open the bucket with the specified prefix
 - add notes to resources: add notes subnode to aws resources to add custom notes
 
 - colorful resource icons
-- Telemetry logging
 
 ## Support
 

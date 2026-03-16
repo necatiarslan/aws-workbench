@@ -4,7 +4,6 @@ exports.LambdaService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const LambdaFunctionNode_1 = require("./LambdaFunctionNode");
-const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
 const Session_1 = require("../common/Session");
@@ -15,7 +14,6 @@ class LambdaService extends ServiceBase_1.ServiceBase {
         LambdaService.Current = this;
     }
     async Add(node) {
-        Telemetry_1.Telemetry.Current?.send("LambdaService.Add");
         ui.logToOutput('LambdaService..Add Started');
         let selectedRegion = await vscode.window.showInputBox({ value: Session_1.Session.Current.AwsRegion, placeHolder: 'Region Name Exp: us-east-1' });
         if (!selectedRegion) {

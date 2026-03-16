@@ -3,8 +3,6 @@ import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { IamRoleNode } from "./IamRoleNode";
 import { IamPolicyNode } from "./IamPolicyNode";
-import { TreeState } from "../tree/TreeState";
-import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";
 import { Session } from "../common/Session";
@@ -20,7 +18,6 @@ export class IamService extends ServiceBase {
     }
 
     public async Add(node?: NodeBase): Promise<void> {
-        Telemetry.Current?.send("IamService.Add");
         ui.logToOutput('IamService.Add Started');
 
         // Ask what type of IAM resource to add
@@ -41,7 +38,6 @@ export class IamService extends ServiceBase {
     }
 
     public async AddRole(node?: NodeBase): Promise<void> {
-        Telemetry.Current?.send("IamService.AddRole");
         ui.logToOutput('IamService.AddRole Started');
 
         const selectedRegion = await vscode.window.showInputBox({
@@ -78,7 +74,6 @@ export class IamService extends ServiceBase {
     }
 
     public async AddPolicy(node?: NodeBase): Promise<void> {
-        Telemetry.Current?.send("IamService.AddPolicy");
         ui.logToOutput('IamService.AddPolicy Started');
 
         const selectedRegion = await vscode.window.showInputBox({

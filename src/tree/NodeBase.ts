@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { TreeProvider } from './TreeProvider';
 import { Session } from '../common/Session';
 import { Serialize } from '../common/serialization/Serialize';
-import { Telemetry } from '../common/Telemetry';
 import * as ui from '../common/UI';
 import { TreeState } from './TreeState';
 import { EventEmitter } from '../common/EventEmitter';
@@ -390,7 +389,6 @@ export abstract class NodeBase extends vscode.TreeItem {
     }
 
     public async NodeAlias(): Promise<void> {
-        Telemetry.Current?.send("NodeBase.NodeAlias");
         ui.logToOutput('NodeBase.NodeAlias Started');
 
         let alias = await vscode.window.showInputBox({ placeHolder: 'Alias' });

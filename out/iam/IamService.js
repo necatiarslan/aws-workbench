@@ -5,7 +5,6 @@ const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const IamRoleNode_1 = require("./IamRoleNode");
 const IamPolicyNode_1 = require("./IamPolicyNode");
-const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
 const Session_1 = require("../common/Session");
@@ -16,7 +15,6 @@ class IamService extends ServiceBase_1.ServiceBase {
         IamService.Current = this;
     }
     async Add(node) {
-        Telemetry_1.Telemetry.Current?.send("IamService.Add");
         ui.logToOutput('IamService.Add Started');
         // Ask what type of IAM resource to add
         const resourceType = await vscode.window.showQuickPick(['IAM Role', 'IAM Policy'], { placeHolder: 'Select IAM Resource Type' });
@@ -33,7 +31,6 @@ class IamService extends ServiceBase_1.ServiceBase {
         }
     }
     async AddRole(node) {
-        Telemetry_1.Telemetry.Current?.send("IamService.AddRole");
         ui.logToOutput('IamService.AddRole Started');
         const selectedRegion = await vscode.window.showInputBox({
             value: Session_1.Session.Current.AwsRegion,
@@ -70,7 +67,6 @@ class IamService extends ServiceBase_1.ServiceBase {
         this.TreeSave();
     }
     async AddPolicy(node) {
-        Telemetry_1.Telemetry.Current?.send("IamService.AddPolicy");
         ui.logToOutput('IamService.AddPolicy Started');
         const selectedRegion = await vscode.window.showInputBox({
             value: Session_1.Session.Current.AwsRegion,

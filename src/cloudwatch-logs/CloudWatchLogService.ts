@@ -2,7 +2,6 @@ import { NodeBase } from "../tree/NodeBase";
 import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { CloudWatchLogGroupNode } from "./CloudWatchLogGroupNode";
-import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";
 import { Session } from "../common/Session";
@@ -17,7 +16,6 @@ export class CloudWatchLogService extends ServiceBase {
     }
 
     public async Add(node?: NodeBase): Promise<void> {
-		Telemetry.Current?.send("CloudWatchLogService.Add");
 		ui.logToOutput('CloudWatchLogService..Add Started');
 
 		let selectedRegion = await vscode.window.showInputBox({value: Session.Current.AwsRegion, placeHolder: 'Region Name Exp: us-east-1'});

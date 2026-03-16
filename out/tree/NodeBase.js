@@ -14,7 +14,6 @@ const vscode = require("vscode");
 const TreeProvider_1 = require("./TreeProvider");
 const Session_1 = require("../common/Session");
 const Serialize_1 = require("../common/serialization/Serialize");
-const Telemetry_1 = require("../common/Telemetry");
 const ui = require("../common/UI");
 const TreeState_1 = require("./TreeState");
 const EventEmitter_1 = require("../common/EventEmitter");
@@ -378,7 +377,6 @@ class NodeBase extends vscode.TreeItem {
         }
     }
     async NodeAlias() {
-        Telemetry_1.Telemetry.Current?.send("NodeBase.NodeAlias");
         ui.logToOutput('NodeBase.NodeAlias Started');
         let alias = await vscode.window.showInputBox({ placeHolder: 'Alias' });
         if (alias === undefined) {

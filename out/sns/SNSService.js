@@ -4,7 +4,6 @@ exports.SNSService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const SNSTopicNode_1 = require("./SNSTopicNode");
-const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
 const Session_1 = require("../common/Session");
@@ -15,7 +14,6 @@ class SNSService extends ServiceBase_1.ServiceBase {
         SNSService.Current = this;
     }
     async Add(node) {
-        Telemetry_1.Telemetry.Current?.send("SNSService.Add");
         ui.logToOutput('SNSService.Add Started');
         // Prompt for region
         let selectedRegion = await vscode.window.showInputBox({

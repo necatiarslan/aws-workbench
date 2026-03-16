@@ -4,7 +4,6 @@ exports.StepFunctionsService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const StateMachineNode_1 = require("./StateMachineNode");
-const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
 const Session_1 = require("../common/Session");
@@ -15,7 +14,6 @@ class StepFunctionsService extends ServiceBase_1.ServiceBase {
         StepFunctionsService.Current = this;
     }
     async Add(node) {
-        Telemetry_1.Telemetry.Current?.send("StepFunctionsService.Add");
         ui.logToOutput('StepFunctionsService.Add Started');
         let selectedRegion = await vscode.window.showInputBox({
             value: Session_1.Session.Current.AwsRegion,

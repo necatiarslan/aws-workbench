@@ -2,8 +2,6 @@ import { NodeBase } from "../tree/NodeBase";
 import { ServiceBase } from "../tree/ServiceBase";
 import * as vscode from 'vscode';
 import { StateMachineNode } from "./StateMachineNode";
-import { TreeState } from "../tree/TreeState";
-import { Telemetry } from "../common/Telemetry";
 import * as api from "./API";
 import * as ui from "../common/UI";
 import { Session } from "../common/Session";
@@ -18,7 +16,6 @@ export class StepFunctionsService extends ServiceBase {
     }
 
     public async Add(node?: NodeBase): Promise<void> {
-        Telemetry.Current?.send("StepFunctionsService.Add");
         ui.logToOutput('StepFunctionsService.Add Started');
 
         let selectedRegion = await vscode.window.showInputBox({

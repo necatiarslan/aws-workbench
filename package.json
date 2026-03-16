@@ -547,7 +547,6 @@
     "@types/uuid": "^11.0.0",
     "@vscode-elements/elements": "^2.5.1",
     "@vscode/codicons": "^0.0.45",
-    "@vscode/extension-telemetry": "^1.5.1",
     "archiver": "^7.0.1",
     "js-tiktoken": "^1.0.21",
     "js-yaml": "^4.1.1",

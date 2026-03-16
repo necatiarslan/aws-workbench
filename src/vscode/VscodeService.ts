@@ -3,7 +3,6 @@ import { ServiceBase } from "../tree/ServiceBase";
 import { NodeBase } from "../tree/NodeBase";
 import * as ui from "../common/UI";
 import { CommandNode } from "./CommandNode";
-import { TreeState } from "../tree/TreeState";
 
 export class VscodeService extends ServiceBase {   
 

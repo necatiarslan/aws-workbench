@@ -4,7 +4,6 @@ exports.CloudWatchLogService = void 0;
 const ServiceBase_1 = require("../tree/ServiceBase");
 const vscode = require("vscode");
 const CloudWatchLogGroupNode_1 = require("./CloudWatchLogGroupNode");
-const Telemetry_1 = require("../common/Telemetry");
 const api = require("./API");
 const ui = require("../common/UI");
 const Session_1 = require("../common/Session");
@@ -15,7 +14,6 @@ class CloudWatchLogService extends ServiceBase_1.ServiceBase {
         CloudWatchLogService.Current = this;
     }
     async Add(node) {
-        Telemetry_1.Telemetry.Current?.send("CloudWatchLogService.Add");
         ui.logToOutput('CloudWatchLogService..Add Started');
         let selectedRegion = await vscode.window.showInputBox({ value: Session_1.Session.Current.AwsRegion, placeHolder: 'Region Name Exp: us-east-1' });
         if (!selectedRegion) {
