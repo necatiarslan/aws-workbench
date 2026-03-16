@@ -118,8 +118,8 @@ export class NoteView {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://cdn.quilljs.com; script-src 'nonce-${nonce}' https://cdn.quilljs.com; font-src ${webview.cspSource} https://cdn.quilljs.com;">
-    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.quilljs.com; script-src 'nonce-${nonce}' https://cdn.jsdelivr.net https://cdn.quilljs.com; font-src ${webview.cspSource} https://cdn.jsdelivr.net https://cdn.quilljs.com;">
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <link href="${styleUri}" rel="stylesheet" />
     <title>Note: ${this.escapeHtml(this.state.noteTitle)}</title>
     <style>
@@ -240,7 +240,7 @@ export class NoteView {
         <div id="statusMessage" class="status-message"></div>
     </div>
 
-    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
         
