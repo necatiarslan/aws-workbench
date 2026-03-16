@@ -31,6 +31,9 @@ class Session {
         const supportedHosts = ['Visual Studio Code', 'Visual Studio Code - Insiders', 'VSCodium'];
         return supportedHosts.includes(this.HostAppName);
     }
+    IsDebugMode() {
+        return this.Context.extensionMode !== vscode.ExtensionMode.Production;
+    }
     async SaveState() {
         ui.logToOutput('Saving state...');
         try {

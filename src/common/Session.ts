@@ -41,6 +41,10 @@ export class Session implements vscode.Disposable {
         return supportedHosts.includes(this.HostAppName);
     }
 
+    public IsDebugMode(): boolean {
+        return this.Context.extensionMode !== vscode.ExtensionMode.Production;
+    }
+
     public async SaveState() {
         ui.logToOutput('Saving state...');
 

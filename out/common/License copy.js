@@ -10,16 +10,16 @@ const vscode = require("vscode");
 const ui = require("./UI");
 const Session_1 = require("./Session");
 // Storage keys
-const LICENSE_KEY_SECRET = 'aws-workbench.licenseKey';
-const LICENSE_STATUS_KEY = 'aws-workbench.licenseStatus';
+const LICENSE_KEY_SECRET = 'awsflow.licenseKey';
+const LICENSE_STATUS_KEY = 'awsflow.licenseStatus';
 // API endpoint
 const LICENSE_API_URL = 'https://www.sairefe.com/wp-json/vscode/v1/license/validate';
 // Validation frequency (7 Days)
 const VALIDATION_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
 const GRACE_PERIOD_DAYS = 7;
-const PRODUCT_NAME = 'Aws Workbench';
-const PRODUCT_ID = 807044;
-const PRODUCT_ID_QA = 807040;
+const PRODUCT_NAME = 'Awsflow';
+const PRODUCT_ID = 807045;
+const PRODUCT_ID_QA = 807037;
 // In-memory cache of the current license status
 let cachedStatus = null;
 let extensionContext = null;
@@ -153,7 +153,7 @@ async function validateLicenseOnline(context) {
  * Does NOT make network calls
  */
 function isLicenseValid() {
-    if (Session_1.Session.Current?.IsDebugMode()) {
+    if (Session_1.Session.Current?.IsDebugMode) {
         return true;
     }
     if (!cachedStatus) {
@@ -281,4 +281,4 @@ async function promptForLicense(context) {
         }
     });
 }
-//# sourceMappingURL=License.js.map
+//# sourceMappingURL=License%20copy.js.map

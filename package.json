@@ -212,12 +212,28 @@
         "command": "AwsWorkbench.ImportConfig",
         "title": "Import Config",
         "icon": "$(arrow-up)"
+      },
+      {
+        "command": "AwsWorkbench.ActivatePro",
+        "title": "Activate Pro"
+      },
+      {
+        "command": "AwsWorkbench.EnterLicenseKey",
+        "title": "Enter License Key"
+      },
+      {
+        "command": "AwsWorkbench.ResetLicenseKey",
+        "title": "Reset License Key"
       }
     ],
     "submenus": [
       {
         "id": "AwsWorkbench.Connection",
         "label": "Connection"
+      },
+      {
+        "id": "AwsWorkbench.ProLicense",
+        "label": "Pro License"
       }
     ],
     "menus": {
@@ -258,24 +274,29 @@
           "group": "other_1"
         },
         {
-          "command": "AwsWorkbench.Donate",
+          "submenu": "AwsWorkbench.ProLicense",
           "when": "view == AwsWorkbenchView",
           "group": "other_2"
+        },
+        {
+          "command": "AwsWorkbench.Donate",
+          "when": "view == AwsWorkbenchView",
+          "group": "other_3"
         },
         {
           "command": "AwsWorkbench.BugAndNewFeatureRequest",
           "when": "view == AwsWorkbenchView",
-          "group": "other_2"
+          "group": "other_3"
         },
         {
           "command": "AwsWorkbench.ExportConfig",
           "when": "view == AwsWorkbenchView",
-          "group": "other_3"
+          "group": "other_4"
         },
         {
           "command": "AwsWorkbench.ImportConfig",
           "when": "view == AwsWorkbenchView",
-          "group": "other_3"
+          "group": "other_4"
         }
       ],
       "view/item/context": [
@@ -416,6 +437,20 @@
         {
           "command": "AwsWorkbench.SetAwsRegion",
           "group": "2_settings"
+        }
+      ],
+      "AwsWorkbench.ProLicense": [
+        {
+          "command": "AwsWorkbench.EnterLicenseKey",
+          "group": "1_license"
+        },
+        {
+          "command": "AwsWorkbench.ResetLicenseKey",
+          "group": "1_license"
+        },
+        {
+          "command": "AwsWorkbench.ActivatePro",
+          "group": "1_license"
         }
       ]
     },

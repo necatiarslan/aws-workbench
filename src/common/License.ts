@@ -1,23 +1,35 @@
 import * as vscode from 'vscode';
+import * as ui from './UI';
+import { Session } from './Session';
 
 // License status interface that represents the current state
 export interface LicenseStatus {
     valid: boolean;
-    plan: string | null;
+    error: string | null;
+    product_id: number | null;
+    product_name: string | null;
+    variant_id: number | null;
+    variant_name: string | null;
+    customer_name: string | null;
+    customer_email: string | null;
     expires_at: string | null; // ISO date string or null for lifetime
     checked_at: number; // Unix timestamp of last validation in seconds
-    grace_days: number; // Number of grace days allowed
 }
 
 // Storage keys
-const LICENSE_KEY_SECRET = 'aws-s3.licenseKey';
-const LICENSE_STATUS_KEY = 'aws-s3.licenseStatus';
+const LICENSE_KEY_SECRET = 'aws-workbench.licenseKey';
+const LICENSE_STATUS_KEY = 'aws-workbench.licenseStatus';
 
 // API endpoint
 const LICENSE_API_URL = 'https://www.sairefe.com/wp-json/vscode/v1/license/validate';
 
-// Validation frequency (24 hours)
-const VALIDATION_INTERVAL_MS = 24 * 60 * 60 * 1000;
+// Validation frequency (7 Days)
+const VALIDATION_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
+const GRACE_PERIOD_DAYS = 7;
+
+const PRODUCT_NAME = 'Aws Workbench';
+const PRODUCT_ID = 807044;
+const PRODUCT_ID_QA = 807040;
 
 // In-memory cache of the current license status
 let cachedStatus: LicenseStatus | null = null;
@@ -40,10 +52,15 @@ export async function initializeLicense(context: vscode.ExtensionContext): Promi
         // No license key stored, mark as invalid
         cachedStatus = {
             valid: false,
-            plan: null,
+            error: null,
+            product_id: null,
+            product_name: null,
+            variant_id: null,
+            variant_name: null,
+            customer_name: null,
+            customer_email: null,
             expires_at: null,
             checked_at: Date.now(),
-            grace_days: 0
         };
         return;
     }
@@ -55,7 +72,7 @@ export async function initializeLicense(context: vscode.ExtensionContext): Promi
             await validateLicenseOnline(context);
         } catch (error) {
             // Network error - rely on cached status with grace period
-            console.log('License validation failed, using cached status:', error);
+            ui.logToOutput('License validation failed, using cached status:', error as Error);
         }
     }
 }
@@ -70,15 +87,20 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
         // No license key, update cache to invalid
         cachedStatus = {
             valid: false,
-            plan: null,
+            error: null,
+            product_id: null,
+            product_name: null,
+            variant_id: null,
+            variant_name: null,
+            customer_name: null,
+            customer_email: null,
             expires_at: null,
             checked_at: Date.now(),
-            grace_days: 0
         };
         await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
         return false;
     }
-    
+    const env = process.env.VSCODE_DEBUG_MODE === 'true' ? 'QA' : 'PROD';
     try {
         // Call the WordPress REST API
         const response = await fetch(LICENSE_API_URL, {
@@ -88,7 +110,8 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
             },
             body: JSON.stringify({
                 licenseKey: licenseKey,
-                machineId: vscode.env.machineId
+                machineId: vscode.env.machineId,
+                env: env
             })
         });
         
@@ -96,17 +119,39 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json() as { valid: boolean; plan?: string; expires_at?: string; checked_at?: number; grace_days?: number };
+        const data = await response.json() as { 
+            valid: boolean; 
+            error?: string | null; 
+            product_id?: number; 
+            product_name?: string;
+            variant_id?: number;
+            variant_name?: string;
+            customer_name?: string;
+            customer_email?: string;
+            expires_at?: string; 
+            checked_at?: number; 
+        };
         
         // Update cache with server response
         cachedStatus = {
             valid: data.valid,
-            plan: data.plan || null,
+            error: data.error || null,
+            product_id: data.product_id || null,
+            product_name: data.product_name || null,
+            variant_id: data.variant_id || null,
+            variant_name: data.variant_name || null,
+            customer_name: data.customer_name || null,
+            customer_email: data.customer_email || null,
             expires_at: data.expires_at || null,
             checked_at: data.checked_at || Date.now(),
-            grace_days: data.grace_days || 7
         };
         
+        if(cachedStatus.product_id !== PRODUCT_ID && cachedStatus.product_id !== PRODUCT_ID_QA) {
+            ui.logToOutput('License product ID does not match this product.');
+            cachedStatus.valid = false;
+            cachedStatus.error = 'License is not valid for this product.';
+        }
+
         // Persist to globalState
         await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
         
@@ -115,15 +160,20 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
     } catch (error) {
         // Network error or server error - don't update cache
         // Return false if we have no cached status
-        console.error('License validation error:', error);
+        ui.logToOutput('License validation error:', error as Error);
         
         if (!cachedStatus) {
             cachedStatus = {
                 valid: false,
-                plan: null,
+                error: null,
+                product_id: null,
+                product_name: null,
+                variant_id: null,
+                variant_name: null,
+                customer_name: null,
+                customer_email: null,
                 expires_at: null,
                 checked_at: Date.now(),
-                grace_days: 0
             };
             await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
         }
@@ -138,9 +188,9 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
  * Does NOT make network calls
  */
 export function isLicenseValid(): boolean {
-    // if (process.env.VSCODE_DEBUG_MODE === 'true') {
-    //     return true;
-    // }
+    if (Session.Current?.IsDebugMode()) {
+        return true;
+    }
     
     if (!cachedStatus) {
         return false;
@@ -167,7 +217,7 @@ export function isLicenseValid(): boolean {
     const now = Date.now() / 1000; // in seconds
     const daysSinceCheck = (now - cachedStatus.checked_at) / (60 * 60 * 24);
     
-    if (daysSinceCheck > cachedStatus.grace_days) {
+    if (daysSinceCheck > GRACE_PERIOD_DAYS) {
         // Grace period expired
         return false;
     }
@@ -183,7 +233,7 @@ export function getLicensePlan(): string | null {
     if (!cachedStatus || !isLicenseValid()) {
         return null;
     }
-    return cachedStatus.plan;
+    return cachedStatus.product_name;
 }
 
 /**
@@ -201,10 +251,15 @@ export async function clearLicense(): Promise<void> {
     // Clear cached status
     cachedStatus = {
         valid: false,
-        plan: null,
+        error: null,
+        product_id: null,
+        product_name: null,
+        variant_id: null,
+        variant_name: null,
+        customer_name: null,
+        customer_email: null,
         expires_at: null,
         checked_at: Date.now(),
-        grace_days: 0
     };
     
     await extensionContext.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
@@ -246,9 +301,32 @@ export async function promptForLicense(context: vscode.ExtensionContext): Promis
         // Validate online
         const isValid = await validateLicenseOnline(context);
         
+        if(cachedStatus?.customer_email) {
+            const email = await vscode.window.showInputBox({
+            prompt: 'Enter your Email associated with license key',
+            ignoreFocusOut: true,
+            validateInput: (value) => {
+                if (!value || value.trim().length === 0) {
+                    return 'Email cannot be empty';
+                }
+                return null;
+                }
+            });
+            
+            if (!email) {
+                await clearLicense();
+                return;
+            }
+            if(email.trim() !== cachedStatus.customer_email) {
+                vscode.window.showErrorMessage('The provided email does not match the license record.');
+                await clearLicense();
+                return;
+            }
+        }
         if (isValid) {
-            vscode.window.showInformationMessage(`License activated successfully! Plan: ${cachedStatus?.plan || 'Unknown'}`);
+            vscode.window.showInformationMessage(`License activated successfully! Product: ${cachedStatus?.product_name || 'Unknown'}`);
         } else {
+            ui.logToOutput('License validation failed:', new Error(cachedStatus?.error || 'Unknown error'));
             vscode.window.showErrorMessage('License validation failed. Please check your license key.');
             // Clear the invalid license
             await clearLicense();
