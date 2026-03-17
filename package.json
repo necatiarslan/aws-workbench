@@ -10,7 +10,7 @@
   },
   "icon": "media/aws-workbench-logo-extension.png",
   "engines": {
-    "vscode": "^1.107.0"
+    "vscode": "^1.106.0"
   },
   "categories": [
     "Other"
@@ -552,7 +552,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^25.5.0",
     "@types/tmp": "^0.2.6",
-    "@types/vscode": "^1.107.0",
+    "@types/vscode": "^1.106.0",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
     "@vscode/test-electron": "^2.5.2",
