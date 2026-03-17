@@ -9,6 +9,7 @@ const ServiceHub_1 = require("./ServiceHub");
 const TreeState_1 = require("./TreeState");
 const ui = require("../common/UI");
 class TreeView {
+    static FREE_NODE_LIMIT = 5;
     static Current;
     view;
     treeDataProvider;
@@ -153,6 +154,35 @@ class TreeView {
     async GetFilterProfilePrompt() {
         return "Profile:" + Session_1.Session.Current.AwsProfile + " ";
     }
+    IsUnrestrictedFreeNodeType(nodeType) {
+        return nodeType === "Folder" || nodeType === "Note";
+    }
+    CountRestrictedNodes(nodes) {
+        let count = 0;
+        for (const currentNode of nodes) {
+            const nodeType = currentNode.constructor.name;
+            if (nodeType !== "FolderNode" && nodeType !== "NoteNode") {
+                count++;
+            }
+            if (currentNode.Children.length > 0) {
+                count += this.CountRestrictedNodes(currentNode.Children);
+            }
+        }
+        return count;
+    }
+    CanAddNodeType(nodeType) {
+        if (Session_1.Session.Current.IsProVersion || this.IsUnrestrictedFreeNodeType(nodeType)) {
+            return true;
+        }
+        const restrictedNodeCount = this.CountRestrictedNodes(NodeBase_1.NodeBase.RootNodes);
+        if (restrictedNodeCount >= TreeView.FREE_NODE_LIMIT) {
+            ui.showWarningMessage("Free version can add up to 5 nodes. Upgrade to Pro version to add unlimited nodes.");
+            // call AwsWorkbench.ProUpgrade() to show upgrade prompt
+            vscode.commands.executeCommand('AwsWorkbench.ActivatePro');
+            return false;
+        }
+        return true;
+    }
     async Remove(node) {
         if (!node) {
             return;
@@ -180,6 +210,9 @@ class TreeView {
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, { canPickMany: false, placeHolder: 'Select Item Type' });
         if (!nodeType) {
+            return;
+        }
+        if (!this.CanAddNodeType(nodeType)) {
             return;
         }
         switch (nodeType) {

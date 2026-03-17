@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RegisterLicenseManagementCommands = RegisterLicenseManagementCommands;
 exports.initializeLicense = initializeLicense;
 exports.validateLicenseOnline = validateLicenseOnline;
 exports.isLicenseValid = isLicenseValid;
@@ -23,6 +24,37 @@ const PRODUCT_ID_QA = 807040;
 // In-memory cache of the current license status
 let cachedStatus = null;
 let extensionContext = null;
+function RegisterLicenseManagementCommands() {
+    vscode.commands.registerCommand('AwsWorkbench.ActivatePro', () => {
+        if (Session_1.Session.Current?.IsProVersion) {
+            ui.showInfoMessage('You already have an active Pro license!');
+            return;
+        }
+        let buyUrl = 'https://necatiarslan.lemonsqueezy.com/checkout/buy/0aa33140-6754-4a23-bc21-72b2d72ec9ad';
+        if (Session_1.Session.Current?.IsDebugMode()) {
+            buyUrl = 'https://necatiarslan.lemonsqueezy.com/checkout/buy/8289ec8d-2343-4e8a-9a03-f398e54881ad';
+        }
+        vscode.env.openExternal(vscode.Uri.parse(buyUrl));
+        vscode.commands.executeCommand('AwsWorkbench.EnterLicenseKey');
+    }),
+        vscode.commands.registerCommand('AwsWorkbench.EnterLicenseKey', async () => {
+            if (Session_1.Session.Current?.IsProVersion) {
+                ui.showInfoMessage('You already have an active Pro license!');
+                return;
+            }
+            await promptForLicense(Session_1.Session.Current?.Context);
+            if (Session_1.Session.Current) {
+                Session_1.Session.Current.IsProVersion = isLicenseValid();
+            }
+        }),
+        vscode.commands.registerCommand('AwsWorkbench.ResetLicenseKey', async () => {
+            await clearLicense();
+            ui.showInfoMessage('License key has been reset. Please enter a new license key to activate Pro features.');
+            if (Session_1.Session.Current) {
+                Session_1.Session.Current.IsProVersion = false;
+            }
+        });
+}
 /**
  * Initialize the license system
  * Called once from activate()
