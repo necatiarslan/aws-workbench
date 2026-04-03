@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { verify as verifySignature } from 'node:crypto';
 import * as ui from './UI';
 import { Session } from './Session';
 
@@ -14,6 +15,8 @@ export interface LicenseStatus {
     customer_email: string | null;
     expires_at: string | null; // ISO date string or null for lifetime
     checked_at: number; // Unix timestamp of last validation in seconds
+    source?: 'online' | 'offline';
+    token_version?: number | null;
 }
 
 // Storage keys
@@ -30,10 +33,209 @@ const GRACE_PERIOD_DAYS = 7;
 const PRODUCT_NAME = 'Aws Workbench';
 const PRODUCT_ID = 807044;
 const PRODUCT_ID_QA = 807040;
+const OFFLINE_VARIANT_NAME = 'Offline Signed License';
+const OFFLINE_TOKEN_PREFIX = 'AWB1';
+const OFFLINE_TOKEN_VERSION = 1;
+
+// Replace with your Ed25519 public key (SPKI PEM format).
+const OFFLINE_PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEAbTluRXY5udoeh0GRkKmcEdi6eh4zWPSG0N8zSJY4zsI=
+-----END PUBLIC KEY-----`;
+
+const TRADITIONAL_LICENSE_KEY_REGEX =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 // In-memory cache of the current license status
 let cachedStatus: LicenseStatus | null = null;
 let extensionContext: vscode.ExtensionContext | null = null;
+
+interface OfflineLicensePayload {
+    v: number;
+    email: string;
+}
+
+interface OfflineTokenParseResult {
+    payloadBytes: Buffer;
+    signatureBytes: Buffer;
+    payload: OfflineLicensePayload;
+}
+
+function nowUnixSeconds(): number {
+    return Math.floor(Date.now() / 1000);
+}
+
+function normalizeCheckedAtSeconds(checkedAt: number | null | undefined): number {
+    if (!checkedAt || !Number.isFinite(checkedAt)) {
+        return nowUnixSeconds();
+    }
+
+    // Handle previous cached values that may have been stored in milliseconds.
+    if (checkedAt > 1_000_000_000_000) {
+        return Math.floor(checkedAt / 1000);
+    }
+
+    return Math.floor(checkedAt);
+}
+
+function normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
+}
+
+function isTraditionalLicenseKey(licenseKey: string): boolean {
+    return TRADITIONAL_LICENSE_KEY_REGEX.test(licenseKey.trim());
+}
+
+function fromBase64Url(value: string): Buffer {
+    const padded = value
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+    const padding = padded.length % 4;
+    const finalValue = padding === 0 ? padded : `${padded}${'='.repeat(4 - padding)}`;
+    return Buffer.from(finalValue, 'base64');
+}
+
+function parseOfflineToken(licenseKey: string): OfflineTokenParseResult | null {
+    const token = licenseKey.trim();
+    const parts = token.split('.');
+
+    let payloadPart: string;
+    let signaturePart: string;
+
+    if (parts.length === 3 && parts[0] === OFFLINE_TOKEN_PREFIX) {
+        payloadPart = parts[1];
+        signaturePart = parts[2];
+    } else if (parts.length === 2) {
+        payloadPart = parts[0];
+        signaturePart = parts[1];
+    } else {
+        return null;
+    }
+
+    try {
+        const payloadBytes = fromBase64Url(payloadPart);
+        const signatureBytes = fromBase64Url(signaturePart);
+        const payload = JSON.parse(payloadBytes.toString('utf8')) as Partial<OfflineLicensePayload>;
+
+        if (payload.v !== OFFLINE_TOKEN_VERSION) {
+            return null;
+        }
+
+        if (!payload.email || typeof payload.email !== 'string' || normalizeEmail(payload.email).length === 0) {
+            return null;
+        }
+
+        return {
+            payloadBytes,
+            signatureBytes,
+            payload: {
+                v: payload.v,
+                email: payload.email,
+            },
+        };
+    } catch {
+        return null;
+    }
+}
+
+function buildInvalidStatus(error: string | null, source?: 'online' | 'offline'): LicenseStatus {
+    return {
+        valid: false,
+        error,
+        product_id: null,
+        product_name: null,
+        variant_id: null,
+        variant_name: null,
+        customer_name: null,
+        customer_email: null,
+        expires_at: null,
+        checked_at: nowUnixSeconds(),
+        source,
+        token_version: source === 'offline' ? OFFLINE_TOKEN_VERSION : null,
+    };
+}
+
+function buildOfflineValidStatus(email: string): LicenseStatus {
+    return {
+        valid: true,
+        error: null,
+        product_id: PRODUCT_ID,
+        product_name: PRODUCT_NAME,
+        variant_id: null,
+        variant_name: OFFLINE_VARIANT_NAME,
+        customer_name: null,
+        customer_email: normalizeEmail(email),
+        expires_at: null,
+        checked_at: nowUnixSeconds(),
+        source: 'offline',
+        token_version: OFFLINE_TOKEN_VERSION,
+    };
+}
+
+function getOfflinePublicKey() {
+    return OFFLINE_PUBLIC_KEY_PEM;
+}
+
+function verifyOfflineLicenseToken(licenseKey: string): { valid: boolean; email?: string; error?: string } {
+    const parsed = parseOfflineToken(licenseKey);
+    if (!parsed) {
+        return {
+            valid: false,
+            error: 'Offline license format is invalid.',
+        };
+    }
+
+    const publicKey = getOfflinePublicKey();
+    if (!publicKey) {
+        return {
+            valid: false,
+            error: 'Offline public key is not configured in extension source.',
+        };
+    }
+
+    try {
+        const isValid = verifySignature(null, parsed.payloadBytes, publicKey, parsed.signatureBytes);
+        if (!isValid) {
+            return {
+                valid: false,
+                error: 'Offline license signature is invalid.',
+            };
+        }
+
+        return {
+            valid: true,
+            email: normalizeEmail(parsed.payload.email),
+        };
+    } catch {
+        return {
+            valid: false,
+            error: 'Offline license signature verification failed.',
+        };
+    }
+}
+
+async function validateLicenseOffline(
+    context: vscode.ExtensionContext,
+    licenseKey: string,
+    enteredEmail?: string
+): Promise<boolean> {
+    const verification = verifyOfflineLicenseToken(licenseKey);
+
+    if (!verification.valid || !verification.email) {
+        cachedStatus = buildInvalidStatus(verification.error || 'Offline license is invalid.', 'offline');
+        await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
+        return false;
+    }
+
+    if (enteredEmail && normalizeEmail(enteredEmail) !== verification.email) {
+        cachedStatus = buildInvalidStatus('Entered email does not match offline license email.', 'offline');
+        await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
+        return false;
+    }
+
+    cachedStatus = buildOfflineValidStatus(verification.email);
+    await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
+    return true;
+}
 
 export function RegisterLicenseManagementCommands(): void {
 
@@ -89,24 +291,24 @@ export async function initializeLicense(context: vscode.ExtensionContext): Promi
     const licenseKey = await context.secrets.get(LICENSE_KEY_SECRET);
     if (!licenseKey) {
         // No license key stored, mark as invalid
-        cachedStatus = {
-            valid: false,
-            error: null,
-            product_id: null,
-            product_name: null,
-            variant_id: null,
-            variant_name: null,
-            customer_name: null,
-            customer_email: null,
-            expires_at: null,
-            checked_at: Date.now(),
-        };
+        cachedStatus = buildInvalidStatus(null);
+        return;
+    }
+
+    const trimmedLicenseKey = licenseKey.trim();
+
+    if (!isTraditionalLicenseKey(trimmedLicenseKey)) {
+        const isOfflineValid = await validateLicenseOffline(context, trimmedLicenseKey);
+        if (!isOfflineValid) {
+            ui.logToOutput('Offline license could not be validated from local token.');
+        }
         return;
     }
     
-    // If we have no cached status or it's been more than 24 hours, validate online
+    // Online UUID keys keep current behavior.
     const now = Date.now();
-    if (!cachedStatus || (now - cachedStatus.checked_at) > VALIDATION_INTERVAL_MS) {
+    const checkedAtMs = normalizeCheckedAtSeconds(cachedStatus?.checked_at) * 1000;
+    if (!cachedStatus || (now - checkedAtMs) > VALIDATION_INTERVAL_MS) {
         try {
             await validateLicenseOnline(context);
         } catch (error) {
@@ -124,18 +326,7 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
     const licenseKey = await context.secrets.get(LICENSE_KEY_SECRET);
     if (!licenseKey) {
         // No license key, update cache to invalid
-        cachedStatus = {
-            valid: false,
-            error: null,
-            product_id: null,
-            product_name: null,
-            variant_id: null,
-            variant_name: null,
-            customer_name: null,
-            customer_email: null,
-            expires_at: null,
-            checked_at: Date.now(),
-        };
+        cachedStatus = buildInvalidStatus(null, 'online');
         await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
         return false;
     }
@@ -182,7 +373,9 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
             customer_name: data.customer_name || null,
             customer_email: data.customer_email || null,
             expires_at: data.expires_at || null,
-            checked_at: data.checked_at || Date.now(),
+            checked_at: normalizeCheckedAtSeconds(data.checked_at),
+            source: 'online',
+            token_version: null,
         };
         
         if(cachedStatus.product_id !== PRODUCT_ID && cachedStatus.product_id !== PRODUCT_ID_QA) {
@@ -202,18 +395,7 @@ export async function validateLicenseOnline(context: vscode.ExtensionContext): P
         ui.logToOutput('License validation error:', error as Error);
         
         if (!cachedStatus) {
-            cachedStatus = {
-                valid: false,
-                error: null,
-                product_id: null,
-                product_name: null,
-                variant_id: null,
-                variant_name: null,
-                customer_name: null,
-                customer_email: null,
-                expires_at: null,
-                checked_at: Date.now(),
-            };
+            cachedStatus = buildInvalidStatus(null, 'online');
             await context.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
         }
         
@@ -239,6 +421,10 @@ export function isLicenseValid(): boolean {
     if (!cachedStatus.valid) {
         return false;
     }
+
+    if (cachedStatus.source === 'offline') {
+        return !!cachedStatus.customer_email;
+    }
     
     // Check expiration date
     if (cachedStatus.expires_at) {
@@ -253,8 +439,9 @@ export function isLicenseValid(): boolean {
     
     // Check grace period for offline usage
     // If last check was more than grace_days ago, consider invalid
-    const now = Date.now() / 1000; // in seconds
-    const daysSinceCheck = (now - cachedStatus.checked_at) / (60 * 60 * 24);
+    const now = nowUnixSeconds();
+    const checkedAt = normalizeCheckedAtSeconds(cachedStatus.checked_at);
+    const daysSinceCheck = (now - checkedAt) / (60 * 60 * 24);
     
     if (daysSinceCheck > GRACE_PERIOD_DAYS) {
         // Grace period expired
@@ -288,18 +475,7 @@ export async function clearLicense(): Promise<void> {
     await extensionContext.secrets.delete(LICENSE_KEY_SECRET);
     
     // Clear cached status
-    cachedStatus = {
-        valid: false,
-        error: null,
-        product_id: null,
-        product_name: null,
-        variant_id: null,
-        variant_name: null,
-        customer_name: null,
-        customer_email: null,
-        expires_at: null,
-        checked_at: Date.now(),
-    };
+    cachedStatus = buildInvalidStatus(null);
     
     await extensionContext.globalState.update(LICENSE_STATUS_KEY, cachedStatus);
 }
@@ -311,8 +487,8 @@ export async function clearLicense(): Promise<void> {
 export async function promptForLicense(context: vscode.ExtensionContext): Promise<void> {
     // Show input box for license key
     const licenseKey = await vscode.window.showInputBox({
-        prompt: 'Enter your license key',
-        placeHolder: 'XXXX-XXXX-XXXX-XXXX',
+        prompt: 'Enter your license key (UUID for online validation or signed token for offline)',
+        placeHolder: 'UUID or signed offline token',
         ignoreFocusOut: true,
         password: false, // Set to true if you want to hide the input
         validateInput: (value) => {
@@ -327,9 +503,26 @@ export async function promptForLicense(context: vscode.ExtensionContext): Promis
         // User cancelled
         return;
     }
+
+    const email = await vscode.window.showInputBox({
+        prompt: 'Enter your email associated with this license',
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+            if (!value || value.trim().length === 0) {
+                return 'Email cannot be empty';
+            }
+            return null;
+        }
+    });
+
+    if (!email) {
+        return;
+    }
+
+    const normalizedLicenseKey = licenseKey.trim();
     
     // Store license key securely
-    await context.secrets.store(LICENSE_KEY_SECRET, licenseKey.trim());
+    await context.secrets.store(LICENSE_KEY_SECRET, normalizedLicenseKey);
     
     // Show progress indicator while validating
     await vscode.window.withProgress({
@@ -337,36 +530,30 @@ export async function promptForLicense(context: vscode.ExtensionContext): Promis
         title: 'Validating license...',
         cancellable: false
     }, async () => {
-        // Validate online
-        const isValid = await validateLicenseOnline(context);
-        
-        if(cachedStatus?.customer_email) {
-            const email = await vscode.window.showInputBox({
-            prompt: 'Enter your Email associated with license key',
-            ignoreFocusOut: true,
-            validateInput: (value) => {
-                if (!value || value.trim().length === 0) {
-                    return 'Email cannot be empty';
-                }
-                return null;
-                }
-            });
-            
-            if (!email) {
+        const isOnlineKey = isTraditionalLicenseKey(normalizedLicenseKey);
+        const isValid = isOnlineKey
+            ? await validateLicenseOnline(context)
+            : await validateLicenseOffline(context, normalizedLicenseKey, email);
+
+        if (isValid && isOnlineKey) {
+            if (!cachedStatus?.customer_email) {
+                vscode.window.showErrorMessage('Online license validation returned no customer email.');
                 await clearLicense();
                 return;
             }
-            if(email.trim() !== cachedStatus.customer_email) {
+
+            if (normalizeEmail(email) !== normalizeEmail(cachedStatus.customer_email)) {
                 vscode.window.showErrorMessage('The provided email does not match the license record.');
                 await clearLicense();
                 return;
             }
         }
+
         if (isValid) {
             vscode.window.showInformationMessage(`License activated successfully! Product: ${cachedStatus?.product_name || 'Unknown'}`);
         } else {
             ui.logToOutput('License validation failed:', new Error(cachedStatus?.error || 'Unknown error'));
-            vscode.window.showErrorMessage('License validation failed. Please check your license key.');
+            vscode.window.showErrorMessage(cachedStatus?.error || 'License validation failed. Please check your license key.');
             // Clear the invalid license
             await clearLicense();
         }

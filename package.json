@@ -2,7 +2,7 @@
   "name": "aws-workbench",
   "displayName": "Aws Workbench",
   "description": "Your complete AWS toolkit, right in VS Code",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "publisher": "NecatiARSLAN",
   "repository": {
     "type": "git",
@@ -543,7 +543,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint \"src/**/*.ts\"",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "license:generate-offline": "node ./offline_license/generate-offline-license.js"
   },
   "devDependencies": {
     "@types/archiver": "^7.0.0",
