@@ -84,3 +84,5 @@ create_emr:
 
 list_emr_clusters:
     aws --endpoint-url=http://localhost:4566 emr list-clusters
+
+# AWB1.eyJ2IjoxLCJlbWFpbCI6Im5lY2F0aWFAZ21haWwuY29tIn0.CHu12V2Q60P40nLSvQ0OcQqqcfk21Tf903-eebalv-AYCyFrgjBK_OJof9gk9-NyB3fTMGfjqtCJYLOHEY-GBw
