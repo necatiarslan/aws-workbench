@@ -7,6 +7,7 @@ const credential_providers_1 = require("@aws-sdk/credential-providers");
 const api = require("../aws-sdk/API");
 const client_sts_1 = require("@aws-sdk/client-sts");
 class Session {
+    static CredentialsIdleTimeoutMs = 10_000;
     static Current;
     Context;
     ExtensionUri;
@@ -17,6 +18,8 @@ class Session {
     AwsEndPoint;
     AwsRegion = "us-east-1";
     CurrentCredentials;
+    CurrentCredentialsLastUsedAt;
+    CurrentCredentialsIdleTimer;
     HostAppName = '';
     IsProVersion = false;
     constructor(context) {
@@ -135,12 +138,22 @@ class Session {
         }
     }
     async GetCredentials() {
+        ui.logToOutput('Getting AWS credentials...');
         if (this.CurrentCredentials !== undefined) {
+            if (this.CurrentCredentialsLastUsedAt !== undefined) {
+                const idleMs = Date.now() - this.CurrentCredentialsLastUsedAt;
+                if (idleMs >= Session.CredentialsIdleTimeoutMs) {
+                    ui.logToOutput('Cached credentials expired due to 60s inactivity, refreshing...');
+                    this.ClearCredentials();
+                }
+            }
             if (this.CurrentCredentials.expiration && this.CurrentCredentials.expiration < new Date()) {
                 ui.logToOutput('Cached credentials expired, refreshing...');
+                this.ClearCredentials();
             }
             else {
                 ui.logToOutput(`Using cached credentials (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
+                this.TouchCredentials();
                 return this.CurrentCredentials;
             }
         }
@@ -152,6 +165,7 @@ class Session {
                 throw new Error('AWS credentials not found');
             }
             ui.logToOutput(`Credentials loaded (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
+            this.TouchCredentials();
             return this.CurrentCredentials;
         }
         catch (error) {
@@ -161,13 +175,43 @@ class Session {
     }
     RefreshCredentials() {
         this.CurrentCredentials = undefined;
+        this.CurrentCredentialsLastUsedAt = undefined;
+        this.ClearCredentialsIdleTimer();
         this.GetCredentials();
         // MessageHub.CredentialsChanged();
         ui.logToOutput('Credentials cache refreshed');
     }
     ClearCredentials() {
         this.CurrentCredentials = undefined;
+        this.CurrentCredentialsLastUsedAt = undefined;
+        this.ClearCredentialsIdleTimer();
         ui.logToOutput('Credentials cache cleared');
+    }
+    TouchCredentials() {
+        this.CurrentCredentialsLastUsedAt = Date.now();
+        this.ResetCredentialsIdleTimer();
+    }
+    ResetCredentialsIdleTimer() {
+        this.ClearCredentialsIdleTimer();
+        if (this.CurrentCredentials === undefined) {
+            return;
+        }
+        this.CurrentCredentialsIdleTimer = setTimeout(() => {
+            if (this.CurrentCredentials === undefined || this.CurrentCredentialsLastUsedAt === undefined) {
+                return;
+            }
+            const idleMs = Date.now() - this.CurrentCredentialsLastUsedAt;
+            if (idleMs >= Session.CredentialsIdleTimeoutMs) {
+                this.ClearCredentials();
+                ui.logToOutput('Cached credentials expired after 60s inactivity');
+            }
+        }, Session.CredentialsIdleTimeoutMs);
+    }
+    ClearCredentialsIdleTimer() {
+        if (this.CurrentCredentialsIdleTimer !== undefined) {
+            clearTimeout(this.CurrentCredentialsIdleTimer);
+            this.CurrentCredentialsIdleTimer = undefined;
+        }
     }
     async GetSTSClient(region) {
         const credentials = await this.GetCredentials();

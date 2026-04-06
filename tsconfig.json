@@ -12,7 +12,9 @@
 		"rootDir": "src",
 		"strict": true,
 		"skipLibCheck": true,
-		"moduleResolution": "node"
+		"types": [
+			"node"
+		]
 	},
 	"exclude": [
 		"node_modules",

@@ -13,6 +13,8 @@ export interface Folder {
 }
 
 export class Session implements vscode.Disposable {
+    private static readonly CredentialsIdleTimeoutMs = 10_000;
+
     public static Current: Session;
 
     public Context: vscode.ExtensionContext;
@@ -24,6 +26,8 @@ export class Session implements vscode.Disposable {
     public AwsEndPoint: string | undefined;
     public AwsRegion: string = "us-east-1";
     public CurrentCredentials: AwsCredentialIdentity | undefined;
+    private CurrentCredentialsLastUsedAt: number | undefined;
+    private CurrentCredentialsIdleTimer: ReturnType<typeof setTimeout> | undefined;
     public HostAppName: string = '';
     public IsProVersion: boolean = false;
 
@@ -140,11 +144,22 @@ export class Session implements vscode.Disposable {
     }
 
     public async GetCredentials(): Promise<AwsCredentialIdentity | undefined> {
+        ui.logToOutput('Getting AWS credentials...');
         if (this.CurrentCredentials !== undefined) {
+            if (this.CurrentCredentialsLastUsedAt !== undefined) {
+                const idleMs = Date.now() - this.CurrentCredentialsLastUsedAt;
+                if (idleMs >= Session.CredentialsIdleTimeoutMs) {
+                    ui.logToOutput('Cached credentials expired due to 60s inactivity, refreshing...');
+                    this.ClearCredentials();
+                }
+            }
+
             if(this.CurrentCredentials.expiration && this.CurrentCredentials.expiration < new Date()){
                 ui.logToOutput('Cached credentials expired, refreshing...');
+                this.ClearCredentials();
             } else {
                 ui.logToOutput(`Using cached credentials (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
+                this.TouchCredentials();
                 return this.CurrentCredentials;
             }
         }
@@ -160,6 +175,7 @@ export class Session implements vscode.Disposable {
             }
 
             ui.logToOutput(`Credentials loaded (AccessKeyId=${this.CurrentCredentials.accessKeyId})`);
+            this.TouchCredentials();
             return this.CurrentCredentials;
         } catch (error: any) {
             ui.logToOutput('Failed to get credentials', error);
@@ -169,6 +185,8 @@ export class Session implements vscode.Disposable {
 
     public RefreshCredentials() {
         this.CurrentCredentials = undefined;
+        this.CurrentCredentialsLastUsedAt = undefined;
+        this.ClearCredentialsIdleTimer();
         this.GetCredentials();
         // MessageHub.CredentialsChanged();
         ui.logToOutput('Credentials cache refreshed');
@@ -176,7 +194,41 @@ export class Session implements vscode.Disposable {
 
     public ClearCredentials() {
         this.CurrentCredentials = undefined;
+        this.CurrentCredentialsLastUsedAt = undefined;
+        this.ClearCredentialsIdleTimer();
         ui.logToOutput('Credentials cache cleared');
+    }
+
+    private TouchCredentials() {
+        this.CurrentCredentialsLastUsedAt = Date.now();
+        this.ResetCredentialsIdleTimer();
+    }
+
+    private ResetCredentialsIdleTimer() {
+        this.ClearCredentialsIdleTimer();
+
+        if (this.CurrentCredentials === undefined) {
+            return;
+        }
+
+        this.CurrentCredentialsIdleTimer = setTimeout(() => {
+            if (this.CurrentCredentials === undefined || this.CurrentCredentialsLastUsedAt === undefined) {
+                return;
+            }
+
+            const idleMs = Date.now() - this.CurrentCredentialsLastUsedAt;
+            if (idleMs >= Session.CredentialsIdleTimeoutMs) {
+                this.ClearCredentials();
+                ui.logToOutput('Cached credentials expired after 60s inactivity');
+            }
+        }, Session.CredentialsIdleTimeoutMs);
+    }
+
+    private ClearCredentialsIdleTimer() {
+        if (this.CurrentCredentialsIdleTimer !== undefined) {
+            clearTimeout(this.CurrentCredentialsIdleTimer);
+            this.CurrentCredentialsIdleTimer = undefined;
+        }
     }
 
     
