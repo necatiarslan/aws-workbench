@@ -9,7 +9,7 @@ const ServiceHub_1 = require("./ServiceHub");
 const TreeState_1 = require("./TreeState");
 const ui = require("../common/UI");
 class TreeView {
-    static FREE_NODE_LIMIT = 5;
+    static FREE_NODE_LIMIT = 10;
     static Current;
     view;
     treeDataProvider;

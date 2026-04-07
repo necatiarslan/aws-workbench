@@ -8,7 +8,7 @@ import * as ui from "../common/UI";
 
 export class TreeView {
 
-    private static readonly FREE_NODE_LIMIT = 5;
+    private static readonly FREE_NODE_LIMIT = 10;
 
     public static Current: TreeView;
 	public view: vscode.TreeView<NodeBase>;
