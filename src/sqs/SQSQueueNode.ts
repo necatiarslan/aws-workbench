@@ -16,7 +16,7 @@ export class SQSQueueNode extends NodeBase {
     constructor(QueueName: string, parent?: NodeBase) 
     {
         super(QueueName, parent);
-        this.Icon = "sqs-queue";
+        this.iconPath = new vscode.ThemeIcon("sqs-queue", new vscode.ThemeColor("charts.red"));
         this.QueueName = QueueName;
         
         this.EnableNodeAlias = true;

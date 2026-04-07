@@ -14,12 +14,13 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const NoteView_1 = require("./NoteView");
+const vscode = require("vscode");
 class NoteNode extends NodeBase_1.NodeBase {
     NoteTitle = "";
     NoteContent = "";
     constructor(NoteTitle, parent) {
         super(NoteTitle, parent);
-        this.Icon = "note";
+        this.iconPath = new vscode.ThemeIcon("note", new vscode.ThemeColor("charts.blue"));
         this.NoteTitle = NoteTitle;
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeEdit.subscribe(() => this.handleNodeEdit());

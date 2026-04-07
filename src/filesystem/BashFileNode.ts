@@ -16,7 +16,7 @@ export class BashFileNode extends NodeBase {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
-        this.Icon = "debug-alt";
+        this.iconPath = new vscode.ThemeIcon("debug-alt", new vscode.ThemeColor("charts.blue"));
         this.FileName = label;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

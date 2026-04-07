@@ -2,6 +2,7 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import { NoteView } from './NoteView';
+import * as vscode from 'vscode';
 
 export class NoteNode extends NodeBase {
 
@@ -14,7 +15,7 @@ export class NoteNode extends NodeBase {
     constructor(NoteTitle: string, parent?: NodeBase) 
     {
         super(NoteTitle, parent);
-        this.Icon = "note";
+        this.iconPath = new vscode.ThemeIcon("note", new vscode.ThemeColor("charts.blue"));
         this.NoteTitle = NoteTitle;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

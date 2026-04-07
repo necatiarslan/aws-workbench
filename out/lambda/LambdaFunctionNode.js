@@ -28,7 +28,7 @@ const LambdaCodeDownloadNode_1 = require("./LambdaCodeDownloadNode");
 class LambdaFunctionNode extends NodeBase_1.NodeBase {
     constructor(FunctionName, parent) {
         super(FunctionName, parent);
-        this.Icon = "lambda-function";
+        this.iconPath = new vscode.ThemeIcon("lambda-function", new vscode.ThemeColor("charts.green"));
         this.FunctionName = FunctionName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

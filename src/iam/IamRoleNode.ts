@@ -14,7 +14,7 @@ export class IamRoleNode extends NodeBase {
     constructor(RoleName: string, parent?: NodeBase) 
     {
         super(RoleName, parent);
-        this.Icon = "shield";
+        this.iconPath = new vscode.ThemeIcon("shield", new vscode.ThemeColor("charts.blue"));
         this.RoleName = RoleName;
         
         this.EnableNodeAlias = true;

@@ -6,6 +6,7 @@ import { CloudWatchLogTagsGroupNode } from './CloudWatchLogTagsGroupNode';
 import { CloudWatchLogStreamsGroupNode } from './CloudWatchLogStreamsGroupNode';
 import { CloudWatchLogInfoGroupNode } from './CloudWatchLogInfoGroupNode';
 import { LogGroup } from '@aws-sdk/client-cloudwatch-logs';
+import * as vscode from 'vscode';
 
 export class CloudWatchLogGroupNode extends NodeBase {
 
@@ -14,7 +15,7 @@ export class CloudWatchLogGroupNode extends NodeBase {
         super(LogGroup, parent);
 
         this.LogGroup = LogGroup;
-        this.Icon = "cloudwatch-loggroup";
+        this.iconPath = new vscode.ThemeIcon("cloudwatch-loggroup", new vscode.ThemeColor("charts.yellow"));
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

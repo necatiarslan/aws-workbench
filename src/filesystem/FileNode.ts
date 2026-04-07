@@ -2,6 +2,7 @@ import { Serialize } from '../common/serialization';
 import { NodeBase } from '../tree/NodeBase';
 import * as ui from '../common/UI'
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
+import * as vscode from 'vscode';
 
 export class FileNode extends NodeBase {
 
@@ -15,7 +16,7 @@ export class FileNode extends NodeBase {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
-        this.Icon = "file-symlink-file";
+        this.iconPath = new vscode.ThemeIcon("file-symlink-file", new vscode.ThemeColor("charts.blue"));
         this.FileName = label;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

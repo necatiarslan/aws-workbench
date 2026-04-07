@@ -23,7 +23,7 @@ const IamRoleInfoGroupNode_1 = require("./IamRoleInfoGroupNode");
 class IamRoleNode extends NodeBase_1.NodeBase {
     constructor(RoleName, parent) {
         super(RoleName, parent);
-        this.Icon = "shield";
+        this.iconPath = new vscode.ThemeIcon("shield", new vscode.ThemeColor("charts.blue"));
         this.RoleName = RoleName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

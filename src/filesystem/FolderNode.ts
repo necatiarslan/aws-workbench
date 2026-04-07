@@ -12,7 +12,7 @@ export class FolderNode extends NodeBase {
     constructor(FolderName: string, parent?: NodeBase) 
     {
         super(FolderName, parent);
-        this.Icon = "folder";
+        this.iconPath = new vscode.ThemeIcon("folder", new vscode.ThemeColor("charts.blue"));
         this.FolderName = FolderName;
 
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());

@@ -29,7 +29,7 @@ const fs = require("fs");
 class StateMachineNode extends NodeBase_1.NodeBase {
     constructor(stateMachineName, parent) {
         super(stateMachineName, parent);
-        this.Icon = "step-functions";
+        this.iconPath = new vscode.ThemeIcon("step-functions", new vscode.ThemeColor("charts.orange"));
         this.StateMachineName = stateMachineName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

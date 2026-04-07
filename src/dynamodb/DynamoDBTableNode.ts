@@ -15,7 +15,7 @@ export class DynamoDBTableNode extends NodeBase {
 
     constructor(TableName: string, parent?: NodeBase) {
         super(TableName, parent);
-        this.Icon = "database";
+        this.iconPath = new vscode.ThemeIcon("database", new vscode.ThemeColor("charts.purple"));
         this.TableName = TableName;
         
         this.EnableNodeAlias = true;

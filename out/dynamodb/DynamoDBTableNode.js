@@ -25,7 +25,7 @@ const DynamoDBInfoGroupNode_1 = require("./DynamoDBInfoGroupNode");
 class DynamoDBTableNode extends NodeBase_1.NodeBase {
     constructor(TableName, parent) {
         super(TableName, parent);
-        this.Icon = "database";
+        this.iconPath = new vscode.ThemeIcon("database", new vscode.ThemeColor("charts.purple"));
         this.TableName = TableName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

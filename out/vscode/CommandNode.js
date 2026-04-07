@@ -19,7 +19,7 @@ class CommandNode extends NodeBase_1.NodeBase {
     Command = "";
     constructor(Title, parent) {
         super(Title, parent);
-        this.Icon = "terminal";
+        this.iconPath = new vscode.ThemeIcon("terminal");
         this.Title = Title;
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());

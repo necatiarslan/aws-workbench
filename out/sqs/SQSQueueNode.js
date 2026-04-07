@@ -25,7 +25,7 @@ const SQSTagsGroupNode_1 = require("./SQSTagsGroupNode");
 class SQSQueueNode extends NodeBase_1.NodeBase {
     constructor(QueueName, parent) {
         super(QueueName, parent);
-        this.Icon = "sqs-queue";
+        this.iconPath = new vscode.ThemeIcon("sqs-queue", new vscode.ThemeColor("charts.red"));
         this.QueueName = QueueName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

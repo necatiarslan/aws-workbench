@@ -26,7 +26,7 @@ const GlueTagsGroupNode_1 = require("./GlueTagsGroupNode");
 class GlueJobNode extends NodeBase_1.NodeBase {
     constructor(JobName, parent) {
         super(JobName, parent);
-        this.Icon = "glue-job";
+        this.iconPath = new vscode.ThemeIcon("glue-job", new vscode.ThemeColor("charts.green"));
         this.JobName = JobName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

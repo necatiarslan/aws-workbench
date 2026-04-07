@@ -12,6 +12,7 @@ import { S3NotificationGroupNode } from './S3NotificationGroupNode';
 import { HeadBucketCommandOutput } from '@aws-sdk/client-s3';
 import * as api from './API';
 import * as ui from '../common/UI';
+import * as vscode from 'vscode';
 
 export class S3BucketNode extends NodeBase {
 
@@ -20,7 +21,7 @@ export class S3BucketNode extends NodeBase {
         super(BucketName, parent);
 
         this.BucketName = BucketName;
-        this.Icon = "s3-bucket";
+        this.iconPath = new vscode.ThemeIcon("s3-bucket", new vscode.ThemeColor("charts.orange"));
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

@@ -14,12 +14,13 @@ const serialization_1 = require("../common/serialization");
 const NodeBase_1 = require("../tree/NodeBase");
 const ui = require("../common/UI");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
+const vscode = require("vscode");
 class FileNode extends NodeBase_1.NodeBase {
     FileName = "";
     FilePath = "";
     constructor(label, parent) {
         super(label, parent);
-        this.Icon = "file-symlink-file";
+        this.iconPath = new vscode.ThemeIcon("file-symlink-file", new vscode.ThemeColor("charts.blue"));
         this.FileName = label;
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeOpen.subscribe(() => this.handleNodeOpen());
