@@ -194,6 +194,26 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "AwsWorkbench.ConnectionRefreshCredentials",
+        "title": "Refresh Credentials",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "AwsWorkbench.ConnectionTestAwsConnection",
+        "title": "Test Aws Connection",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "AwsWorkbench.ConnectionChangeProfile",
+        "title": "Change Profile",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "AwsWorkbench.ConnectionRefreshView",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
         "command": "AwsWorkbench.Donate",
         "title": "Donate",
         "icon": "$(heart)"
@@ -297,6 +317,11 @@
           "command": "AwsWorkbench.ImportConfig",
           "when": "view == AwsWorkbenchView",
           "group": "other_4"
+        },
+        {
+          "command": "AwsWorkbench.ConnectionRefreshView",
+          "when": "view == AwsWorkbenchConnectionView",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -419,6 +444,21 @@
           "command": "AwsWorkbench.NodeCopy",
           "when": "view == AwsWorkbenchView && viewItem =~ /#NodeCopy#/",
           "group": "inline@10"
+        },
+        {
+          "command": "AwsWorkbench.ConnectionRefreshCredentials",
+          "when": "view == AwsWorkbenchConnectionView && viewItem == ConnectionRefreshCredentialsNode",
+          "group": "inline@1"
+        },
+        {
+          "command": "AwsWorkbench.ConnectionTestAwsConnection",
+          "when": "view == AwsWorkbenchConnectionView && viewItem == ConnectionTestAwsNode",
+          "group": "inline@2"
+        },
+        {
+          "command": "AwsWorkbench.ConnectionChangeProfile",
+          "when": "view == AwsWorkbenchConnectionView && viewItem == ConnectionChangeProfileNode",
+          "group": "inline@3"
         }
       ],
       "AwsWorkbench.Connection": [
@@ -469,7 +509,13 @@
           "id": "AwsWorkbenchView",
           "name": "Aws Workbench",
           "icon": "media/aws-workbench-logo-activitybar.svg"
+        },
+        {
+          "id": "AwsWorkbenchConnectionView",
+          "name": "Aws Connection",
+          "icon": "media/aws-workbench-logo-activitybar.svg"
         }
+
       ]
     },
     "viewsWelcome": [

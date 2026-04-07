@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as ui from './common/UI';
 import { Session } from './common/Session';
 import { TreeView } from './tree/TreeView';
+import { ConnectionView } from './tree/ConnectionView';
 import { ServiceHub } from './tree/ServiceHub';
 import { TreeState } from './tree/TreeState';
 import { initializeLicense, isLicenseValid, RegisterLicenseManagementCommands } from "./common/License";
@@ -22,6 +23,9 @@ export function activate(context: vscode.ExtensionContext): void {
         
         // 1. Initialize the Unified "Aws Workbench" Tree Provider
         new TreeView(context);
+
+        // 1.1 Initialize Aws Connection Tree Provider
+        new ConnectionView(context);
 
         // 2. Load saved tree state after TreeView is initialized
         TreeState.load();
