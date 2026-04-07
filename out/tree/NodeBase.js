@@ -18,6 +18,7 @@ const ui = require("../common/UI");
 const TreeState_1 = require("./TreeState");
 const EventEmitter_1 = require("../common/EventEmitter");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
+const crypto_1 = require("crypto");
 class NodeBase extends vscode.TreeItem {
     static RootNodes = [];
     // Event emitters for node operations
@@ -36,7 +37,7 @@ class NodeBase extends vscode.TreeItem {
     OnNodeLoaded = new EventEmitter_1.EventEmitter();
     constructor(label, parent) {
         super(label);
-        this.id = Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        this.id = (0, crypto_1.randomUUID)();
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
         if (this.Parent) {

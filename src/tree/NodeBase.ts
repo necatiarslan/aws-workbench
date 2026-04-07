@@ -6,6 +6,7 @@ import * as ui from '../common/UI';
 import { TreeState } from './TreeState';
 import { EventEmitter } from '../common/EventEmitter';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
+import { randomUUID } from 'crypto';
 
 export abstract class NodeBase extends vscode.TreeItem {
    
@@ -30,7 +31,7 @@ export abstract class NodeBase extends vscode.TreeItem {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label);        
-        this.id = Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        this.id = randomUUID();
 
         // Set parent and add this item to the parent's children
         this.Parent = parent || undefined;
