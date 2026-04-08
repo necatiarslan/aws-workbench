@@ -239,11 +239,11 @@ class Session {
             ui.showWarningMessage("Credentials File NOT Found");
         }
     }
-    RefreshCredentials() {
+    async RefreshCredentials() {
         this.CurrentCredentials = undefined;
         this.CurrentCredentialsLastUsedAt = undefined;
         this.ClearCredentialsIdleTimer();
-        this.GetCredentials();
+        await this.GetCredentials();
         // MessageHub.CredentialsChanged();
         ui.logToOutput('Credentials cache refreshed');
     }

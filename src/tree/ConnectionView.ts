@@ -26,15 +26,23 @@ export class ConnectionView {
             this.Refresh();
         }));
 
-        context.subscriptions.push(vscode.commands.registerCommand('AwsWorkbench.ConnectionRefreshCredentials', () => {
-            Session.Current.RefreshCredentials();
-            ui.showInfoMessage('AWS credentials refreshed.');
-            this.Refresh();
+        context.subscriptions.push(vscode.commands.registerCommand('AwsWorkbench.ConnectionRefreshCredentials', async () => {
+            try {
+                await Session.Current.RefreshCredentials();
+                ui.showInfoMessage('AWS credentials refreshed.');
+                this.Refresh();
+            } catch (error: any) {
+                ui.showErrorMessage('Failed to refresh AWS credentials', error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('AwsWorkbench.ConnectionTestAwsConnection', async () => {
-            await Session.Current.TestAwsConnection();
-            this.Refresh();
+            try {
+                await Session.Current.TestAwsConnection();
+                this.Refresh();
+            } catch (error: any) {
+                ui.showErrorMessage('Failed to test AWS connection', error);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('AwsWorkbench.ConnectionChangeProfile', async () => {

@@ -281,11 +281,11 @@ export class Session implements vscode.Disposable {
         }
     }
     
-    public RefreshCredentials() {
+    public async RefreshCredentials() {
         this.CurrentCredentials = undefined;
         this.CurrentCredentialsLastUsedAt = undefined;
         this.ClearCredentialsIdleTimer();
-        this.GetCredentials();
+        await this.GetCredentials();
         // MessageHub.CredentialsChanged();
         ui.logToOutput('Credentials cache refreshed');
     }
