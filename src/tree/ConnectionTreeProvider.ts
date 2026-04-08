@@ -36,16 +36,16 @@ export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.Tr
         let expirationLabel: string;
         let expirationIcon: string;
         if (Session.Current.HasExpiration && !Session.Current.IsExpired) {
-            expirationLabel = `Expiration Time: ${Session.Current.ExpireTime}`;
+            expirationLabel = `Expire in ${Session.Current.ExpireTime}`;
             expirationIcon = 'history';
             this.StartExpirationRefreshTimer();
         } else if (Session.Current.HasExpiration && Session.Current.IsExpired) {
-            expirationLabel = `Expiration Time: Expired (${Session.Current.ExpireTime} ago)`;
+            expirationLabel = `Expired (${Session.Current.ExpireTime} ago)`;
             expirationIcon = 'warning';
             this.StopExpirationRefreshTimer();
         } else {
-            expirationLabel = 'Expiration Time: N/A';
-            expirationIcon = 'history';
+            expirationLabel = 'No Expiration Time';
+            expirationIcon = 'circle';
             this.StopExpirationRefreshTimer();
         }
         const expirationTimeNode = new vscode.TreeItem(expirationLabel, vscode.TreeItemCollapsibleState.None);

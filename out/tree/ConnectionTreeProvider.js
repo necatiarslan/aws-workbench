@@ -31,18 +31,18 @@ class ConnectionTreeProvider {
         let expirationLabel;
         let expirationIcon;
         if (Session_1.Session.Current.HasExpiration && !Session_1.Session.Current.IsExpired) {
-            expirationLabel = `Expiration Time: ${Session_1.Session.Current.ExpireTime}`;
+            expirationLabel = `Expire in ${Session_1.Session.Current.ExpireTime}`;
             expirationIcon = 'history';
             this.StartExpirationRefreshTimer();
         }
         else if (Session_1.Session.Current.HasExpiration && Session_1.Session.Current.IsExpired) {
-            expirationLabel = `Expiration Time: Expired (${Session_1.Session.Current.ExpireTime} ago)`;
+            expirationLabel = `Expired (${Session_1.Session.Current.ExpireTime} ago)`;
             expirationIcon = 'warning';
             this.StopExpirationRefreshTimer();
         }
         else {
-            expirationLabel = 'Expiration Time: N/A';
-            expirationIcon = 'history';
+            expirationLabel = 'No Expiration Time';
+            expirationIcon = 'circle';
             this.StopExpirationRefreshTimer();
         }
         const expirationTimeNode = new vscode.TreeItem(expirationLabel, vscode.TreeItemCollapsibleState.None);
