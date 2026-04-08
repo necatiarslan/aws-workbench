@@ -1,13 +1,19 @@
 import * as vscode from 'vscode';
 import { Session } from '../common/Session';
 
-export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.TreeItem>, vscode.Disposable {
 
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined | void> = new vscode.EventEmitter<vscode.TreeItem | undefined | void>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined | void> = this._onDidChangeTreeData.event;
+    private expirationRefreshInterval: ReturnType<typeof setInterval> | undefined;
 
     public Refresh(): void {
         this._onDidChangeTreeData.fire(undefined);
+    }
+
+    public dispose(): void {
+        this.StopExpirationRefreshTimer();
+        this._onDidChangeTreeData.dispose();
     }
 
     public getTreeItem(node: vscode.TreeItem): vscode.TreeItem {
@@ -32,12 +38,15 @@ export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.Tr
         if (Session.Current.HasExpiration && !Session.Current.IsExpired) {
             expirationLabel = `Expiration Time: ${Session.Current.ExpireTime}`;
             expirationIcon = 'history';
+            this.StartExpirationRefreshTimer();
         } else if (Session.Current.HasExpiration && Session.Current.IsExpired) {
             expirationLabel = `Expiration Time: Expired (${Session.Current.ExpireTime} ago)`;
             expirationIcon = 'warning';
+            this.StopExpirationRefreshTimer();
         } else {
             expirationLabel = 'Expiration Time: N/A';
             expirationIcon = 'history';
+            this.StopExpirationRefreshTimer();
         }
         const expirationTimeNode = new vscode.TreeItem(expirationLabel, vscode.TreeItemCollapsibleState.None);
         expirationTimeNode.contextValue = 'ConnectionExpirationTimeNode';
@@ -78,5 +87,26 @@ export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.Tr
             testConnectionNode,
             changeProfileNode
         ];
+    }
+
+    private StartExpirationRefreshTimer(): void {
+        if (this.expirationRefreshInterval !== undefined) {
+            return;
+        }
+
+        this.expirationRefreshInterval = setInterval(() => {
+            if (!(Session.Current.HasExpiration && !Session.Current.IsExpired)) {
+                this.StopExpirationRefreshTimer();
+            }
+
+            this.Refresh();
+        }, 1000);
+    }
+
+    private StopExpirationRefreshTimer(): void {
+        if (this.expirationRefreshInterval !== undefined) {
+            clearInterval(this.expirationRefreshInterval);
+            this.expirationRefreshInterval = undefined;
+        }
     }
 }

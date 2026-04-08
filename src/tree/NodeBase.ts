@@ -308,6 +308,17 @@ export abstract class NodeBase extends vscode.TreeItem {
             { label: '$(symbol-color) Purple', token: 'charts.purple' },
             { label: '$(symbol-color) Yellow', token: 'charts.yellow' },
             { label: '$(symbol-color) Gray', token: 'charts.gray' }
+
+            //       These are examples of using hex color codes instead of theme tokens
+            //       for icon colors in VS Code. Uncomment and modify if you want to use
+            //       custom hex colors rather than the built-in theme color tokens.
+            // { label: '$(symbol-color) Blue', token: '#0099ff' },
+            // { label: '$(symbol-color) Green', token: '#00ff2f' },
+            // { label: '$(symbol-color) Orange', token: '#ff9900' },
+            // { label: '$(symbol-color) Red', token: '#ff0000' },
+            // { label: '$(symbol-color) Purple', token: '#9a5dd3' },
+            // { label: '$(symbol-color) Yellow', token: '#c9a227' },
+            // { label: '$(symbol-color) Gray', token: '#8a8a8a' }
         ];
         const pick = await vscode.window.showQuickPick(colors.map(c => c.label), { placeHolder: 'Select icon color' });
         if (pick === undefined) { return; }

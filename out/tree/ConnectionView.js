@@ -19,6 +19,7 @@ class ConnectionView {
             showCollapseAll: false
         });
         context.subscriptions.push(this.view);
+        context.subscriptions.push(this.treeDataProvider);
         context.subscriptions.push(vscode.commands.registerCommand('AwsWorkbench.ConnectionRefreshView', () => {
             this.Refresh();
         }));

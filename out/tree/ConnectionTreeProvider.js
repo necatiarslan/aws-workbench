@@ -6,8 +6,13 @@ const Session_1 = require("../common/Session");
 class ConnectionTreeProvider {
     _onDidChangeTreeData = new vscode.EventEmitter();
     onDidChangeTreeData = this._onDidChangeTreeData.event;
+    expirationRefreshInterval;
     Refresh() {
         this._onDidChangeTreeData.fire(undefined);
+    }
+    dispose() {
+        this.StopExpirationRefreshTimer();
+        this._onDidChangeTreeData.dispose();
     }
     getTreeItem(node) {
         return node;
@@ -28,14 +33,17 @@ class ConnectionTreeProvider {
         if (Session_1.Session.Current.HasExpiration && !Session_1.Session.Current.IsExpired) {
             expirationLabel = `Expiration Time: ${Session_1.Session.Current.ExpireTime}`;
             expirationIcon = 'history';
+            this.StartExpirationRefreshTimer();
         }
         else if (Session_1.Session.Current.HasExpiration && Session_1.Session.Current.IsExpired) {
             expirationLabel = `Expiration Time: Expired (${Session_1.Session.Current.ExpireTime} ago)`;
             expirationIcon = 'warning';
+            this.StopExpirationRefreshTimer();
         }
         else {
             expirationLabel = 'Expiration Time: N/A';
             expirationIcon = 'history';
+            this.StopExpirationRefreshTimer();
         }
         const expirationTimeNode = new vscode.TreeItem(expirationLabel, vscode.TreeItemCollapsibleState.None);
         expirationTimeNode.contextValue = 'ConnectionExpirationTimeNode';
@@ -72,6 +80,23 @@ class ConnectionTreeProvider {
             testConnectionNode,
             changeProfileNode
         ];
+    }
+    StartExpirationRefreshTimer() {
+        if (this.expirationRefreshInterval !== undefined) {
+            return;
+        }
+        this.expirationRefreshInterval = setInterval(() => {
+            if (!(Session_1.Session.Current.HasExpiration && !Session_1.Session.Current.IsExpired)) {
+                this.StopExpirationRefreshTimer();
+            }
+            this.Refresh();
+        }, 1000);
+    }
+    StopExpirationRefreshTimer() {
+        if (this.expirationRefreshInterval !== undefined) {
+            clearInterval(this.expirationRefreshInterval);
+            this.expirationRefreshInterval = undefined;
+        }
     }
 }
 exports.ConnectionTreeProvider = ConnectionTreeProvider;
