@@ -27,6 +27,15 @@ export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.Tr
             title: 'Change Profile'
         };
 
+        var expirationLabel = Session.Current.HasExpiration ? `Expire In: ${Session.Current.ExpireTime}` : 'No Expiration';
+        const expirationTimeNode = new vscode.TreeItem(expirationLabel, vscode.TreeItemCollapsibleState.None);
+        expirationTimeNode.contextValue = 'ConnectionExpirationTimeNode';
+        expirationTimeNode.iconPath = new vscode.ThemeIcon('history');
+        expirationTimeNode.command = {
+            command: 'AwsWorkbench.ConnectionRefreshView',
+            title: 'Refresh'
+        };
+
         const refreshCredentialsNode = new vscode.TreeItem('Refresh Credentials', vscode.TreeItemCollapsibleState.None);
         refreshCredentialsNode.contextValue = 'ConnectionRefreshCredentialsNode';
         refreshCredentialsNode.iconPath = new vscode.ThemeIcon('refresh');
@@ -53,6 +62,7 @@ export class ConnectionTreeProvider implements vscode.TreeDataProvider<vscode.Tr
 
         return [
             activeProfileNode,
+            expirationTimeNode,
             refreshCredentialsNode,
             testConnectionNode,
             changeProfileNode

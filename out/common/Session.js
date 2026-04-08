@@ -6,6 +6,7 @@ const vscode = require("vscode");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 const api = require("../aws-sdk/API");
 const client_sts_1 = require("@aws-sdk/client-sts");
+const node_fs_1 = require("node:fs");
 class Session {
     static CredentialsIdleTimeoutMs = 10_000;
     static Current;
@@ -18,6 +19,7 @@ class Session {
     AwsEndPoint;
     AwsRegion = "us-east-1";
     CurrentCredentials;
+    IniData;
     CurrentCredentialsLastUsedAt;
     CurrentCredentialsIdleTimer;
     HostAppName = '';
@@ -161,6 +163,7 @@ class Session {
             process.env.AWS_PROFILE = this.AwsProfile;
             const provider = (0, credential_providers_1.fromNodeProviderChain)({ ignoreCache: true });
             this.CurrentCredentials = await provider();
+            this.GetIniData();
             if (!this.CurrentCredentials) {
                 throw new Error('AWS credentials not found');
             }
@@ -171,6 +174,69 @@ class Session {
         catch (error) {
             ui.logToOutput('Failed to get credentials', error);
             throw error;
+        }
+    }
+    async GetIniData() {
+        Session.Current.IniData = await api.getIniProfileData();
+    }
+    get HasIniCredentials() {
+        return this.IniData !== undefined;
+    }
+    get ExpirationDateString() {
+        let result;
+        if (this.IniData) {
+            if (this.IniData[this.AwsProfile] && this.IniData[this.AwsProfile]["token_expiration"]) {
+                result = this.IniData[this.AwsProfile]["token_expiration"];
+            }
+        }
+        return result;
+    }
+    get ExpireDate() {
+        let result;
+        if (this.ExpirationDateString) {
+            result = new Date(this.ExpirationDateString);
+        }
+        return result;
+    }
+    get HasExpiration() {
+        if (this.HasIniCredentials && this.ExpirationDateString) {
+            return true;
+        }
+        return false;
+    }
+    get IsExpired() {
+        if (this.ExpirationDateString) {
+            let expireDate = new Date(this.ExpirationDateString);
+            let now = new Date();
+            return expireDate < now;
+        }
+        return false;
+    }
+    get ExpireTime() {
+        if (this.ExpirationDateString) {
+            let now = new Date();
+            let expireDate = new Date(this.ExpirationDateString);
+            if (this.IsExpired) {
+                return ui.getDuration(expireDate, now);
+            }
+            else {
+                return ui.getDuration(now, expireDate);
+            }
+        }
+        return "";
+    }
+    OpenCredentialsFile() {
+        if (this.HasIniCredentials) {
+            let filePath = api.getCredentialsFilepath();
+            if ((0, node_fs_1.existsSync)(filePath)) {
+                ui.openFile(filePath);
+            }
+            else {
+                ui.showWarningMessage("Credentials File NOT Found Path=" + filePath);
+            }
+        }
+        else {
+            ui.showWarningMessage("Credentials File NOT Found");
         }
     }
     RefreshCredentials() {

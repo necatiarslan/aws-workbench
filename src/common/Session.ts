@@ -1,9 +1,10 @@
 import * as ui from './UI';
 import * as vscode from 'vscode';
-import { AwsCredentialIdentity } from '@aws-sdk/types';
+import { AwsCredentialIdentity, ParsedIniData } from '@aws-sdk/types';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import * as api from '../aws-sdk/API';
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
+import { existsSync } from 'node:fs';
 
 export interface Folder {
     id: string;
@@ -26,6 +27,7 @@ export class Session implements vscode.Disposable {
     public AwsEndPoint: string | undefined;
     public AwsRegion: string = "us-east-1";
     public CurrentCredentials: AwsCredentialIdentity | undefined;
+    public IniData: ParsedIniData | undefined;
     private CurrentCredentialsLastUsedAt: number | undefined;
     private CurrentCredentialsIdleTimer: ReturnType<typeof setTimeout> | undefined;
     public HostAppName: string = '';
@@ -169,6 +171,7 @@ export class Session implements vscode.Disposable {
 
             const provider = fromNodeProviderChain({ ignoreCache: true });
             this.CurrentCredentials = await provider();
+            this.GetIniData();
 
             if (!this.CurrentCredentials) {
                 throw new Error('AWS credentials not found');
@@ -183,6 +186,101 @@ export class Session implements vscode.Disposable {
         }
     }
 
+    public async GetIniData() {
+        Session.Current.IniData = await api.getIniProfileData();
+    }
+
+    public get HasIniCredentials():boolean
+    {
+        return this.IniData !== undefined;
+    }
+
+    public get ExpirationDateString():string | undefined
+    {
+        let result:string | undefined;
+
+        if(this.IniData)
+        {
+            if(this.IniData[this.AwsProfile] && this.IniData[this.AwsProfile]["token_expiration"])
+            {
+                result = this.IniData[this.AwsProfile]["token_expiration"];
+            }            
+        }
+
+        return result;
+    }
+
+    public get ExpireDate():Date | undefined
+    {
+        let result:Date | undefined;
+
+        if(this.ExpirationDateString)
+        {
+            result = new Date(this.ExpirationDateString);         
+        }
+
+        return result;
+    }
+
+    public get HasExpiration():boolean{
+        if(this.HasIniCredentials && this.ExpirationDateString)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public get IsExpired():boolean{
+
+        if(this.ExpirationDateString)
+        {
+            let expireDate = new Date(this.ExpirationDateString);
+            let now = new Date();
+            return expireDate < now;
+        }
+        
+        return false;
+    }
+
+    public get ExpireTime():string{
+        if(this.ExpirationDateString)
+        {
+            let now = new Date();
+            let expireDate = new Date(this.ExpirationDateString);
+            if(this.IsExpired)
+            {
+                return ui.getDuration(expireDate, now);
+            }
+            else
+            {
+                return ui.getDuration(now, expireDate);
+            }
+            
+        }
+        return "";
+    }
+
+    public OpenCredentialsFile()
+    {
+        if(this.HasIniCredentials)
+        {
+            let filePath = api.getCredentialsFilepath();
+            if (existsSync(filePath))
+            {
+                ui.openFile(filePath);
+            }
+            else
+            {
+                ui.showWarningMessage("Credentials File NOT Found Path=" + filePath);
+            }
+        }
+        else
+        {
+            ui.showWarningMessage("Credentials File NOT Found");
+        }
+    }
+    
     public RefreshCredentials() {
         this.CurrentCredentials = undefined;
         this.CurrentCredentialsLastUsedAt = undefined;
