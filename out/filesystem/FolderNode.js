@@ -19,7 +19,9 @@ class FolderNode extends NodeBase_1.NodeBase {
     FolderName = "";
     constructor(FolderName, parent) {
         super(FolderName, parent);
-        this.iconPath = new vscode.ThemeIcon("folder", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "folder";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.FolderName = FolderName;
         this.OnNodeAdd.subscribe(() => this.handleNodeAdd());
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

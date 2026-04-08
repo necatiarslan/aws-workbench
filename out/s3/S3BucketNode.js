@@ -23,12 +23,13 @@ const S3LoggingGroupNode_1 = require("./S3LoggingGroupNode");
 const S3NotificationGroupNode_1 = require("./S3NotificationGroupNode");
 const api = require("./API");
 const ui = require("../common/UI");
-const vscode = require("vscode");
 class S3BucketNode extends NodeBase_1.NodeBase {
     constructor(BucketName, parent) {
         super(BucketName, parent);
         this.BucketName = BucketName;
-        this.iconPath = new vscode.ThemeIcon("s3-bucket", new vscode.ThemeColor("charts.orange"));
+        this.DefaultIcon = "s3-bucket";
+        this.DefaultIconColor = "charts.orange";
+        this.SetIcon();
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         // Event subscriptions

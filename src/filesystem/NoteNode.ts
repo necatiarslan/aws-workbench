@@ -15,7 +15,9 @@ export class NoteNode extends NodeBase {
     constructor(NoteTitle: string, parent?: NodeBase) 
     {
         super(NoteTitle, parent);
-        this.iconPath = new vscode.ThemeIcon("note", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "note";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.NoteTitle = NoteTitle;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

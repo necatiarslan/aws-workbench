@@ -14,7 +14,9 @@ export class CommandNode extends NodeBase {
     constructor(Title: string, parent?: NodeBase) 
     {
         super(Title, parent);
-        this.iconPath = new vscode.ThemeIcon("terminal");
+        this.DefaultIcon = "terminal";
+        this.DefaultIconColor = "charts.black";
+        this.SetIcon();
         this.Title = Title;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

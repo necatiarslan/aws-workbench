@@ -15,7 +15,9 @@ export class CloudWatchLogGroupNode extends NodeBase {
         super(LogGroup, parent);
 
         this.LogGroup = LogGroup;
-        this.iconPath = new vscode.ThemeIcon("cloudwatch-loggroup", new vscode.ThemeColor("charts.yellow"));
+        this.DefaultIcon = "cloudwatch-loggroup";
+        this.DefaultIconColor = "charts.yellow";
+        this.SetIcon();
 
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

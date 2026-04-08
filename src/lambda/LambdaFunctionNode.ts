@@ -20,7 +20,9 @@ export class LambdaFunctionNode extends NodeBase {
     constructor(FunctionName: string, parent?: NodeBase) 
     {
         super(FunctionName, parent);
-        this.iconPath = new vscode.ThemeIcon("lambda-function", new vscode.ThemeColor("charts.green"));
+        this.DefaultIcon = "lambda-function";
+        this.DefaultIconColor = "charts.green";
+        this.SetIcon();
         this.FunctionName = FunctionName;
         
         this.EnableNodeAlias = true;

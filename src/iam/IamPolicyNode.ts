@@ -13,7 +13,9 @@ export class IamPolicyNode extends NodeBase {
     constructor(PolicyName: string, parent?: NodeBase) 
     {
         super(PolicyName, parent);
-        this.iconPath = new vscode.ThemeIcon("lock", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "lock";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.PolicyName = PolicyName;
         
         this.EnableNodeAlias = true;

@@ -17,12 +17,13 @@ const CloudWatchLogView_1 = require("./CloudWatchLogView");
 const CloudWatchLogTagsGroupNode_1 = require("./CloudWatchLogTagsGroupNode");
 const CloudWatchLogStreamsGroupNode_1 = require("./CloudWatchLogStreamsGroupNode");
 const CloudWatchLogInfoGroupNode_1 = require("./CloudWatchLogInfoGroupNode");
-const vscode = require("vscode");
 class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     constructor(LogGroup, parent) {
         super(LogGroup, parent);
         this.LogGroup = LogGroup;
-        this.iconPath = new vscode.ThemeIcon("cloudwatch-loggroup", new vscode.ThemeColor("charts.yellow"));
+        this.DefaultIcon = "cloudwatch-loggroup";
+        this.DefaultIconColor = "charts.yellow";
+        this.SetIcon();
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;
         // Attach event handlers

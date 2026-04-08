@@ -13,7 +13,9 @@ export class SNSTopicNode extends NodeBase {
 
     constructor(TopicArn: string, parent?: NodeBase) {
         super(api.GetTopicNameFromArn(TopicArn), parent);
-        this.iconPath = new vscode.ThemeIcon("broadcast", new vscode.ThemeColor("charts.red"));
+        this.DefaultIcon = "broadcast";
+        this.DefaultIconColor = "charts.red";
+        this.SetIcon();
         this.TopicArn = TopicArn;
         this.TopicName = api.GetTopicNameFromArn(TopicArn);
         

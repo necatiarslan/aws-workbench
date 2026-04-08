@@ -20,7 +20,9 @@ class BashFileNode extends NodeBase_1.NodeBase {
     FilePath = "";
     constructor(label, parent) {
         super(label, parent);
-        this.iconPath = new vscode.ThemeIcon("debug-alt", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "debug-alt";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.FileName = label;
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeRun.subscribe(() => this.handleNodeRun());

@@ -53,6 +53,8 @@ export abstract class NodeBase extends vscode.TreeItem {
     public EnableNodeAlias: boolean = false;
     public IsOnNodeLoadChildrenCalled: boolean = false;
     public IsOnNodeLoadedCalled: boolean = false;
+    public DefaultIcon: string = "circle";
+    public DefaultIconColor: string = "charts.gray";
 
     @Serialize()
     private _isFavorite: boolean = false;
@@ -65,6 +67,9 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     @Serialize()
     private _icon: string = "";
+
+    @Serialize()
+    private _iconColor?: string;
 
     @Serialize()
     private _awsProfile: string = "";
@@ -102,7 +107,9 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public StopWorking(): void {
         this.IsWorking = false;
-        this.iconPath = new vscode.ThemeIcon(this._icon);
+        this.iconPath = this._iconColor
+            ? new vscode.ThemeIcon(this._icon, new vscode.ThemeColor(this._iconColor))
+            : new vscode.ThemeIcon(this._icon);
         this.RefreshTree()
     }
 
@@ -222,6 +229,7 @@ export abstract class NodeBase extends vscode.TreeItem {
             else { context += "#ShowOnlyInThisWorkspace#"; }
 
             context += "#SetTooltip#";
+            context += "#SetColor#";
             context += "#MoveUp#";
             context += "#MoveDown#";
             context += "#NodeMove#";
@@ -274,7 +282,39 @@ export abstract class NodeBase extends vscode.TreeItem {
 
     public set Icon(value: string) {
         this._icon = value;
-        this.iconPath = new vscode.ThemeIcon(this._icon);
+        this.iconPath = this._iconColor
+            ? new vscode.ThemeIcon(this._icon, new vscode.ThemeColor(this._iconColor))
+            : new vscode.ThemeIcon(this._icon);
+    }
+
+    public SetIcon(icon?: string, colorToken?: string): void {
+        if(!icon){ icon = this.DefaultIcon; }
+        if(!colorToken){ colorToken = this.DefaultIconColor; }
+
+        this._icon = icon;
+        this._iconColor = colorToken;
+        this.iconPath = colorToken
+            ? new vscode.ThemeIcon(icon, new vscode.ThemeColor(colorToken))
+            : new vscode.ThemeIcon(icon);
+    }
+
+    public async SetIconColor(): Promise<void> {
+        const colors: { label: string; token: string | undefined }[] = [
+            { label: '$(circle-outline) Default', token: undefined },
+            { label: '$(symbol-color) Blue', token: 'charts.blue' },
+            { label: '$(symbol-color) Green', token: 'charts.green' },
+            { label: '$(symbol-color) Orange', token: 'charts.orange' },
+            { label: '$(symbol-color) Red', token: 'charts.red' },
+            { label: '$(symbol-color) Purple', token: 'charts.purple' },
+            { label: '$(symbol-color) Yellow', token: 'charts.yellow' },
+            { label: '$(symbol-color) Gray', token: 'charts.gray' }
+        ];
+        const pick = await vscode.window.showQuickPick(colors.map(c => c.label), { placeHolder: 'Select icon color' });
+        if (pick === undefined) { return; }
+        const chosen = colors.find(c => c.label === pick);
+        this.SetIcon(this._icon, chosen?.token);
+        this.RefreshTree();
+        this.TreeSave();
     }
 
     public Remove(): void {
@@ -376,7 +416,9 @@ export abstract class NodeBase extends vscode.TreeItem {
 
         // Restore icon path from saved icon name
         if (this._icon) {
-            this.iconPath = new vscode.ThemeIcon(this._icon);
+            this.iconPath = this._iconColor
+                ? new vscode.ThemeIcon(this._icon, new vscode.ThemeColor(this._iconColor))
+                : new vscode.ThemeIcon(this._icon);
         }
 
         this.SetContextValue();

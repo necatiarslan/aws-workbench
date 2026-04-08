@@ -16,7 +16,9 @@ export class FileNode extends NodeBase {
     constructor(label: string, parent?: NodeBase) 
     {
         super(label, parent);
-        this.iconPath = new vscode.ThemeIcon("file-symlink-file", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "file-symlink-file";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.FileName = label;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

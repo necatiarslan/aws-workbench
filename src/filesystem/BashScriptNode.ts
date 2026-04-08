@@ -14,7 +14,9 @@ export class BashScriptNode extends NodeBase {
     constructor(Title: string, parent?: NodeBase) 
     {
         super(Title, parent);
-        this.iconPath = new vscode.ThemeIcon("debug-console", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "debug-console";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.Title = Title;
 
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());

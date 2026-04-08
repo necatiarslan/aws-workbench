@@ -23,7 +23,9 @@ const SNSTagsGroupNode_1 = require("./SNSTagsGroupNode");
 class SNSTopicNode extends NodeBase_1.NodeBase {
     constructor(TopicArn, parent) {
         super(api.GetTopicNameFromArn(TopicArn), parent);
-        this.iconPath = new vscode.ThemeIcon("broadcast", new vscode.ThemeColor("charts.red"));
+        this.DefaultIcon = "broadcast";
+        this.DefaultIconColor = "charts.red";
+        this.SetIcon();
         this.TopicArn = TopicArn;
         this.TopicName = api.GetTopicNameFromArn(TopicArn);
         this.EnableNodeAlias = true;

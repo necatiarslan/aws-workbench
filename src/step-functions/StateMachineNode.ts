@@ -20,7 +20,9 @@ export class StateMachineNode extends NodeBase {
     constructor(stateMachineName: string, parent?: NodeBase) 
     {
         super(stateMachineName, parent);
-        this.iconPath = new vscode.ThemeIcon("step-functions", new vscode.ThemeColor("charts.orange"));
+        this.DefaultIcon = "step-functions";
+        this.DefaultIconColor = "charts.orange";
+        this.SetIcon();
         this.StateMachineName = stateMachineName;
         
         this.EnableNodeAlias = true;

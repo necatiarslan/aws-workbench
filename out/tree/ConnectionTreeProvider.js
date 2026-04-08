@@ -23,10 +23,23 @@ class ConnectionTreeProvider {
             command: 'AwsWorkbench.ConnectionChangeProfile',
             title: 'Change Profile'
         };
-        var expirationLabel = Session_1.Session.Current.HasExpiration ? `Expire In: ${Session_1.Session.Current.ExpireTime}` : 'No Expiration';
+        let expirationLabel;
+        let expirationIcon;
+        if (Session_1.Session.Current.HasExpiration && !Session_1.Session.Current.IsExpired) {
+            expirationLabel = `Expiration Time: ${Session_1.Session.Current.ExpireTime}`;
+            expirationIcon = 'history';
+        }
+        else if (Session_1.Session.Current.HasExpiration && Session_1.Session.Current.IsExpired) {
+            expirationLabel = `Expiration Time: Expired (${Session_1.Session.Current.ExpireTime} ago)`;
+            expirationIcon = 'warning';
+        }
+        else {
+            expirationLabel = 'Expiration Time: N/A';
+            expirationIcon = 'history';
+        }
         const expirationTimeNode = new vscode.TreeItem(expirationLabel, vscode.TreeItemCollapsibleState.None);
         expirationTimeNode.contextValue = 'ConnectionExpirationTimeNode';
-        expirationTimeNode.iconPath = new vscode.ThemeIcon('history');
+        expirationTimeNode.iconPath = new vscode.ThemeIcon(expirationIcon);
         expirationTimeNode.command = {
             command: 'AwsWorkbench.ConnectionRefreshView',
             title: 'Refresh'

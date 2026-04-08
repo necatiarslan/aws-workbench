@@ -22,7 +22,9 @@ const IamPolicyInfoGroupNode_1 = require("./IamPolicyInfoGroupNode");
 class IamPolicyNode extends NodeBase_1.NodeBase {
     constructor(PolicyName, parent) {
         super(PolicyName, parent);
-        this.iconPath = new vscode.ThemeIcon("lock", new vscode.ThemeColor("charts.blue"));
+        this.DefaultIcon = "lock";
+        this.DefaultIconColor = "charts.blue";
+        this.SetIcon();
         this.PolicyName = PolicyName;
         this.EnableNodeAlias = true;
         this.IsAwsResourceNode = true;

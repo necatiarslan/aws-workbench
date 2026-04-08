@@ -155,6 +155,11 @@
         "icon": "$(comment)"
       },
       {
+        "command": "AwsWorkbench.SetColor",
+        "title": "Set Color",
+        "icon": "$(symbol-color)"
+      },
+      {
         "command": "AwsWorkbench.MoveUp",
         "title": "Move Up",
         "icon": "$(arrow-up)"
@@ -378,6 +383,11 @@
         {
           "command": "AwsWorkbench.SetTooltip",
           "when": "view == AwsWorkbenchView && viewItem =~ /#SetTooltip#/",
+          "group": "Customize"
+        },
+        {
+          "command": "AwsWorkbench.SetColor",
+          "when": "view == AwsWorkbenchView && viewItem =~ /#SetColor#/",
           "group": "Customize"
         },
         {

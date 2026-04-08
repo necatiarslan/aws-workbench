@@ -110,6 +110,9 @@ class TreeView {
         vscode.commands.registerCommand('AwsWorkbench.SetTooltip', (node) => {
             this.SetTooltip(node);
         });
+        vscode.commands.registerCommand('AwsWorkbench.SetColor', (node) => {
+            this.SetColor(node);
+        });
         vscode.commands.registerCommand('AwsWorkbench.MoveUp', (node) => {
             this.MoveUp(node);
         });
@@ -406,6 +409,9 @@ class TreeView {
     }
     SetTooltip(node) {
         node.SetCustomTooltip();
+    }
+    SetColor(node) {
+        node.SetIconColor();
     }
     MoveUp(node) {
         node.MoveUp();

@@ -141,6 +141,10 @@ export class TreeView {
             this.SetTooltip(node);
         });
 
+        vscode.commands.registerCommand('AwsWorkbench.SetColor', (node: NodeBase) => {
+            this.SetColor(node);
+        });
+
         vscode.commands.registerCommand('AwsWorkbench.MoveUp', (node: NodeBase) => {
             this.MoveUp(node);
         });
@@ -484,6 +488,10 @@ export class TreeView {
 
     public SetTooltip(node: NodeBase): void {
         node.SetCustomTooltip();
+    }
+
+    public SetColor(node: NodeBase): void {
+        node.SetIconColor();
     }
 
     public MoveUp(node: NodeBase): void {

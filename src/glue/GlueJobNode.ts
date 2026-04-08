@@ -17,7 +17,9 @@ export class GlueJobNode extends NodeBase {
 
     constructor(JobName: string, parent?: NodeBase) {
         super(JobName, parent);
-        this.iconPath = new vscode.ThemeIcon("glue-job", new vscode.ThemeColor("charts.green"));
+        this.DefaultIcon = "glue-job";
+        this.DefaultIconColor = "charts.green";
+        this.SetIcon();
         this.JobName = JobName;
         
         this.EnableNodeAlias = true;
