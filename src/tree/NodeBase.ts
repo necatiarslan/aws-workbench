@@ -26,6 +26,9 @@ export abstract class NodeBase extends vscode.TreeItem {
     protected OnNodeDeserialized: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeLoadChildren: EventEmitter<void> = new EventEmitter<void>();
     protected OnNodeLoaded: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeSelect: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeExpand: EventEmitter<void> = new EventEmitter<void>();
+    protected OnNodeCollapse: EventEmitter<void> = new EventEmitter<void>();
 
     
     constructor(label: string, parent?: NodeBase) 
@@ -213,6 +216,10 @@ export abstract class NodeBase extends vscode.TreeItem {
         if (this.OnNodeOpen.hasListeners()) { context += "#NodeOpen#"; }
         if (this.OnNodeInfo.hasListeners()) { context += "#NodeInfo#"; }
         if (this.OnNodeCopy.hasListeners()) { context += "#NodeCopy#"; }
+        if (this.OnNodeSelect.hasListeners()) { context += "#NodeSelect#"; }
+        if (this.OnNodeExpand.hasListeners()) { context += "#NodeExpand#"; }
+        if (this.OnNodeCollapse.hasListeners()) { context += "#NodeCollapse#"; }
+
         if (this.EnableNodeAlias) { context += "#NodeAlias#"; }
 
         if(this.IsSerializable){
@@ -507,6 +514,18 @@ export abstract class NodeBase extends vscode.TreeItem {
     
     public async NodeCopy(): Promise<void> {
         await this.OnNodeCopy.fire(undefined);
+    }
+
+    public async NodeSelect(): Promise<void> {
+        await this.OnNodeSelect.fire(undefined);
+    }
+
+    public async NodeExpand(): Promise<void> {
+        await this.OnNodeExpand.fire(undefined);
+    }
+
+    public async NodeCollapse(): Promise<void> {
+        await this.OnNodeCollapse.fire(undefined);
     }
 
     public async NodeDeserialized(): Promise<void> {

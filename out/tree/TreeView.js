@@ -21,6 +21,11 @@ class TreeView {
         this.view = vscode.window.createTreeView('AwsWorkbenchView', { treeDataProvider: this.treeDataProvider, showCollapseAll: true });
         context.subscriptions.push(this.view);
         this.RegisterCommands();
+        this.view.onDidChangeSelection(e => { if (e.selection.length > 0) {
+            this.NodeSelect(e.selection[0]);
+        } }, null, context.subscriptions);
+        this.view.onDidExpandElement(e => { this.NodeExpand(e.element); }, null, context.subscriptions);
+        this.view.onDidCollapseElement(e => { this.NodeCollapse(e.element); }, null, context.subscriptions);
     }
     RegisterCommands() {
         vscode.commands.registerCommand('AwsWorkbench.Refresh', () => {
@@ -376,6 +381,15 @@ class TreeView {
     }
     NodeAdd(node) {
         node.NodeAdd();
+    }
+    NodeSelect(node) {
+        node.NodeSelect();
+    }
+    NodeExpand(node) {
+        node.NodeExpand();
+    }
+    NodeCollapse(node) {
+        node.NodeCollapse();
     }
     NodeRemove(node) {
         node.NodeRemove();
