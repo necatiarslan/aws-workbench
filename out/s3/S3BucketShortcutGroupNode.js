@@ -5,6 +5,7 @@ const NodeBase_1 = require("../tree/NodeBase");
 const vscode = require("vscode");
 const S3BucketShortcutNode_1 = require("./S3BucketShortcutNode");
 class S3BucketShortcutGroupNode extends NodeBase_1.NodeBase {
+    isRefreshing = false;
     constructor(Label, parent) {
         super(Label, parent);
         this.Icon = "file-symlink-directory";
@@ -38,13 +39,30 @@ class S3BucketShortcutGroupNode extends NodeBase_1.NodeBase {
         }
     }
     async handleNodeRefresh() {
+        if (this.isRefreshing) {
+            return;
+        }
         const s3BucketNode = this.GetAwsResourceNode();
         if (!s3BucketNode) {
             return;
         }
-        this.Children = [];
-        for (const shortcutKey of s3BucketNode.Shortcuts) {
-            new S3BucketShortcutNode_1.S3BucketShortcutNode(shortcutKey, this);
+        const currentShortcutKeys = this.Children
+            .filter((child) => child instanceof S3BucketShortcutNode_1.S3BucketShortcutNode)
+            .map((child) => child.Key);
+        const shortcutsAreUnchanged = currentShortcutKeys.length === s3BucketNode.Shortcuts.length &&
+            currentShortcutKeys.every((key, index) => key === s3BucketNode.Shortcuts[index]);
+        if (shortcutsAreUnchanged) {
+            return;
+        }
+        this.isRefreshing = true;
+        try {
+            this.Children = [];
+            for (const shortcutKey of s3BucketNode.Shortcuts) {
+                new S3BucketShortcutNode_1.S3BucketShortcutNode(shortcutKey, this);
+            }
+        }
+        finally {
+            this.isRefreshing = false;
         }
     }
 }

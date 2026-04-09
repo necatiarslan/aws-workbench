@@ -5,6 +5,8 @@ import { S3BucketShortcutNode } from './S3BucketShortcutNode';
 
 export class S3BucketShortcutGroupNode extends NodeBase {
 
+    private isRefreshing: boolean = false;
+
     constructor(Label: string, parent?: NodeBase) 
     {
         super(Label, parent);
@@ -45,13 +47,35 @@ export class S3BucketShortcutGroupNode extends NodeBase {
     }
     
     public async handleNodeRefresh(): Promise<void> {
+        if (this.isRefreshing) {
+            return;
+        }
+
         const s3BucketNode = this.GetAwsResourceNode() as S3BucketNode;
         if (!s3BucketNode) {
             return;
         }
-        this.Children = [];
-        for (const shortcutKey of s3BucketNode.Shortcuts) {
-            new S3BucketShortcutNode(shortcutKey, this);
+
+        const currentShortcutKeys = this.Children
+            .filter((child): child is S3BucketShortcutNode => child instanceof S3BucketShortcutNode)
+            .map((child) => child.Key);
+
+        const shortcutsAreUnchanged = currentShortcutKeys.length === s3BucketNode.Shortcuts.length &&
+            currentShortcutKeys.every((key, index) => key === s3BucketNode.Shortcuts[index]);
+
+        if (shortcutsAreUnchanged) {
+            return;
+        }
+
+        this.isRefreshing = true;
+        try {
+            this.Children = [];
+            for (const shortcutKey of s3BucketNode.Shortcuts) {
+                new S3BucketShortcutNode(shortcutKey, this);
+            }
+        }
+        finally {
+            this.isRefreshing = false;
         }
     }
 }

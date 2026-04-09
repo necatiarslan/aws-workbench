@@ -6,16 +6,18 @@ const ui = require("../common/UI");
 const TreeState_1 = require("../tree/TreeState");
 const Session_1 = require("../common/Session");
 class NoteView {
-    static Current;
+    static OpenViews = new Map();
     panel;
     disposables = [];
     extensionUri;
     state;
     noteNode;
-    constructor(panel, noteNode) {
+    noteKey;
+    constructor(panel, noteNode, noteKey) {
         this.panel = panel;
         this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this.noteNode = noteNode;
+        this.noteKey = noteKey;
         this.state = {
             noteTitle: noteNode.NoteTitle,
             noteContent: noteNode.NoteContent
@@ -26,22 +28,29 @@ class NoteView {
     }
     static Render(noteNode) {
         ui.logToOutput(`NoteView.Render ${noteNode.NoteTitle}`);
-        if (NoteView.Current) {
-            NoteView.Current.noteNode = noteNode;
-            NoteView.Current.state = {
+        const noteKey = NoteView.getNoteKey(noteNode);
+        const existingView = NoteView.OpenViews.get(noteKey);
+        if (existingView) {
+            existingView.noteNode = noteNode;
+            existingView.state = {
                 noteTitle: noteNode.NoteTitle,
                 noteContent: noteNode.NoteContent
             };
-            NoteView.Current.panel.title = `Note: ${noteNode.NoteTitle}`;
-            NoteView.Current.panel.reveal(vscode.ViewColumn.One);
-            NoteView.Current.render();
+            existingView.panel.title = `Note: ${noteNode.NoteTitle}`;
+            existingView.panel.reveal(vscode.ViewColumn.One);
+            existingView.render();
             return;
         }
         const panel = vscode.window.createWebviewPanel("NoteView", `Note: ${noteNode.NoteTitle}`, vscode.ViewColumn.One, { enableScripts: true, retainContextWhenHidden: true });
-        NoteView.Current = new NoteView(panel, noteNode);
+        const view = new NoteView(panel, noteNode, noteKey);
+        NoteView.OpenViews.set(noteKey, view);
+    }
+    static getNoteKey(noteNode) {
+        const nodeWithId = noteNode;
+        return nodeWithId.id ?? noteNode.NoteTitle;
     }
     dispose() {
-        NoteView.Current = undefined;
+        NoteView.OpenViews.delete(this.noteKey);
         while (this.disposables.length) {
             const d = this.disposables.pop();
             if (d) {
@@ -95,23 +104,33 @@ class NoteView {
     <link href="${styleUri}" rel="stylesheet" />
     <title>Note: ${this.escapeHtml(this.state.noteTitle)}</title>
     <style>
+        html {
+            height: 100%;
+        }
         body {
-            padding: 20px;
+            margin: 0;
+            padding: 12px;
+            box-sizing: border-box;
+            height: 100%;
+            overflow: hidden;
             font-family: var(--vscode-font-family);
             background-color: var(--vscode-editor-background);
             color: var(--vscode-editor-foreground);
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--vscode-panel-border);
+            flex-shrink: 0;
         }
         .header h1 {
             margin: 0;
@@ -144,10 +163,16 @@ class NoteView {
             background-color: var(--vscode-button-secondaryHoverBackground);
         }
         #editor-container {
-            height: 500px;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
             background-color: var(--vscode-input-background);
             border: 1px solid var(--vscode-input-border);
             border-radius: 4px;
+        }
+        .ql-toolbar.ql-snow {
+            flex-shrink: 0;
         }
         .ql-toolbar {
             background-color: var(--vscode-editor-background);
@@ -155,6 +180,8 @@ class NoteView {
             border-radius: 4px 4px 0 0;
         }
         .ql-container {
+            flex: 1;
+            min-height: 0;
             border-color: var(--vscode-input-border) !important;
             border-radius: 0 0 4px 4px;
             font-size: 14px;
@@ -162,7 +189,7 @@ class NoteView {
         .ql-editor {
             background-color: var(--vscode-input-background);
             color: var(--vscode-editor-foreground);
-            min-height: 400px;
+            min-height: 100%;
         }
         .ql-editor.ql-blank::before {
             color: var(--vscode-input-placeholderForeground);
