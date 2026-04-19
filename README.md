@@ -86,7 +86,7 @@ A powerful VS Code extension that brings your AWS resources directly into your e
 ### Coming Soon
 - Bucket with a default key prefix: set a default key prefix when adding a bucket to the tree view to open the bucket with the specified prefix
 - add notes to resources: add notes subnode to aws resources to add custom notes
-- Bug: On S3 Explorer, when i star a folder and go to s3 bucket and shortcuts and click arrow, it raises an error that the Element with id xxx (node id) is already registered. when i click refresh button on the shortcuts node, the new folder appears correctly in the tree view
+- S3 Explorer basic view
 
 ## Support
 
