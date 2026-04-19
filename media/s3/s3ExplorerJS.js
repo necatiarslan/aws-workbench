@@ -83,11 +83,35 @@ function main() {
     DeleteFolderButton.addEventListener("click", DeleteFolderButtonClicked);
   }
 
-  const CopyDropDown = document.getElementById("copy_dropdown");
-  CopyDropDown.addEventListener("change", CopyDropDownChanged);
+  const EditDropdownMenu = document.getElementById("edit_dropdown_menu");
+  EditDropdownMenu.data = [
+    { label: "Delete", value: "Delete" },
+    { label: "Rename", value: "Rename" },
+    { label: "Copy", value: "Copy" },
+    { label: "Move", value: "Move" }
+  ];
+  const EditDropdownToggle = document.getElementById("edit_dropdown_toggle");
+  EditDropdownToggle.addEventListener("click", function(e) {
+    e.stopPropagation();
+    EditDropdownMenu.show = !EditDropdownMenu.show;
+  });
+  EditDropdownMenu.addEventListener("vsc-context-menu-select", EditDropDownMenuSelected);
 
-  const EditDropDown = document.getElementById("edit_dropdown");
-  EditDropDown.addEventListener("change", EditDropDownChanged);
+  const CopyDropdownMenu = document.getElementById("copy_dropdown_menu");
+  CopyDropdownMenu.data = [
+    { label: "File Name(s) No Ext", value: "File Name(s) No Ext" },
+    { label: "File Name(s) /w Ext", value: "File Name(s) /w Ext" },
+    { label: "Key(s)", value: "Key(s)" },
+    { label: "ARN(s)", value: "ARN(s)" },
+    { label: "S3 URI(s)", value: "S3 URI(s)" },
+    { label: "URL(s)", value: "URL(s)" }
+  ];
+  const CopyDropdownToggle = document.getElementById("copy_dropdown_toggle");
+  CopyDropdownToggle.addEventListener("click", function(e) {
+    e.stopPropagation();
+    CopyDropdownMenu.show = !CopyDropdownMenu.show;
+  });
+  CopyDropdownMenu.addEventListener("vsc-context-menu-select", CopyDropDownMenuSelected);
 
   const GoUpLink = document.getElementById("go_up");
   if (GoUpLink) {
@@ -285,24 +309,12 @@ function DownloadCurrentFileButtonClicked(e) {
   });
 }
 
-function CopyDropDownChanged(e) {
-
-  let CheckedKeys = GetCheckedKeys();
-
-  vscode.postMessage({
-    command: "copy",
-    action: e.target.value,
-    keys: CheckedKeys
-  });
-
-  e.target._selectedIndex = 0;
+function EditDropDownMenuSelected(e) {
+  EditSelectedFiles(e.detail.value);
 }
 
-function EditDropDownChanged(e) {
-
-  EditSelectedFiles(e.target.value);
-
-  e.target._selectedIndex = 0;
+function CopyDropDownMenuSelected(e) {
+  CopySelectedFiles(e.detail.value);
 }
 
 function GetCheckedKeys() {

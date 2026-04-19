@@ -408,23 +408,21 @@ class S3Explorer {
                 <vscode-button secondary id="upload" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="Upload">Upload</vscode-button>
                 <vscode-button secondary id="create_folder" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="New Folder">New Folder</vscode-button>
                 
-                <vscode-single-select id="edit_dropdown" style="width: 100px; vertical-align:top" >
-                    <vscode-option>Edit</vscode-option>
-                    <vscode-option>Delete</vscode-option>
-                    <vscode-option>Rename</vscode-option>
-                    <vscode-option>Copy</vscode-option>
-                    <vscode-option>Move</vscode-option>
-                </vscode-single-select >
+                <div style="display:inline-block; position:relative; vertical-align:top;">
+                    <vscode-button-group>
+                        <vscode-button secondary>Edit</vscode-button>
+                        <vscode-button secondary icon="chevron-down" title="More actions..." id="edit_dropdown_toggle"></vscode-button>
+                    </vscode-button-group>
+                    <vscode-context-menu id="edit_dropdown_menu" style="position:absolute; top:100%; left:0; z-index:100;"></vscode-context-menu>
+                </div>
 
-                <vscode-single-select id="copy_dropdown" style="width: 150px; vertical-align:top" >
-                    <vscode-option>Copy</vscode-option>
-                    <vscode-option>File Name(s) No Ext</vscode-option>
-                    <vscode-option>File Name(s) /w Ext</vscode-option>
-                    <vscode-option>Key(s)</vscode-option>
-                    <vscode-option>ARN(s)</vscode-option>
-                    <vscode-option>S3 URI(s)</vscode-option>
-                    <vscode-option>URL(s)</vscode-option>
-                </vscode-single-select >
+                <div style="display:inline-block; position:relative; vertical-align:top;">
+                    <vscode-button-group>
+                        <vscode-button secondary>Copy</vscode-button>
+                        <vscode-button secondary icon="chevron-down" title="More actions..." id="copy_dropdown_toggle"></vscode-button>
+                    </vscode-button-group>
+                    <vscode-context-menu id="copy_dropdown_menu" style="position:absolute; top:100%; left:0; z-index:100;"></vscode-context-menu>
+                </div>
                 </td>
                 <td colspan="2" style="text-align:right">
                     <vscode-textfield id="search_text" placeholder="Search" value="${this.SearchText}" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} style="width: 20ch; vertical-align:top">
