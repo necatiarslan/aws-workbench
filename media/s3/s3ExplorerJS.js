@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 const vscode = acquireVsCodeApi();
 
 window.addEventListener("load", main);
@@ -129,6 +128,17 @@ function main() {
   if (FileMoveLink) {
     FileMoveLink.addEventListener("click", FileMoveLinkClicked);
   }
+
+  const S3CopyKeyLink = document.getElementById("s3_copy_key");
+  if (S3CopyKeyLink) {
+    S3CopyKeyLink.addEventListener("click", S3CopyKeyLinkClicked);
+  }
+
+  const S3CopyUriLink = document.getElementById("s3_copy_uri");
+  if (S3CopyUriLink) {
+    S3CopyUriLink.addEventListener("click", S3CopyUriLinkClicked);
+  }
+
 
   const GoHomeLink = document.getElementById("go_home");
   if (GoHomeLink) {
@@ -365,6 +375,25 @@ function FileCopyLinkClicked() {
 function FileMoveLinkClicked() {
   EditSelectedFiles("Move");
 }
+
+function CopySelectedFiles(action) {
+  let CheckedKeys = GetCheckedKeys();
+
+  vscode.postMessage({
+    command: "copy",
+    action: action,
+    keys: CheckedKeys
+  });
+}
+
+function S3CopyKeyLinkClicked(e) {
+  CopySelectedFiles("Key(s)");
+}
+
+function S3CopyUriLinkClicked(e) {
+  CopySelectedFiles("S3 URI(s)");
+}
+
 
 function GoHomeLinkClicked() {
   vscode.postMessage({

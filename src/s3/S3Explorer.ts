@@ -204,6 +204,11 @@ export class S3Explorer {
         const fileMoveUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-move.png"]);
         const fileCopyUri = ui.getUri(webview, extensionUri, ["media", "s3", "file-copy.png"]);
 
+        const s3CopyKeyUri = ui.getUri(webview, extensionUri, ["media", "s3", "s3-copy-key.png"]);
+        const s3CopyUriUri = ui.getUri(webview, extensionUri, ["media", "s3", "s3-copy-uri.png"]);
+
+
+
         const fileUri = ui.getUri(webview, extensionUri, ["media", "s3", "file.png"]);
         const folderUri = ui.getUri(webview, extensionUri, ["media", "s3", "folder.png"]);
 
@@ -483,7 +488,7 @@ export class S3Explorer {
                 <th style="width:20px; text-align:center; vertical-align:middle">
                     <a id="go_up"><img src="${goUpUri}" title="Go Back" style="cursor: pointer;"></a>
                 </th>
-                <th style="width:160px; text-align:center; vertical-align:middle">
+                <th style="width:180px; text-align:center; vertical-align:middle">
                     
                     <a id="file_download"><img src="${fileDownloadUri}" title="Download" style="cursor: pointer;"></a>
                     <a id="file_upload"><img src="${fileUploadUri}" title="Upload" style="cursor: pointer;"></a>
@@ -493,6 +498,10 @@ export class S3Explorer {
                     <a id="file_rename"><img src="${fileRenameUri}" title="Rename" style="cursor: pointer;"></a>
                     <a id="file_copy"><img src="${fileCopyUri}" title="Copy" style="cursor: pointer;"></a>
                     <a id="file_move"><img src="${fileMoveUri}" title="Move" style="cursor: pointer;"></a>
+
+                    <a id="s3_copy_key"><img src="${s3CopyKeyUri}" title="Copy S3 Key" style="cursor: pointer;"></a>
+                    <a id="s3_copy_uri"><img src="${s3CopyUriUri}" title="Copy S3 URI" style="cursor: pointer;"></a>
+
                 </th>
                 <th>
                     Name 
@@ -559,7 +568,7 @@ export class S3Explorer {
         <table>
             <tr>
                 <td>
-                    <a href="https://github.com/necatiarslan/aws-s3/issues/new" style="cursor: pointer; text-decoration: none;">Bug Report & Feature Request</a>
+                    <a href="https://github.com/necatiarslan/aws-workbench/issues/new" style="cursor: pointer; text-decoration: none;">Bug Report & Feature Request</a>
                 </td>
             </tr>
         </table>
@@ -1080,7 +1089,7 @@ export class S3Explorer {
 
         if(key && s3_helper.IsFile(key))
         {
-            const tempFolderPath = fs.mkdtempSync(path.join(os.tmpdir(), 'aws-s3-'));
+            const tempFolderPath = fs.mkdtempSync(path.join(os.tmpdir(), 'aws-workbench-'));
 
             let result = await api.DownloadFile(this.S3ExplorerItem.Bucket, key, tempFolderPath);
             if(result.isSuccessful)
