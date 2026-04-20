@@ -436,7 +436,6 @@ class S3Explorer {
             <tr>
                 <td colspan="4" style="text-align:left">
                 <vscode-button secondary id="refresh" title="Refresh">Refresh</vscode-button>
-                <vscode-button secondary id="search" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="Advanced Search">Search</vscode-button>
                 <vscode-button secondary id="download" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="Download">Download</vscode-button>
                 <vscode-button secondary id="upload" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="Upload">Upload</vscode-button>
                 <vscode-button secondary id="create_folder" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="New Folder">New Folder</vscode-button>
@@ -461,6 +460,7 @@ class S3Explorer {
                     <vscode-textfield id="search_text" placeholder="Search" value="${this.SearchText}" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} style="width: 20ch; vertical-align:top">
                         <vscode-icon slot="content-before" name="search" title="search"></vscode-icon>
                     </vscode-textfield>
+                    <vscode-button secondary id="search" ${this.S3ExplorerItem.IsFile() ? "disabled" : ""} title="Advanced Search">.</vscode-button>
                 </td>
             </tr>
             </table>
@@ -475,17 +475,17 @@ class S3Explorer {
                 <th style="width:20px; text-align:center; vertical-align:middle">
                     <a id="go_up"><img src="${goUpUri}" title="Go Back" style="cursor: pointer;"></a>
                 </th>
-                <th style="width:180px; text-align:center; vertical-align:middle">
+                <th style="width:200px; text-align:center; vertical-align:middle">
                     
                     <a id="file_download"><img src="${fileDownloadUri}" title="Download" style="cursor: pointer;"></a>
                     <a id="file_upload"><img src="${fileUploadUri}" title="Upload" style="cursor: pointer;"></a>
                     <a id="folder_create"><img src="${folderCreateUri}" title="Create Folder" style="cursor: pointer;"></a>
-                    
+                    &nbsp;&nbsp;&nbsp;
                     <a id="file_delete"><img src="${fileDeleteUri}" title="Delete" style="cursor: pointer;"></a>
                     <a id="file_rename"><img src="${fileRenameUri}" title="Rename" style="cursor: pointer;"></a>
                     <a id="file_copy"><img src="${fileCopyUri}" title="Copy" style="cursor: pointer;"></a>
                     <a id="file_move"><img src="${fileMoveUri}" title="Move" style="cursor: pointer;"></a>
-
+                    &nbsp;&nbsp;&nbsp;
                     <a id="s3_copy_key"><img src="${s3CopyKeyUri}" title="Copy S3 Key" style="cursor: pointer;"></a>
                     <a id="s3_copy_uri"><img src="${s3CopyUriUri}" title="Copy S3 URI" style="cursor: pointer;"></a>
 

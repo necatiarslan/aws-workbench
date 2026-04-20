@@ -63,6 +63,9 @@ lambda-name := "my-lambda"
 stepfn-name := "my_step_function"
 log-group := "my-log-group"
 log-stream := "my-log-stream"
+glue-job := "my-glue"
+glue-script := "glue_script.py"
+iam-role := "my-iam-role"
 
 # LocalStack lifecycle
 localstack-start:
@@ -77,9 +80,22 @@ localstack-status:
 localstack-logs:
     localstack logs
 
+# IAM Role
+iam-role-create:
+    aws --endpoint-url={{localstack-endpoint}} iam create-role \
+    --role-name {{iam-role}} \
+    --assume-role-policy-document '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Principal": {"Service": "lambda.amazonaws.com"},"Action": "sts:AssumeRole"}]}'
+
+iam-role-list:
+    aws --endpoint-url={{localstack-endpoint}} iam list-roles
+
+iam-role-delete:
+    aws --endpoint-url={{localstack-endpoint}} iam delete-role --role-name {{iam-role}}
+
 # S3
 s3-create-bucket:
     aws --endpoint-url={{localstack-endpoint}} s3 mb s3://{{s3-bucket}}
+    aws --endpoint-url={{localstack-endpoint}} s3 cp media s3://{{s3-bucket}}/media/ --recursive
 
 s3-list-buckets:
     aws --endpoint-url={{localstack-endpoint}} s3 ls
@@ -88,7 +104,8 @@ s3-list-bucket-content:
     aws --endpoint-url={{localstack-endpoint}} s3 ls s3://{{s3-bucket}}
 
 s3-upload-file:
-    aws --endpoint-url={{localstack-endpoint}} s3 cp lic/index.html s3://{{s3-bucket}}
+    aws --endpoint-url={{localstack-endpoint}} s3 cp media s3://{{s3-bucket}}/media/ --recursive
+
 
 # SQS
 sqs-list-queues:
@@ -125,13 +142,13 @@ lambda-list-functions:
     aws --endpoint-url={{localstack-endpoint}} lambda list-functions
 
 lambda-create-function:
-    cd lambda && zip my_lambda.zip my_lambda.py
+    cd tests/lambda && zip my_lambda.zip my_lambda.py
     aws --endpoint-url={{localstack-endpoint}} lambda create-function \
     --function-name {{lambda-name}} \
     --runtime python3.9 \
-    --zip-file fileb://lambda/my_lambda.zip \
+    --zip-file fileb://tests/lambda/my_lambda.zip \
     --handler my_lambda.handler \
-    --role arn:aws:iam::{{aws-account}}:role/lambda-role
+    --role arn:aws:iam::{{aws-account}}:role/{{iam-role}}
 
 # CloudWatch Logs
 logs-create-group:
@@ -152,7 +169,7 @@ stepfunctions-create:
     aws --endpoint-url={{localstack-endpoint}} stepfunctions create-state-machine \
     --name {{stepfn-name}} \
     --definition file://step/my_step_function.json \
-    --role-arn arn:aws:iam::{{aws-account}}:role/DummyRole
+    --role-arn arn:aws:iam::{{aws-account}}:role/{{iam-role}}
 
 stepfunctions-start-execution:
     aws --endpoint-url={{localstack-endpoint}} stepfunctions start-execution \
@@ -162,13 +179,29 @@ stepfunctions-list-executions:
     aws --endpoint-url={{localstack-endpoint}} stepfunctions list-executions \
     --state-machine-arn arn:aws:states:{{aws-region}}:{{aws-account}}:stateMachine:{{stepfn-name}}
 
+# Glue Jobs
+gluejob-list:
+    aws --endpoint-url={{localstack-endpoint}} glue list-jobs
+
+gluejob-create:
+    aws --endpoint-url={{localstack-endpoint}} s3 cp tests/glue/glue-script.py s3://{{s3-bucket}}/{{glue-script}}
+
+    aws --endpoint-url={{localstack-endpoint}} glue create-job \
+    --name {{glue-job}} \
+    --role arn:aws:iam::{{aws-account}}:role/{{iam-role}} \
+    --command '{"Name": "glueetl", "ScriptLocation": "s3://{{s3-bucket}}/{{glue-script}}", "PythonVersion": "3"}'
+
+
 logs-list-groups:
     aws --endpoint-url={{localstack-endpoint}} logs describe-log-groups
 
 create:
+    just iam-role-create
     just s3-create-bucket
+    just s3-upload-file
     just sqs-create-queue
     just dynamodb-create-table
     just lambda-create-function
     just logs-create-group
     just stepfunctions-create
+    just gluejob-create
