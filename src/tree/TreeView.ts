@@ -265,6 +265,7 @@ export class TreeView {
         result.push("Sqs Queue");
         result.push("IAM Role");
         result.push("IAM Policy");
+        result.push("EMR Cluster");
         result.push("Vscode Command");
         let nodeType = await vscode.window.showQuickPick(result, {canPickMany:false, placeHolder: 'Select Item Type'});
 
@@ -319,6 +320,9 @@ export class TreeView {
                 break;
             case "IAM Policy":
                 await ServiceHub.Current.IamService.AddPolicy(node);
+                break;
+            case "EMR Cluster":
+                await ServiceHub.Current.EmrService.Add(node);
                 break;
         }
         TreeState.save();

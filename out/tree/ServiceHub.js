@@ -12,6 +12,7 @@ const DynamoDBService_1 = require("../dynamodb/DynamoDBService");
 const SNSService_1 = require("../sns/SNSService");
 const SQSService_1 = require("../sqs/SQSService");
 const IamService_1 = require("../iam/IamService");
+const EmrService_1 = require("../emr/EmrService");
 class ServiceHub {
     static Current;
     Context;
@@ -26,6 +27,7 @@ class ServiceHub {
     SNSService = new SNSService_1.SNSService();
     SQSService = new SQSService_1.SQSService();
     IamService = new IamService_1.IamService();
+    EmrService = new EmrService_1.EmrService();
     constructor(context) {
         this.Context = context;
         ServiceHub.Current = this;

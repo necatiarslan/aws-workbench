@@ -10,6 +10,7 @@ import { DynamoDBService } from '../dynamodb/DynamoDBService';
 import { SNSService } from '../sns/SNSService';
 import { SQSService } from '../sqs/SQSService';
 import { IamService } from '../iam/IamService';
+import { EmrService } from '../emr/EmrService';
 
 export class ServiceHub {
     public static Current: ServiceHub;
@@ -25,6 +26,7 @@ export class ServiceHub {
     public SNSService: SNSService = new SNSService();
     public SQSService: SQSService = new SQSService();
     public IamService: IamService = new IamService();
+    public EmrService: EmrService = new EmrService();
     
     public constructor(context: vscode.ExtensionContext) {
         this.Context = context;

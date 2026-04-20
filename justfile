@@ -66,6 +66,9 @@ log-stream := "my-log-stream"
 glue-job := "my-glue"
 glue-script := "glue_script.py"
 iam-role := "my-iam-role"
+emr-cluster-name := "my-emr-cluster"
+emr-release-label := "emr-6.5.0"
+emr-script := "my-emr-script.py"
 
 # LocalStack lifecycle
 localstack-start:
@@ -190,6 +193,25 @@ gluejob-create:
     --name {{glue-job}} \
     --role arn:aws:iam::{{aws-account}}:role/{{iam-role}} \
     --command '{"Name": "glueetl", "ScriptLocation": "s3://{{s3-bucket}}/{{glue-script}}", "PythonVersion": "3"}'
+
+# emr 
+
+emr-list-clusters:
+    aws --endpoint-url={{localstack-endpoint}} emr list-clusters
+
+emr-create-cluster:
+    aws --endpoint-url={{localstack-endpoint}} emr create-cluster \
+    --name {{emr-cluster-name}} \
+    --release-label {{emr-release-label}} \
+    --applications Name=Hadoop Name=Spark \
+    --service-role arn:aws:iam::{{aws-account}}:role/{{iam-role}} \
+    --ec2-attributes '{"InstanceProfile":"arn:aws:iam::{{aws-account}}:instance-profile/{{iam-role}}"}' \
+    --instance-type m5.xlarge \
+    --instance-count 3
+
+emr-submit-job:
+    aws --endpoint-url={{localstack-endpoint}} s3 cp tests/emr/{{emr-script}} s3://{{s3-bucket}}/{{emr-script}}
+    aws --endpoint-url={{localstack-endpoint}} emr add-steps --cluster-id j-OHTH0AC4YFILY --steps Type=Spark,Name="MySparkJob",ActionOnFailure=CONTINUE,Args=[--deploy-mode,cluster,--master,yarn,s3://{{s3-bucket}}/{{emr-script}}]
 
 
 logs-list-groups:
