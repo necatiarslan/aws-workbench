@@ -1,17 +1,11 @@
 import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
-import { CloudWatchLogsClient, OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
-import { IAMClient } from "@aws-sdk/client-iam";
+import { OutputLogEvent } from "@aws-sdk/client-cloudwatch-logs";
 import * as ui from "../common/UI";
 import { MethodResult } from '../common/MethodResult';
-import { homedir } from "os";
-import { sep } from "path";
-import { join, basename, extname, dirname } from "path";
-import { parseKnownFiles, SourceProfileInit } from "../aws-sdk/parseKnownFiles";
-import { ParsedIniData } from "@aws-sdk/types";
+import { basename, dirname } from "path";
 import { Session } from '../common/Session';
 import * as fs from 'fs';
-import * as archiver from 'archiver';
-import { GetSTSClient } from '../sts/API';
+import archiver = require('archiver');
 import { GetCloudWatchLogsClient } from "../cloudwatch-logs/API";
 
 export async function GetLambdaClient(region: string) {
