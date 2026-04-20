@@ -37,6 +37,7 @@ exports.EmrStepNode = void 0;
 const vscode = __importStar(require("vscode"));
 const ui = __importStar(require("../common/UI"));
 const NodeBase_1 = require("../tree/NodeBase");
+const S3Explorer_1 = require("../s3/S3Explorer");
 class EmrStepNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
@@ -54,7 +55,14 @@ class EmrStepNode extends NodeBase_1.NodeBase {
         ui.showInfoMessage("Step details copied to clipboard");
     }
     async handleNodeView() {
-        ui.showInfoMessage(`Step details:\nStepId: ${this.StepId}\nStatus: ${this.Status}\nLogUri: ${this.LogUri}`);
+        if (this.LogUri) {
+            const bucket = this.LogUri.split("/")[2];
+            const key = this.LogUri.split("/").slice(3).join("/");
+            S3Explorer_1.S3Explorer.Open(bucket, key);
+        }
+        else {
+            ui.showInfoMessage("No LogUri available for this step");
+        }
     }
 }
 exports.EmrStepNode = EmrStepNode;

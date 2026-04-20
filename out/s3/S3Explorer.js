@@ -37,6 +37,7 @@ exports.S3Explorer = void 0;
 const vscode = __importStar(require("vscode"));
 const ui = __importStar(require("../common/UI"));
 const api = __importStar(require("./API"));
+const S3BucketNode_1 = require("./S3BucketNode");
 const S3ExplorerItem_1 = require("./S3ExplorerItem");
 const s3_helper = __importStar(require("./S3Helper"));
 const S3Search_1 = require("./S3Search");
@@ -104,6 +105,11 @@ class S3Explorer {
             S3Explorer.Current.S3ExplorerItem.Key = key;
             S3Explorer.Current.Load();
         }
+    }
+    static Open(bucket, key = undefined) {
+        ui.logToOutput('S3Explorer.Open Started');
+        const node = new S3BucketNode_1.S3BucketNode(bucket);
+        S3Explorer.Render(node, key);
     }
     GetFileExtension(Key) {
         if (!Key) {

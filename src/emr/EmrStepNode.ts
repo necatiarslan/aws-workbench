@@ -25,6 +25,13 @@ export class EmrStepNode extends NodeBase {
         ui.showInfoMessage("Step details copied to clipboard");
     }
     private async handleNodeView(): Promise<void> {
-        ui.showInfoMessage(`Step details:\nStepId: ${this.StepId}\nStatus: ${this.Status}\nLogUri: ${this.LogUri}`);
+        if (this.LogUri) {
+            const bucket = this.LogUri.split("/")[2];
+            const key = this.LogUri.split("/").slice(3).join("/");
+            S3Explorer.Open(bucket, key);
+        } else {
+            ui.showInfoMessage("No LogUri available for this step");
+        }
+
     }
 }

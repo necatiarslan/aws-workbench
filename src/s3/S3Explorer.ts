@@ -92,6 +92,13 @@ export class S3Explorer {
         }
     }
 
+    public static Open(bucket: string, key: string | undefined = undefined) {
+        ui.logToOutput('S3Explorer.Open Started');
+
+        const node = new S3BucketNode(bucket);
+        S3Explorer.Render(node, key);
+    }
+
     public GetFileExtension(Key:string | undefined)
     {
         if(!Key) { return ""; }
