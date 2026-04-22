@@ -87,6 +87,8 @@ A powerful VS Code extension that brings your AWS resources directly into your e
 - Bucket with a default key prefix: set a default key prefix when adding a bucket to the tree view to open the bucket with the specified prefix
 - add notes to resources: add notes subnode to aws resources to add custom notes
 - S3 Explorer basic view
+- Step Functions : add an execution to favorites under new Pinned Executions node
+- Step Functions : when you directly go to Executions report, getting arn error, need to fix it
 
 ## Support
 
