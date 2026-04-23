@@ -58,6 +58,7 @@ const Session_1 = require("../common/Session");
 const StateMachineExecutionNode_1 = require("./StateMachineExecutionNode");
 const StateMachineInfoGroupNode_1 = require("./StateMachineInfoGroupNode");
 const StateMachineTagsGroupNode_1 = require("./StateMachineTagsGroupNode");
+const StateMachinePinnedExecutionsGroupNode_1 = require("./StateMachinePinnedExecutionsGroupNode");
 const fs = __importStar(require("fs"));
 class StateMachineNode extends NodeBase_1.NodeBase {
     constructor(stateMachineName, parent) {
@@ -82,6 +83,7 @@ class StateMachineNode extends NodeBase_1.NodeBase {
     PayloadFiles = [];
     LogGroupName = "";
     ExecutionFilters = [];
+    PinnedExecutions = [];
     _definition = undefined;
     AddExecutionFilter(NodeId, startDate, executionName, statusFilter) {
         this.ExecutionFilters.push({ NodeId, startDate: startDate.getTime(), executionName, statusFilter });
@@ -91,6 +93,16 @@ class StateMachineNode extends NodeBase_1.NodeBase {
         this.ExecutionFilters = this.ExecutionFilters.filter(filter => {
             return filter.NodeId !== NodeId;
         });
+        this.TreeSave();
+    }
+    AddPinnedExecution(executionArn, executionName, startDate, stopDate, status) {
+        if (!this.PinnedExecutions.some(p => p.executionArn === executionArn)) {
+            this.PinnedExecutions.push({ executionArn, executionName, startDate, stopDate, status });
+            this.TreeSave();
+        }
+    }
+    RemovePinnedExecution(executionArn) {
+        this.PinnedExecutions = this.PinnedExecutions.filter(p => p.executionArn !== executionArn);
         this.TreeSave();
     }
     async GetDefinition() {
@@ -140,6 +152,7 @@ class StateMachineNode extends NodeBase_1.NodeBase {
         new StateMachineDefinitionGroupNode_1.StateMachineDefinitionGroupNode("Definition", this);
         new StateMachineTriggerGroupNode_1.StateMachineTriggerGroupNode("Trigger", this);
         new StateMachineExecutionsGroupNode_1.StateMachineExecutionsGroupNode("Executions", this);
+        new StateMachinePinnedExecutionsGroupNode_1.StateMachinePinnedExecutionsGroupNode("Pinned Executions", this);
         new StateMachineLogsGroupNode_1.StateMachineLogsGroupNode("Logs", this);
         new StateMachineTagsGroupNode_1.StateMachineTagsGroupNode("Tags", this);
     }
@@ -316,6 +329,10 @@ __decorate([
     (0, Serialize_1.Serialize)(),
     __metadata("design:type", Array)
 ], StateMachineNode.prototype, "ExecutionFilters", void 0);
+__decorate([
+    (0, Serialize_1.Serialize)(),
+    __metadata("design:type", Array)
+], StateMachineNode.prototype, "PinnedExecutions", void 0);
 // Register with NodeRegistry for deserialization
 NodeRegistry_1.NodeRegistry.register('StateMachineNode', StateMachineNode);
 //# sourceMappingURL=StateMachineNode.js.map

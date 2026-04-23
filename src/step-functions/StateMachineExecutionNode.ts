@@ -1,13 +1,10 @@
 import { NodeBase } from '../tree/NodeBase';
-import { Serialize } from '../common/serialization/Serialize';
-import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import * as vscode from 'vscode';
 import * as ui from '../common/UI';
 import * as api from './API';
 import { StateMachineNode } from './StateMachineNode';
-import { GetLogEvents } from '../lambda/API';
 import { StateMachineExecutionView } from './StateMachineExecutionView';
-import { Session } from '../common/Session';
+import { StateMachinePinnedExecutionsGroupNode } from './StateMachinePinnedExecutionsGroupNode';
 
 export class StateMachineExecutionNode extends NodeBase {
 
@@ -33,6 +30,13 @@ export class StateMachineExecutionNode extends NodeBase {
     public StopDate: string = "";
 
     private handleNodeRemove(): void {
+        // If inside a pinned group, also remove from the persisted list
+        if (this.Parent instanceof StateMachinePinnedExecutionsGroupNode) {
+            const stateMachineNode = this.GetStateMachineNode();
+            if (stateMachineNode && this.ExecutionArn) {
+                stateMachineNode.RemovePinnedExecution(this.ExecutionArn);
+            }
+        }
         this.Remove();
     }
 
@@ -131,7 +135,7 @@ export class StateMachineExecutionNode extends NodeBase {
             return;
         }
 
-        StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '');
+        StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '', stateMachineNode);
     }
 
     private GetStateMachineNode(): StateMachineNode | undefined {

@@ -58,7 +58,7 @@ class StateMachineExecutionsGroupNode extends NodeBase_1.NodeBase {
             ui.showInfoMessage("State Machine not found.");
             return;
         }
-        StateMachineExecutionsReportView_1.StateMachineExecutionsReportView.Render(stateMachineNode.Region, stateMachineNode.StateMachineArn, stateMachineNode.StateMachineName);
+        StateMachineExecutionsReportView_1.StateMachineExecutionsReportView.Render(stateMachineNode.Region, stateMachineNode.StateMachineArn, stateMachineNode.StateMachineName, stateMachineNode);
     }
     async handleNodeAdd() {
         const stateMachineNode = this.GetAwsResourceNode();

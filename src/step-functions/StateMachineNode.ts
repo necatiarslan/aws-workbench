@@ -13,6 +13,7 @@ import { Session } from '../common/Session';
 import { StateMachineExecutionNode } from './StateMachineExecutionNode';
 import { StateMachineInfoGroupNode } from './StateMachineInfoGroupNode';
 import { StateMachineTagsGroupNode } from './StateMachineTagsGroupNode';
+import { StateMachinePinnedExecutionsGroupNode } from './StateMachinePinnedExecutionsGroupNode';
 import * as fs from 'fs';
 
 export class StateMachineNode extends NodeBase {
@@ -58,6 +59,9 @@ export class StateMachineNode extends NodeBase {
     @Serialize()
     public ExecutionFilters: { NodeId:string, startDate: number; executionName?: string; statusFilter?: string }[] = [];
 
+    @Serialize()
+    public PinnedExecutions: { executionArn: string; executionName: string; startDate?: string; stopDate?: string; status?: string }[] = [];
+
     private _definition: any | undefined = undefined;
 
     public AddExecutionFilter(NodeId: string, startDate: Date, executionName?: string, statusFilter?: string): void {
@@ -69,6 +73,18 @@ export class StateMachineNode extends NodeBase {
         this.ExecutionFilters = this.ExecutionFilters.filter(filter => {
             return filter.NodeId !== NodeId;
         });
+        this.TreeSave();
+    }
+
+    public AddPinnedExecution(executionArn: string, executionName: string, startDate?: string, stopDate?: string, status?: string): void {
+        if (!this.PinnedExecutions.some(p => p.executionArn === executionArn)) {
+            this.PinnedExecutions.push({ executionArn, executionName, startDate, stopDate, status });
+            this.TreeSave();
+        }
+    }
+
+    public RemovePinnedExecution(executionArn: string): void {
+        this.PinnedExecutions = this.PinnedExecutions.filter(p => p.executionArn !== executionArn);
         this.TreeSave();
     }
 
@@ -123,6 +139,7 @@ export class StateMachineNode extends NodeBase {
         new StateMachineDefinitionGroupNode("Definition", this);
         new StateMachineTriggerGroupNode("Trigger", this);
         new StateMachineExecutionsGroupNode("Executions", this);
+        new StateMachinePinnedExecutionsGroupNode("Pinned Executions", this);
         new StateMachineLogsGroupNode("Logs", this);
         new StateMachineTagsGroupNode("Tags", this);
     }

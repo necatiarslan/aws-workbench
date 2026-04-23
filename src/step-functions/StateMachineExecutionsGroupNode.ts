@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import { StateMachineExecutionFilterGroupNode } from './StateMachineExecutionFilterGroupNode';
 import { StateMachineNode } from './StateMachineNode';
 import * as ui from '../common/UI';
-import { FolderNode } from '../filesystem/FolderNode';
 import { StateMachineExecutionsReportView } from './StateMachineExecutionsReportView';
 
 export class StateMachineExecutionsGroupNode extends NodeBase {
@@ -36,7 +35,8 @@ export class StateMachineExecutionsGroupNode extends NodeBase {
         StateMachineExecutionsReportView.Render(
             stateMachineNode.Region,
             stateMachineNode.StateMachineArn,
-            stateMachineNode.StateMachineName
+            stateMachineNode.StateMachineName,
+            stateMachineNode
         );
     }
 

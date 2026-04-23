@@ -47,24 +47,26 @@ class StateMachineExecutionsReportView {
     stateMachineArn;
     stateMachineName;
     disposables = [];
+    stateMachineNode;
     state = {
         isLoading: false,
         executions: [],
         selectedStatus: "All",
         nameFilter: ""
     };
-    constructor(panel, region, stateMachineArn, stateMachineName) {
+    constructor(panel, region, stateMachineArn, stateMachineName, stateMachineNode) {
         this.panel = panel;
         this.extensionUri = Session_1.Session.Current.ExtensionUri;
         this.region = region;
         this.stateMachineArn = stateMachineArn;
         this.stateMachineName = stateMachineName;
+        this.stateMachineNode = stateMachineNode;
         this.panel.onDidDispose(this.dispose, null, this.disposables);
         this.panel.webview.onDidReceiveMessage(this.handleMessage, this, this.disposables);
         this.loadExecutions();
         this.render();
     }
-    static Render(region, stateMachineArn, stateMachineName) {
+    static Render(region, stateMachineArn, stateMachineName, stateMachineNode) {
         ui.logToOutput(`StateMachineExecutionsReportView.Render ${stateMachineName} @ ${region}`);
         if (StateMachineExecutionsReportView.Current) {
             StateMachineExecutionsReportView.Current.state = {
@@ -76,6 +78,7 @@ class StateMachineExecutionsReportView {
             StateMachineExecutionsReportView.Current.region = region;
             StateMachineExecutionsReportView.Current.stateMachineArn = stateMachineArn;
             StateMachineExecutionsReportView.Current.stateMachineName = stateMachineName;
+            StateMachineExecutionsReportView.Current.stateMachineNode = stateMachineNode;
             StateMachineExecutionsReportView.Current.panel.title = `Executions: ${stateMachineName}`;
             StateMachineExecutionsReportView.Current.panel.reveal(vscode.ViewColumn.One);
             StateMachineExecutionsReportView.Current.loadExecutions();
@@ -84,7 +87,7 @@ class StateMachineExecutionsReportView {
         const panel = vscode.window.createWebviewPanel("StateMachineExecutionsReportView", `Executions: ${stateMachineName}`, vscode.ViewColumn.One, {
             enableScripts: true,
         });
-        StateMachineExecutionsReportView.Current = new StateMachineExecutionsReportView(panel, region, stateMachineArn, stateMachineName);
+        StateMachineExecutionsReportView.Current = new StateMachineExecutionsReportView(panel, region, stateMachineArn, stateMachineName, stateMachineNode);
     }
     async loadExecutions() {
         try {
@@ -234,7 +237,7 @@ class StateMachineExecutionsReportView {
             ui.showInfoMessage("Execution ARN not found");
             return;
         }
-        StateMachineExecutionView_1.StateMachineExecutionView.Render(executionArn, this.stateMachineArn, this.region);
+        StateMachineExecutionView_1.StateMachineExecutionView.Render(executionArn, this.stateMachineArn, this.region, this.stateMachineNode);
     }
     getHtml(webview) {
         const codiconsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);

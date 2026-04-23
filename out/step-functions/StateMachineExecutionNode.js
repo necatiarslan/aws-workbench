@@ -40,6 +40,7 @@ const ui = __importStar(require("../common/UI"));
 const api = __importStar(require("./API"));
 const StateMachineNode_1 = require("./StateMachineNode");
 const StateMachineExecutionView_1 = require("./StateMachineExecutionView");
+const StateMachinePinnedExecutionsGroupNode_1 = require("./StateMachinePinnedExecutionsGroupNode");
 class StateMachineExecutionNode extends NodeBase_1.NodeBase {
     constructor(label, parent) {
         super(label, parent);
@@ -55,6 +56,13 @@ class StateMachineExecutionNode extends NodeBase_1.NodeBase {
     StartDate = "";
     StopDate = "";
     handleNodeRemove() {
+        // If inside a pinned group, also remove from the persisted list
+        if (this.Parent instanceof StateMachinePinnedExecutionsGroupNode_1.StateMachinePinnedExecutionsGroupNode) {
+            const stateMachineNode = this.GetStateMachineNode();
+            if (stateMachineNode && this.ExecutionArn) {
+                stateMachineNode.RemovePinnedExecution(this.ExecutionArn);
+            }
+        }
         this.Remove();
     }
     async handleNodeInfo() {
@@ -141,7 +149,7 @@ class StateMachineExecutionNode extends NodeBase_1.NodeBase {
             ui.showWarningMessage('State machine node not found');
             return;
         }
-        StateMachineExecutionView_1.StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '');
+        StateMachineExecutionView_1.StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '', stateMachineNode);
     }
     GetStateMachineNode() {
         let current = this.Parent;

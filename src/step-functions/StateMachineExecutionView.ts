@@ -4,6 +4,7 @@ import * as api from './API';
 import { CloudWatchLogView } from '../cloudwatch-logs/CloudWatchLogView';
 import { DescribeExecutionCommandOutput } from '@aws-sdk/client-sfn';
 import { Session } from '../common/Session';
+import { StateMachineNode } from './StateMachineNode';
 
 interface ExecutionState {
 	name: string;
@@ -29,18 +30,20 @@ export class StateMachineExecutionView {
 	private _executionOutput: string = '';
 	private _stateHistory: ExecutionState[] = [];
 	private _isLoading: boolean = false;
+	private _stateMachineNode: StateMachineNode | undefined;
 
-	public static Render(executionArn: string, stepFuncArn: string, region: string) {
+	public static Render(executionArn: string, stepFuncArn: string, region: string, stateMachineNode?: StateMachineNode) {
 		ui.logToOutput('StateMachineExecutionView.Render Started');
-		StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stepFuncArn, region);
+		StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stepFuncArn, region, stateMachineNode);
 		StateMachineExecutionView.Current.Initialize();
 	}
 
-	constructor(executionArn: string, stepFuncArn: string, region: string) {
+	constructor(executionArn: string, stepFuncArn: string, region: string, stateMachineNode?: StateMachineNode) {
 		this._extensionUri = Session.Current.ExtensionUri;
 		this._executionArn = executionArn;
 		this._stepFuncArn = stepFuncArn;
 		this._region = region;
+		this._stateMachineNode = stateMachineNode;
 	}
 
 	private _getExecutionName(): string {
@@ -510,7 +513,10 @@ export class StateMachineExecutionView {
 				<div class="header-section">
 					<div class="top-bar">
 						<h2>Execution ${this._escapeHtml(this._getExecutionName())}</h2>
-						<button id="topRefreshBtn">Refresh</button>
+						<div style="display:flex;gap:8px;">
+							${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin Execution</button>' : ''}
+							<button id="topRefreshBtn">Refresh</button>
+						</div>
 					</div>
 
 					<div class="tabs">
@@ -689,6 +695,10 @@ export class StateMachineExecutionView {
 						vscode.postMessage({ command: 'refresh' });
 					});
 
+					document.getElementById('pinExecutionBtn')?.addEventListener('click', () => {
+						vscode.postMessage({ command: 'pinExecution' });
+					});
+
 					// State input/output links
 					document.querySelectorAll('.state-link:not(.disabled)').forEach(link => {
 						link.addEventListener('click', (e) => {
@@ -763,8 +773,9 @@ export class StateMachineExecutionView {
 						break;
 					case 'refresh':
 						await this._handleRefresh();
-						break;
-				}
+						break;						case 'pinExecution':
+							await this._handlePinExecution();
+							break;				}
 			},
 			null
 		);
@@ -789,6 +800,20 @@ export class StateMachineExecutionView {
 		} catch (error: any) {
 			ui.showErrorMessage('Error viewing logs', error);
 		}
+	}
+
+	private async _handlePinExecution() {
+		ui.logToOutput('StepFuncExecutionView: Pin Execution clicked');
+		if (!this._stateMachineNode) {
+			ui.showWarningMessage('No state machine node associated with this view');
+			return;
+		}
+		const executionName = this._getExecutionName();
+		const startDate = this._executionDetails?.startDate?.toLocaleString();
+		const stopDate = this._executionDetails?.stopDate?.toLocaleString();
+		const status = this._executionDetails?.status;
+		this._stateMachineNode.AddPinnedExecution(this._executionArn, executionName, startDate, stopDate, status);
+		ui.showInfoMessage(`Execution "${executionName}" pinned successfully`);
 	}
 
 	private async _handleRefresh() {
