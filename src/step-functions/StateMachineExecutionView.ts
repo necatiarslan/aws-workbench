@@ -510,7 +510,7 @@ export class StateMachineExecutionView {
 					<div class="top-bar">
 						<h2>Execution ${this._escapeHtml(this._getExecutionName())}</h2>
 						<div style="display:flex;gap:8px;">
-						${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin Execution</button>' : ''}
+						${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin</button>' : ''}
 							<button id="topRefreshBtn">Refresh</button>
 						</div>
 					</div>
