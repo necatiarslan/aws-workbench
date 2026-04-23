@@ -135,7 +135,7 @@ export class StateMachineExecutionNode extends NodeBase {
             return;
         }
 
-        StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '', stateMachineNode);
+        StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode);
     }
 
     private GetStateMachineNode(): StateMachineNode | undefined {

@@ -23,26 +23,22 @@ export class StateMachineExecutionView {
 	private _panel: vscode.WebviewPanel | undefined;
 	private _extensionUri: vscode.Uri;
 	private _executionArn: string;
-	private _stepFuncArn: string;
-	private _region: string;
 	private _executionDetails: DescribeExecutionCommandOutput | undefined;
 	private _executionInput: string = '';
 	private _executionOutput: string = '';
 	private _stateHistory: ExecutionState[] = [];
 	private _isLoading: boolean = false;
-	private _stateMachineNode: StateMachineNode | undefined;
+	private _stateMachineNode: StateMachineNode;
 
-	public static Render(executionArn: string, stepFuncArn: string, region: string, stateMachineNode?: StateMachineNode) {
+	public static Render(executionArn: string, stateMachineNode: StateMachineNode) {
 		ui.logToOutput('StateMachineExecutionView.Render Started');
-		StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stepFuncArn, region, stateMachineNode);
+		StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stateMachineNode);
 		StateMachineExecutionView.Current.Initialize();
 	}
 
-	constructor(executionArn: string, stepFuncArn: string, region: string, stateMachineNode?: StateMachineNode) {
+	constructor(executionArn: string, stateMachineNode: StateMachineNode) {
 		this._extensionUri = Session.Current.ExtensionUri;
 		this._executionArn = executionArn;
-		this._stepFuncArn = stepFuncArn;
-		this._region = region;
 		this._stateMachineNode = stateMachineNode;
 	}
 
@@ -83,7 +79,7 @@ export class StateMachineExecutionView {
 
 	private async LoadExecutionDetails() {
 		try {
-			const result = await api.GetExecutionDetails(this._region, this._executionArn);
+			const result = await api.GetExecutionDetails(this._stateMachineNode.Region, this._executionArn);
 			if (result.isSuccessful && result.result) {
 				this._executionDetails = result.result as DescribeExecutionCommandOutput;
 				this._executionInput = result.result.input || '{}';
@@ -104,7 +100,7 @@ export class StateMachineExecutionView {
 			let nextToken: string | undefined;
 
 			const result = await api.GetExecutionHistory(
-				this._region,
+				this._stateMachineNode.Region,
 				this._executionArn,
 			);
 
@@ -514,7 +510,7 @@ export class StateMachineExecutionView {
 					<div class="top-bar">
 						<h2>Execution ${this._escapeHtml(this._getExecutionName())}</h2>
 						<div style="display:flex;gap:8px;">
-							${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin Execution</button>' : ''}
+						${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin Execution</button>' : ''}
 							<button id="topRefreshBtn">Refresh</button>
 						</div>
 					</div>
@@ -784,19 +780,19 @@ export class StateMachineExecutionView {
 	private async _handleViewLogs() {
 		ui.logToOutput('StepFuncExecutionView: View Logs clicked');
 		try {
-			const logGroupName = await api.GetLogGroupNameFromArn(this._stepFuncArn);
+			const logGroupName = await api.GetLogGroupNameFromArn(this._stateMachineNode.StateMachineArn);
 			if (!logGroupName) {
 				ui.showWarningMessage('Log Group not found for this Step Function');
 				return;
 			}
 
-			const logStreamResult = await api.GetLatestLogStreamForExecution(this._region, logGroupName, this._executionArn);
+			const logStreamResult = await api.GetLatestLogStreamForExecution(this._stateMachineNode.Region, logGroupName, this._executionArn);
 			if (!logStreamResult.isSuccessful) {
 				ui.showWarningMessage('Log Stream not found for this Step Function');
 				return;
 			}
 
-			CloudWatchLogView.Render(this._region, logGroupName, logStreamResult.result);
+			CloudWatchLogView.Render(this._stateMachineNode.Region, logGroupName, logStreamResult.result);
 		} catch (error: any) {
 			ui.showErrorMessage('Error viewing logs', error);
 		}
@@ -804,10 +800,6 @@ export class StateMachineExecutionView {
 
 	private async _handlePinExecution() {
 		ui.logToOutput('StepFuncExecutionView: Pin Execution clicked');
-		if (!this._stateMachineNode) {
-			ui.showWarningMessage('No state machine node associated with this view');
-			return;
-		}
 		const executionName = this._getExecutionName();
 		const startDate = this._executionDetails?.startDate?.toLocaleString();
 		const stopDate = this._executionDetails?.stopDate?.toLocaleString();

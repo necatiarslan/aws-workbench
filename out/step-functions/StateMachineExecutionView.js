@@ -44,24 +44,20 @@ class StateMachineExecutionView {
     _panel;
     _extensionUri;
     _executionArn;
-    _stepFuncArn;
-    _region;
     _executionDetails;
     _executionInput = '';
     _executionOutput = '';
     _stateHistory = [];
     _isLoading = false;
     _stateMachineNode;
-    static Render(executionArn, stepFuncArn, region, stateMachineNode) {
+    static Render(executionArn, stateMachineNode) {
         ui.logToOutput('StateMachineExecutionView.Render Started');
-        StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stepFuncArn, region, stateMachineNode);
+        StateMachineExecutionView.Current = new StateMachineExecutionView(executionArn, stateMachineNode);
         StateMachineExecutionView.Current.Initialize();
     }
-    constructor(executionArn, stepFuncArn, region, stateMachineNode) {
+    constructor(executionArn, stateMachineNode) {
         this._extensionUri = Session_1.Session.Current.ExtensionUri;
         this._executionArn = executionArn;
-        this._stepFuncArn = stepFuncArn;
-        this._region = region;
         this._stateMachineNode = stateMachineNode;
     }
     _getExecutionName() {
@@ -90,7 +86,7 @@ class StateMachineExecutionView {
     }
     async LoadExecutionDetails() {
         try {
-            const result = await api.GetExecutionDetails(this._region, this._executionArn);
+            const result = await api.GetExecutionDetails(this._stateMachineNode.Region, this._executionArn);
             if (result.isSuccessful && result.result) {
                 this._executionDetails = result.result;
                 this._executionInput = result.result.input || '{}';
@@ -109,7 +105,7 @@ class StateMachineExecutionView {
         try {
             let allEvents = [];
             let nextToken;
-            const result = await api.GetExecutionHistory(this._region, this._executionArn);
+            const result = await api.GetExecutionHistory(this._stateMachineNode.Region, this._executionArn);
             // Parse all state history from events
             this._parseStateHistory(result.result.events || []);
             ui.logToOutput(`Loaded ${allEvents.length} execution history events`);
@@ -501,7 +497,7 @@ class StateMachineExecutionView {
 					<div class="top-bar">
 						<h2>Execution ${this._escapeHtml(this._getExecutionName())}</h2>
 						<div style="display:flex;gap:8px;">
-							${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin Execution</button>' : ''}
+						${this._stateMachineNode ? '<button id="pinExecutionBtn">Pin Execution</button>' : ''}
 							<button id="topRefreshBtn">Refresh</button>
 						</div>
 					</div>
@@ -768,17 +764,17 @@ class StateMachineExecutionView {
     async _handleViewLogs() {
         ui.logToOutput('StepFuncExecutionView: View Logs clicked');
         try {
-            const logGroupName = await api.GetLogGroupNameFromArn(this._stepFuncArn);
+            const logGroupName = await api.GetLogGroupNameFromArn(this._stateMachineNode.StateMachineArn);
             if (!logGroupName) {
                 ui.showWarningMessage('Log Group not found for this Step Function');
                 return;
             }
-            const logStreamResult = await api.GetLatestLogStreamForExecution(this._region, logGroupName, this._executionArn);
+            const logStreamResult = await api.GetLatestLogStreamForExecution(this._stateMachineNode.Region, logGroupName, this._executionArn);
             if (!logStreamResult.isSuccessful) {
                 ui.showWarningMessage('Log Stream not found for this Step Function');
                 return;
             }
-            CloudWatchLogView_1.CloudWatchLogView.Render(this._region, logGroupName, logStreamResult.result);
+            CloudWatchLogView_1.CloudWatchLogView.Render(this._stateMachineNode.Region, logGroupName, logStreamResult.result);
         }
         catch (error) {
             ui.showErrorMessage('Error viewing logs', error);
@@ -786,10 +782,6 @@ class StateMachineExecutionView {
     }
     async _handlePinExecution() {
         ui.logToOutput('StepFuncExecutionView: Pin Execution clicked');
-        if (!this._stateMachineNode) {
-            ui.showWarningMessage('No state machine node associated with this view');
-            return;
-        }
         const executionName = this._getExecutionName();
         const startDate = this._executionDetails?.startDate?.toLocaleString();
         const stopDate = this._executionDetails?.stopDate?.toLocaleString();

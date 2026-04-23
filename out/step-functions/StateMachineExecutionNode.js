@@ -149,7 +149,7 @@ class StateMachineExecutionNode extends NodeBase_1.NodeBase {
             ui.showWarningMessage('State machine node not found');
             return;
         }
-        StateMachineExecutionView_1.StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode.StateMachineArn || '', stateMachineNode.Region || '', stateMachineNode);
+        StateMachineExecutionView_1.StateMachineExecutionView.Render(this.ExecutionArn, stateMachineNode);
     }
     GetStateMachineNode() {
         let current = this.Parent;

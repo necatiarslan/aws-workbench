@@ -43,31 +43,25 @@ class StateMachineExecutionsReportView {
     static Current;
     panel;
     extensionUri;
-    region;
-    stateMachineArn;
-    stateMachineName;
-    disposables = [];
     stateMachineNode;
+    disposables = [];
     state = {
         isLoading: false,
         executions: [],
         selectedStatus: "All",
         nameFilter: ""
     };
-    constructor(panel, region, stateMachineArn, stateMachineName, stateMachineNode) {
+    constructor(panel, stateMachineNode) {
         this.panel = panel;
         this.extensionUri = Session_1.Session.Current.ExtensionUri;
-        this.region = region;
-        this.stateMachineArn = stateMachineArn;
-        this.stateMachineName = stateMachineName;
         this.stateMachineNode = stateMachineNode;
         this.panel.onDidDispose(this.dispose, null, this.disposables);
         this.panel.webview.onDidReceiveMessage(this.handleMessage, this, this.disposables);
         this.loadExecutions();
         this.render();
     }
-    static Render(region, stateMachineArn, stateMachineName, stateMachineNode) {
-        ui.logToOutput(`StateMachineExecutionsReportView.Render ${stateMachineName} @ ${region}`);
+    static Render(stateMachineNode) {
+        ui.logToOutput(`StateMachineExecutionsReportView.Render ${stateMachineNode.StateMachineName} @ ${stateMachineNode.Region}`);
         if (StateMachineExecutionsReportView.Current) {
             StateMachineExecutionsReportView.Current.state = {
                 isLoading: false,
@@ -75,26 +69,23 @@ class StateMachineExecutionsReportView {
                 selectedStatus: "All",
                 nameFilter: ""
             };
-            StateMachineExecutionsReportView.Current.region = region;
-            StateMachineExecutionsReportView.Current.stateMachineArn = stateMachineArn;
-            StateMachineExecutionsReportView.Current.stateMachineName = stateMachineName;
             StateMachineExecutionsReportView.Current.stateMachineNode = stateMachineNode;
-            StateMachineExecutionsReportView.Current.panel.title = `Executions: ${stateMachineName}`;
+            StateMachineExecutionsReportView.Current.panel.title = `Executions: ${stateMachineNode.StateMachineName}`;
             StateMachineExecutionsReportView.Current.panel.reveal(vscode.ViewColumn.One);
             StateMachineExecutionsReportView.Current.loadExecutions();
             return;
         }
-        const panel = vscode.window.createWebviewPanel("StateMachineExecutionsReportView", `Executions: ${stateMachineName}`, vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel("StateMachineExecutionsReportView", `Executions: ${stateMachineNode.StateMachineName}`, vscode.ViewColumn.One, {
             enableScripts: true,
         });
-        StateMachineExecutionsReportView.Current = new StateMachineExecutionsReportView(panel, region, stateMachineArn, stateMachineName, stateMachineNode);
+        StateMachineExecutionsReportView.Current = new StateMachineExecutionsReportView(panel, stateMachineNode);
     }
     async loadExecutions() {
         try {
             this.state.isLoading = true;
             this.state.error = undefined;
             this.sendState();
-            const result = await api.ListExecutions(this.region, this.stateMachineArn);
+            const result = await api.ListExecutions(this.stateMachineNode.Region, this.stateMachineNode.StateMachineArn);
             if (!result.isSuccessful) {
                 this.state.error = result.error ? String(result.error) : "Failed to load executions";
                 this.state.executions = [];
@@ -194,8 +185,8 @@ class StateMachineExecutionsReportView {
         this.panel.webview.postMessage({
             type: "state",
             state: {
-                region: this.region,
-                stateMachineName: this.stateMachineName,
+                region: this.stateMachineNode.Region,
+                stateMachineName: this.stateMachineNode.StateMachineName,
                 selectedDate: this.state.selectedDate,
                 selectedStatus: this.state.selectedStatus,
                 nameFilter: this.state.nameFilter,
@@ -237,7 +228,7 @@ class StateMachineExecutionsReportView {
             ui.showInfoMessage("Execution ARN not found");
             return;
         }
-        StateMachineExecutionView_1.StateMachineExecutionView.Render(executionArn, this.stateMachineArn, this.region, this.stateMachineNode);
+        StateMachineExecutionView_1.StateMachineExecutionView.Render(executionArn, this.stateMachineNode);
     }
     getHtml(webview) {
         const codiconsUri = ui.getUri(webview, this.extensionUri, ["node_modules", "@vscode", "codicons", "dist", "codicon.css"]);

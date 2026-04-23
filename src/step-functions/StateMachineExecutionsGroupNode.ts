@@ -32,12 +32,7 @@ export class StateMachineExecutionsGroupNode extends NodeBase {
             return;
         }
 
-        StateMachineExecutionsReportView.Render(
-            stateMachineNode.Region,
-            stateMachineNode.StateMachineArn,
-            stateMachineNode.StateMachineName,
-            stateMachineNode
-        );
+        StateMachineExecutionsReportView.Render(stateMachineNode);
     }
 
     private async handleNodeAdd(): Promise<void> {
