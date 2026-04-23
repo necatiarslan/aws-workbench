@@ -171,7 +171,7 @@ stepfunctions-list:
 stepfunctions-create:
     aws --endpoint-url={{localstack-endpoint}} stepfunctions create-state-machine \
     --name {{stepfn-name}} \
-    --definition file://step/my_step_function.json \
+    --definition file://tests/step/my_step_function.asl.json \
     --role-arn arn:aws:iam::{{aws-account}}:role/{{iam-role}}
 
 stepfunctions-start-execution:

@@ -306,6 +306,17 @@ export class StateMachineExecutionView {
 						color: var(--vscode-foreground);
 					}
 
+					.top-bar {
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						margin-bottom: 10px;
+					}
+
+					.top-bar h2 {
+						margin: 0;
+					}
+
 					.header-section {
 						margin-bottom: 30px;
 					}
@@ -497,7 +508,10 @@ export class StateMachineExecutionView {
 			</head>
 			<body>
 				<div class="header-section">
-					<h2>Execution ${this._escapeHtml(this._getExecutionName())}</h2>
+					<div class="top-bar">
+						<h2>Execution ${this._escapeHtml(this._getExecutionName())}</h2>
+						<button id="topRefreshBtn">Refresh</button>
+					</div>
 
 					<div class="tabs">
 						<button class="tab-button active" data-tab="status">Status</button>
@@ -668,6 +682,10 @@ export class StateMachineExecutionView {
 					});
 
 					document.getElementById('refreshBtn')?.addEventListener('click', () => {
+						vscode.postMessage({ command: 'refresh' });
+					});
+
+					document.getElementById('topRefreshBtn')?.addEventListener('click', () => {
 						vscode.postMessage({ command: 'refresh' });
 					});
 

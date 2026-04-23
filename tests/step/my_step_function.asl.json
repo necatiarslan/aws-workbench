@@ -1,0 +1,32 @@
+{
+  "Comment": "A basic Step Functions state machine example",
+  "StartAt": "HelloWorld",
+  "States": {
+    "HelloWorld": {
+      "Type": "Pass",
+      "Result": {
+        "message": "Hello, World!"
+      },
+      "Next": "CheckInput"
+    },
+    "CheckInput": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.action",
+          "StringEquals": "stop",
+          "Next": "FailState"
+        }
+      ],
+      "Default": "SuccessState"
+    },
+    "FailState": {
+      "Type": "Fail",
+      "Error": "ActionFailed",
+      "Cause": "Action was 'stop'"
+    },
+    "SuccessState": {
+      "Type": "Succeed"
+    }
+  }
+}

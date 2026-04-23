@@ -89,6 +89,7 @@ A powerful VS Code extension that brings your AWS resources directly into your e
 - S3 Explorer basic view
 - Step Functions : add an execution to favorites under new Pinned Executions node
 - Step Functions : when you directly go to Executions report, getting arn error, need to fix it
+- Step Functions : add refresh button to execution view
 
 ## Support
 
