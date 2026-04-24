@@ -94,9 +94,17 @@ export class StateMachineExecutionsGroupNode extends NodeBase {
     private async handleNodeRefresh(): Promise<void> {
         // Clear and reload children
         this.Children = [];
+
         const todayFilterNode = new StateMachineExecutionFilterGroupNode("Today", this);
         todayFilterNode.StartDate = new Date();
         todayFilterNode.StartDate.setHours(0, 0, 0, 0);
+
+        const thisWeekFilterNode = new StateMachineExecutionFilterGroupNode("This Week", this);
+        thisWeekFilterNode.StartDate = new Date();
+        const dayOfWeek = thisWeekFilterNode.StartDate.getDay();
+        const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        thisWeekFilterNode.StartDate.setDate(thisWeekFilterNode.StartDate.getDate() - daysFromMonday);
+        thisWeekFilterNode.StartDate.setHours(0, 0, 0, 0);
 
         const stateMachineNode = this.GetAwsResourceNode() as StateMachineNode;
         if(stateMachineNode && stateMachineNode.ExecutionFilters) {

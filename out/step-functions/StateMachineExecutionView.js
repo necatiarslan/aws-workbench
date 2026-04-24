@@ -310,7 +310,13 @@ class StateMachineExecutionView {
 				<link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
 				<style>
 					body {
+						box-sizing: border-box;
 						padding: 20px;
+						height: 100vh;
+						margin: 0;
+						display: flex;
+						flex-direction: column;
+						overflow: hidden;
 						font-family: var(--vscode-font-family);
 						color: var(--vscode-foreground);
 					}
@@ -328,6 +334,10 @@ class StateMachineExecutionView {
 
 					.header-section {
 						margin-bottom: 30px;
+						display: flex;
+						flex-direction: column;
+						flex: 1;
+						min-height: 0;
 					}
 
 					.tabs {
@@ -353,10 +363,14 @@ class StateMachineExecutionView {
 
 					.tab-content {
 						display: none;
+						min-height: 0;
 					}
 
 					.tab-content.active {
-						display: block;
+						display: flex;
+						flex-direction: column;
+						flex: 1;
+						overflow: auto;
 					}
 
 					.detail-grid {
@@ -435,6 +449,16 @@ class StateMachineExecutionView {
 						display: flex;
 						gap: 10px;
 						margin-top: 20px;
+					}
+
+					#status > #viewLogsBtn {
+						margin-top: auto;
+						align-self: flex-start;
+					}
+
+					#stateHistory .button-group {
+						margin-top: auto;
+						padding-top: 12px;
 					}
 
 					button {

@@ -109,6 +109,12 @@ class StateMachineExecutionsGroupNode extends NodeBase_1.NodeBase {
         const todayFilterNode = new StateMachineExecutionFilterGroupNode_1.StateMachineExecutionFilterGroupNode("Today", this);
         todayFilterNode.StartDate = new Date();
         todayFilterNode.StartDate.setHours(0, 0, 0, 0);
+        const thisWeekFilterNode = new StateMachineExecutionFilterGroupNode_1.StateMachineExecutionFilterGroupNode("This Week", this);
+        thisWeekFilterNode.StartDate = new Date();
+        const dayOfWeek = thisWeekFilterNode.StartDate.getDay();
+        const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        thisWeekFilterNode.StartDate.setDate(thisWeekFilterNode.StartDate.getDate() - daysFromMonday);
+        thisWeekFilterNode.StartDate.setHours(0, 0, 0, 0);
         const stateMachineNode = this.GetAwsResourceNode();
         if (stateMachineNode && stateMachineNode.ExecutionFilters) {
             for (const filter of stateMachineNode.ExecutionFilters) {
