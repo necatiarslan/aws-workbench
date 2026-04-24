@@ -72,6 +72,7 @@ class StateMachineExecutionView {
             localResourceRoots: [
                 vscode.Uri.joinPath(this._extensionUri, 'media', 'step-functions'),
                 vscode.Uri.joinPath(this._extensionUri, 'node_modules', '@vscode-elements', 'elements', 'dist', 'bundled.js'),
+                vscode.Uri.joinPath(this._extensionUri, 'node_modules', '@vscode', 'codicons', 'dist'),
             ],
         });
         this._panel.onDidDispose(() => {
@@ -236,6 +237,23 @@ class StateMachineExecutionView {
             .replace('Entered', '')
             .replace('Exited', '');
     }
+    _getStatusIcon(status) {
+        switch ((status || '').toUpperCase()) {
+            case 'SUCCEEDED':
+            case 'COMPLETED':
+                return 'pass';
+            case 'FAILED':
+                return 'error';
+            case 'RUNNING':
+                return 'sync~spin';
+            case 'TIMED_OUT':
+                return 'clock';
+            case 'ABORTED':
+                return 'stop';
+            default:
+                return 'circle-outline';
+        }
+    }
     RenderHtml() {
         if (!this._panel)
             return;
@@ -244,6 +262,7 @@ class StateMachineExecutionView {
     _getHtmlContent() {
         const styleUri = this._panel.webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'step-functions', 'style.css'));
         const mainUri = ui.getUri(this._panel.webview, this._extensionUri, ['media', 'step-functions', 'main.js']);
+        const codiconsUri = ui.getUri(this._panel.webview, this._extensionUri, ['node_modules', '@vscode', 'codicons', 'dist', 'codicon.css']);
         const executionStatus = this._executionDetails?.status || 'Unknown';
         const executionType = this._executionDetails?.stateMachineArn ? 'Standard' : 'Express';
         const error = this._executionDetails?.cause ? JSON.parse(this._executionDetails.cause).error || 'N/A' : 'N/A';
@@ -265,7 +284,10 @@ class StateMachineExecutionView {
 					</div>
 				</td>
 				<td>${this._escapeHtml(state.type)}</td>
-				<td>${this._escapeHtml(state.status)}</td>
+				<td>
+					<span class="codicon codicon-${this._getStatusIcon(state.status)}" style="margin-right: 6px;" title="${this._escapeHtml(state.status)}"></span>
+					${this._escapeHtml(state.status)}
+				</td>
 				<td>${this._formatDuration(state.duration)}</td>
 				<td>${this._formatDateTime(state.startDateTime)}</td>
 			</tr>
@@ -284,6 +306,7 @@ class StateMachineExecutionView {
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${this._panel.webview.cspSource} 'unsafe-inline' https://cdn.jsdelivr.net; script-src ${this._panel.webview.cspSource} 'unsafe-inline' https://cdn.jsdelivr.net; font-src ${this._panel.webview.cspSource}; worker-src blob:;">
 				<title>Execution ${this._escapeHtml(this._getExecutionName())}</title>
 				<link rel="stylesheet" href="${styleUri}">
+				<link rel="stylesheet" href="${codiconsUri}">
 				<link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
 				<style>
 					body {
@@ -514,7 +537,7 @@ class StateMachineExecutionView {
 						<div class="detail-grid">
 							<div class="detail-item">
 								<span class="detail-label">Status</span>
-								<span class="detail-value">${this._escapeHtml(executionStatus)}</span>
+								<span class="detail-value"><span class="codicon codicon-${this._getStatusIcon(executionStatus)}" style="margin-right: 6px;" title="${this._escapeHtml(executionStatus)}"></span>${this._escapeHtml(executionStatus)}</span>
 							</div>
 							<div class="detail-item">
 								<span class="detail-label">Execution Type</span>
