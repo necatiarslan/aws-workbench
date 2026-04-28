@@ -448,6 +448,30 @@ class DynamoDBQueryView {
             vscode.postMessage({ command: 'exportResults', items: currentResults });
         });
 
+        document.getElementById('tableBody').addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) {
+                return;
+            }
+
+            const actionButton = target.closest('[data-action]');
+            if (!(actionButton instanceof HTMLElement)) {
+                return;
+            }
+
+            const action = actionButton.getAttribute('data-action');
+            const idx = Number(actionButton.getAttribute('data-idx'));
+            if (!Number.isInteger(idx) || idx < 0 || idx >= currentResults.length) {
+                return;
+            }
+
+            if (action === 'edit') {
+                editItem(idx);
+            } else if (action === 'delete') {
+                deleteItem(idx);
+            }
+        });
+
         window.addEventListener('message', event => {
             const message = event.data;
             switch (message.command) {
@@ -511,8 +535,8 @@ class DynamoDBQueryView {
             items.forEach((item, idx) => {
                 bodyHtml += '<tr>';
                 bodyHtml += '<td class="action-buttons">';
-                bodyHtml += '<button class="btn-icon" onclick="editItem(' + idx + ')" title="Edit">✏️</button>';
-                bodyHtml += '<button class="btn-icon" onclick="deleteItem(' + idx + ')" title="Delete">🗑️</button>';
+                bodyHtml += '<button class="btn-icon" data-action="edit" data-idx="' + idx + '" title="Edit">✏️</button>';
+                bodyHtml += '<button class="btn-icon" data-action="delete" data-idx="' + idx + '" title="Delete">🗑️</button>';
                 bodyHtml += '</td>';
                 attributes.forEach(attr => {
                     const value = item[attr];
