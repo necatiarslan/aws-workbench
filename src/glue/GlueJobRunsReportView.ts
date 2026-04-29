@@ -109,8 +109,8 @@ export class GlueJobRunsReportView {
 
         return (this.state.runs || [])
             .filter(run => {
-                if (!run.StartedOn) { return false; }
                 if (selectedDateObj && nextDayObj) {
+                    if (!run.StartedOn) { return false; }
                     const runDate = new Date(run.StartedOn);
                     return runDate >= selectedDateObj && runDate < nextDayObj;
                 }
@@ -266,8 +266,9 @@ export class GlueJobRunsReportView {
         </div>
         <div class="controls">
             <div class="controls-group">
-                <label for="dateInput" style="margin: 0; display: flex; align-items: center; gap: 4px;"><span class="codicon codicon-calendar"></span>Date:</label>
+                <label for="dateInput" style="margin: 0; display: flex; align-items: center; gap: 4px;"><span class="codicon codicon-calendar"></span>Date <span class="muted" style="font-size:11px;">(optional)</span>:</label>
                 <input id="dateInput" type="date" style="padding: 4px 6px; border: 1px solid var(--vscode-input-border); background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-radius: 2px; font-size: 12px;" />
+                <vscode-button id="clearDate" appearance="secondary" title="Clear date filter"><span class="codicon codicon-close"></span></vscode-button>
             </div>
             <vscode-button id="refresh" appearance="secondary"><span class="codicon codicon-refresh"></span>Refresh</vscode-button>
             <span class="spinner" id="spinner" style="display:none;"><span class="codicon codicon-sync"></span>Loading...</span>
@@ -309,6 +310,11 @@ export class GlueJobRunsReportView {
 
         dateInput.addEventListener('change', () => {
             vscode.postMessage({ command: 'dateChanged', date: dateInput.value });
+        });
+
+        document.getElementById('clearDate').addEventListener('click', () => {
+            dateInput.value = '';
+            vscode.postMessage({ command: 'dateChanged', date: '' });
         });
 
         function render(state) {

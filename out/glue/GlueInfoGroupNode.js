@@ -114,6 +114,12 @@ class GlueInfoGroupNode extends NodeBase_1.NodeBase {
             if (config.LastModifiedOn) {
                 new GlueInfoNode_1.GlueInfoNode("Last Modified", config.LastModifiedOn.toISOString(), this);
             }
+            if (config.DefaultArguments && Object.keys(config.DefaultArguments).length > 0) {
+                let defaultArgsNode = new GlueInfoNode_1.GlueInfoNode("Default Arguments", "", this);
+                for (const [key, value] of Object.entries(config.DefaultArguments)) {
+                    new GlueInfoNode_1.GlueInfoNode(`${key}`, String(value), defaultArgsNode);
+                }
+            }
         }
         catch (error) {
             ui.logToOutput('GlueInfoGroupNode.handleLoadChildren Error !!!', error);

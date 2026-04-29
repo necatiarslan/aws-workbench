@@ -89,6 +89,12 @@ export class GlueInfoGroupNode extends NodeBase {
             if (config.LastModifiedOn) {
                 new GlueInfoNode("Last Modified", config.LastModifiedOn.toISOString(), this);
             }
+            if (config.DefaultArguments && Object.keys(config.DefaultArguments).length > 0) {
+                let defaultArgsNode = new GlueInfoNode("Default Arguments", "", this);
+                for (const [key, value] of Object.entries(config.DefaultArguments)) {
+                    new GlueInfoNode(`${key}`, String(value), defaultArgsNode);
+                }
+            }
 
         } catch (error: any) {
             ui.logToOutput('GlueInfoGroupNode.handleLoadChildren Error !!!', error);
