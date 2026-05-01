@@ -8,7 +8,14 @@ import { ParsedIniData } from "@aws-sdk/types";
 import { Session } from "../common/Session";
 
 
-import { CloudWatchLogsClient, ListTagsForResourceCommand, TagResourceCommand, UntagResourceCommand } from "@aws-sdk/client-cloudwatch-logs";
+import {
+  CloudWatchLogsClient,
+  ListTagsForResourceCommand,
+  PutLogEventsCommand,
+  PutLogEventsCommandOutput,
+  TagResourceCommand,
+  UntagResourceCommand
+} from "@aws-sdk/client-cloudwatch-logs";
 
 export async function GetCloudWatchLogsClient(Region:string | undefined = Session.Current?.AwsRegion): Promise<CloudWatchLogsClient> {
   let credentials = await Session.Current.GetCredentials();
@@ -228,6 +235,74 @@ export async function GetLogEvents(Region: string, LogGroupName: string, LogStre
   }
 
   return result;
+}
+
+function extractExpectedSequenceToken(error: any): string | undefined {
+  const tokenFromField = error?.expectedSequenceToken as string | undefined;
+  if (tokenFromField) {
+    return tokenFromField;
+  }
+
+  const message = (error?.message ?? "") as string;
+  const messageMatch = message.match(/sequenceToken is:\s*([^\s]+)/i);
+  if (messageMatch && messageMatch[1]) {
+    return messageMatch[1];
+  }
+
+  return undefined;
+}
+
+export async function PutLogEvent(
+  Region: string,
+  LogGroupName: string,
+  LogStreamName: string,
+  Message: string
+): Promise<MethodResult<PutLogEventsCommandOutput>> {
+  ui.logToOutput(`api.PutLogEvent Started - Region:${Region}, LogGroupName:${LogGroupName}, LogStreamName:${LogStreamName}`);
+
+  const result = new MethodResult<PutLogEventsCommandOutput>();
+
+  try {
+    const client = await GetCloudWatchLogsClient(Region);
+    const logEvent = {
+      message: Message,
+      timestamp: Date.now(),
+    };
+
+    try {
+      const command = new PutLogEventsCommand({
+        logGroupName: LogGroupName,
+        logStreamName: LogStreamName,
+        logEvents: [logEvent],
+      });
+      const response = await client.send(command);
+      result.result = response;
+      result.isSuccessful = true;
+      return result;
+    } catch (firstError: any) {
+      const token = extractExpectedSequenceToken(firstError);
+      if (!token) {
+        throw firstError;
+      }
+
+      const retryCommand = new PutLogEventsCommand({
+        logGroupName: LogGroupName,
+        logStreamName: LogStreamName,
+        logEvents: [logEvent],
+        sequenceToken: token,
+      });
+      const retryResponse = await client.send(retryCommand);
+      result.result = retryResponse;
+      result.isSuccessful = true;
+      return result;
+    }
+  } catch (error: any) {
+    result.isSuccessful = false;
+    result.error = error;
+    ui.showErrorMessage("api.PutLogEvent Error !!!", error);
+    ui.logToOutput("api.PutLogEvent Error !!!", error);
+    return result;
+  }
 }
 
 export async function GetAwsProfileList(): Promise<MethodResult<string[]>> {
