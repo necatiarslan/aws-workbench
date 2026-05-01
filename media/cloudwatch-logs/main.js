@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 const vscode = acquireVsCodeApi();
 
 window.addEventListener("load", main);
@@ -36,6 +35,9 @@ function main() {
 
   const FilterStartTime = document.getElementById("filter_start_time");
   FilterStartTime.addEventListener("change", DateTimeFilterChange);
+
+  // Catch Enter presses from vscode-textfield internals (shadow DOM) reliably.
+  document.addEventListener("keydown", GlobalEnterKeyDown, true);
 }
 
 function RefreshButtonClick() {
@@ -49,9 +51,9 @@ function RefreshButtonClick() {
 
   vscode.postMessage({
     command: "refresh",
-    search_text: SearchTextBox._value,
-    hide_text: HideTextBox._value,
-    filter_text: FilterTextBox._value,
+    search_text: GetTextFieldValue(SearchTextBox),
+    hide_text: GetTextFieldValue(HideTextBox),
+    filter_text: GetTextFieldValue(FilterTextBox),
     wrap_text: WrapCheckbox.checked,
     use_datetime_filter: UseDateTimeFilterCheckbox.checked,
     filter_start_date: FilterStartDate.value,
@@ -70,14 +72,30 @@ function RefreshNoLogLoad() {
 
   vscode.postMessage({
     command: "refresh_nologload",
-    search_text: SearchTextBox._value,
-    hide_text: HideTextBox._value,
-    filter_text: FilterTextBox._value,
+    search_text: GetTextFieldValue(SearchTextBox),
+    hide_text: GetTextFieldValue(HideTextBox),
+    filter_text: GetTextFieldValue(FilterTextBox),
     wrap_text: WrapCheckbox.checked,
     use_datetime_filter: UseDateTimeFilterCheckbox.checked,
     filter_start_date: FilterStartDate.value,
     filter_start_time: FilterStartTime.value
   });
+}
+
+function GetTextFieldValue(textField) {
+  if (!textField) {
+    return "";
+  }
+
+  if (typeof textField.value === "string") {
+    return textField.value;
+  }
+
+  if (typeof textField._value === "string") {
+    return textField._value;
+  }
+
+  return "";
 }
 
 function PauseTimerClick() {
@@ -107,20 +125,54 @@ function WrapCheckboxChange(e) {
 
 function SearchTextBoxKeyDown(e) {
   if (e.key === "Enter") {
+    e.preventDefault();
     RefreshNoLogLoad();
   }
 }
 
 function HideTextBoxKeyDown(e) {
   if (e.key === "Enter") {
+    e.preventDefault();
     RefreshNoLogLoad();
   }
 }
 
 function FilterTextBoxKeyDown(e) {
   if (e.key === "Enter") {
+    e.preventDefault();
     RefreshNoLogLoad();
   }
+}
+
+function GlobalEnterKeyDown(e) {
+  if (e.defaultPrevented || e.key !== "Enter") {
+    return;
+  }
+
+  if (!IsFilterInputEvent(e)) {
+    return;
+  }
+
+  e.preventDefault();
+  e.stopPropagation();
+  RefreshNoLogLoad();
+}
+
+function IsFilterInputEvent(e) {
+  const ids = new Set(["search_text", "filter_text", "hide_text"]);
+  const target = e.target;
+  if (target && ids.has(target.id)) {
+    return true;
+  }
+
+  const path = typeof e.composedPath === "function" ? e.composedPath() : [];
+  for (const node of path) {
+    if (node && ids.has(node.id)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function UseDateTimeFilterCheckboxChange(e) {

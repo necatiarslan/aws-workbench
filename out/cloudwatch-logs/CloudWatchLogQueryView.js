@@ -273,13 +273,13 @@ class CloudWatchLogQueryView {
       </div>
       <div class="toolbar-row">
         Date Range:
-        <vscode-button class="preset-btn" appearance="secondary" data-preset="15m">15m</vscode-button>
-        <vscode-button class="preset-btn" appearance="secondary" data-preset="1h">1h</vscode-button>
-        <vscode-button class="preset-btn" appearance="secondary" data-preset="6h">6h</vscode-button>
-        <vscode-button class="preset-btn" appearance="secondary" data-preset="24h">24h</vscode-button>
-        <vscode-button class="preset-btn" appearance="secondary" data-preset="7d">7d</vscode-button>
+        <vscode-button class="preset-btn" secondary data-preset="15m">15m</vscode-button>
+        <vscode-button class="preset-btn" secondary data-preset="1h">1h</vscode-button>
+        <vscode-button class="preset-btn" secondary data-preset="6h">6h</vscode-button>
+        <vscode-button class="preset-btn" secondary data-preset="24h">24h</vscode-button>
+        <vscode-button class="preset-btn" secondary data-preset="7d">7d</vscode-button>
         |
-        <vscode-button id="runBtn" appearance="primary">Run</vscode-button>
+        <vscode-button id="runBtn" primary>Run</vscode-button>
       </div>
       <div class="toolbar-row">
         <span id="statusText" class="status"></span>

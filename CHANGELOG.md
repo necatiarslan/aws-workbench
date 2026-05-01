@@ -1,3 +1,6 @@
+# v1.5.0
+    - cloudwatch logs insights query view
+    
 # v1.4.0
     - glue job info node improvements
     - glue job report view date selection optional
