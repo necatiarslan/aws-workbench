@@ -46,6 +46,13 @@ class GlueJobRunView {
     extensionUri;
     state;
     triggerFilePath;
+    static IN_PROGRESS_STATES = new Set([
+        "STARTING",
+        "RUNNING",
+        "WAITING",
+        "WAITING_FOR_DEPENDENCIES",
+        "STOPPING",
+    ]);
     constructor(panel, region, jobName, triggerFilePath) {
         this.panel = panel;
         this.extensionUri = Session_1.Session.Current.ExtensionUri;
@@ -175,6 +182,9 @@ class GlueJobRunView {
             const runId = res.result;
             this.state.isRunning = true;
             this.state.currentRunId = runId;
+            this.state.runStatus = "STARTING";
+            this.state.startedOnEpochMs = Date.now();
+            this.state.completedOnEpochMs = undefined;
             await this.updateRunDetails();
             this.sendState();
             ui.showInfoMessage(`Job run started. Run id: ${runId}`);
@@ -194,13 +204,17 @@ class GlueJobRunView {
                 ui.showErrorMessage("Stop job run failed", res.error);
                 return;
             }
-            this.state.isRunning = false;
+            this.state.runStatus = "STOPPING";
+            this.state.isRunning = true;
             this.sendState();
             ui.showInfoMessage(`Stop requested for run ${this.state.currentRunId}`);
         }
         catch (err) {
             ui.showErrorMessage("Stop job run error", err);
         }
+    }
+    isInProgress(status) {
+        return !!status && GlueJobRunView.IN_PROGRESS_STATES.has(status);
     }
     async updateRunDetails() {
         if (!this.state.currentRunId) {
@@ -210,6 +224,11 @@ class GlueJobRunView {
             const res = await api.GetGlueJobRun(this.state.region, this.state.jobName, this.state.currentRunId);
             if (res.isSuccessful && res.result) {
                 const run = res.result;
+                const runStatus = run.JobRunState;
+                this.state.runStatus = runStatus;
+                this.state.startedOnEpochMs = run.StartedOn ? run.StartedOn.getTime() : this.state.startedOnEpochMs;
+                this.state.completedOnEpochMs = run.CompletedOn ? run.CompletedOn.getTime() : undefined;
+                this.state.isRunning = this.isInProgress(runStatus);
                 // Glue logs go to standard log groups
                 this.state.outputLogGroup = api.GetGlueJobLogGroupName(this.state.jobName);
                 this.state.errorLogGroup = api.GetGlueJobErrorLogGroupName(this.state.jobName);
@@ -278,7 +297,8 @@ class GlueJobRunView {
             <div class="headline-row">
                 <span class="badge" id="region"></span>
                 <span class="badge" id="runId"></span>
-                <span class="spinner" id="spinner" style="display:none;"><span class="codicon codicon-sync"></span>Running...</span>
+                <span class="badge" id="duration" style="display:none;"></span>
+                <span class="spinner" id="spinner" style="display:none;"><span class="codicon codicon-sync"></span><span id="spinnerText">Running...</span></span>
             </div>
         </div>
 
@@ -314,8 +334,10 @@ class GlueJobRunView {
             title: document.getElementById('title'),
             region: document.getElementById('region'),
             runId: document.getElementById('runId'),
+            duration: document.getElementById('duration'),
             triggerFile: document.getElementById('triggerFile'),
             spinner: document.getElementById('spinner'),
+            spinnerText: document.getElementById('spinnerText'),
             args: document.getElementById('args'),
             addArg: document.getElementById('addArg'),
             start: document.getElementById('start'),
@@ -325,6 +347,57 @@ class GlueJobRunView {
         };
 
         let currentState = undefined;
+        let runTicker = undefined;
+
+        const inProgressStates = new Set(['STARTING', 'RUNNING', 'WAITING', 'WAITING_FOR_DEPENDENCIES', 'STOPPING']);
+
+        function formatDuration(ms) {
+            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            if (hours > 0) {
+                return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            }
+            return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        function updateRunStatusUi() {
+            if (!currentState) {
+                stateEl.spinner.style.display = 'none';
+                stateEl.duration.style.display = 'none';
+                return;
+            }
+
+            const status = currentState.runStatus || '';
+            const isInProgress = inProgressStates.has(status) || !!currentState.isRunning;
+            const hasStartTime = typeof currentState.startedOnEpochMs === 'number';
+
+            if (hasStartTime) {
+                const endTime = currentState.completedOnEpochMs || Date.now();
+                const elapsed = formatDuration(endTime - currentState.startedOnEpochMs);
+                stateEl.duration.textContent = 'Duration: ' + elapsed;
+                stateEl.duration.style.display = 'inline-block';
+
+                if (isInProgress) {
+                    stateEl.spinnerText.textContent = (status || 'RUNNING') + ' ' + elapsed;
+                }
+            } else {
+                stateEl.duration.style.display = 'none';
+                if (isInProgress) {
+                    stateEl.spinnerText.textContent = status || 'RUNNING';
+                }
+            }
+
+            stateEl.spinner.style.display = isInProgress ? 'inline-flex' : 'none';
+        }
+
+        function ensureRunTicker() {
+            if (runTicker) {
+                clearInterval(runTicker);
+            }
+            runTicker = setInterval(updateRunStatusUi, 1000);
+        }
 
         function toggleArgInputs(arg, elements) {
             const enabled = !!arg.enabled;
@@ -398,7 +471,7 @@ class GlueJobRunView {
             stateEl.runId.textContent = state.currentRunId ? ('Run: ' + state.currentRunId) : '';
             stateEl.triggerFile.textContent = state.triggerFilePath ? ('Trigger: ' + state.triggerFilePath) : '';
             stateEl.triggerFile.style.display = state.triggerFilePath ? 'inline-block' : 'none';
-            stateEl.spinner.style.display = state.isRunning ? 'inline-flex' : 'none';
+            updateRunStatusUi();
             renderArgs(state.args || []);
         }
 
@@ -432,6 +505,7 @@ class GlueJobRunView {
             }
         });
 
+        ensureRunTicker();
         vscode.postMessage({ command: 'ready' });
     </script>
 </body>
