@@ -47,6 +47,7 @@ const NodeBase_1 = require("../tree/NodeBase");
 const Serialize_1 = require("../common/serialization/Serialize");
 const NodeRegistry_1 = require("../common/serialization/NodeRegistry");
 const CloudWatchLogView_1 = require("./CloudWatchLogView");
+const CloudWatchLogQueryView_1 = require("./CloudWatchLogQueryView");
 const CloudWatchLogTagsGroupNode_1 = require("./CloudWatchLogTagsGroupNode");
 const CloudWatchLogStreamsGroupNode_1 = require("./CloudWatchLogStreamsGroupNode");
 const CloudWatchLogInfoGroupNode_1 = require("./CloudWatchLogInfoGroupNode");
@@ -62,6 +63,7 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
         // Attach event handlers
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
         this.LoadDefaultChildren();
         this.SetContextValue();
     }
@@ -98,6 +100,9 @@ class CloudWatchLogGroupNode extends NodeBase_1.NodeBase {
     }
     handleNodeView() {
         CloudWatchLogView_1.CloudWatchLogView.Render(this.Region, this.LogGroup);
+    }
+    async handleNodeRun() {
+        CloudWatchLogQueryView_1.CloudWatchLogQueryView.Render(this.Region, this.LogGroup);
     }
 }
 exports.CloudWatchLogGroupNode = CloudWatchLogGroupNode;

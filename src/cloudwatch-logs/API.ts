@@ -10,9 +10,13 @@ import { Session } from "../common/Session";
 
 import {
   CloudWatchLogsClient,
+  GetQueryResultsCommand,
+  GetQueryResultsCommandOutput,
   ListTagsForResourceCommand,
   PutLogEventsCommand,
   PutLogEventsCommandOutput,
+  ResultField,
+  StartQueryCommand,
   TagResourceCommand,
   UntagResourceCommand
 } from "@aws-sdk/client-cloudwatch-logs";
@@ -303,6 +307,120 @@ export async function PutLogEvent(
     ui.logToOutput("api.PutLogEvent Error !!!", error);
     return result;
   }
+}
+
+export async function StartCloudWatchInsightsQuery(
+  Region: string,
+  LogGroupName: string,
+  QueryString: string,
+  StartTimeSec: number,
+  EndTimeSec: number
+): Promise<MethodResult<string>> {
+  ui.logToOutput(`api.StartCloudWatchInsightsQuery Started - Region:${Region}, LogGroupName:${LogGroupName}`);
+
+  const result = new MethodResult<string>();
+  result.result = "";
+
+  try {
+    const client = await GetCloudWatchLogsClient(Region);
+    const command = new StartQueryCommand({
+      logGroupName: LogGroupName,
+      queryString: QueryString,
+      startTime: StartTimeSec,
+      endTime: EndTimeSec,
+    });
+    const response = await client.send(command);
+    result.result = response.queryId ?? "";
+    result.isSuccessful = result.result.length > 0;
+
+    if (!result.isSuccessful) {
+      result.error = new Error("Start query did not return a queryId.");
+      ui.showErrorMessage("api.StartCloudWatchInsightsQuery Error !!!", result.error);
+      ui.logToOutput("api.StartCloudWatchInsightsQuery Error !!!", result.error);
+    }
+
+    return result;
+  } catch (error: any) {
+    result.isSuccessful = false;
+    result.error = error;
+    ui.showErrorMessage("api.StartCloudWatchInsightsQuery Error !!!", error);
+    ui.logToOutput("api.StartCloudWatchInsightsQuery Error !!!", error);
+    return result;
+  }
+}
+
+export async function GetCloudWatchInsightsQueryResults(
+  Region: string,
+  QueryId: string
+): Promise<MethodResult<GetQueryResultsCommandOutput>> {
+  ui.logToOutput(`api.GetCloudWatchInsightsQueryResults Started - Region:${Region}, QueryId:${QueryId}`);
+
+  const result = new MethodResult<GetQueryResultsCommandOutput>();
+
+  try {
+    const client = await GetCloudWatchLogsClient(Region);
+    const command = new GetQueryResultsCommand({
+      queryId: QueryId,
+    });
+    const response = await client.send(command);
+
+    result.result = response;
+    result.isSuccessful = true;
+    return result;
+  } catch (error: any) {
+    result.isSuccessful = false;
+    result.error = error;
+    ui.showErrorMessage("api.GetCloudWatchInsightsQueryResults Error !!!", error);
+    ui.logToOutput("api.GetCloudWatchInsightsQueryResults Error !!!", error);
+    return result;
+  }
+}
+
+export async function PollCloudWatchInsightsQuery(
+  Region: string,
+  QueryId: string,
+  TimeoutMs: number = 30000,
+  PollIntervalMs: number = 1000
+): Promise<MethodResult<GetQueryResultsCommandOutput>> {
+  ui.logToOutput(`api.PollCloudWatchInsightsQuery Started - Region:${Region}, QueryId:${QueryId}`);
+
+  const result = new MethodResult<GetQueryResultsCommandOutput>();
+  const startedAt = Date.now();
+  const terminalStatuses = new Set(["Complete", "Failed", "Cancelled", "Timeout", "Unknown"]);
+
+  while (Date.now() - startedAt <= TimeoutMs) {
+    const pollResult = await GetCloudWatchInsightsQueryResults(Region, QueryId);
+    if (!pollResult.isSuccessful) {
+      return pollResult;
+    }
+
+    result.result = pollResult.result;
+    const status = (pollResult.result?.status ?? "Unknown").toString();
+    if (terminalStatuses.has(status)) {
+      result.isSuccessful = status === "Complete";
+      if (!result.isSuccessful) {
+        result.error = new Error(`Insights query ended with status: ${status}`);
+      }
+      return result;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, PollIntervalMs));
+  }
+
+  result.isSuccessful = false;
+  result.error = new Error(`Insights query timed out after ${TimeoutMs} ms.`);
+  ui.showErrorMessage("api.PollCloudWatchInsightsQuery Error !!!", result.error);
+  ui.logToOutput("api.PollCloudWatchInsightsQuery Error !!!", result.error);
+  return result;
+}
+
+export function GetInsightsFieldValue(fields: ResultField[] | undefined, fieldName: string): string {
+  if (!fields) {
+    return "";
+  }
+
+  const match = fields.find((f) => f.field === fieldName);
+  return match?.value ?? "";
 }
 
 export async function GetAwsProfileList(): Promise<MethodResult<string[]>> {

@@ -2,6 +2,7 @@ import { NodeBase } from '../tree/NodeBase';
 import { Serialize } from '../common/serialization/Serialize';
 import { NodeRegistry } from '../common/serialization/NodeRegistry';
 import { CloudWatchLogView } from './CloudWatchLogView';
+import { CloudWatchLogQueryView } from './CloudWatchLogQueryView';
 import { CloudWatchLogTagsGroupNode } from './CloudWatchLogTagsGroupNode';
 import { CloudWatchLogStreamsGroupNode } from './CloudWatchLogStreamsGroupNode';
 import { CloudWatchLogInfoGroupNode } from './CloudWatchLogInfoGroupNode';
@@ -25,6 +26,7 @@ export class CloudWatchLogGroupNode extends NodeBase {
         // Attach event handlers
         this.OnNodeRemove.subscribe(() => this.handleNodeRemove());
         this.OnNodeView.subscribe(() => this.handleNodeView());
+        this.OnNodeRun.subscribe(() => this.handleNodeRun());
         
         this.LoadDefaultChildren();
         this.SetContextValue();
@@ -74,6 +76,10 @@ export class CloudWatchLogGroupNode extends NodeBase {
 
     public handleNodeView(): void {
         CloudWatchLogView.Render(this.Region, this.LogGroup);
+    }
+
+    public async handleNodeRun(): Promise<void> {
+        CloudWatchLogQueryView.Render(this.Region, this.LogGroup);
     }
 
 }
