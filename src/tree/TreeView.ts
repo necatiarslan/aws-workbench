@@ -587,6 +587,8 @@ export class TreeView {
         });
         if (!filePath) { return; }
         TreeState.load(filePath[0].fsPath);
+        TreeState.saveImmediate();
+        this.Refresh();
     }
 
 }

@@ -530,6 +530,8 @@ class TreeView {
             return;
         }
         TreeState_1.TreeState.load(filePath[0].fsPath);
+        TreeState_1.TreeState.saveImmediate();
+        this.Refresh();
     }
 }
 exports.TreeView = TreeView;
