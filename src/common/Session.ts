@@ -2,7 +2,7 @@ import * as ui from './UI';
 import * as vscode from 'vscode';
 import { AwsCredentialIdentity, ParsedIniData } from '@aws-sdk/types';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import * as api from '../aws-sdk/API';
+import * as api from './API';
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import { existsSync } from 'node:fs';
 
@@ -187,7 +187,7 @@ export class Session implements vscode.Disposable {
     }
 
     public async GetIniData() {
-        Session.Current.IniData = await api.getIniProfileData();
+        Session.Current.IniData = await api.GetAwsProfiles();
     }
 
     public get HasIniCredentials():boolean
@@ -263,22 +263,23 @@ export class Session implements vscode.Disposable {
 
     public OpenCredentialsFile()
     {
-        if(this.HasIniCredentials)
-        {
-            let filePath = api.getCredentialsFilepath();
-            if (existsSync(filePath))
-            {
-                ui.openFile(filePath);
-            }
-            else
-            {
-                ui.showWarningMessage("Credentials File NOT Found Path=" + filePath);
-            }
-        }
-        else
-        {
-            ui.showWarningMessage("Credentials File NOT Found");
-        }
+        ui.showWarningMessage("Work In Progress: Open Credentials File is not implemented yet");
+        // if(this.HasIniCredentials)
+        // {
+        //     let filePath = api.getCredentialsFilepath();
+        //     if (existsSync(filePath))
+        //     {
+        //         ui.openFile(filePath);
+        //     }
+        //     else
+        //     {
+        //         ui.showWarningMessage("Credentials File NOT Found Path=" + filePath);
+        //     }
+        // }
+        // else
+        // {
+        //     ui.showWarningMessage("Credentials File NOT Found");
+        // }
     }
     
     public async RefreshCredentials() {

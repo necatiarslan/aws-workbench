@@ -37,9 +37,8 @@ exports.Session = void 0;
 const ui = __importStar(require("./UI"));
 const vscode = __importStar(require("vscode"));
 const credential_providers_1 = require("@aws-sdk/credential-providers");
-const api = __importStar(require("../aws-sdk/API"));
+const api = __importStar(require("./API"));
 const client_sts_1 = require("@aws-sdk/client-sts");
-const node_fs_1 = require("node:fs");
 class Session {
     static CredentialsIdleTimeoutMs = 10_000;
     static Current;
@@ -210,7 +209,7 @@ class Session {
         }
     }
     async GetIniData() {
-        Session.Current.IniData = await api.getIniProfileData();
+        Session.Current.IniData = await api.GetAwsProfiles();
     }
     get HasIniCredentials() {
         return this.IniData !== undefined;
@@ -259,18 +258,23 @@ class Session {
         return "";
     }
     OpenCredentialsFile() {
-        if (this.HasIniCredentials) {
-            let filePath = api.getCredentialsFilepath();
-            if ((0, node_fs_1.existsSync)(filePath)) {
-                ui.openFile(filePath);
-            }
-            else {
-                ui.showWarningMessage("Credentials File NOT Found Path=" + filePath);
-            }
-        }
-        else {
-            ui.showWarningMessage("Credentials File NOT Found");
-        }
+        ui.showWarningMessage("Work In Progress: Open Credentials File is not implemented yet");
+        // if(this.HasIniCredentials)
+        // {
+        //     let filePath = api.getCredentialsFilepath();
+        //     if (existsSync(filePath))
+        //     {
+        //         ui.openFile(filePath);
+        //     }
+        //     else
+        //     {
+        //         ui.showWarningMessage("Credentials File NOT Found Path=" + filePath);
+        //     }
+        // }
+        // else
+        // {
+        //     ui.showWarningMessage("Credentials File NOT Found");
+        // }
     }
     async RefreshCredentials() {
         this.CurrentCredentials = undefined;

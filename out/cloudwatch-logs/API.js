@@ -33,7 +33,6 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getConfigFilepath = exports.getCredentialsFilepath = exports.getHomeDir = exports.ENV_CREDENTIALS_PATH = void 0;
 exports.GetCloudWatchLogsClient = GetCloudWatchLogsClient;
 exports.GetLogGroupList = GetLogGroupList;
 exports.GetLogGroupInfo = GetLogGroupInfo;
@@ -45,17 +44,11 @@ exports.StartCloudWatchInsightsQuery = StartCloudWatchInsightsQuery;
 exports.GetCloudWatchInsightsQueryResults = GetCloudWatchInsightsQueryResults;
 exports.PollCloudWatchInsightsQuery = PollCloudWatchInsightsQuery;
 exports.GetInsightsFieldValue = GetInsightsFieldValue;
-exports.GetAwsProfileList = GetAwsProfileList;
-exports.getIniProfileData = getIniProfileData;
 exports.GetLogGroupTags = GetLogGroupTags;
 exports.UpdateCloudWatchLogGroupTag = UpdateCloudWatchLogGroupTag;
 exports.RemoveCloudWatchLogGroupTag = RemoveCloudWatchLogGroupTag;
 const ui = __importStar(require("../common/UI"));
 const MethodResult_1 = require("../common/MethodResult");
-const os_1 = require("os");
-const path_1 = require("path");
-const path_2 = require("path");
-const parseKnownFiles_1 = require("../aws-sdk/parseKnownFiles");
 const Session_1 = require("../common/Session");
 const client_cloudwatch_logs_1 = require("@aws-sdk/client-cloudwatch-logs");
 async function GetCloudWatchLogsClient(Region = Session_1.Session.Current?.AwsRegion) {
@@ -377,47 +370,6 @@ function GetInsightsFieldValue(fields, fieldName) {
     const match = fields.find((f) => f.field === fieldName);
     return match?.value ?? "";
 }
-async function GetAwsProfileList() {
-    ui.logToOutput("api.GetAwsProfileList Started");
-    let result = new MethodResult_1.MethodResult();
-    try {
-        let profileData = await getIniProfileData();
-        result.result = Object.keys(profileData);
-        result.isSuccessful = true;
-        return result;
-    }
-    catch (error) {
-        result.isSuccessful = false;
-        result.error = error;
-        ui.showErrorMessage('api.GetAwsProfileList Error !!!', error);
-        ui.logToOutput("api.GetAwsProfileList Error !!!", error);
-        return result;
-    }
-}
-async function getIniProfileData(init = {}) {
-    ui.logToOutput('api.getIniProfileData Started');
-    const profiles = await (0, parseKnownFiles_1.parseKnownFiles)(init);
-    return profiles;
-}
-exports.ENV_CREDENTIALS_PATH = "AWS_SHARED_CREDENTIALS_FILE";
-const getHomeDir = () => {
-    const { HOME, USERPROFILE, HOMEPATH, HOMEDRIVE = `C:${path_1.sep}` } = process.env;
-    if (HOME) {
-        return HOME;
-    }
-    if (USERPROFILE) {
-        return USERPROFILE;
-    }
-    if (HOMEPATH) {
-        return `${HOMEDRIVE}${HOMEPATH}`;
-    }
-    return (0, os_1.homedir)();
-};
-exports.getHomeDir = getHomeDir;
-const getCredentialsFilepath = () => process.env[exports.ENV_CREDENTIALS_PATH] || (0, path_2.join)((0, exports.getHomeDir)(), ".aws", "credentials");
-exports.getCredentialsFilepath = getCredentialsFilepath;
-const getConfigFilepath = () => process.env[exports.ENV_CREDENTIALS_PATH] || (0, path_2.join)((0, exports.getHomeDir)(), ".aws", "config");
-exports.getConfigFilepath = getConfigFilepath;
 async function GetLogGroupTags(region, logGroupName) {
     const result = new MethodResult_1.MethodResult();
     result.result = [];

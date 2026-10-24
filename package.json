@@ -633,6 +633,7 @@
     "@aws-sdk/credential-provider-ini": "^3.972.34",
     "@aws-sdk/credential-provider-node": "^3.972.35",
     "@aws-sdk/credential-providers": "^3.1035.0",
+    "@aws-sdk/shared-ini-file-loader": "^3.370.0",
     "@aws-sdk/types": "^3.973.8",
     "@tshepomgaga/aws-sfn-graph": "^0.0.6",
     "@types/uuid": "^11.0.0",

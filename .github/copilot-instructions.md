@@ -130,7 +130,6 @@ VS Code automatically reloads extension on file changes during `npm run watch` i
 | `src/common/` | Shared: Session, UI, EventEmitter, MethodResult, serialization |
 | `src/<service>/` | Service-specific: API.ts, Service.ts, Node classes (e.g., LambdaFunctionNode) |
 | `media/<service>/` | Webview HTML/CSS/JS for interactive views |
-| `src/aws-sdk/` | AWS credentials file parsing (AWS SDK helpers) |
 
 ---
 
