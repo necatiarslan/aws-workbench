@@ -5,7 +5,7 @@ import { MethodResult } from '../common/MethodResult';
 import { basename, dirname } from "path";
 import { Session } from '../common/Session';
 import * as fs from 'fs';
-import archiver = require('archiver');
+import { ZipArchive } from 'archiver';
 import { GetCloudWatchLogsClient } from "../cloudwatch-logs/API";
 
 export async function GetLambdaClient(region: string) {
@@ -500,7 +500,7 @@ export async function ZipTextFile(inputPath: string, outputZipPath?: string): Pr
     }
 
     const output = fs.createWriteStream(outputZipPath);
-    const archive = archiver('zip', {
+    const archive = new ZipArchive({
       zlib: { level: 9 } // Set compression level
     });
 

@@ -60,7 +60,7 @@ const MethodResult_1 = require("../common/MethodResult");
 const path_1 = require("path");
 const Session_1 = require("../common/Session");
 const fs = __importStar(require("fs"));
-const archiver = require("archiver");
+const archiver_1 = require("archiver");
 const API_1 = require("../cloudwatch-logs/API");
 async function GetLambdaClient(region) {
     const credentials = await Session_1.Session.Current.GetCredentials();
@@ -431,7 +431,7 @@ async function ZipTextFile(inputPath, outputZipPath) {
             fs.unlinkSync(outputZipPath);
         }
         const output = fs.createWriteStream(outputZipPath);
-        const archive = archiver('zip', {
+        const archive = new archiver_1.ZipArchive({
             zlib: { level: 9 } // Set compression level
         });
         archive.pipe(output);
